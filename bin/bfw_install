@@ -1,0 +1,31 @@
+#!/bin/bash
+# Install BFW script
+#
+# dateCreate : 2014-02-11
+# version : 2.0.0
+# author : bulton-fr
+
+#Create dir cache
+mkdir -p cache
+
+#Create dir controllers
+mkdir -p controllers
+
+#Create dir modeles
+mkdir -p modeles
+
+#Create dir modules
+mkdir -p modules
+
+#Create dir view
+mkdir -p view
+
+#Create dir web
+mkdir -p web
+
+PHP=`which php`
+DIR=`$PHP -r "echo dirname(dirname(realpath('$0')));"`
+
+cp $DIR/install/skeleton/.htaccess ./.htaccess
+cp $DIR/install/skeleton/config.php ./config.php
+cp $DIR/install/skeleton/index.php web/index.php

@@ -1,0 +1,49 @@
+{
+	"name": "bulton-fr/bfw",
+	"type": "library",
+	"description": "Framework PHP5.3",
+	"keywords": ["framework", "php", "simple"],
+	"homepage": "https://github.com/bulton-fr/bfw",
+	"time": "2014-02-07",
+	"license": "LGPL-3.0",
+	"authors":
+	[
+		{
+			"name": "Vermeulen Maxime / Bulton",
+			"homepage": "http://www.bulton.fr",
+			"email": "bulton.fr@bulton.fr"
+		}
+	],
+	"support":
+	{
+		"email": "support@bulton.fr",
+		"issues": "https://github.com/bulton-fr/bfw/issues",
+		"source": "https://github.com/bulton-fr/bfw"
+	},
+	"require":
+	{
+		"php": ">=5.3.0"
+	},
+	"require-dev":
+	{
+		"atoum/atoum": "@stable"
+	},
+	"suggest":
+	{
+		"ext-memcache": "*",
+		"lib-memcache": "*",
+		"bulton-fr/bfw_controler": "@stable",
+		"bulton-fr/bfw_sql": "@stable",
+		"bulton-fr/bfw_template": "@stable"
+	},
+	"minimum-stability": "stable",
+	"autoload":
+	{
+		"psr-4":
+		{
+			"BFW\\": "src/classes/",
+			"BFWInterface\\": "src/interfaces/"
+		}
+	},
+	"bin": ["bin/bfw_install"]
+}
