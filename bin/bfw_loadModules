@@ -1,0 +1,130 @@
+#!/usr/bin/env php
+<?php
+# Load BFW Modules script : Read all dir in vendor for find bfw modules and create symlink to modules dir
+#
+# dateCreate : 2014-03-04
+# version : 2.0.0
+# author : bulton-fr
+
+$rootPath = __DIR__.'/../../..';
+
+$exist = false;
+$iTest = 0;
+do
+{
+	if(!file_exists($rootPath.'/autoload.php') && !file_exists($rootPath.'/composer'))
+	{
+		$rootPath .= '/..';
+	}
+	else {$exist = true;}
+	
+	if($iTest > 9) //Securit&
+	{
+		echo "\n\033[1;31mLe répertoire contenant composer n'a pu être trouvé !\033[0m";
+		die;
+	}
+	
+	$iTest++;
+}
+while(!$exist);
+
+$listModulesFind = array();
+
+//Class de lecture des dossiers.
+//Une class pour éviter de tomber dans les sécurités de récursivité d'appel de fonction
+class readDir
+{
+	/**
+	 * @var $list : Référence vers l'array stockant la liste des path de modules trouvés
+	 */
+	private $list = array();
+	
+	/**
+	 * @var $ignore : Les éléments à ignoré lors de la lecture du dossier
+	 */
+	private $ignore = array('.', '..');
+	
+	/*
+	 * Constructeur
+	 * 
+	 * @param array (ref) $listModuleFind : Liste des modules trouvé
+	 */
+	public function __construct()
+	{
+		global $listModulesFind;	
+		$this->list = &$listModulesFind;
+	}
+	
+	/**
+	 * Méthode de lecture d'un dossier
+	 *
+	 * @param string $path : Le chemin à lire
+	 */
+	public function read($path)
+	{
+		$dir = opendir($path); //Ouverture du dossier à lire
+		
+		if($dir !== false)
+		{
+			//Tant qu'il y a des fichiers à lire dans le dossier
+			while(($file = readdir($dir)) !== false)
+			{
+				if(!in_array($file, $this->ignore))
+				{
+					//Si le fichier d'initialisation du modules existes
+					if(file_exists($path.'/bfw_modules_info.php'))
+					{
+						$this->list[] = $path; //On ajoute le chemin courant à la liste
+						break;
+					}
+					
+					//Si l'élément lu est un dossier
+					if(is_dir($path.'/'.$file))
+					{
+						//On le lit à son tour
+						$read = new readDir();
+						$read->read($path.'/'.$file);
+					}
+				}
+			}
+			
+			closedir($dir); //Fermeture du dossier lu
+		}
+	}
+}
+
+//Lance la lecture du dossier vendor
+$read = new readDir();
+$read->read($rootPath.'/');
+
+//print_r($listModulesFind);
+
+//Si des modules ont été trouvé
+if(count($listModulesFind) > 0)
+{
+	//Pour chaque module trouvé dans le vendor
+	foreach($listModulesFind as $modulePath)
+	{
+		//On obtient le nom du module
+		$modules = explode('/', $modulePath);
+		$module = $modules[(count($modules)-1)];
+		
+		//Et on tente de créer le lien symbolique
+		echo "\n".'Création du lien symbolique de '.$module.' : ';
+		
+		$result = '';
+		if(!file_exists(realpath($rootPath.'/..').'/modules/'.$module))
+		{
+			if(symlink(realpath($modulePath), realpath($rootPath.'/..').'/modules/'.$module))
+			{
+				$result .= "...\033[1;32m Done";
+			}
+			else {$result .= "...\033[1;31m Fail !";}
+		}
+		else {$result .= "...\033[1;33m Non créer. Le module existe déjà !";}
+		
+		echo $result."\033[0m\n";
+	}
+}
+else {echo "\033[0;33m Aucun module trouvé dans le vendor \033[0m\n";}
+?>
