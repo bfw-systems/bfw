@@ -45,5 +45,5 @@
 			"BFWInterface\\": "src/interfaces/"
 		}
 	},
-	"bin": ["bin/bfw_install"]
+	"bin": ["bin/bfw_install", "bin/bfw_loadModules"]
 }
