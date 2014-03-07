@@ -29,6 +29,6 @@ $base_url = 'http://localhost';
 //*** Adresse ***
 
 //*** Controler par défaut ***
-$DefaultControler = 'index'; //Il s'agit du modele de page qui sera utilisé comme page index du site
+$DefaultController = 'index'; //Il s'agit du modele de page qui sera utilisé comme page index du site
 //*** Controler par défaut ***
 ?>
