@@ -6,7 +6,8 @@
 # version : 2.0.0
 # author : bulton-fr
 
-$rootPath = __DIR__.'/../../..';
+echo __DIR__."\n";
+$rootPath = __DIR__.'/..';
 
 $exist = false;
 $iTest = 0;
@@ -20,7 +21,7 @@ do
 	
 	if($iTest > 9) //Securit&
 	{
-		echo "\n\033[1;31mLe répertoire contenant composer n'a pu être trouvé !\033[0m";
+		echo "\033[1;31mLe rÃ©pertoire contenant composer n'a pu Ãªtre trouvÃ© !\033[0m\n";
 		die;
 	}
 	
@@ -31,23 +32,23 @@ while(!$exist);
 $listModulesFind = array();
 
 //Class de lecture des dossiers.
-//Une class pour éviter de tomber dans les sécurités de récursivité d'appel de fonction
+//Une class pour Ã©viter de tomber dans les sÃ©curitÃ©s de rÃ©cursivitÃ© d'appel de fonction
 class readDir
 {
 	/**
-	 * @var $list : Référence vers l'array stockant la liste des path de modules trouvés
+	 * @var $list : RÃ©fÃ©rence vers l'array stockant la liste des path de modules trouvÃ©s
 	 */
 	private $list = array();
 	
 	/**
-	 * @var $ignore : Les éléments à ignoré lors de la lecture du dossier
+	 * @var $ignore : Les Ã©lÃ©ments Ã  ignorer lors de la lecture du dossier
 	 */
 	private $ignore = array('.', '..');
 	
 	/*
 	 * Constructeur
 	 * 
-	 * @param array (ref) $listModuleFind : Liste des modules trouvé
+	 * @param array (ref) $listModuleFind : Liste des modules trouvÃ©
 	 */
 	public function __construct()
 	{
@@ -56,17 +57,17 @@ class readDir
 	}
 	
 	/**
-	 * Méthode de lecture d'un dossier
+	 * MÃ©thode de lecture d'un dossier
 	 *
-	 * @param string $path : Le chemin à lire
+	 * @param string $path : Le chemin Ã  lire
 	 */
 	public function read($path)
 	{
-		$dir = opendir($path); //Ouverture du dossier à lire
+		$dir = opendir($path); //Ouverture du dossier Ã  lire
 		
 		if($dir !== false)
 		{
-			//Tant qu'il y a des fichiers à lire dans le dossier
+			//Tant qu'il y a des fichiers Ã  lire dans le dossier
 			while(($file = readdir($dir)) !== false)
 			{
 				if(!in_array($file, $this->ignore))
@@ -74,14 +75,14 @@ class readDir
 					//Si le fichier d'initialisation du modules existes
 					if(file_exists($path.'/bfw_modules_info.php'))
 					{
-						$this->list[] = $path; //On ajoute le chemin courant à la liste
+						$this->list[] = $path; //On ajoute le chemin courant Ã  la liste
 						break;
 					}
 					
-					//Si l'élément lu est un dossier
+					//Si l'Ã©lÃ©ment lu est un dossier
 					if(is_dir($path.'/'.$file))
 					{
-						//On le lit à son tour
+						//On le lit Ã  son tour
 						$read = new readDir();
 						$read->read($path.'/'.$file);
 					}
@@ -99,18 +100,18 @@ $read->read($rootPath.'/');
 
 //print_r($listModulesFind);
 
-//Si des modules ont été trouvé
+//Si des modules ont Ã©tÃ© trouvÃ©
 if(count($listModulesFind) > 0)
 {
-	//Pour chaque module trouvé dans le vendor
+	//Pour chaque module trouvÃ© dans le vendor
 	foreach($listModulesFind as $modulePath)
 	{
 		//On obtient le nom du module
 		$modules = explode('/', $modulePath);
 		$module = $modules[(count($modules)-1)];
 		
-		//Et on tente de créer le lien symbolique
-		echo "\n".'Création du lien symbolique de '.$module.' : ';
+		//Et on tente de crÃ©er le lien symbolique
+		echo 'CrÃ©ation du lien symbolique de '.$module.' : ';
 		
 		$result = '';
 		if(!file_exists(realpath($rootPath.'/..').'/modules/'.$module))
@@ -121,10 +122,10 @@ if(count($listModulesFind) > 0)
 			}
 			else {$result .= "...\033[1;31m Fail !";}
 		}
-		else {$result .= "...\033[1;33m Non créer. Le module existe déjà !";}
+		else {$result .= "...\033[1;33m Non crÃ©er. Le module existe dÃ©jÃ  !";}
 		
 		echo $result."\033[0m\n";
 	}
 }
-else {echo "\033[0;33m Aucun module trouvé dans le vendor \033[0m\n";}
+else {echo "\033[0;33m Aucun module trouvÃ© dans le vendor \033[0m\n";}
 ?>

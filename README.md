@@ -34,7 +34,7 @@ Pour installer le framework, créez un fichier "composer.json" à la racine de v
 
 Enfin, pour lancer l'installation, 2 étapes sont nécessaires :
 
-Récupérer les framework via composer :
+Récupérer le framework via composer :
 ```
 php composer.phar install
 ```

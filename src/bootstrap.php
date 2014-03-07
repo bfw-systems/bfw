@@ -5,7 +5,7 @@
  * @package BFW
  */
 
-$rootPath = $_SERVER['DOCUMENT_ROOT'].'/';
+$rootPath = realpath(__DIR__.'/../../../../').'/';
 require_once($rootPath.'config.php');
 
 if(substr($base_url, -1) == '/')
@@ -30,7 +30,7 @@ if(!($request == '/index.php' || $request == '/'))
     
     $file = $request;
     
-    if(substr($exp, 0, 3) != 'php' && !is_null($ext))
+    if(substr($ext, 0, 3) != 'php' && !is_null($ext))
     {
         $pathFile = '';
         
@@ -55,11 +55,11 @@ if(!($request == '/index.php' || $request == '/'))
         
         if(is_null($error))
         {
-            if($exp == 'css')
+            if($ext == 'css')
             {
                 header('Content-type: text/css');
             }
-            elseif($exp == 'js')
+            elseif($ext == 'js')
             {
                 header('Content-type: text/javascript');
             }
@@ -72,12 +72,12 @@ if(!($request == '/index.php' || $request == '/'))
             echo file_get_contents($pathFile.$file);
         }
     }
-    elseif(substr($exp, 0, 3) == 'php' && !is_null($ext))
+    elseif(substr($ext, 0, 3) == 'php' && !is_null($ext))
     {
         $modulePos = strpos($request, '/modules/')+9;
         $moduleName = substr($request, $modulePos, (strpos($request, '/', $modulePos)-$modulePos));
         
-        if(!file_exists($rootPath.'modules/'.$moduleName.'/externe.php'))
+        if(file_exists($rootPath.'modules/'.$moduleName.'/externe.php'))
         {
             $afterModuleName = $modulePos+strlen($moduleName)+1;
             require_once('modules/'.$moduleName.'/externe.php');
@@ -93,17 +93,18 @@ if(!($request == '/index.php' || $request == '/'))
     //Pas de else car aucune extension peut dire l'index d'un controller.
 }
 
-require_once(__DIR__.'BFW_init.php');
+require_once(__DIR__.'/BFW_init.php');
 
 if(!is_null($error))
 {
-    Errorview($error);
+    echo '$error here';
+    Errorview($error, false);
 }
 else
 {
-    if(file_exists($rootPath.'modules/'.$ctr_module.'/kernel_init.php'))
+    if(kernelModuleLoad_ctr_test == true)
     {
-        require_once($rootPath.'modules/'.$ctr_module.'/kernel_init.php');
+        require_once(kernelModuleLoad_ctr_path);
     }
 }
 ?>

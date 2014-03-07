@@ -37,7 +37,7 @@ $BFWKernel->set_debug($DebugMode);
 header('Content-Type: text/html; charset=utf-8'); //On indique un header en utf-8 de type html
 
 //Inclusion fonction
-$dir = opendir($rootPath.'kernel/fonctions'); //Ouverture du dossier fonctions se trouvant à la racine
+$dir = opendir(__DIR__.'/fonctions'); //Ouverture du dossier fonctions se trouvant à la racine
 $dir_arr = array('.', '..'); //Les fichiers & dossiers à ignorer à la lecture
 
 while(false !== ($file = readdir($dir))) //Si on a un fichier
@@ -45,7 +45,7 @@ while(false !== ($file = readdir($dir))) //Si on a un fichier
     //Si c'est un fichier, et que ce n'est pas une sauvegarde auto, on inclu.
     if(!in_array($file, $dir_arr) && !preg_match("#~$#", $file))
     {
-        require_once($rootPath.'kernel/fonctions/'.$file);
+        require_once(__DIR__.'/fonctions/'.$file);
     }
 }
 
@@ -53,24 +53,82 @@ closedir($dir); //Fermeture du dossier
 unset($dir, $dir_arr, $file); //Suppression des variables
 //Fin Inclusion fonction
 
-//Sql
+//Load module
+$modulesToLoad = array();
+
+//SQL
 if($bd_enabled)
 {
-    if(file_exists($rootPath.'modules/'.$bd_module.'/kernel_init.php'))
-    {
-        require_once($rootPath.'modules/'.$bd_module.'/kernel_init.php');
-    }
-    else {throw new \Exception('Module '.$db_module.' not found.');}
+    $modulesToLoad['bd'] = array('name' => $bd_module, 'action' => 'load');
 }
-//Sql
 
 //Template
-if(file_exists($rootPath.'modules/'.$tpl_module.'/kernel_init.php'))
+$modulesToLoad['tpl'] = array('name' => $tpl_module, 'action' => 'load');
+
+//Controller
+$modulesToLoad['ctr'] = array('name' => $ctr_module, 'action' => 'test');
+
+foreach($modulesToLoad as $key => $moduleLoad)
 {
-    require_once($rootPath.'modules/'.$tpl_module.'/kernel_init.php');
+    $pathToModule = $rootPath.'modules/'.$moduleLoad['name'];
+    $failLoadModule = false;
+    
+    if(!empty($pathToModule))
+    {
+        if(!file_exists($pathToModule.'/kernel_init.php'))
+        {
+            if(is_link($pathToModule))
+            {
+                $pathToModule = readlink($pathToModule);
+                if(file_exists($pathToModule.'/bfw_modules_info.php'))
+                {
+                    require_once($pathToModule.'/bfw_modules_info.php');
+                    
+                    if(!empty($modulePath))
+                    {
+                        $pathToModule .= '/'.$modulePath;
+                        
+                        if(!file_exists($pathToModule.'/kernel_init.php'))
+                        {
+                            $failLoadModule = true;
+                        }
+                    }
+                    else
+                    {
+                        $failLoadModule = true;
+                    }
+                }
+                else
+                {
+                    $failLoadModule = true;
+                }
+            }
+            else
+            {
+                $failLoadModule = true;
+            }
+                
+            if($failLoadModule)
+            {
+                define('kernelModuleLoad_'.$key.'_test', false);
+                throw new \Exception('Module '.$moduleLoad['name'].' not found.');
+            }
+        }
+        
+        define('kernelModuleLoad_'.$key.'_test', true);
+        define('kernelModuleLoad_'.$key.'_path', $pathToModule.'/kernel_init.php');
+        
+        if($moduleLoad['action'] == 'load')
+        {
+            require_once($pathToModule.'/kernel_init.php');
+        }
+    }
+    else
+    {
+        define('kernelModuleLoad_'.$key.'_test', false);
+    }
 }
-else {throw new \Exception('Module '.$tpl_module.' not found.');}
-//Template
+//Load module
 
 //Serveur memcache (permet de stocker des infos direct sur la ram avec ou sans limite dans le temps)
 $Memcache = new BFW\Ram;
@@ -142,7 +200,7 @@ define('path_view', $rootPath.'view/');
 /**
  * @name path_view : Chemin vers la racine du dossier web
  */
-define('path_view', $rootPath.'web/');
+define('path_web', $rootPath.'web/');
 
 /**
  * @name path : Chemin vers la racine
