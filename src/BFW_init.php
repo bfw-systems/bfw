@@ -71,48 +71,27 @@ $modulesToLoad['ctr'] = array('name' => $ctr_module, 'action' => 'test');
 foreach($modulesToLoad as $key => $moduleLoad)
 {
     $pathToModule = $rootPath.'modules/'.$moduleLoad['name'];
-    $failLoadModule = false;
-    
     if(!empty($pathToModule))
     {
+        if(is_link($pathToModule))
+        {
+            $pathToModule = readlink($pathToModule);
+            
+            if(file_exists($pathToModule.'/bfw_modules_info.php'))
+            {
+                require_once($pathToModule.'/bfw_modules_info.php');
+                
+                if(!empty($modulePath))
+                {
+                    $pathToModule .= '/'.$modulePath;
+                }
+            }
+        }
+        
         if(!file_exists($pathToModule.'/kernel_init.php'))
         {
-            if(is_link($pathToModule))
-            {
-                $pathToModule = readlink($pathToModule);
-                if(file_exists($pathToModule.'/bfw_modules_info.php'))
-                {
-                    require_once($pathToModule.'/bfw_modules_info.php');
-                    
-                    if(!empty($modulePath))
-                    {
-                        $pathToModule .= '/'.$modulePath;
-                        
-                        if(!file_exists($pathToModule.'/kernel_init.php'))
-                        {
-                            $failLoadModule = true;
-                        }
-                    }
-                    else
-                    {
-                        $failLoadModule = true;
-                    }
-                }
-                else
-                {
-                    $failLoadModule = true;
-                }
-            }
-            else
-            {
-                $failLoadModule = true;
-            }
-                
-            if($failLoadModule)
-            {
-                define('kernelModuleLoad_'.$key.'_test', false);
-                throw new \Exception('Module '.$moduleLoad['name'].' not found.');
-            }
+            define('kernelModuleLoad_'.$key.'_test', false);
+            throw new \Exception('Module '.$moduleLoad['name'].' not found.');
         }
         
         define('kernelModuleLoad_'.$key.'_test', true);
@@ -137,20 +116,54 @@ $Memcache = new BFW\Ram;
 //Inclusions des modules
 $Modules = new BFW\Modules;
 
+/**
+ * @name modulesLoadTime_Module : Pour charger les modules directement à leurs lecture
+ */
+define('modulesLoadTime_Module', 'module');
+
+/**
+ * @name modulesLoadTime_Visiteur : Pour changer les modules après l'initialisation et la récupération des infos visiteur
+ */
+define('modulesLoadTime_Visiteur', 'visiteur');
+
+/**
+ * @name modulesLoadTime_EndInit : Pour charger les modules une fois que le framework à fini de s'initialiser, avant l'appel au controleur.
+ */
+define('modulesLoadTime_EndInit', 'endInit');
+
 $dir = opendir($rootPath.'modules');
 $dir_arr = array('.', '..', '.htaccess');
 
 while(false !== ($file = readdir($dir)))
 {
-    //Si le fichier existe, on inclus le fichier principal du mod
-    if(file_exists($rootPath.'modules/'.$file.'/'.$file.'.php'))
+    $path = $rootPath.'modules/'.$file;
+    
+    if(is_link($path))
     {
-        //echo 'Inclus module : '.$file.'<br/>';
-        require_once($rootPath.'modules/'.$file.'/'.$file.'.php');
+        $path = readlink($path);
+    }
+    
+    //Si le fichier existe, on inclus le fichier principal du module
+    if(file_exists($path.'/'.$file.'.php'))
+    {
+        require_once($path.'/'.$file.'.php');
+        $Modules->addPath($file, $path);
     }
 }
 closedir($dir);
 unset($dir, $dir_arr, $file);
+
+$modulesToLoad = $Modules->listToLoad(modulesLoadTime_Module);
+if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
+{
+    foreach($modulesToLoad as $moduleToLoad)
+    {
+        $infos = $Modules->getModuleInfos($moduleToLoad);
+        $path = $infos['path'];
+        
+        require_once($path.'/inclus.php');
+    }
+}
 //Inclusions des modules
 
 //Visiteur
@@ -158,15 +171,15 @@ $Visiteur = new BFW\Visiteur;
 //Visiteur
 
 //Chargement des modules
-$time = 'after_visiteur';
-if(array_key_exists($time, $Modules->mod_load))
+$modulesToLoad = $Modules->listToLoad(modulesLoadTime_Visiteur);
+if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
 {
-    if(is_array($Modules->mod_load[$time]))
+    foreach($modulesToLoad as $moduleToLoad)
     {
-        foreach($Modules->mod_load[$time] as $name)
-        {
-            require_once($rootPath.'modules/'.$name.'/inclus.php');
-        }
+        $infos = $Modules->getModuleInfos($moduleToLoad);
+        $path = $infos['path'];
+        
+        require_once($path.'/inclus.php');
     }
 }
 //Chargement des modules
@@ -209,15 +222,15 @@ define('path', $rootPath);
 //Chemin
 
 //Chargement des modules
-$time = 'end_kernel';
-if(array_key_exists($time, $Modules->mod_load))
+$modulesToLoad = $Modules->listToLoad(modulesLoadTime_EndInit);
+if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
 {
-    if(is_array($Modules->mod_load[$time]))
+    foreach($modulesToLoad as $moduleToLoad)
     {
-        foreach($Modules->mod_load[$time] as $name)
-        {
-            require_once($path.'modules/'.$name.'/inclus.php');
-        }
+        $infos = $Modules->getModuleInfos($moduleToLoad);
+        $path = $infos['path'];
+        
+        require_once($path.'/inclus.php');
     }
 }
 //Chargement des modules

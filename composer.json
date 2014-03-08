@@ -32,9 +32,9 @@
 	{
 		"ext-memcache": "*",
 		"lib-memcache": "*",
-		"bulton-fr/bfw_controler": "@stable",
-		"bulton-fr/bfw_sql": "@stable",
-		"bulton-fr/bfw_template": "@stable"
+		"bulton-fr/bfw-controller": "@stable",
+		"bulton-fr/bfw-sql": "@stable",
+		"bulton-fr/bfw-template": "@stable"
 	},
 	"minimum-stability": "stable",
 	"autoload":

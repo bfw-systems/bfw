@@ -1,11 +1,6 @@
 <IfModule mod_rewrite.c>
 	RewriteEngine On
-	RewriteBase /web/
-
-	RewriteCond %{REQUEST_FILENAME} -s [OR]
-	RewriteCond %{REQUEST_FILENAME} -l [OR]
-	RewriteCond %{REQUEST_FILENAME} -d
-	RewriteRule ^.*$ - [NC,L]
+	RewriteBase /
 	
-	RewriteRule ^.*$ index.php [NC,L]
+	RewriteRule ^.*$ web/index.php [NC,L]
 </IfModule>
