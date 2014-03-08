@@ -20,12 +20,22 @@ $requestExplode = explode('?', $requestAll);
 $request = $requestExplode[0];
 $error = null;
 
+$exBaseUrl = explode('/', $base_url);
+if(count($exBaseUrl) > 3)
+{
+    unset($exBaseUrl[0], $exBaseUrl[1], $exBaseUrl[2]);
+    $imBaseUrl = '/'.implode('/', $exBaseUrl);
+    $lenBaseUrl = strlen($imBaseUrl);
+    
+    $request = substr($request, $lenBaseUrl);
+}
+
 if(!($request == '/index.php' || $request == '/'))
 {
     $ext = null;
     if(strpos($request, '.') !== false)
     {
-        $ext = substr($request, (strpos($request, '.')+1));
+        $ext = substr($request, (strrpos($request, '.')+1));
     }
     
     $file = $request;
@@ -70,6 +80,7 @@ if(!($request == '/index.php' || $request == '/'))
             }
             
             echo file_get_contents($pathFile.$file);
+            exit;
         }
     }
     elseif(substr($ext, 0, 3) == 'php' && !is_null($ext))
