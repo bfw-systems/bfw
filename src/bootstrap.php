@@ -108,7 +108,6 @@ require_once(__DIR__.'/BFW_init.php');
 
 if(!is_null($error))
 {
-    echo '$error here';
     Errorview($error, false);
 }
 else
