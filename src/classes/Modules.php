@@ -54,7 +54,7 @@ class Modules implements \BFWInterface\IModules
      */ 
     public function newMod($name, $params=array())
     {
-        if(isset($this->mod_list[$name]))
+        if($this->exists($name))
         {
             throw new \Exception('Le module '.$name.' existe déjà.');
             return false;
@@ -63,16 +63,23 @@ class Modules implements \BFWInterface\IModules
         $time = (isset($params['time'])) ? $params['time'] : modulesLoadTime_EndInit;
         $require = array();
         
-        if(isset($params['require']))
+        if(is_array($params))
         {
-            if(is_string($params['require']))
+            if(isset($params['require']))
             {
-                $require = array($params['require']);
+                if(is_string($params['require']))
+                {
+                    $require = array($params['require']);
+                }
+                elseif(is_array($params['require']))
+                {
+                    $require = $params['require'];
+                }
             }
-            elseif(is_array($params['require']))
-            {
-                $require = $params['require'];
-            }
+        }
+        else
+        {
+            throw new \Exception('Les options du module '.$name.' doivent être déclarer sous la forme d\'un array.');
         }
         
         $this->modList[$name] = array(
@@ -80,6 +87,8 @@ class Modules implements \BFWInterface\IModules
             'time' => $time,
             'require' => $require
         );
+        
+        echo '<pre>';print_r($this->modList);
     }
     
     /**
@@ -91,7 +100,7 @@ class Modules implements \BFWInterface\IModules
      */
     public function exists($name)
     {
-        return in_array($name, $this->modList);
+        return array_key_exists($name, $this->modList);
     }
     
     /**
@@ -175,7 +184,7 @@ class Modules implements \BFWInterface\IModules
                     }
                     else
                     {
-                        if(!$this->isLoad($modRequire) || $this->modList[$modRequire]['time'] != $mod['time'])
+                        if(!$this->isLoad($modRequire) && $this->modList[$modRequire]['time'] != $mod['time'])
                         {
                             throw new \Exception('La dépendance '.$modRequire.' du module '.$mod['name'].' n\'est pas encore chargé. Vous devez charger votre module plus tard.');
                             $load = false;

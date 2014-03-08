@@ -138,9 +138,9 @@ while(false !== ($file = readdir($dir)))
 {
     $path = $rootPath.'modules/'.$file;
     
-    if(is_link($rootPath.'modules/'.$file))
+    if(is_link($path))
     {
-        $path = readlink($pathToModule);
+        $path = readlink($path);
     }
     
     //Si le fichier existe, on inclus le fichier principal du module
