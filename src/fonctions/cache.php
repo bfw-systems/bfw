@@ -1,13 +1,15 @@
 <?php
 /**
  * Toutes les fonctions utilisé par le système de cache
- * Auteur : Vermeulen Maxime
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
+ * @package bfw
  */
 
 /**
  * Ajoute des variables normalement envoyé à la vue à la variable l'affichant
- * @param string : La où ont doit ajouté les variables
- * @param array : Les variables normalement envoyé à la vue
+ * 
+ * @param string $where : La où ont doit ajouté les variables
+ * @param array  $data  : Les variables normalement envoyé à la vue
  */
 function BFWCacheAddVars($where, $data)
 {

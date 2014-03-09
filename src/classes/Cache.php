@@ -1,7 +1,7 @@
 <?php
 /**
  * Classes en rapport avec la gestion du Cache
- * @author Vermeulen Maxime
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
  * @version 1.0
  */
 
@@ -9,52 +9,52 @@ namespace BFW;
 
 /**
  * Classe gérant le cache
- * @package BFW
+ * @package bfw
  */
 class Cache implements \BFWInterface\ICache
 {
     /**
-     * @var $_kernel : L'instance du Kernel
+     * @var $_kernel L'instance du Kernel
      */
     private $_kernel;
     
     /**
-     * @var $controler : Le controleur qu'on doit lire
+     * @var $controler Le controleur qu'on doit lire
      */
     private $controler;
     
     //Partie 1
     /**
-     * @var $codeOneLine : Tout le code du fichier controleur sur 1 seule ligne.
+     * @var $codeOneLine Tout le code du fichier controleur sur 1 seule ligne.
      */
     private $codeOneLine = '';
     
     //Partie 2
     /**
-     * @var $noTpl : Si à true, la classe Template n'est pas appelé !
+     * @var $noTpl Si à true, la classe Template n'est pas appelé !
      */
     private $noTpl = false;
     
     /**
-     * @var $VarTpl : Le nom de la variable attribué à l'instance Template
+     * @var $VarTpl Le nom de la variable attribué à l'instance Template
      */
     private $VarTpl = '';
     
     /**
-     * @var $linkTpl : Le "lien" vers le fichier de vue
+     * @var $linkTpl Le "lien" vers le fichier de vue
      */
     private $linkTpl = '';
     
     //Partie 3
     /**
-     * @var $lstBlockVue : La liste des block présent dans le fichier de vue.
+     * @var $lstBlockVue La liste des block présent dans le fichier de vue.
      */
     private $lstBlockVue;
     
     /**
      * Constructeur
      * 
-     * @param string $controler : Le controleur qu'on doit lire
+     * @param string $controler Le controleur qu'on doit lire
      */
     public function __construct($controler)
     {
@@ -109,7 +109,7 @@ class Cache implements \BFWInterface\ICache
     /**
      * Accesseur vers l'attribut $controler
      * 
-     * @param string $controler : Le controleur qu'on doit lire
+     * @param string $controler Le controleur qu'on doit lire
      */
     public function set_controler($controler)
     {
@@ -119,7 +119,7 @@ class Cache implements \BFWInterface\ICache
     /**
      * Si une erreur est trouvé. On l'affiche et on arrête le script.
      * 
-     * @param string $txt : L'erreur à afficher.
+     * @param string $txt L'erreur à afficher.
      */
     protected function error($txt)
     {
@@ -625,8 +625,7 @@ class Cache implements \BFWInterface\ICache
     /**
      * Récupère le code html qui est entre le block indiqué en paramètre.
      * 
-     * @param string $nomBlock : Le nom du block dont on doit retourner le contenu.
-     *                                Par défault à null pour en dehors des blocks.
+     * @param string|null $nomBlock (default: null) Le nom du block dont on doit retourner le contenu. A null pour en dehors des blocks.
      */
     private function recupHtml($nomBlock=null)
     {
@@ -744,9 +743,8 @@ class Cache implements \BFWInterface\ICache
     /**
      * Remplace toutes les balises <var /> par des variables contenant leurs valeurs
      * 
-     * @param string $nomBlock : Le nom du block dont on doit retourner le contenu.
-     *                                Par défault à null pour en dehors des blocks.
-     * @param string $line : La ligne qu'on lit
+     * @param string|null $nomBlock (default: null) Le nom du block dont on doit retourner le contenu. A null pour en dehors des blocks.
+     * @param string      $line     La ligne qu'on lit
      * 
      * @return string La ligne avec les balises <var /> remplacé.
      */
@@ -817,7 +815,7 @@ class Cache implements \BFWInterface\ICache
     /**
      * Ecrit le code php du cache dans le fichier de cache
      * 
-     * @param string $code : Le code à écrire dans la page
+     * @param string $code Le code à écrire dans la page
      */
     protected function WriteCache($code)
     {

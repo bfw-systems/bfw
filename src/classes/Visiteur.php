@@ -1,7 +1,9 @@
 <?php
 /**
  * Classes en rapport avec les visiteurs
- * @author Vermeulen Maxime
+ * @author Minimix
+ * @author Hédoux Julien <sg71master@gmail.com>
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
  * @version 1.0
  */
 
@@ -9,94 +11,96 @@ namespace BFW;
 
 /**
  * Permet de gérer tout ce qui concerne le visiteur
- * @package BFW
+ * @package bfw
  */
 class Visiteur implements \BFWInterface\IVisiteur
 {
     /**
-     * @var $_kernel : L'instance du Kernel
+     * @var $_kernel L'instance du Kernel
      */
     private $_kernel;
     
     /**
-     * @var $Id_Session : Id de la session correspondante
+     * @var $Id_Session Id de la session correspondante
      */
     private $Id_Session = null;
     
     /**
-     * @var $Session : Instance de la classe session
+     * @var $Session Instance de la classe session
      */
     private $Session = null;
     
     /**
-     * @var $Nom_Page : Le nom de la page sur laquel il est
+     * @var $Nom_Page Le nom de la page sur laquel il est
      */
     private $Nom_Page = "";
     
     /**
-     * @var $Ip : Son ip
+     * @var $Ip Son ip
      */
     private $Ip = "";
     
     /**
-     * @var $Host : L'hostname du visiteur
+     * @var $Host L'hostname du visiteur
      */
     private $Host = "";
     
     /**
-     * @var $Proxy : S'il passe par un proxy
+     * @var $Proxy S'il passe par un proxy
      */
     private $Proxy = "";
     
     /**
-     * @var $Proxy_ip : L'ip du proxy
+     * @var $Proxy_ip L'ip du proxy
      */
     private $Proxy_ip = "";
     
     /**
-     * @var $Proxy_host : L'hostname du proxy
+     * @var $Proxy_host L'hostname du proxy
      */
     private $Proxy_host = "";
     
     /**
-     * @var $OS : Son système d'exploitation
+     * @var $OS Son système d'exploitation
      */
     private $OS = "";
     
     /**
-     * @var $Nav : Son navigateur
+     * @var $Nav Son navigateur
      */
     private $Nav = "";
     
     /**
-     * @var $Langue : Sa langue (n'est pas obligatoirement celle utiliser pour le jeu)
+     * @var $Langue Sa langue (n'est pas obligatoirement celle utiliser pour le jeu)
      */
     private $Langue = "";
     
     /**
-     * @var $Langue_Initiale : Les initiale de la langue
+     * @var $Langue_Initiale Les initiale de la langue
      */
     private $Langue_Initiale = "";
     
     /**
-     * @var $Proviens : L'url d'où il vient
+     * @var $Proviens L'url d'où il vient
      */
     private $Proviens = "";
     
     /**
-     * @var $Url : Son url actuelle
+     * @var $Url Son url actuelle
      */
     private $Url = "";
     
     /**
-     * @var $Bot : S'il s'agit d'un robot
+     * @var $Bot S'il s'agit d'un robot
      */
     private $Bot = "";
 
     /**
      * Accesseur get vers les attributs
-     * @param string $name : Le nom de l'attribut
-     * @return mixed : La valeur de l'attribut
+     * 
+     * @param string $name Le nom de l'attribut
+     * 
+     * @return mixed La valeur de l'attribut
      */
     public function __get($name)
     {
@@ -105,8 +109,9 @@ class Visiteur implements \BFWInterface\IVisiteur
     
     /**
      * Accesseur set vers les attributs
-     * @param string $name : Le nom de l'attribut
-     * @param mixed $val : La nouvelle valeure de l'attribut
+     * 
+     * @param string $name Le nom de l'attribut
+     * @param mixed  $val  La nouvelle valeure de l'attribut
      */
     public function __set($name, $val)
     {
@@ -150,14 +155,15 @@ class Visiteur implements \BFWInterface\IVisiteur
     }
     
     /********************************************************************
-     * Code créé par Minimix                                          *
-     * Donné par Hédoux Julien (sg71master) pour Gatewars.eu          *
-     * Adapté en POO et mit à jour pour la langue par Vermeulen Maxime    *
+     * Code créé par Minimix                                            *
+     * Donné par Hédoux Julien (sg71master) pour Gatewars.eu            *
+     * Adapté en POO et mit à jour pour la langue par Vermeulen Maxime  *
      ********************************************************************/
     
     /**
      * Trouve l'ip réelle si un proxy est detecté
-     * @return (string) L'ip réel de l'user
+     * 
+     * @return string L'ip réel de l'user
      */
     private function proxy_detect()
     {
@@ -330,7 +336,6 @@ class Visiteur implements \BFWInterface\IVisiteur
             '(Bluefish)'   => 'Bluefish',
             '(ICEBrowser)' => 'ICEBrowser',
             '(Safari)'     => 'Safari',
-            '(GateWarsNotifier)'     => 'GateWarsNotifier',
             '(Kanari)'     => 'Kanari',
             '(ICEBrowser)' => 'ICEBrowser',
             '(bot|google|slurp|scooter|spider|infoseek|arachnoidea|altavista)' => 'Search engine',
@@ -367,7 +372,8 @@ class Visiteur implements \BFWInterface\IVisiteur
     
     /**
      * Détecte la langue préféré de l'user via l'UserAgent
-     * @return string : La langue préféré de l'user au format xx-yy (exemple : fr-fr ou en-us)
+     * 
+     * @return string La langue préféré de l'user au format xx-yy (exemple : fr-fr ou en-us)
      */
     private function language_detect()
     {
@@ -397,8 +403,10 @@ class Visiteur implements \BFWInterface\IVisiteur
     
     /**
      * Retourne la langue choisie pour l'user au format humain
-     * @param string : Les initiale de la langue choisie
-     * @return string : La langue choisie. "Inconnue" si elle n'a pas été trouvée.
+     * 
+     * @param string $lang Les initiale de la langue choisie
+     * 
+     * @return string La langue choisie. "Inconnue" si elle n'a pas été trouvée.
      */
     private function language_convert($lang='')
     {

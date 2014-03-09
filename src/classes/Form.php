@@ -1,8 +1,7 @@
 <?php
 /**
  * Classes en rapport avec les formulaires
- * 
- * @author Vermeulen Maxime
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
  * @version 1.0
  */
  
@@ -10,23 +9,24 @@ namespace BFW;
 
 /**
  * Permet de gérer les formulaire (gestion des tokens)
- * @package BFW
+ * @package bfw
  */
 class Form implements \BFWInterface\IForm
 {
     /**
-     * @var $_kernel : L'instance du Kernel
+     * @var $_kernel L'instance du Kernel
      */
     private $_kernel;
     
     /**
-     * @var $idForm : L'id du formulaire
+     * @var $idForm L'id du formulaire
      */
     private $idForm;
     
     /**
      * Constructeur
-     * @param string $idForm : L'id du formulaire
+     * 
+     * @param string $idForm L'id du formulaire
      */
     public function __construct($idForm=null)
     {
@@ -37,7 +37,8 @@ class Form implements \BFWInterface\IForm
     
     /**
      * Accesseur set sur id_form
-     * @param string $idForm : L'id du formulaire
+     * 
+     * @param string $idForm L'id du formulaire
      */
     public function set_idForm($idForm)
     {
@@ -46,7 +47,8 @@ class Form implements \BFWInterface\IForm
     
     /**
      * Permet de créer un token pour le formulaire
-     * @return string : Le token à mettre dans un champ input de type hidden.
+     * 
+     * @return string Le token à mettre dans un champ input de type hidden.
      */
     public function create_token()
     {
@@ -64,7 +66,8 @@ class Form implements \BFWInterface\IForm
     
     /**
      * Permet de vérifier si le token est correct
-     * @return bool : True si le toke est bon, false sinon.
+     * 
+     * @return bool True si le toke est bon, false sinon.
      */
     public function verif_token()
     {
