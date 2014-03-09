@@ -1,7 +1,7 @@
 <?php
 /**
  * Classes en rapport avec les observers
- * @author Vermeulen Maxime
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
  * @version 1.0
  */
 
@@ -9,14 +9,14 @@ namespace BFW;
 
 /**
  * Classe Observer
- * @package BFW
+ * @package bfw
  */
 class Observer implements \SplObserver
 {
     /**
      * Méthode par défaut appelé lorsque l'observer se déclanche
      * 
-     * @param SplSubject $subject : Le sujet déclanchant l'observer
+     * @param SplSubject $subject Le sujet déclanchant l'observer
      */
     public function update(SplSubject $subject)
     {
@@ -26,8 +26,8 @@ class Observer implements \SplObserver
     /**
      * Méthode appelé lorsque l'observer se déclanche via la classe Kernel
      * 
-     * @param SplSubject $subject : Le sujet déclanchant l'observer
-     * @param string     $action  : L'action à faire lors du déclanchement
+     * @param SplSubject $subject Le sujet déclanchant l'observer
+     * @param string     $action  L'action à faire lors du déclanchement
      */
     public function updateWithAction(SplSubject $subject, $action)
     {
@@ -85,7 +85,7 @@ class Observer implements \SplObserver
         {
             eval($action);
         }
-        catch(\exception $e)
+        catch(\Exception $e)
         {
             echo $e->getMessage();
         }

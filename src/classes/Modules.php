@@ -1,7 +1,7 @@
 <?php
 /**
  * Classes gérant les modules
- * @author Vermeulen Maxime
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
  * @version 2.0
  */
 
@@ -9,27 +9,27 @@ namespace BFW;
 
 /**
  * Gestions des modules
- * @package BFW
+ * @package bfw
  */
 class Modules implements \BFWInterface\IModules
 {
     /**
-     * @var $_kernel : L'instance du Kernel
+     * @var $_kernel L'instance du Kernel
      */
     private $_kernel;
     
     /**
-     * @var $modList : Liste des modules inclus
+     * @var $modList Liste des modules inclus
      */
     private $modList = array();
     
     /**
-     * @var $modLoad : Liste des modules chargé
+     * @var $modLoad Liste des modules chargé
      */
     private $modLoad = array();
     
     /**
-     * @var $notLoad : Liste des modules qui n'ont pas été chargé.
+     * @var $notLoad Liste des modules qui n'ont pas été chargé.
      */
     private $notLoad = null;
     
@@ -43,14 +43,16 @@ class Modules implements \BFWInterface\IModules
 
     /**
      * Permet de déclarer un nouveau modules
-     * @param string $name  : Le nom du modules
-     * @param array $params : Options pour le chargement des modules.
-     *                          Liste des clés du tableau : 
-     *                              - time (string, constante) : Le moment auquel sera chargé le module. Plusieurs valeurs possible. Ce sont des constantes
-     *                                          modulesLoadTime_Module : Chargement immédiat. Avant la classe visiteur et les path en constante
-     *                                          modulesLoadTime_Visiteur : Après la classe Visiteur. Les path en constante n'existe pas
-     *                                          modulesLoadTime_EndInit : A la fin de l'initialisation du framework (défaut)
-     *                              - require (string, array) : Si le module doit avoir d'autre module de chargé avant.
+     * @param string $name   Le nom du modules
+     * @param array  $params Options pour le chargement des modules.
+     * Liste des clés du tableau : 
+     * - time (string, constante) : Le moment auquel sera chargé le module. Plusieurs valeurs possible. Ce sont des constantes
+     *     modulesLoadTime_Module : Chargement immédiat. Avant la classe visiteur et les path en constante
+     *     modulesLoadTime_Visiteur : Après la classe Visiteur. Les path en constante n'existe pas
+     *     modulesLoadTime_EndInit : A la fin de l'initialisation du framework (défaut)
+     * - require (string, array) : Si le module doit avoir d'autre module de chargé avant.
+     * 
+     * @throws \Exception Erreur sur la déclaration des options
      */ 
     public function newMod($name, $params=array())
     {
@@ -87,16 +89,14 @@ class Modules implements \BFWInterface\IModules
             'time' => $time,
             'require' => $require
         );
-        
-        echo '<pre>';print_r($this->modList);
     }
     
     /**
      * Permet de vérifier si un module existe
      * 
-     * @param string $name : Le nom du module
+     * @param string $name Le nom du module
      * 
-     * @return bool : true s'il existe, false sinon
+     * @return bool true s'il existe, false sinon
      */
     public function exists($name)
     {
@@ -106,9 +106,9 @@ class Modules implements \BFWInterface\IModules
     /**
      * Permet de vérifier si un module est chargé
      * 
-     * @param string $name : Le nom du module
+     * @param string $name Le nom du module
      * 
-     * @return bool : true s'il est chargé, false sinon
+     * @return bool true s'il est chargé, false sinon
      */
     public function isLoad($name)
     {
@@ -118,8 +118,10 @@ class Modules implements \BFWInterface\IModules
     /**
      * Ajoute le path pour un module donné
      * 
-     * @param string $name : Le nom du module
-     * @param string $path : Le chemin réel du module
+     * @param string $name Le nom du module
+     * @param string $path Le chemin réel du module
+     * 
+     * @throws \Exception Le module n'existe pas
      */
     public function addPath($name, $path)
     {
@@ -136,9 +138,11 @@ class Modules implements \BFWInterface\IModules
     /**
      * Liste des modules à charger à un moment précis.
      * 
-     * @param string $timeToLoad : Le temps auquel doivent être chargé les modules
+     * @param string $timeToLoad Le temps auquel doivent être chargé les modules
      * 
-     * @return array : Liste des modules à charger
+     * @throws \Exception Erreur au chargement d'un module
+     * 
+     * @return array Liste des modules à charger
      */
     public function listToLoad($timeToLoad)
     {
@@ -161,10 +165,12 @@ class Modules implements \BFWInterface\IModules
     /**
      * Permet de vérifier si un module peut être chargé
      * 
-     * @param array $mod         : Le module à vérifier pour le chargement
-     * @param array $arrayToLoad : (référence) Liste des modules à charger
+     * @param array $mod         Le module à vérifier pour le chargement
+     * @param array $arrayToLoad (ref) Liste des modules à charger
      * 
-     * @return bool : Si le module peut être chargé ou non.
+     * @throws \Exception Erreur avec les dépendances
+     * 
+     * @return bool Si le module peut être chargé ou non.
      */
     protected function modToLoad($mod, &$arrayToLoad)
     {
@@ -211,9 +217,9 @@ class Modules implements \BFWInterface\IModules
     /**
      * Liste les modules non chargé
      * 
-     * @param bool $regen : Permet de regénérer la liste ou non
+     * @param bool $regen (default: false) Permet de regénérer la liste ou non
      * 
-     * @return array : Liste des modules non chargé
+     * @return array Liste des modules non chargé
      */
     public function listNotLoad($regen=false)
     {
@@ -228,7 +234,7 @@ class Modules implements \BFWInterface\IModules
     /**
      * Permet de savoir si des modules n'ont pas pu être chargé
      * 
-     * @return bool : True si des modules n'ont pas pu être chargé, false sinon.
+     * @return bool True si des modules n'ont pas pu être chargé, false sinon.
      */
     public function isModulesNotLoad()
     {
@@ -247,9 +253,11 @@ class Modules implements \BFWInterface\IModules
     /**
      * Retourne les infos sur un module
      * 
-     * @param string $name : Le nom du module dont on veux les infos
+     * @param string $name Le nom du module dont on veux les infos
      * 
-     * @return array : Les infos sur le module
+     * @throws \Exception Le module n'existe pas.
+     * 
+     * @return array Les infos sur le module
      */
     public function getModuleInfos($name)
     {

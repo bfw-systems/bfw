@@ -1,7 +1,7 @@
 <?php
 /**
  * Classes en rapport avec le Kernel
- * @author Vermeulen Maxime
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
  * @version 1.0
  */
 
@@ -9,17 +9,17 @@ namespace BFW;
 
 /**
  * Classe Noyau.
- * @package BFW
+ * @package bfw
  */
 class Kernel implements \SplSubject
 {
     /**
-     * @var array $observers : Liste des observateurs instanciés
+     * @var array $observers Liste des observateurs instanciés
      */
     protected $observers = array();
     
     /**
-     * @var bool $debug : Si mode débug ou non.
+     * @var bool $debug Si mode débug ou non.
      */
     protected $debug = false;
     
@@ -32,7 +32,7 @@ class Kernel implements \SplSubject
     /**
      * Ajouter un nouvel observateur
      * 
-     * @param SplObserver $observer : L'observateur à ajouter
+     * @param SplObserver $observer L'observateur à ajouter
      */
     public function attach(SplObserver $observer)
     {
@@ -42,7 +42,7 @@ class Kernel implements \SplSubject
     /**
      * Ajouter un nouvel observateur de type autre SplObserver
      * 
-     * @param class $observer : L'observateur à ajouter
+     * @param class $observer L'observateur à ajouter
      */
     public function attachOther($observer)
     {
@@ -52,7 +52,7 @@ class Kernel implements \SplSubject
     /**
      * Enlever un observateur
      * 
-     * @param SplObserver $observer : L'observateur à enlever
+     * @param SplObserver $observer L'observateur à enlever
      */
     public function detach(SplObserver $observer)
     {
@@ -67,7 +67,7 @@ class Kernel implements \SplSubject
     /**
      * Enlever un observateur de type autre SplObserver
      * 
-     * @param class $observer : L'observateur à enlever
+     * @param class $observer L'observateur à enlever
      */
     public function detachOther($observer)
     {
@@ -82,7 +82,7 @@ class Kernel implements \SplSubject
     /**
      * Déclanche la notification vers les observers.
      * 
-     * @param string $action : L'action à faire par l'observateur.
+     * @param string $action L'action à faire par l'observateur.
      */
     public function notifyObserver($action)
     {
@@ -98,9 +98,9 @@ class Kernel implements \SplSubject
     /**
      * Définie l'action à faire pour les observers.
      * 
-     * @param string $action : L'action à faire par l'observateur.
+     * @param string $action L'action à faire par l'observateur.
      * 
-     * @return Kernel : L'instance actuelle de la classe.
+     * @return Kernel L'instance actuelle de la classe.
      */
     public function notifyAction($action)
     {
@@ -132,8 +132,10 @@ class Kernel implements \SplSubject
      * Méthode magique __call : Gère les getter et setter
      * Est appelé dès qu'une méthode non déclaré est appelé.
      * 
-     * @param string $name : Le nom de la méthode appelé
-     * @param array  $arg  : Les arguments passé à la méthode
+     * @param string $name Le nom de la méthode appelé
+     * @param array  $arg  Les arguments passé à la méthode
+     * 
+     * @throws \Exception L'attribut ou la méthode demandé n'existe pas.
      * 
      * @return mixed Les retours prévu. 
      */
@@ -164,7 +166,7 @@ class Kernel implements \SplSubject
     /**
      * Set de l'attribut debug. Gestion de l'affichage des erreurs en plus.
      * 
-     * @param bool $debug : True si on est en mode débug, False sinon.
+     * @param bool $debug True si on est en mode débug, False sinon.
      */
     public function set_debug($debug)
     {

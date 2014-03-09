@@ -2,7 +2,7 @@
 /**
  * Classe en rapport avec Memcache
  * 
- * @author Vermeulen Maxime
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
  * @version 1.0
  */
 
@@ -10,27 +10,27 @@ namespace BFW;
 
 /**
  * Gestion du serveur avec memcache
- * @package BFW
+ * @package bfw
  */
 class Ram implements \BFWInterface\IRam
 {
     /**
-     * @var $_kernel : L'instance du Kernel
+     * @var $_kernel L'instance du Kernel
      */
     private $_kernel;
     
     /**
-     * @var $server_connect : Permet de savoir si on est connecté au serveur.
+     * @var $server_connect Permet de savoir si on est connecté au serveur.
      */
     private $server_connect = false;
     
     /**
-     * @var $Server : Le serveur
+     * @var $Server Le serveur
      */
     private $Server;
     
     /**
-     * @var $debug : Permet d'activer ou non le mode débug
+     * @var $debug Permet d'activer ou non le mode débug
      */
     public $debug = false;
     
@@ -39,7 +39,7 @@ class Ram implements \BFWInterface\IRam
      * Constructeur
      * Se connecte au serveur memcache indiqué, par défaut au localhost
      * 
-     * @param string $name : [optionel] le nom du serveur memcache
+     * @param string $name (default:"localhost") le nom du serveur memcache
      * 
      * @return bool
      */
@@ -62,9 +62,11 @@ class Ram implements \BFWInterface\IRam
     /**
      * Permet de stocker une clé en mémoire ou de la mettre à jour
      * 
-     * @param string $key    : Clé correspondant à la valeur
-     * @param mixed  $data   : Les nouvelles données. Il n'est pas possible de stocker une valeur de type resource.
-     * @param int    $expire : [optionnel] Le temps en seconde avant expiration. 0 illimité, max 30jours
+     * @param string $key    Clé correspondant à la valeur
+     * @param mixed  $data   Les nouvelles données. Il n'est pas possible de stocker une valeur de type resource.
+     * @param int    $expire (default: 0) Le temps en seconde avant expiration. 0 illimité, max 30jours
+     * 
+     * @throws \Exception Erreur dsans les paramètres donnée à la méthode
      * 
      * @return bool
      */
@@ -107,8 +109,10 @@ class Ram implements \BFWInterface\IRam
     /**
      * On modifie le temps avant expiration des infos sur le serveur memcached pour une clé choisie.
      * 
-     * @param string $key : la clé disignant les infos concerné
-     * @param int    $exp : le nouveau temps avant expiration (0: pas d'expiration, max 30jours)
+     * @param string $key la clé disignant les infos concerné
+     * @param int    $exp le nouveau temps avant expiration (0: pas d'expiration, max 30jours)
+     * 
+     * @throws \Exception Erreur dsans les paramètres donnée à la méthode
      * 
      * @return bool
      */
@@ -157,7 +161,9 @@ class Ram implements \BFWInterface\IRam
     /**
      * Permet de savoir si la clé existe
      * 
-     * @param string $key : la clé disignant les infos concernées
+     * @param string $key la clé disignant les infos concernées
+     * 
+     * @throws \Exception Erreur dsans les paramètres donnée à la méthode
      * 
      * @return bool
      */
@@ -189,7 +195,7 @@ class Ram implements \BFWInterface\IRam
     /**
      * Supprime une clé
      * 
-     * @param string la clé disignant les infos concernées
+     * @param string $key la clé disignant les infos concernées
      * 
      * @return bool
      */
@@ -215,7 +221,9 @@ class Ram implements \BFWInterface\IRam
     /**
      * Permet de retourner la valeur d'une clé.
      * 
-     * @param string $key : Clé correspondant à la valeur
+     * @param string $key Clé correspondant à la valeur
+     * 
+     * @throws \Exception Erreur dsans les paramètres donnée à la méthode
      * 
      * @return mixed La valeur demandée
      */

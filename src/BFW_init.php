@@ -1,8 +1,8 @@
 <?php
 /**
  * Gère tout le noyau du framework. Est appelé sur chaque page.
- * @author Vermeulen Maxime
- * @package BFW
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
+ * @package bfw
  */
 
 ob_start(); //Tamporisation du tampon de sortie html. Permet que le code html ne sorte qu'à la fin et non petit à petit (permet d'utiliser les fonctions changeant les headers ou cookie à n'importe quel moment par exemple)

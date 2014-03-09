@@ -1,7 +1,7 @@
 <?php
 /**
  * Classes en rapport avec la génération automatique d'une autre classe
- * @author Vermeulen Maxime
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
  * @version 1.0
  */
 
@@ -9,78 +9,77 @@ namespace BFW;
 
 /**
  * Classe générant une autre classe.
- * @package BFW
+ * @package bfw
  */
 class CreateClasse implements \BFWInterface\ICreateClasse
 {
     /**
-     * @var $_kernel : L'instance du Kernel
+     * @var $_kernel L'instance du Kernel
      */
     private $_kernel;
     
     /**
-     * @var $nom : Le nom de la classe
+     * @var $nom Le nom de la classe
      */
     private $nom = '';
     
     /**
-     * @var $indente : Le ou les caractère(s) mit pour indenté
+     * @var $indente Le ou les caractère(s) mit pour indenté
      */
     private $indente = '    ';
     
     /**
-     * @var $extends : Depuis quelle classe on hérite
+     * @var $extends Depuis quelle classe on hérite
      */
     private $extends = '';
     
     /**
-     * @var $implements : Liste les interfaces de la classe
+     * @var $implements Liste les interfaces de la classe
      */
     private $implements = array();
     
     /**
-     * @var $ attributs : Liste tous les attributs de la futur classe
+     * @var $ attributs Liste tous les attributs de la futur classe
      */
     private $attributs = array();
     
     /**
-     * @var $attributs_porter : La portée de tous les attributs (public/private/protected)
+     * @var $attributs_porter La portée de tous les attributs (public/private/protected)
      */
     private $attributs_porter = array();
     
     /**
-     * @var $attributs_option : Les options passé à la méthode de création d'attribut pour chaque attribut
+     * @var $attributs_option Les options passé à la méthode de création d'attribut pour chaque attribut
      */
     private $attributs_option = array();
     
     /**
-     * @var $methode : Liste toutes les méthodes qui sont à créer
+     * @var $methode Liste toutes les méthodes qui sont à créer
      */
     private $methode = array();
     
     /**
-     * @var $methode_porter : La portée de toutes les méthodes (public/private/protected)
+     * @var $methode_porter La portée de toutes les méthodes (public/private/protected)
      */
     private $methode_porter = array();
     
     /**
-     * @var $get : La liste de tous les accesseur get à faire
+     * @var $get La liste de tous les accesseur get à faire
      */
     private $get = array();
     
     /**
-     * @var $set : La liste de tous les accesseur set à faire
+     * @var $set La liste de tous les accesseur set à faire
      */
     private $set = array();
     
     /**
-     * @var $file : Le contenu de la futur classe
+     * @var $file Le contenu de la futur classe
      */
     private $file = '';
     
     /**
-     * @var $methode_create : La liste de toutes les méthodes créé 
-     *                        (pour éviter d'en créer en double à cause des get et set)
+     * @var $methode_create La liste de toutes les méthodes créé (pour éviter d'en créer en double à cause des get et set)
      */
     private $methode_create = array();
     
@@ -88,8 +87,8 @@ class CreateClasse implements \BFWInterface\ICreateClasse
     /**
      * Constructeur
      * 
-     * @param string $nom     : Le nom de la futur classe
-     * @param array  $options : Les options de la classe
+     * @param string $nom     Le nom de la futur classe
+     * @param array  $options Les options de la classe
      */
     public function __construct($nom, $options=array())
     {
@@ -116,7 +115,7 @@ class CreateClasse implements \BFWInterface\ICreateClasse
     /**
      * Retourne le contenu de la futur classe
      * 
-     * @return string : La futur classe
+     * @return string La futur classe
      */
     public function get_file()
     {
@@ -126,14 +125,18 @@ class CreateClasse implements \BFWInterface\ICreateClasse
     /**
      * Créer un attribut à la nouvelle classe
      * 
-     * @param string $nom : Le nom de l'attribut
-     * @param array  $opt : Les options de l'attribut (porter/get/set). Par défaut à (protected/true/true).
-     *                      Il est possible de déclarer un type via l'option "type". Par défaut à rien.
-     *                      Et de déclarer une valeur par défaut via l'option "default".
-     *                      Si la valeur par défaut est un string, il faut déclarer l'option "default_string" 
-     *                      qui ajoutera des ' autour de la valeur par défaut.
+     * @param string $nom Le nom de l'attribut
+     * @param array  $opt (default: array()) Les options de l'attribut : 
+     * - string porter         : La porté de l'attribut. Par défaut à "protected"
+     * - bool   get            : Si un get doit être créé. Par défaut à true
+     * - bool   set            : Si un set doit être créé. Par défaut à true
+     * - string type           : Le type de l'attribut. Par défaut aucun type prédéfini.
+     * - mixed  default        : Valeur par défaut de l'attribut.
+     * - bool   default_string : Permet d'indiqué que la valeur par défaut est de type string (met des ' autour.)
      * 
-     * @return bool : True si réussi, False si existe déjà.
+     * @TODO : Enlever default_string et repérer dynamiquement le type de la valeur.
+     * 
+     * @return bool True si réussi, False si existe déjà.
      */
     public function createAttribut($nom, $opt=array())
     {
@@ -181,8 +184,8 @@ class CreateClasse implements \BFWInterface\ICreateClasse
      * 
      * @todo Gestion des arguments pour la méthode
      * 
-     * @param string $nom    : Le nom de la méthode
-     * @param string $porter : La porté de la méthode. Par défaut private.
+     * @param string $nom    Le nom de la méthode
+     * @param string $porter La porté de la méthode. Par défaut private.
      */
     public function createMethode($nom, $porter='private')
     {
@@ -196,7 +199,7 @@ class CreateClasse implements \BFWInterface\ICreateClasse
     /**
      * Créer un attribut dans la futur classe.
      * 
-     * @param int $key : La clé de l'attribut à créer (tableau $this->attributs)
+     * @param int $key La clé de l'attribut à créer (tableau $this->attributs)
      */
     protected function genereAttribut($key)
     {
@@ -257,7 +260,7 @@ class CreateClasse implements \BFWInterface\ICreateClasse
     /**
      * Créer un accesseur get
      * 
-     * @param int $key : La clé de la méthode à créer (tableau $this->get)
+     * @param int $key La clé de la méthode à créer (tableau $this->get)
      */
     protected function genereGet($key)
     {
@@ -275,7 +278,7 @@ class CreateClasse implements \BFWInterface\ICreateClasse
     /**
      * Créer un accesseur set
      * 
-     * @param int $key : La clé de la méthode à créer (tableau $this->get)
+     * @param int $key La clé de la méthode à créer (tableau $this->get)
      */
     protected function genereSet($key)
     {
@@ -298,7 +301,7 @@ class CreateClasse implements \BFWInterface\ICreateClasse
     /**
      * Créer une méthode
      * 
-     * @param int $key : La clé de la méthode à créer (tableau $this->méthode)
+     * @param int $key La clé de la méthode à créer (tableau $this->méthode)
      */
     protected function genereMethode($key)
     {
@@ -315,7 +318,7 @@ class CreateClasse implements \BFWInterface\ICreateClasse
     /**
      * Lance la génération de la classe.
      * 
-     * @return string : La classe généré
+     * @return string La classe généré
      */
     public function genere()
     {

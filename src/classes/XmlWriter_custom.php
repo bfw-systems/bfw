@@ -1,7 +1,8 @@
 <?php
 /**
  * Classes en rapport avec xml
- * @author Simon Willison puis repris par Vermeulen Maxime
+ * @author Simon Willison
+ * @author (to php5) Vermeulen Maxime <bulton.fr@gmail.com>
  * @version 1.0
  */
 
@@ -9,27 +10,27 @@ namespace BFW;
 
 /**
  * Permet de générer un fichier xml
- * @package BFW
+ * @package bfw
  */
 class XmlWriter_custom implements \BFWInterface\IXmlWriter_custom
 {
     /**
-     * @var $_kernel : L'instance du Kernel
+     * @var $_kernel L'instance du Kernel
      */
     private $_kernel;
     
     /**
-     * @var $xml : Le contenu xml
+     * @var $xml Le contenu xml
      */
     private $xml;
     
     /**
-     * @var $indent : Par quoi on indente
+     * @var $indent Par quoi on indente
      */
     private $indent = ' ';
     
     /**
-     * @var $stack : Array contenant les balises entourat les balises d'éléments
+     * @var $stack Array contenant les balises entourat les balises d'éléments
      */
     private $stack = array();
     
@@ -56,8 +57,9 @@ class XmlWriter_custom implements \BFWInterface\IXmlWriter_custom
     
     /**
      * Créer une balise avec ces attributs (les balises principales, avec d'autres balise dedans en général)
-     * @param string $element : nom de la balise
-     * @param array $attributes [opt] : Les attributs de la balise
+     * 
+     * @param string $element    Nom de la balise
+     * @param array  $attributes (default: array()) Les attributs de la balise
      */
     public function push($element, $attributes = array())
     {
@@ -75,9 +77,10 @@ class XmlWriter_custom implements \BFWInterface\IXmlWriter_custom
     
     /**
      * Créer une balise simple, avec ces attributs et son contenu
-     * @param string $element : nom de la balise
-     * @param string $content : Le contenu de la balise
-     * @param array $attributes [opt] : Les attributs de la balise
+     * 
+     * @param string $element    Nom de la balise
+     * @param string $content    Le contenu de la balise
+     * @param array  $attributes (default: array()) Les attributs de la balise
      */ 
     public function element($element, $content, $attributes = array())
     {
@@ -94,9 +97,10 @@ class XmlWriter_custom implements \BFWInterface\IXmlWriter_custom
     
     /**
      * Créer une balise avec ![CDATA pour mettre du xhtml dedans
-     * @param string $element : nom de la balise
-     * @param string $content : Le contenu de la balise
-     * @param array $attributes [opt] : Les attributs de la balise
+     * 
+     * @param string $element    Nom de la balise
+     * @param string $content    Le contenu de la balise
+     * @param array  $attributes (default: array()) Les attributs de la balise
      */
     public function element_cdata($element, $content, $attributes = array())
     {
@@ -113,8 +117,9 @@ class XmlWriter_custom implements \BFWInterface\IXmlWriter_custom
     
     /**
      * Créer une balise autofermante
-     * @param string $element : nom de la balise
-     * @param array $attributes [opt] : Les attributs de la balise
+     * 
+     * @param string $element    Nom de la balise
+     * @param array  $attributes (default: array()) Les attributs de la balise
      */
     public function emptyelement($element, $attributes = array())
     {
@@ -141,7 +146,8 @@ class XmlWriter_custom implements \BFWInterface\IXmlWriter_custom
     
     /**
      * Retourne le résultat du xml
-     * @return string : Le xml
+     * 
+     * @return string Le xml
      */
     public function getXml()
     {

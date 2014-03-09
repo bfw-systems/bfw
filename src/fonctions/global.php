@@ -1,13 +1,15 @@
 <?php
 /**
  * Toutes les fonctions de base utilisé un peu partout dans les scripts
- * @author Vermeulen Maxime
- * @package BFW
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
+ * @package bfw
  */
 
 /**
  * Permet d'hasher un mot de passe
- * @param string le mot de passe en clair
+ * 
+ * @param string $val : le mot de passe en clair
+ * 
  * @return string le mot de passe hashé
  */
 function hashage($val)
@@ -94,7 +96,7 @@ function create_cookie($name, $val)
  * 
  * @param string $str : le texte à convertir
  * 
- * @return string le texte converti
+ * @return string : le texte converti
  */
 function nl2br_replace($str)
 {

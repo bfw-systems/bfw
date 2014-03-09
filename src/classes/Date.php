@@ -1,7 +1,7 @@
 <?php
 /**
  * Classes en rapport avec les Dates
- * @author Vermeulen Maxime
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
  * @version 1.0
  */
 
@@ -10,63 +10,59 @@ namespace BFW;
 /**
  * Classe de gestion des dates
  * Le format de la date est aaaa-mm-jj hh:mm:ss+OO:OO
- * @package BFW
+ * @package bfw
  */
-class Date extends DateTime implements \BFWInterface\IDate
+class Date extends \DateTime implements \BFWInterface\IDate
 {
     /**
-     * @var $_kernel : L'instance du Kernel
+     * @var $_kernel L'instance du Kernel
      */
     private $_kernel;
     
     /**
-     * @var : L'instance de la classe php DateTime
-     */
-    private $DateTime;
-    
-    /**
-     * @var $date : La date au format string
+     * @var $date La date au format string
      */
     private $date = '';
     
     /**
-     * @var $annee : L'année de la date
+     * @var $annee L'année de la date
      */
     private $annee = 0;
     
     /**
-     * @var $mois : Le mois de la date
+     * @var $mois Le mois de la date
      */
     private $mois = 0;
     
     /**
-     * @var $jour : Le jour de la date
+     * @var $jour Le jour de la date
      */
     private $jour = 0;
     
     /**
-     * @var $heure : L'heure de la date
+     * @var $heure L'heure de la date
      */
     private $heure = 0;
     
     /**
-     * @var $minute : Les minutes de la date
+     * @var $minute Les minutes de la date
      */
     private $minute = 0;
     
     /**
-     * @var $seconde : Les secondes de la date
+     * @var $seconde Les secondes de la date
      */
     private $seconde = 0;
     
     /**
-     * @var $zone : Le timezone à utiliser
+     * @var $zone Le timezone à utiliser
      */
     private $zone;
     
     /**
      * Fonction magique, permet de lire les attributs directement
-     * @param string $name : Le nom de l'attribut auquel on veux accéder.
+     * 
+     * @param string $name Le nom de l'attribut auquel on veux accéder.
      */
     public function __get($name)
     {
@@ -77,7 +73,8 @@ class Date extends DateTime implements \BFWInterface\IDate
      * Constructeur
      * La date dans un format précis (aaaa-mm-jj hh:mm:ss+OO:OO)
      * S'il n'y a pas ":00" à la fin, alors c'est géré.
-     * @param string $date [opt] : La date sur laquelle travailler. Si pas indiqué, il s'agit de la date actuelle.
+     * 
+     * @param string $date (default: "now") La date sur laquelle travailler. Si pas indiqué, il s'agit de la date actuelle.
      */
     public function __construct($date="now")
     {
@@ -94,11 +91,11 @@ class Date extends DateTime implements \BFWInterface\IDate
         }
         
         $this->date = $date;
-        $this->DateTime = new \DateTime($date);
+        parent::__construct($date);
         
         if($date == "now")
         {
-            $this->date = $this->DateTime->format('Y-m-d H:i:sO');
+            $this->date = $this->format('Y-m-d H:i:sO');
         }
         
         $this->MAJ_Attributes();
@@ -122,8 +119,10 @@ class Date extends DateTime implements \BFWInterface\IDate
     
     /**
      * Modifie une données de la date
-     * @param string $cond : La partie à modifier : year, mouth, day, jour, minute, second
-     * @return bool : True la si modif à réussi, fales si erreur
+     * 
+     * @param string $cond La partie à modifier : year, mouth, day, jour, minute, second
+     * 
+     * @return bool True la si modif à réussi, fales si erreur
      */
     public function modify($cond)
     {
@@ -183,10 +182,12 @@ class Date extends DateTime implements \BFWInterface\IDate
     
     /**
      * Renvoi au format pour SQL (postgresql) via un array
-     * @param bool $decoupe [opt=false] : Indique si on veux retourner un string ayant tout, 
-     *                                      ou un array ayant la date et l'heure séparé
-     * @return string/array : Si string : aaaa-mm-jj hh:mm:ss
-     *                        Si array : [0]=>partie date (aaaa-mm-jj), [1]=>partie heure (hh:mm:ss)
+     * 
+     * @param bool $decoupe (default: false) Indique si on veux retourner un string ayant tout, ou un array ayant la date et l'heure séparé
+     * 
+     * @return string|array Le format pour SQL
+     * Si string : aaaa-mm-jj hh:mm:ss
+     * Si array : [0]=>partie date (aaaa-mm-jj), [1]=>partie heure (hh:mm:ss)
      */
     public function getSql($decoupe=false)
     {
@@ -206,7 +207,8 @@ class Date extends DateTime implements \BFWInterface\IDate
     
     /**
      * Modifie le timezone
-     * @param string le nouveau time zone
+     * 
+     * @param string $NewZone le nouveau time zone
      */
     public function setZone($NewZone)
     {
@@ -215,7 +217,8 @@ class Date extends DateTime implements \BFWInterface\IDate
     
     /**
      * Liste tous les timezone qui existe
-     * @return array : La liste des timezone possible
+     * 
+     * @return array La liste des timezone possible
      */
     public function lst_TimeZone()
     {
@@ -225,7 +228,8 @@ class Date extends DateTime implements \BFWInterface\IDate
     
     /**
      * Liste les continents possible pour les timezones
-     * @return array : La liste des continents
+     * 
+     * @return array La liste des continents
      */
     public function lst_TimeZoneContinent()
     {
@@ -247,8 +251,10 @@ class Date extends DateTime implements \BFWInterface\IDate
     
     /**
      * Liste des pays possible pour un continent donné
-     * @param string : Le continent dans lequel on veux la liste des pays
-     * @return array : La liste des pays pour le continent donné
+     * 
+     * @param string $continent Le continent dans lequel on veux la liste des pays
+     * 
+     * @return array La liste des pays pour le continent donné
      */
     public function lst_TimeZonePays($continent)
     {
@@ -270,43 +276,42 @@ class Date extends DateTime implements \BFWInterface\IDate
     
     /**
      * Transforme la date en un format plus facilement lisible.
-     * @param bool $tout : Affiche la date en entier (true) ou non (false). Par défault "true"
-     * @param bool $minus : Affiche la date en minuscule (true) ou non (false). Par défault "false"
+     * 
+     * Paramètre en entrée
+     *      $tout :
+     *          1 : On affiche la date en entier (jour et heure)
+     *          0 : On affiche que le jour
+     *      $minus : 
+     *          1 : On affiche le texte en minuscule (hier, le)
+     *          0 : On affiche le texte en normal (Hier, Le)
+     * 
+     * possibilitées en sortie : 
+     *
+     *      $tout == 1
+     *          Il y 1s
+     *          Il y 1min
+     *          Il y 1h
+     *          Hier à 00:00
+     *          Le 00/00 à 00:00
+     *          Le 00/00/0000 à 00:00 (si l'année n'est pas la même)
+     *      
+     *      $tout == 0
+     *          Il y 1s
+     *          Il y 1min
+     *          Il y 1h
+     *          Hier
+     *          Le 00/00
+     *          Le 00/00/0000 (si l'année n'est pas la même)
+     *      
+     *      Ou "Maintenant" (qu'importe la valeur de $tout)
+     * 
+     * @param bool $tout  (default: true) Affiche la date en entier (true) ou non (false).
+     * @param bool $minus (default: false) Affiche la date en minuscule (true) ou non (false).
+     * 
+     * @return string La date simplifié
      */
-    public function aff_simple($tout=1, $minus=false)
+    public function aff_simple($tout=true, $minus=false)
     {
-        /*
-            Paramètre en entrée
-            $tout :
-                1 : On affiche la date en entier (jour et heure)
-                0 : On affiche que le jour
-            $minus : 
-                1 : On affiche le texte en minuscule (hier, le)
-                0 : On affiche le texte en normal (Hier, Le)
-            
-            -------------------------------------
-            Paramètre en sortie
-            Plusieurs possibilitées
-            
-            $tout == 1
-                Il y 1s
-                Il y 1min
-                Il y 1h
-                Hier à 00:00
-                Le 00/00 à 00:00
-                Le 00/00/0000 à 00:00 (si l'année n'est pas la même)
-            
-            $tout == 0
-                Il y 1s
-                Il y 1min
-                Il y 1h
-                Hier
-                Le 00/00
-                Le 00/00/0000 (si l'année n'est pas la même)
-            
-            Ou "Maintenant" (qu'importe la valeur de $tout)
-        */
-        
         //Découpage de la date donnée dans l'instance de la classe
         $annee = $this->annee;
         $mois = $this->mois;

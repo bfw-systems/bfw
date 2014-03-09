@@ -1,8 +1,8 @@
 <?php
 /**
  * Fichier bootstrap. Détermination du controller.
- * @author Vermeulen Maxime
- * @package BFW
+ * @author Vermeulen Maxime <bulton.fr@gmail.com>
+ * @package bfw
  */
 
 $rootPath = realpath(__DIR__.'/../../../../').'/';
