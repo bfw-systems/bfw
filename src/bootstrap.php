@@ -5,8 +5,12 @@
  * @package bfw
  */
 
-$rootPath = realpath(__DIR__.'/../../../../').'/';
-require_once($rootPath.'config.php');
+if(!isset($rootPath))
+{
+    $rootPath = $_SERVER['DOCUMENT_ROOT'].'/';
+}
+
+require_once($rootPath.'configs/bfw_config.php');
 
 if(substr($base_url, -1) == '/')
 {

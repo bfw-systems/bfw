@@ -17,6 +17,18 @@ else
 	BFWfail=true
 fi
 
+#Create dir configs
+if [ "$BFWfail" = false ] ;then
+	echo -n '  > Création du dossier configs ...'
+	
+	if mkdir -p configs ;then
+		echo '\033[1;32m Done\033[0m'
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
+
 #Create dir controllers
 if [ "$BFWfail" = false ] ;then
 	echo -n '  > Création du dossier controllers ...'
@@ -109,7 +121,7 @@ fi
 if [ "$BFWfail" = false ] ;then
 	echo -n '  > Copie du fichier de config ...'
 
-	if cp $DIR/install/skeleton/config.php ./config.php ;then
+	if cp $DIR/install/skeleton/config.php ./configs/bfw_config.php ;then
 		echo '\033[1;32m Done\033[0m'
 	else
 		echo '\033[1;31m Fail\033[0m'

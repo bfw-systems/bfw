@@ -14,7 +14,7 @@ if(!isset($rootPath))
 }
 
 //Fichier de config
-require_once($rootPath.'config.php');
+require_once($rootPath.'configs/bfw_config.php');
 //Fichier de config
 
 if((isset($noSession) && $noSession == false) || !isset($noSession))
