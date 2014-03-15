@@ -5,27 +5,133 @@
 # version : 2.0.0
 # author : bulton-fr
 
+BFWfail=false
+echo '\033[0;33mInstallation du framework :\033[0m'
+
 #Create dir cache
-mkdir -p cache
+echo -n '  > Création du dossier cache ...'
+if mkdir -p cache ;then
+	echo '\033[1;32m Done\033[0m'
+else
+	echo '\033[1;31m Fail\033[0m'
+	BFWfail=true
+fi
 
 #Create dir controllers
-mkdir -p controllers
+if [ "$BFWfail" = false ] ;then
+	echo -n '  > Création du dossier controllers ...'
+	
+	if mkdir -p controllers ;then
+		echo '\033[1;32m Done\033[0m'
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
 
 #Create dir modeles
-mkdir -p modeles
+if [ "$BFWfail" = false ] ;then
+	echo -n '  > Création du dossier modeles ...'
+	
+	if mkdir -p modeles ;then
+		echo '\033[1;32m Done\033[0m'
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
 
 #Create dir modules
-mkdir -p modules
+if [ "$BFWfail" = false ] ;then
+	echo -n '  > Création du dossier modules ...'
+	
+	if mkdir -p modules ;then
+		echo '\033[1;32m Done\033[0m'
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
 
 #Create dir view
-mkdir -p view
+if [ "$BFWfail" = false ] ;then
+	echo -n '  > Création du dossier view ...'
+
+	if mkdir -p view ;then
+		echo '\033[1;32m Done\033[0m'
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
 
 #Create dir web
-mkdir -p web
+if [ "$BFWfail" = false ] ;then
+	echo -n '  > Création du dossier web ...'
 
-PHP=`which php`
-DIR=`$PHP -r "echo dirname(dirname(realpath('$0')));"`
+	if mkdir -p web ;then
+		echo '\033[1;32m Done\033[0m'
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
 
-cp $DIR/install/skeleton/.htaccess ./.htaccess
-cp $DIR/install/skeleton/config.php ./config.php
-cp $DIR/install/skeleton/index.php web/index.php
+
+if [ "$BFWfail" = false ] ;then
+	echo -n '  > Détermination des chemins vers le skeleton ...'
+	
+	if PHP=`which php` ;then
+		if DIR=`$PHP -r "echo dirname(dirname(realpath('$0')));"` ;then
+			echo '\033[1;32m Done\033[0m'
+		else
+			echo '\033[1;31m Fail\033[0m'
+			BFWfail=true
+		fi
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
+
+
+if [ "$BFWfail" = false ] ;then
+	echo -n '  > Copie du fichier .htaccess ...'
+
+	if cp $DIR/install/skeleton/.htaccess ./.htaccess ;then
+		echo '\033[1;32m Done\033[0m'
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
+
+if [ "$BFWfail" = false ] ;then
+	echo -n '  > Copie du fichier de config ...'
+
+	if cp $DIR/install/skeleton/config.php ./config.php ;then
+		echo '\033[1;32m Done\033[0m'
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
+
+if [ "$BFWfail" = false ] ;then
+	echo -n "  > Copie du fichier index d'exemple dans web ..."
+
+	if cp $DIR/install/skeleton/index.php web/index.php ;then
+		echo '\033[1;32m Done\033[0m'
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
+
+echo ''
+echo -n '\033[0;33mInstallation du framework : '
+if [ "$BFWfail" = false ] ;then
+	echo '\033[1;32msuccess\033[0m'
+else
+	echo '\033[1;31mFail\033[0m'
+fi
