@@ -6,7 +6,6 @@
 # version : 2.0.0
 # author : bulton-fr
 
-echo __DIR__."\n";
 $rootPath = __DIR__.'/..';
 
 $exist = false;
@@ -19,7 +18,7 @@ do
 	}
 	else {$exist = true;}
 	
-	if($iTest > 9) //Securit&
+	if($iTest > 9) //Securité
 	{
 		echo "\033[1;31mLe répertoire contenant composer n'a pu être trouvé !\033[0m\n";
 		die;
@@ -94,6 +93,7 @@ class readDir
 	}
 }
 
+//si les dossiers du framework qu'on utilise sont bien présent...
 if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpath($rootPath.'/..').'/modules/')))
 {
 	//Lance la lecture du dossier vendor
@@ -110,33 +110,33 @@ if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpat
 			$modules = explode('/', $moduleFindPath);
 			$module = $modules[(count($modules)-1)];
 			
-			//Et on tente de créer le lien symbolique
 			echo 'Création du lien symbolique de '.$module.' : ';
+			$result = ''; //Ce qui sera affiché à la fin dans la console.
 			
-			$result = '';
+			//Si le module n'a pas déjà été installé dans le dossier /modules
 			if(!file_exists(realpath($rootPath.'/..').'/modules/'.$module))
 			{
+				//Si on arrive à créer le lien symbolique
 				if(symlink(realpath($moduleFindPath), realpath($rootPath.'/..').'/modules/'.$module))
 				{
 					$result .= "...\033[1;32m Done\033[0m\n";
 					
-					/*
-					<?php
-					$modulePath = 'src';
-					$configFiles = array('config.php');
-					?>
-					*/
+					//Les fichiers de configs du modules lu
 					$result .= '    Recherche de fichiers de configs ... ';
+					//On inclus le fichier contenant les infos sur les fichiers de configs
 					require_once(realpath($moduleFindPath).'/bfw_modules_info.php');
+					//Si les 2 variables utile existe et on le bon type.
 					if(isset($modulePath) && isset($configFiles) && is_array($configFiles) && is_string($modulePath))
 					{
 						$result .= "\033[0;33m ".count($configFiles)." fichier(s) trouvé(s)\033[0m\n";
 						
 						$result .= '    Création du répertoire de config pour le module ...';
-						$createConfigDirFail = false;
+						$createConfigDirFail = false; //Permet de savoir si la création du dossier pour la config du module à fail
 						
+						//Si le dossier contenant la config du module dans /configs n'existe pas
 						if(!file_exists(realpath($rootPath.'/..').'/configs/'.$module))
 						{
+							//On tente de le créer
 							if(mkdir(realpath($rootPath.'/..').'/configs/'.$module, 0755))
 							{
 								$result .= "...\033[1;32m Done";
@@ -150,17 +150,22 @@ if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpat
 						else {$result .= "...\033[1;33m Existe déjà.";}
 						$result .= "\033[0m\n";
 						
+						//Si on a de quoi stocké les fichiers de configs
 						if($createConfigDirFail == false)
 						{
 							$result .= '    Copie des fichiers de configs : '."\n";
+							//Pour chaque fichier de config indiqué
 							foreach($configFiles as $config)
 							{
 								$result .= '        > Copie du fichier '.$config.' : ';
 								
+								//On vérifie qu'il n'existe pas déjà
 								if(!file_exists(realpath($rootPath.'/..').'/configs/'.$module.'/'.$config))
 								{
+									//Si le fichier source indiqué existe bien
 									if(file_exists(realpath($moduleFindPath).'/'.$modulePath.'/'.$config))
 									{
+										//Alors on copie le fichier vers le dossier /configs/[monModule]/
 										if(copy(realpath($moduleFindPath).'/'.$modulePath.'/'.$config, realpath($rootPath.'/..').'/configs/'.$module.'/'.$config))
 										{
 											$result .= "...\033[1;32m Done";
@@ -169,17 +174,19 @@ if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpat
 									}
 									else {$result .= "...\033[1;31m Fichier source non trouvé : Fail !";}
 								}
-								else {$result .= "...\033[1;33m Existe déjà.\n";}
+								else {$result .= "...\033[1;33m Existe déjà.";}
 							}
 						}
 						else
 						{
-							$result .= "...\033[1;31m Fail !\n";
+							$result .= "...\033[1;31m Fail !";
 							$result .= 'Les fichiers de configs n\'ont pas été copié.';
 						}
+						$result .= "\n";
 					}
 					else {$result .= "\033[0;33m 0 fichier trouvé. \033[0m\n";}
 					
+					//et on supprime les variables qui indiquait les configs pour le module lu pour pas qu'elles soient utilisé pour les modules lu après.
 					unset($modulePath, $configFiles);
 				}
 				else {$result .= "...\033[1;31m Fail !";}
