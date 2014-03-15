@@ -10,7 +10,12 @@ ob_start(); //Tamporisation du tampon de sortie html. Permet que le code html ne
 //Définition des chemins d'accès
 if(!isset($rootPath))
 {
-    $rootPath = $_SERVER['DOCUMENT_ROOT'].'/';
+    if(!isset($myVendorName))
+    {
+        $myVendorName = 'vendor';
+    }
+    
+    $rootPath = substr(__DIR__, 0, strpos(__DIR__, $myVendorName));
 }
 
 //Fichier de config

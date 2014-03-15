@@ -7,7 +7,12 @@
 
 if(!isset($rootPath))
 {
-    $rootPath = $_SERVER['DOCUMENT_ROOT'].'/';
+    if(!isset($myVendorName))
+    {
+        $myVendorName = 'vendor';
+    }
+    
+    $rootPath = substr(__DIR__, 0, strpos(__DIR__, $myVendorName));
 }
 
 require_once($rootPath.'configs/bfw_config.php');
