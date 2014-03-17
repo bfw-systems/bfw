@@ -31,9 +31,9 @@ if((isset($noSession) && $noSession == false) || !isset($noSession))
 //Class Loader
 $loader = require($rootPath.'vendor/autoload.php');
 
-$loader->add('controller', $rootPath.'controllers');
-$loader->add('modules',    $rootPath.'modules');
-$loader->add('modeles',    $rootPath.'modeles');
+$loader->addPsr4('controller\\', $rootPath.'controllers/');
+$loader->addPsr4('modules\\',    $rootPath.'modules/');
+$loader->addPsr4('modeles\\',    $rootPath.'modeles/');
 //Class Loader
 
 //Instancie la classe Kernel
