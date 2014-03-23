@@ -184,7 +184,10 @@ if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
         $infos = $Modules->getModuleInfos($moduleToLoad);
         $path = $infos['path'];
         
-        require_once($path.'/inclus.php');
+        if(file_exists($path.'/inclus.php'))
+        {
+            require_once($path.'/inclus.php');
+        }
     }
 }
 //Chargement des modules
@@ -235,7 +238,10 @@ if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
         $infos = $Modules->getModuleInfos($moduleToLoad);
         $path = $infos['path'];
         
-        require_once($path.'/inclus.php');
+        if(file_exists($path.'/inclus.php'))
+        {
+            require_once($path.'/inclus.php');
+        }
     }
 }
 //Chargement des modules
