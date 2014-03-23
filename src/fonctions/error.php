@@ -56,19 +56,23 @@ if($DebugMode)
                 <style>
                     html {padding:0; margin:0; background-color:#e3e3e3; font-family:sans-serif; font-size: 1em; word-wrap:break-word;}
                     div {position:relative; margin:auto; width:950px; border: 1px solid #a6c9e2; top: 30px;}
-                    p {padding:5px; margin:0;}
+                    p {padding:0; margin:0;}
                     p.title {font-size:1.2em; background-color:#D0DCE9; padding:10px;}
+                    p.info {padding:5px; margin-top:10px; margin-bottom:10px;}
                     fieldset {border:none; background-color: white;}
-                    legend {}
                     pre {width:910px; line-height:1.5;}
                 </style>
             </head>
             <body>
                 <div>
                     <p class="title">Niarf, une erreur s\'est produite</p>
-                    <p>'.$erreurType.' Error : <strong>'.$err_msg.'</strong> in '.$err_file.' at line '.$err_line.'</p>
-                    <p></p>
-                    <fieldset><pre>';debug_print_backtrace();echo '</pre></fieldset>
+                    <p class="info">'.$erreurType.' Error : <strong>'.$err_msg.'</strong> in '.$err_file.' at line '.$err_line.'</p>
+                    <fieldset><pre>';
+                        foreach(debug_backtrace() as $i => $info)
+                        {
+                            echo '#'.$i.'  '.$info['function'].' called at ['.$info['file'].' line '.$info['line'].']'."\n\n";
+                        }
+                    echo '</pre></fieldset>
                 </div>
             <body>
         </html>
