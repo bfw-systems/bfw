@@ -91,7 +91,7 @@ if($DebugMode)
                         {
                             echo '#'.$i.'  '.$info['function'];
                             
-                            if(count($info['args']) > 0)
+                            if(isset($info['args']) && count($info['args']) > 0)
                             {
                                 echo '(';
                                 
