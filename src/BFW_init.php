@@ -203,7 +203,7 @@ define('path_cache', $rootPath.'cache/');
 /**
  * @name path_controler : Chemin vers la racine du dossier controlers
  */
-define('path_controler', $rootPath.'controlers/');
+define('path_controllers', $rootPath.'controllers/');
 
 /**
  * @name path_modeles : Chemin vers la racine du dossier modeles
