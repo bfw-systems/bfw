@@ -41,6 +41,8 @@ $BFWKernel = new BFW\Kernel;
 $BFWKernel->set_debug($DebugMode);
 header('Content-Type: text/html; charset=utf-8'); //On indique un header en utf-8 de type html
 
+require_once(__DIR__.'/app/error.php'); //Page d'erreur personnalisée
+
 //Inclusion fonction
 $dir = opendir(__DIR__.'/fonctions'); //Ouverture du dossier fonctions se trouvant à la racine
 $dir_arr = array('.', '..'); //Les fichiers & dossiers à ignorer à la lecture

@@ -1,6 +1,20 @@
 <?php
 if($DebugMode)
 {
+    function exception_handler($exception)
+    {
+        //trigger_error($exception->getMessage(), E_USER_WARNING);
+        displayPHPError(
+            'Fatal', 
+            $exception->getMessage(), 
+            $exception->getFile(), 
+            $exception->getLine(), 
+            $exception->getTrace()
+        );
+    }
+    
+    set_exception_handler('exception_handler');
+        
     set_error_handler(function ($err_severity, $err_msg, $err_file, $err_line, array $err_context)
     {
         /*
@@ -47,6 +61,11 @@ if($DebugMode)
         elseif($err_severity == E_DEPRECATED || $err_severity == E_USER_DEPRECATED) {$erreurType = 'Deprecated';}
         else {$erreurType = 'Unknow';}
         
+        displayPHPError($erreurType, $err_msg, $err_file, $err_line, debug_backtrace());
+    });
+        
+    function displayPHPError($erreurType, $err_msg, $err_file, $err_line, $backtrace)
+    {
         ob_clean();
         echo '
         <!doctype html>
@@ -55,7 +74,7 @@ if($DebugMode)
                 <title>Une erreur est parmit nous !</title>
                 <style>
                     html {padding:0; margin:0; background-color:#e3e3e3; font-family:sans-serif; font-size: 1em; word-wrap:break-word;}
-                    div {position:relative; margin:auto; width:950px; border: 1px solid #a6c9e2; top: 30px;}
+                    div {position:relative; margin:auto; width:950px; border: 1px solid #a6c9e2; top: 30px; margin-bottom:10px;}
                     p {padding:0; margin:0;}
                     p.title {font-size:1.2em; background-color:#D0DCE9; padding:10px;}
                     p.info {padding:5px; margin-top:10px; margin-bottom:10px;}
@@ -68,9 +87,31 @@ if($DebugMode)
                     <p class="title">Niarf, une erreur s\'est produite</p>
                     <p class="info">'.$erreurType.' Error : <strong>'.$err_msg.'</strong> in '.$err_file.' at line '.$err_line.'</p>
                     <fieldset><pre>';
-                        foreach(debug_backtrace() as $i => $info)
+                        foreach($backtrace as $i => $info)
                         {
-                            echo '#'.$i.'  '.$info['function'].' called at ['.$info['file'].' line '.$info['line'].']'."\n\n";
+                            echo '#'.$i.'  '.$info['function'];
+                            
+                            if(count($info['args']) > 0)
+                            {
+                                echo '(';
+                                
+                                foreach($info['args'] as $iArgs => $args)
+                                {
+                                    if($iArgs > 0) {echo ', ';}
+                                    
+                                        if(is_array($args) || is_object($args)) {echo gettype($args);}
+                                    elseif(is_null($args)) {echo 'null';}
+                                    else {echo htmlentities($args);}
+                                }
+                                
+                                echo ')';
+                            }
+                            
+                            if(isset($info['file'], $info['line']))
+                            {
+                                echo ' called at ['.$info['file'].' line '.$info['line'].']';
+                            }
+                            echo "\n\n";
                         }
                     echo '</pre></fieldset>
                 </div>
@@ -80,5 +121,5 @@ if($DebugMode)
         
         ob_end_flush();
         exit;
-    });
+    }
 }
