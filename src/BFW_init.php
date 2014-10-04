@@ -19,7 +19,10 @@ if(!isset($rootPath))
 }
 
 //Fichier de config
-require_once($rootPath.'configs/bfw_config.php');
+if(!isset($forceConfig) || (isset($forceConfig) && $forceConfig == false))
+{
+    require_once($rootPath.'configs/bfw_config.php');
+}
 //Fichier de config
 
 if((isset($noSession) && $noSession == false) || !isset($noSession))
@@ -29,11 +32,17 @@ if((isset($noSession) && $noSession == false) || !isset($noSession))
 }
 
 //Class Loader
-$loader = require($rootPath.'vendor/autoload.php');
+if(!isset($loader))
+{
+    $loader = require($rootPath.'vendor/autoload.php');
+    $loaderAddPsr4 = 'addPsr4';
+}
 
-$loader->addPsr4('controller\\', $rootPath.'controllers/');
-$loader->addPsr4('modules\\',    $rootPath.'modules/');
-$loader->addPsr4('modeles\\',    $rootPath.'modeles/');
+if(!isset($loaderAddPsr4)) {$loaderAddPsr4 = 'addNamespace';} //Default of PSR4 library
+
+$loader->$loaderAddPsr4('controller\\', $rootPath.'controllers/');
+$loader->$loaderAddPsr4('modules\\',    $rootPath.'modules/');
+$loader->$loaderAddPsr4('modeles\\',    $rootPath.'modeles/');
 //Class Loader
 
 //Instancie la classe Kernel
@@ -77,39 +86,43 @@ $modulesToLoad['ctr'] = array('name' => $ctr_module, 'action' => 'test');
 
 foreach($modulesToLoad as $key => $moduleLoad)
 {
-    $pathToModule = $rootPath.'modules/'.$moduleLoad['name'];
-    if(!empty($pathToModule))
+    if(!empty($moduleLoad['name']))
     {
-        if(is_link($pathToModule))
+        $pathToModule = $rootPath.'modules/'.$moduleLoad['name'];
+        if(!empty($pathToModule))
         {
-            $pathToModule = readlink($pathToModule);
-            
-            if(file_exists($pathToModule.'/bfw_modules_info.php'))
+            if(is_link($pathToModule))
             {
-                require_once($pathToModule.'/bfw_modules_info.php');
+                $pathToModule = readlink($pathToModule);
                 
-                if(!empty($modulePath))
+                if(file_exists($pathToModule.'/bfw_modules_info.php'))
                 {
-                    $pathToModule .= '/'.$modulePath;
+                    require_once($pathToModule.'/bfw_modules_info.php');
+                    
+                    if(!empty($modulePath))
+                    {
+                        $pathToModule .= '/'.$modulePath;
+                    }
                 }
             }
-        }
-        
-        if(!file_exists($pathToModule.'/kernel_init.php'))
-        {
-            define('kernelModuleLoad_'.$key.'_test', false);
-            throw new \Exception('Module '.$moduleLoad['name'].' not found.');
-        }
-        
-        define('kernelModuleLoad_'.$key.'_test', true);
-        define('kernelModuleLoad_'.$key.'_path', $pathToModule.'/kernel_init.php');
-        
-        if($moduleLoad['action'] == 'load')
-        {
-            require_once($pathToModule.'/kernel_init.php');
+            
+            if(!file_exists($pathToModule.'/kernel_init.php'))
+            {
+                define('kernelModuleLoad_'.$key.'_test', false);
+                throw new \Exception('Module '.$moduleLoad['name'].' not found.');
+            }
+            
+            define('kernelModuleLoad_'.$key.'_test', true);
+            define('kernelModuleLoad_'.$key.'_path', $pathToModule.'/kernel_init.php');
+            
+            if($moduleLoad['action'] == 'load')
+            {
+                require_once($pathToModule.'/kernel_init.php');
+            }
         }
     }
-    else
+    
+    if(!defined('kernelModuleLoad_'.$key.'_test'))
     {
         define('kernelModuleLoad_'.$key.'_test', false);
     }
@@ -138,27 +151,30 @@ define('modulesLoadTime_Visiteur', 'visiteur');
  */
 define('modulesLoadTime_EndInit', 'endInit');
 
-$dir = opendir($rootPath.'modules');
-$dir_arr = array('.', '..', '.htaccess');
-
-while(false !== ($file = readdir($dir)))
+if(file_exists($rootPath.'modules'))
 {
-    $path = $rootPath.'modules/'.$file;
+    $dir = opendir($rootPath.'modules');
+    $dir_arr = array('.', '..', '.htaccess');
     
-    if(is_link($path))
+    while(false !== ($file = readdir($dir)))
     {
-        $path = readlink($path);
+        $path = $rootPath.'modules/'.$file;
+        
+        if(is_link($path))
+        {
+            $path = readlink($path);
+        }
+        
+        //Si le fichier existe, on inclus le fichier principal du module
+        if(file_exists($path.'/'.$file.'.php'))
+        {
+            require_once($path.'/'.$file.'.php');
+            $Modules->addPath($file, $path);
+        }
     }
-    
-    //Si le fichier existe, on inclus le fichier principal du module
-    if(file_exists($path.'/'.$file.'.php'))
-    {
-        require_once($path.'/'.$file.'.php');
-        $Modules->addPath($file, $path);
-    }
+    closedir($dir);
+    unset($dir, $dir_arr, $file);
 }
-closedir($dir);
-unset($dir, $dir_arr, $file);
 
 $modulesToLoad = $Modules->listToLoad(modulesLoadTime_Module);
 if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
