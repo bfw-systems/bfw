@@ -229,7 +229,7 @@ class Date extends \DateTime implements \BFWInterface\IDate
     /**
      * Liste les continents possible pour les timezones
      * 
-     * @return array La liste des continents
+     * @return string[] La liste des continents
      */
     public function lst_TimeZoneContinent()
     {

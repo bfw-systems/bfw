@@ -167,7 +167,7 @@ function get($key, $default=null)
  * 
  * @param string $mail : L'adresse e-mail à vérifier
  * 
- * @return bool : 
+ * @return integer : 
  */
 function valid_mail($mail)
 {

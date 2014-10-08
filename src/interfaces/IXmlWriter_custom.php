@@ -15,6 +15,7 @@ interface IXmlWriter_custom
 {
     /**
      * Constructeur
+     * @return void
      */
     public function __construct();
     
@@ -23,6 +24,7 @@ interface IXmlWriter_custom
      * 
      * @param string $element    Nom de la balise
      * @param array  $attributes (default: array()) Les attributs de la balise
+     * @return void
      */
     public function push($element, $attributes = array());
     
@@ -32,6 +34,7 @@ interface IXmlWriter_custom
      * @param string $element    Nom de la balise
      * @param string $content    Le contenu de la balise
      * @param array  $attributes (default: array()) Les attributs de la balise
+     * @return void
      */ 
     public function element($element, $content, $attributes = array());
     
@@ -41,6 +44,7 @@ interface IXmlWriter_custom
      * @param string $element    Nom de la balise
      * @param string $content    Le contenu de la balise
      * @param array  $attributes (default: array()) Les attributs de la balise
+     * @return void
      */
     public function element_cdata($element, $content, $attributes = array());
     
@@ -49,11 +53,13 @@ interface IXmlWriter_custom
      * 
      * @param string $element    Nom de la balise
      * @param array  $attributes (default: array()) Les attributs de la balise
+     * @return void
      */
     public function emptyelement($element, $attributes = array());
     
     /**
      * Ferme une balise ouverte avec push()
+     * @return void
      */
     public function pop();
     

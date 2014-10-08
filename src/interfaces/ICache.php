@@ -17,11 +17,13 @@ interface ICache
      * Constructeur
      * 
      * @param string $controler Le controleur qu'on doit lire
+     * @return void
      */
     public function __construct($controler);
     
     /**
      * Lance la création du cache
+     * @return void
      */
     public function run();
     
@@ -29,6 +31,7 @@ interface ICache
      * Accesseur vers l'attribut $controler
      * 
      * @param string $controler Le controleur qu'on doit lire
+     * @return void
      */
     public function set_controler($controler);
 }
