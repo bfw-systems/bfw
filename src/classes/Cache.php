@@ -656,7 +656,7 @@ class Cache implements \BFWInterface\ICache
             if($stock == false && $nomBlock != null)
             {
                 //Si c'est bien notre block
-                if($preg = preg_match('#(.*)<block name=("|\')'.$nomBlock.'("|\')>(.*)#i', $line, $decoupe))
+                if(preg_match('#(.*)<block name=("|\')'.$nomBlock.'("|\')>(.*)#i', $line, $decoupe))
                 {
                     $stock = true; //On indique qu'on peut commencer à stocker
                     
