@@ -138,7 +138,7 @@ function post($key, $default=null, $html=false)
     }
     else
     {
-        return null;
+        return $default;
     }
 }
 
