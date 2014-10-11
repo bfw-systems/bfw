@@ -25,34 +25,34 @@ class Date extends \DateTime implements \BFWInterface\IDate
     protected $date = '';
     
     /**
-     * @var int $annee L'année de la date
+     * @var string $annee L'année de la date
      */
-    protected $annee = 0;
+    protected $annee = '';
     
     /**
-     * @var int $mois Le mois de la date
+     * @var string $mois Le mois de la date
      */
-    protected $mois = 0;
+    protected $mois = '';
     
     /**
-     * @var int $jour Le jour de la date
+     * @var string $jour Le jour de la date
      */
-    protected $jour = 0;
+    protected $jour = '';
     
     /**
-     * @var int $heure L'heure de la date
+     * @var string $heure L'heure de la date
      */
-    protected $heure = 0;
+    protected $heure = '';
     
     /**
-     * @var int $minute Les minutes de la date
+     * @var string $minute Les minutes de la date
      */
-    protected $minute = 0;
+    protected $minute = '';
     
     /**
-     * @var int $seconde Les secondes de la date
+     * @var string $seconde Les secondes de la date
      */
-    protected $seconde = 0;
+    protected $seconde = '';
     
     /**
      * @var string $zone Le timezone à utiliser
@@ -343,6 +343,7 @@ class Date extends \DateTime implements \BFWInterface\IDate
         $diffSeconde = $diff->format('%S');
         $diffInvert = $diff->invert;
         
+        //@TODO : All $diffXxx variable is on a string type, not int.
         if($diffAnnee == 0 && $diffMois == 0 && $diffJour == 0 && $diffHeure == 0 && $diffMinute == 0 && $diffSeconde == 0)
         {
             $aff_date = 'Maintenant';
