@@ -41,7 +41,7 @@ class Ram implements \BFWInterface\IRam
      * 
      * @param string $name (default:"localhost") le nom du serveur memcache
      * 
-     * @return bool
+     * @return boolean|null
      */
     public function __construct($name='localhost')
     {

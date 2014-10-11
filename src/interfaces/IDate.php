@@ -28,6 +28,7 @@ interface IDate
      * S'il n'y a pas ":00" à la fin, alors c'est géré.
      * 
      * @param string $date (default: "now") La date sur laquelle travailler. Si pas indiqué, il s'agit de la date actuelle.
+     * @return void
      */
     public function __construct($date="now");
     
@@ -55,6 +56,7 @@ interface IDate
      * Modifie le timezone
      * 
      * @param string $NewZone le nouveau time zone
+     * @return void
      */
     public function setZone($NewZone);
     
@@ -68,7 +70,7 @@ interface IDate
     /**
      * Liste les continents possible pour les timezones
      * 
-     * @return array La liste des continents
+     * @return string[] La liste des continents
      */
     public function lst_TimeZoneContinent();
     
@@ -112,7 +114,7 @@ interface IDate
      *      
      *      Ou "Maintenant" (qu'importe la valeur de $tout)
      * 
-     * @param bool $tout  (default: true) Affiche la date en entier (true) ou non (false).
+     * @param integer $tout  (default: true) Affiche la date en entier (true) ou non (false).
      * @param bool $minus (default: false) Affiche la date en minuscule (true) ou non (false).
      * 
      * @return string La date simplifié

@@ -15,6 +15,7 @@ interface IModules
 {
     /**
      * Constructeur
+     * @return void
      */
     public function __construct();
     
@@ -58,6 +59,7 @@ interface IModules
      * @param string $path Le chemin réel du module
      * 
      * @throws \Exception Le module n'existe pas
+     * @return void
      */
     public function addPath($name, $path);
     

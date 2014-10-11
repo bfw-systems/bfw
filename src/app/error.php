@@ -64,6 +64,9 @@ if($DebugMode)
         displayPHPError($erreurType, $err_msg, $err_file, $err_line, debug_backtrace());
     });
         
+    /**
+     * @param string $erreurType
+     */
     function displayPHPError($erreurType, $err_msg, $err_file, $err_line, $backtrace)
     {
         ob_clean();

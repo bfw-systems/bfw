@@ -17,6 +17,7 @@ interface IForm
      * Constructeur
      * 
      * @param string $idForm L'id du formulaire
+     * @return void
      */
     public function __construct($idForm=null);
     
@@ -24,6 +25,7 @@ interface IForm
      * Accesseur set sur id_form
      * 
      * @param string $idForm L'id du formulaire
+     * @return void
      */
     public function set_idForm($idForm);
     
