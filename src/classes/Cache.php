@@ -241,7 +241,7 @@ class Cache implements \BFWInterface\ICache
                     //Les autres variables seront de toute façon pas trouvé.
                     
                     $searchtplvar = array();
-                    $searchtpl = preg_match('#\$(.*)#i', $info[3], $searchtplvar);
+                    preg_match('#\$(.*)#i', $info[3], $searchtplvar);
                     $namevar = substr($searchtplvar[1], 0, strpos($searchtplvar[1], '.'));
                     
                     if(!isset($GLOBALS[$namevar]))
