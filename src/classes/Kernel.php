@@ -133,7 +133,7 @@ class Kernel implements \SplSubject
      * 
      * @param bool $debug True si on est en mode débug, False sinon.
      */
-    public function set_debug($debug)
+    public function setDebug($debug)
     {
         $this->debug = $debug;
         

@@ -47,7 +47,7 @@ $loader->$loaderAddPsr4('modeles\\',    $rootPath.'modeles/');
 
 //Instancie la classe Kernel
 $BFWKernel = new BFW\Kernel;
-$BFWKernel->set_debug($DebugMode);
+$BFWKernel->setDebug($DebugMode);
 header('Content-Type: text/html; charset=utf-8'); //On indique un header en utf-8 de type html
 
 require_once(__DIR__.'/app/error.php'); //Page d'erreur personnalisée
