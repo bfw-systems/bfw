@@ -713,7 +713,7 @@ class Cache implements \BFWInterface\ICache
                     {
                         //...On récupère ses infos ...
                         $searchInfo = array();
-                        $search = preg_match('<block name="([0-9a-zA-Z._-]+)">', $line, $searchInfo);
+                        preg_match('<block name="([0-9a-zA-Z._-]+)">', $line, $searchInfo);
                         $nomSsBlock = $searchInfo[1]; //... Et on stock son nom pour la variable qui appelera son contenu.
                     }
                     
