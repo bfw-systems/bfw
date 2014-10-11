@@ -100,7 +100,7 @@ function create_cookie($name, $val)
  */
 function nl2br_replace($str)
 {
-    return $newstr = str_replace("\n", '<br>', $str);
+    return str_replace("\n", '<br>', $str);
 }
 
 /**
