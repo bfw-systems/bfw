@@ -58,7 +58,7 @@ class Form implements \BFWInterface\IForm
         global $_SESSION;
         $_SESSION['token'][$this->idForm] = array(
             'token' => $Id,
-            'date' => $date->date
+            'date' => $date->getDate()
         );
         
         return $Id;

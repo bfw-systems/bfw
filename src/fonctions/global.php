@@ -217,7 +217,7 @@ function logfile($file, $txt, $date=true)
     if($date == true)
     {
         $date = new \BFW\Date();
-        $dateTxt = $date->jour.'-'.$date->mois.'-'.$date->annee.' '.$date->heure.':'.$date->minute.':'.$date->seconde;
+        $dateTxt = $date->getJour().'-'.$date->getMois().'-'.$date->getAnnee().' '.$date->getHeure().':'.$date->getMinute().':'.$date->getSeconde();
         $txt = '['.$dateTxt.'] '.$txt;
     }
     
