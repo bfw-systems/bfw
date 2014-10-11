@@ -15,49 +15,49 @@ namespace BFW;
 class Date extends \DateTime implements \BFWInterface\IDate
 {
     /**
-     * @var $_kernel L'instance du Kernel
+     * @var \BFW\Kernel $_kernel L'instance du Kernel
      */
-    private $_kernel;
+    protected $_kernel;
     
     /**
-     * @var $date La date au format string
+     * @var string $date La date au format string
      */
-    private $date = '';
+    protected $date = '';
     
     /**
-     * @var $annee L'année de la date
+     * @var int $annee L'année de la date
      */
-    private $annee = 0;
+    protected $annee = 0;
     
     /**
-     * @var $mois Le mois de la date
+     * @var int $mois Le mois de la date
      */
-    private $mois = 0;
+    protected $mois = 0;
     
     /**
-     * @var $jour Le jour de la date
+     * @var int $jour Le jour de la date
      */
-    private $jour = 0;
+    protected $jour = 0;
     
     /**
-     * @var $heure L'heure de la date
+     * @var int $heure L'heure de la date
      */
-    private $heure = 0;
+    protected $heure = 0;
     
     /**
-     * @var $minute Les minutes de la date
+     * @var int $minute Les minutes de la date
      */
-    private $minute = 0;
+    protected $minute = 0;
     
     /**
-     * @var $seconde Les secondes de la date
+     * @var int $seconde Les secondes de la date
      */
-    private $seconde = 0;
+    protected $seconde = 0;
     
     /**
-     * @var $zone Le timezone à utiliser
+     * @var string $zone Le timezone à utiliser
      */
-    private $zone;
+    protected $zone;
     
     /**
      * Fonction magique, permet de lire les attributs directement
