@@ -60,13 +60,67 @@ class Date extends \DateTime implements \BFWInterface\IDate
     protected $zone;
     
     /**
-     * Fonction magique, permet de lire les attributs directement
-     * 
-     * @param string $name Le nom de l'attribut auquel on veux accéder.
+     * Accesseur vers l'attribut $date
      */
-    public function __get($name)
+    public function getDate()
     {
-        return $this->$name;
+        return $this->date;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $annee
+     */
+    public function getAnnee()
+    {
+        return $this->annee;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $mois
+     */
+    public function getMois()
+    {
+        return $this->mois;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $jour
+     */
+    public function getJour()
+    {
+        return $this->jour;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $heure
+     */
+    public function getHeure()
+    {
+        return $this->heure;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $minute
+     */
+    public function getMinute()
+    {
+        return $this->minute;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $seconde
+     */
+    public function getSeconde()
+    {
+        return $this->seconde;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $zone
+     */
+    public function getZone()
+    {
+        return $this->zone;
     }
     
     /**
