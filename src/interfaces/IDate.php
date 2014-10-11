@@ -17,41 +17,49 @@ interface IDate
     
     /**
      * Accesseur vers l'attribut $date
+     * @return string
      */
     public function getDate();
     
     /**
      * Accesseur vers l'attribut $annee
+     * @return string
      */
     public function getAnnee();
     
     /**
      * Accesseur vers l'attribut $mois
+     * @return string
      */
     public function getMois();
     
     /**
      * Accesseur vers l'attribut $jour
+     * @return string
      */
     public function getJour();
     
     /**
      * Accesseur vers l'attribut $heure
+     * @return string
      */
     public function getHeure();
     
     /**
      * Accesseur vers l'attribut $minute
+     * @return string
      */
     public function getMinute();
     
     /**
      * Accesseur vers l'attribut $seconde
+     * @return string
      */
     public function getSeconde();
     
     /**
      * Accesseur vers l'attribut $zone
+     * @return string
      */
     public function getZone();
     

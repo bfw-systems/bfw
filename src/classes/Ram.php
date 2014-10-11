@@ -117,7 +117,7 @@ class Ram implements \BFWInterface\IRam
      * 
      * @throws \Exception Erreur dsans les paramètres donnée à la méthode
      * 
-     * @return bool
+     * @return boolean|null
      */
     public function majExpire($key, $exp)
     {
