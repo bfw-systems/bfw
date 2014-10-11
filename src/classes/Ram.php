@@ -102,7 +102,10 @@ class Ram implements \BFWInterface\IRam
             global $path;
             
             $stock = array('expire' => $expire, 'create' => time(), 'data' => $data);
-            return file_put_contents($path.'kernel/Memcache_ifnoExt/'.$key.'.txt', json_encode($stock));
+            $filePutContentReturn = file_put_contents($path.'kernel/Memcache_ifnoExt/'.$key.'.txt', json_encode($stock));
+            
+            if($filePutContentReturn === false) {return false;}
+            return true;
         }
     }
     
@@ -153,7 +156,10 @@ class Ram implements \BFWInterface\IRam
                 $data->expire = $exp;
                 $data->create = time();
                 
-                return file_put_contents($path.'kernel/Memcache_ifnoExt/'.$key.'.txt', json_encode($data));
+                $filePutContentReturn = file_put_contents($path.'kernel/Memcache_ifnoExt/'.$key.'.txt', json_encode($data));
+                
+                if($filePutContentReturn === false) {return false;}
+                return true;
             }
         }
     }
