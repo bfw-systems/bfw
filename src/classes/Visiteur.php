@@ -210,7 +210,7 @@ class Visiteur implements \BFWInterface\IVisiteur
         }
         else
         {
-            $this->Proxy_ip = FALSE;
+            $this->Proxy_ip = '';
         }
     }
     
@@ -224,7 +224,7 @@ class Visiteur implements \BFWInterface\IVisiteur
         if($this->Proxy != NULL) {$this->Proxy_host = @gethostbyaddr($_SERVER['REMOTE_ADDR']);}
         else {$this->Proxy_host = FALSE;}
         */
-        $this->Proxy_host = FALSE;
+        $this->Proxy_host = '';
     }
     
     /**
