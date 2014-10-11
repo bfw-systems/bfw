@@ -59,7 +59,6 @@ class Modules implements \BFWInterface\IModules
         if($this->exists($name))
         {
             throw new \Exception('Le module '.$name.' existe déjà.');
-            return false;
         }
         
         $time = (isset($params['time'])) ? $params['time'] : modulesLoadTime_EndInit;
@@ -186,14 +185,12 @@ class Modules implements \BFWInterface\IModules
                     if(!array_key_exists($modRequire, $this->modList))
                     {
                         throw new \Exception('La dépendance '.$modRequire.' du module '.$mod['name'].' n\'a pas été trouvé.');
-                        $load = false;
                     }
                     else
                     {
                         if(!$this->isLoad($modRequire) && $this->modList[$modRequire]['time'] != $mod['time'])
                         {
                             throw new \Exception('La dépendance '.$modRequire.' du module '.$mod['name'].' n\'est pas encore chargé. Vous devez charger votre module plus tard.');
-                            $load = false;
                         }
                         else
                         {
@@ -268,7 +265,6 @@ class Modules implements \BFWInterface\IModules
         else
         {
             throw new \Exception('Le module '.$name.' n\'existe pas.');
-            return array();
         }
     }
 }
