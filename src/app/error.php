@@ -15,7 +15,7 @@ if($DebugMode)
     
     set_exception_handler('exception_handler');
         
-    set_error_handler(function ($err_severity, $err_msg, $err_file, $err_line, array $err_context)
+    set_error_handler(function ($err_severity, $err_msg, $err_file, $err_line)
     {
         /*
         http://fr2.php.net/manual/fr/function.set-error-handler.php#113567
