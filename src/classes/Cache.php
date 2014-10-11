@@ -259,7 +259,7 @@ class Cache implements \BFWInterface\ICache
                     
                     //On récupère les infos sur la constante
                     $infosCst = array();
-                    $searchCst = preg_match('#(.*)(\.\'(.*))#i', $info[3], $infosCst);
+                    preg_match('#(.*)(\.\'(.*))#i', $info[3], $infosCst);
                     
                     $vue = '';
                     $cst = $infosCst[1];
