@@ -80,7 +80,7 @@ class Ram implements \BFWInterface\IRam
         
         if(!$verifParams || gettype($data) == 'resource')
         {
-            if($this->get_debug()) {throw new \Exception('Erreur dans les paramètres de Ram->setVal()');}
+            if($this->_kernel->getDebug()) {throw new \Exception('Erreur dans les paramètres de Ram->setVal()');}
             else {return $default;}
         }
         
@@ -129,7 +129,7 @@ class Ram implements \BFWInterface\IRam
         
         if(!$verifParams)
         {
-            if($this->get_debug()) {throw new \Exception('Erreur dans les paramètres de Ram->majExpire()');}
+            if($this->_kernel->getDebug()) {throw new \Exception('Erreur dans les paramètres de Ram->majExpire()');}
             else {return $default;}
         }
         
@@ -180,7 +180,7 @@ class Ram implements \BFWInterface\IRam
         
         if(!$verifParams)
         {
-            if($this->get_debug()) {throw new \Exception('Erreur dans les paramètres de Ram->ifExists()');}
+            if($this->_kernel->getDebug()) {throw new \Exception('Erreur dans les paramètres de Ram->ifExists()');}
             else {return $default;}
         }
         
@@ -240,7 +240,7 @@ class Ram implements \BFWInterface\IRam
         
         if(!$verifParams)
         {
-            if($this->get_debug()) {throw new \Exception('Erreur dans les paramètres de Ram->getVal()');}
+            if($this->_kernel->getDebug()) {throw new \Exception('Erreur dans les paramètres de Ram->getVal()');}
             else {return $default;}
         }
         
