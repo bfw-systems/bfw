@@ -115,7 +115,7 @@ class Kernel implements \SplSubject
     {
         if(!is_null($this->notify_action))
         {
-            $this->notifyObserver($action);
+            $this->notifyObserver($this->notify_action);
         }
         else
         {
