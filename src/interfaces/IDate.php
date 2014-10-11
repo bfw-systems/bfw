@@ -16,11 +16,44 @@ interface IDate
     const ZONE_DEFAULT = 'Europe/Paris'; //Le timeZone par défault
     
     /**
-     * Fonction magique, permet de lire les attributs directement
-     * 
-     * @param string $name Le nom de l'attribut auquel on veux accéder.
+     * Accesseur vers l'attribut $date
      */
-    public function __get($name);
+    public function getDate();
+    
+    /**
+     * Accesseur vers l'attribut $annee
+     */
+    public function getAnnee();
+    
+    /**
+     * Accesseur vers l'attribut $mois
+     */
+    public function getMois();
+    
+    /**
+     * Accesseur vers l'attribut $jour
+     */
+    public function getJour();
+    
+    /**
+     * Accesseur vers l'attribut $heure
+     */
+    public function getHeure();
+    
+    /**
+     * Accesseur vers l'attribut $minute
+     */
+    public function getMinute();
+    
+    /**
+     * Accesseur vers l'attribut $seconde
+     */
+    public function getSeconde();
+    
+    /**
+     * Accesseur vers l'attribut $zone
+     */
+    public function getZone();
     
     /**
      * Constructeur
