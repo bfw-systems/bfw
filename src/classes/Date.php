@@ -122,7 +122,7 @@ class Date extends \DateTime implements \BFWInterface\IDate
      * 
      * @param string $cond La partie à modifier : year, mouth, day, jour, minute, second
      * 
-     * @return bool True la si modif à réussi, fales si erreur
+     * @return mixed : Retourne l'objet si la modification à réussi. False si échec.
      */
     public function modify($cond)
     {
@@ -171,12 +171,13 @@ class Date extends \DateTime implements \BFWInterface\IDate
             else
             {
                 $this->MAJ_Attributes();
-                return true;
+                return $this;
             }
         }
         else
         {
-            $this->MAJ_Attributes(); return true;
+            $this->MAJ_Attributes();
+            return $this;
         }
     }
     
