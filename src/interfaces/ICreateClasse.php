@@ -27,7 +27,7 @@ interface ICreateClasse
      * 
      * @return string La futur classe
      */
-    public function get_file();
+    public function getFile();
     
     /**
      * Créer un attribut à la nouvelle classe
