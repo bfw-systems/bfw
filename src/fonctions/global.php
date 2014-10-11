@@ -177,8 +177,8 @@ function valid_mail($mail)
 /**
  * Affiche une page d'erreur
  * 
- * @param int/string $num        : Le n° d'erreur à afficher ou l'erreur au format texte
- * @param bool       $cleanCache : Indique si le cache du tampon de sortie doit être vidé ou pas
+ * @param mixed $num        : Le n° d'erreur à afficher ou l'erreur au format texte
+ * @param bool  $cleanCache : Indique si le cache du tampon de sortie doit être vidé ou pas
  */
 function ErrorView($num, $cleanCache=true)
 {
@@ -187,11 +187,7 @@ function ErrorView($num, $cleanCache=true)
        ob_clean(); //On efface tout ce qui a pu être mis dans le buffer pour l'affichage
     }
     
-    global $request;
-    global $Overlay, $Overlay_type, $Overlay_msg, $Overlay_opt;
-    global $mini_infos, $mini_infos_msg;
-    
-    global $path;
+    global $request, $path;
     
     if(file_exists($path.'controlers/erreurs/'.$num.'.php'))
     {
