@@ -241,7 +241,7 @@ class Cache implements \BFWInterface\ICache
                     //Les autres variables seront de toute façon pas trouvé.
                     
                     $searchtplvar = array();
-                    $searchtpl = preg_match('#\$(.*)#i', $info[3], $searchtplvar);
+                    preg_match('#\$(.*)#i', $info[3], $searchtplvar);
                     $namevar = substr($searchtplvar[1], 0, strpos($searchtplvar[1], '.'));
                     
                     if(!isset($GLOBALS[$namevar]))
@@ -259,7 +259,7 @@ class Cache implements \BFWInterface\ICache
                     
                     //On récupère les infos sur la constante
                     $infosCst = array();
-                    $searchCst = preg_match('#(.*)(\.\'(.*))#i', $info[3], $infosCst);
+                    preg_match('#(.*)(\.\'(.*))#i', $info[3], $infosCst);
                     
                     $vue = '';
                     $cst = $infosCst[1];
@@ -656,7 +656,7 @@ class Cache implements \BFWInterface\ICache
             if($stock == false && $nomBlock != null)
             {
                 //Si c'est bien notre block
-                if($preg = preg_match('#(.*)<block name=("|\')'.$nomBlock.'("|\')>(.*)#i', $line, $decoupe))
+                if(preg_match('#(.*)<block name=("|\')'.$nomBlock.'("|\')>(.*)#i', $line, $decoupe))
                 {
                     $stock = true; //On indique qu'on peut commencer à stocker
                     
@@ -713,7 +713,7 @@ class Cache implements \BFWInterface\ICache
                     {
                         //...On récupère ses infos ...
                         $searchInfo = array();
-                        $search = preg_match('<block name="([0-9a-zA-Z._-]+)">', $line, $searchInfo);
+                        preg_match('<block name="([0-9a-zA-Z._-]+)">', $line, $searchInfo);
                         $nomSsBlock = $searchInfo[1]; //... Et on stock son nom pour la variable qui appelera son contenu.
                     }
                     

@@ -15,58 +15,112 @@ namespace BFW;
 class Date extends \DateTime implements \BFWInterface\IDate
 {
     /**
-     * @var $_kernel L'instance du Kernel
+     * @var \BFW\Kernel $_kernel L'instance du Kernel
      */
-    private $_kernel;
+    protected $_kernel;
     
     /**
-     * @var $date La date au format string
+     * @var string $date La date au format string
      */
-    private $date = '';
+    protected $date = '';
     
     /**
-     * @var $annee L'année de la date
+     * @var string $annee L'année de la date
      */
-    private $annee = 0;
+    protected $annee = '';
     
     /**
-     * @var $mois Le mois de la date
+     * @var string $mois Le mois de la date
      */
-    private $mois = 0;
+    protected $mois = '';
     
     /**
-     * @var $jour Le jour de la date
+     * @var string $jour Le jour de la date
      */
-    private $jour = 0;
+    protected $jour = '';
     
     /**
-     * @var $heure L'heure de la date
+     * @var string $heure L'heure de la date
      */
-    private $heure = 0;
+    protected $heure = '';
     
     /**
-     * @var $minute Les minutes de la date
+     * @var string $minute Les minutes de la date
      */
-    private $minute = 0;
+    protected $minute = '';
     
     /**
-     * @var $seconde Les secondes de la date
+     * @var string $seconde Les secondes de la date
      */
-    private $seconde = 0;
+    protected $seconde = '';
     
     /**
-     * @var $zone Le timezone à utiliser
+     * @var string $zone Le timezone à utiliser
      */
-    private $zone;
+    protected $zone;
     
     /**
-     * Fonction magique, permet de lire les attributs directement
-     * 
-     * @param string $name Le nom de l'attribut auquel on veux accéder.
+     * Accesseur vers l'attribut $date
      */
-    public function __get($name)
+    public function getDate()
     {
-        return $this->$name;
+        return $this->date;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $annee
+     */
+    public function getAnnee()
+    {
+        return $this->annee;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $mois
+     */
+    public function getMois()
+    {
+        return $this->mois;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $jour
+     */
+    public function getJour()
+    {
+        return $this->jour;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $heure
+     */
+    public function getHeure()
+    {
+        return $this->heure;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $minute
+     */
+    public function getMinute()
+    {
+        return $this->minute;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $seconde
+     */
+    public function getSeconde()
+    {
+        return $this->seconde;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $zone
+     */
+    public function getZone()
+    {
+        return $this->zone;
     }
     
     /**
@@ -122,7 +176,7 @@ class Date extends \DateTime implements \BFWInterface\IDate
      * 
      * @param string $cond La partie à modifier : year, mouth, day, jour, minute, second
      * 
-     * @return bool True la si modif à réussi, fales si erreur
+     * @return mixed : Retourne l'objet si la modification à réussi. False si échec.
      */
     public function modify($cond)
     {
@@ -171,12 +225,13 @@ class Date extends \DateTime implements \BFWInterface\IDate
             else
             {
                 $this->MAJ_Attributes();
-                return true;
+                return $this;
             }
         }
         else
         {
-            $this->MAJ_Attributes(); return true;
+            $this->MAJ_Attributes();
+            return $this;
         }
     }
     
@@ -229,7 +284,7 @@ class Date extends \DateTime implements \BFWInterface\IDate
     /**
      * Liste les continents possible pour les timezones
      * 
-     * @return array La liste des continents
+     * @return string[] La liste des continents
      */
     public function lst_TimeZoneContinent()
     {
@@ -343,6 +398,7 @@ class Date extends \DateTime implements \BFWInterface\IDate
         $diffSeconde = $diff->format('%S');
         $diffInvert = $diff->invert;
         
+        //@TODO : All $diffXxx variable is on a string type, not int.
         if($diffAnnee == 0 && $diffMois == 0 && $diffJour == 0 && $diffHeure == 0 && $diffMinute == 0 && $diffSeconde == 0)
         {
             $aff_date = 'Maintenant';

@@ -58,7 +58,7 @@ class Form implements \BFWInterface\IForm
         global $_SESSION;
         $_SESSION['token'][$this->idForm] = array(
             'token' => $Id,
-            'date' => $date->date
+            'date' => $date->getDate()
         );
         
         return $Id;
@@ -84,9 +84,9 @@ class Form implements \BFWInterface\IForm
                 if(isset($_POST['token']) && $_POST['token'] == $token)
                 {
                     $date_limit = new Date();
-                    $date_limit->DateTime->modify('-15 minute');
+                    $date_limit->modify('-15 minute');
                     
-                    if($date_createDT->DateTime >= $date_limit->DateTime)
+                    if($date_createDT >= $date_limit)
                     {
                         unset($_SESSION['token'][$this->idForm]);
                         return true;

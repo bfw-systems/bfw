@@ -7,6 +7,8 @@
 
 namespace BFW;
 
+use \Exception;
+
 /**
  * Classe Observer
  * @package bfw
@@ -28,9 +30,20 @@ class Observer implements \SplObserver
      * 
      * @param SplSubject $subject Le sujet déclanchant l'observer
      * @param string     $action  L'action à faire lors du déclanchement
+     * 
+     * @throws \Exception : Si le paramètre $subject n'est pas un objet ou n'est pas une instance de \BFW\Kernel
      */
-    public function updateWithAction(SplSubject $subject, $action)
+    public function updateWithAction($subject, $action)
     {
+        if(!is_object($subject))
+        {
+            throw new Exception('Le paramètre $subject doit être un objet.');
+        }
+        elseif(is_object($subject) && get_class($subject) != '\SplSubject')
+        {
+            throw new Exception('Le paramètre $subject doit être un objet de type \SplSubject.');
+        }
+        
         //Gestion de l'action.
         /*
          * $action : 

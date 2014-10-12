@@ -115,7 +115,7 @@ class Kernel implements \SplSubject
     {
         if(!is_null($this->notify_action))
         {
-            $this->notifyObserver($action);
+            $this->notifyObserver($this->notify_action);
         }
         else
         {
@@ -129,46 +129,11 @@ class Kernel implements \SplSubject
     //******* Observateurs *******
     
     /**
-     * Méthode magique __call : Gère les getter et setter
-     * Est appelé dès qu'une méthode non déclaré est appelé.
-     * 
-     * @param string $name Le nom de la méthode appelé
-     * @param array  $arg  Les arguments passé à la méthode
-     * 
-     * @throws \Exception L'attribut ou la méthode demandé n'existe pas.
-     * 
-     * @return mixed Les retours prévu. 
-     */
-    public function __call($name, $arg)
-    {
-        $type = substr($name, 0, 3);
-        
-        if($type == 'get' || $type == 'set')
-        {
-            $attr = strtolower(substr($name, 4, strlen($name)));
-            if(property_exists(get_class($this), $attr))
-            {
-                if($type == 'get')
-                {
-                    return $this->{$attr};
-                }
-                elseif($type == 'set')
-                {
-                    $this->{$attr} = $arg[0];
-                    return true;
-                }
-            }
-            else {throw new \Exception('L\'attribut '.$attr.' n\'existe pas', 50);}
-        }
-        else {throw new \Exception('La méthode '.$name.' n\'existe pas.', 50);}
-    }
-    
-    /**
      * Set de l'attribut debug. Gestion de l'affichage des erreurs en plus.
      * 
      * @param bool $debug True si on est en mode débug, False sinon.
      */
-    public function set_debug($debug)
+    public function setDebug($debug)
     {
         $this->debug = $debug;
         
@@ -182,6 +147,16 @@ class Kernel implements \SplSubject
         {
             error_reporting(0);
         }
+    }
+    
+    /**
+     * Accesseur vers l'attribut debug
+     * 
+     * @return bool
+     */
+    public function getDebug()
+    {
+        return $this->debug;
     }
 }
 ?>

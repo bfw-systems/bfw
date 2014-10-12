@@ -41,7 +41,7 @@ class Ram implements \BFWInterface\IRam
      * 
      * @param string $name (default:"localhost") le nom du serveur memcache
      * 
-     * @return bool
+     * @return boolean|null
      */
     public function __construct($name='localhost')
     {
@@ -80,7 +80,7 @@ class Ram implements \BFWInterface\IRam
         
         if(!$verifParams || gettype($data) == 'resource')
         {
-            if($this->get_debug()) {throw new \Exception('Erreur dans les paramètres de Ram->setVal()');}
+            if($this->_kernel->getDebug()) {throw new \Exception('Erreur dans les paramètres de Ram->setVal()');}
             else {return $default;}
         }
         
@@ -102,7 +102,10 @@ class Ram implements \BFWInterface\IRam
             global $path;
             
             $stock = array('expire' => $expire, 'create' => time(), 'data' => $data);
-            return file_put_contents($path.'kernel/Memcache_ifnoExt/'.$key.'.txt', json_encode($stock));
+            $filePutContentReturn = file_put_contents($path.'kernel/Memcache_ifnoExt/'.$key.'.txt', json_encode($stock));
+            
+            if($filePutContentReturn === false) {return false;}
+            return true;
         }
     }
     
@@ -114,7 +117,7 @@ class Ram implements \BFWInterface\IRam
      * 
      * @throws \Exception Erreur dsans les paramètres donnée à la méthode
      * 
-     * @return bool
+     * @return boolean|null
      */
     public function majExpire($key, $exp)
     {
@@ -126,7 +129,7 @@ class Ram implements \BFWInterface\IRam
         
         if(!$verifParams)
         {
-            if($this->get_debug()) {throw new \Exception('Erreur dans les paramètres de Ram->majExpire()');}
+            if($this->_kernel->getDebug()) {throw new \Exception('Erreur dans les paramètres de Ram->majExpire()');}
             else {return $default;}
         }
         
@@ -153,7 +156,10 @@ class Ram implements \BFWInterface\IRam
                 $data->expire = $exp;
                 $data->create = time();
                 
-                return file_put_contents($path.'kernel/Memcache_ifnoExt/'.$key.'.txt', json_encode($data));
+                $filePutContentReturn = file_put_contents($path.'kernel/Memcache_ifnoExt/'.$key.'.txt', json_encode($data));
+                
+                if($filePutContentReturn === false) {return false;}
+                return true;
             }
         }
     }
@@ -174,7 +180,7 @@ class Ram implements \BFWInterface\IRam
         
         if(!$verifParams)
         {
-            if($this->get_debug()) {throw new \Exception('Erreur dans les paramètres de Ram->ifExists()');}
+            if($this->_kernel->getDebug()) {throw new \Exception('Erreur dans les paramètres de Ram->ifExists()');}
             else {return $default;}
         }
         
@@ -234,7 +240,7 @@ class Ram implements \BFWInterface\IRam
         
         if(!$verifParams)
         {
-            if($this->get_debug()) {throw new \Exception('Erreur dans les paramètres de Ram->getVal()');}
+            if($this->_kernel->getDebug()) {throw new \Exception('Erreur dans les paramètres de Ram->getVal()');}
             else {return $default;}
         }
         

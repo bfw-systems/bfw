@@ -117,9 +117,9 @@ class CreateClasse implements \BFWInterface\ICreateClasse
      * 
      * @return string La futur classe
      */
-    public function get_file()
+    public function getFile()
     {
-        return $file;
+        return $this->file;
     }
     
     /**

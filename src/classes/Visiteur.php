@@ -210,7 +210,7 @@ class Visiteur implements \BFWInterface\IVisiteur
         }
         else
         {
-            $this->Proxy_ip = FALSE;
+            $this->Proxy_ip = '';
         }
     }
     
@@ -224,7 +224,7 @@ class Visiteur implements \BFWInterface\IVisiteur
         if($this->Proxy != NULL) {$this->Proxy_host = @gethostbyaddr($_SERVER['REMOTE_ADDR']);}
         else {$this->Proxy_host = FALSE;}
         */
-        $this->Proxy_host = FALSE;
+        $this->Proxy_host = '';
     }
     
     /**
@@ -236,9 +236,13 @@ class Visiteur implements \BFWInterface\IVisiteur
         {
             $this->Ip = $this->Proxy;
         }
-        else
+        elseif(isset($_SERVER['REMOTE_ADDR']))
         {
             $this->Ip = $_SERVER['REMOTE_ADDR'];
+        }
+        else
+        {
+            $this->Ip = 'Unknown';
         }
     }
     
@@ -385,17 +389,24 @@ class Visiteur implements \BFWInterface\IVisiteur
         Puis en (préférence 0.4/1)
         */
         
-        $language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-        $ex = explode(',', $language);
-        
-        $ex2 = explode(';', $ex[0]);
-        $lang_user = strtolower($ex2[0]);
-        $lang = $lang_user;
-        
-        if(strpos($lang, '-') !== false)
+        if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
         {
-            $ex3 = explode('-', $lang);
-            $lang = $ex3[0];
+            $language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+            $ex = explode(',', $language);
+            
+            $ex2 = explode(';', $ex[0]);
+            $lang_user = strtolower($ex2[0]);
+            $lang = $lang_user;
+            
+            if(strpos($lang, '-') !== false)
+            {
+                $ex3 = explode('-', $lang);
+                $lang = $ex3[0];
+            }
+        }
+        else
+        {
+            $lang = 'Unknown';
         }
         
         return $lang;

@@ -100,7 +100,7 @@ function create_cookie($name, $val)
  */
 function nl2br_replace($str)
 {
-    return $newstr = str_replace("\n", '<br>', $str);
+    return str_replace("\n", '<br>', $str);
 }
 
 /**
@@ -138,7 +138,7 @@ function post($key, $default=null, $html=false)
     }
     else
     {
-        return null;
+        return $default;
     }
 }
 
@@ -167,7 +167,7 @@ function get($key, $default=null)
  * 
  * @param string $mail : L'adresse e-mail à vérifier
  * 
- * @return bool : 
+ * @return integer : 
  */
 function valid_mail($mail)
 {
@@ -177,8 +177,8 @@ function valid_mail($mail)
 /**
  * Affiche une page d'erreur
  * 
- * @param int/string $num        : Le n° d'erreur à afficher ou l'erreur au format texte
- * @param bool       $cleanCache : Indique si le cache du tampon de sortie doit être vidé ou pas
+ * @param mixed $num        : Le n° d'erreur à afficher ou l'erreur au format texte
+ * @param bool  $cleanCache : Indique si le cache du tampon de sortie doit être vidé ou pas
  */
 function ErrorView($num, $cleanCache=true)
 {
@@ -187,11 +187,7 @@ function ErrorView($num, $cleanCache=true)
        ob_clean(); //On efface tout ce qui a pu être mis dans le buffer pour l'affichage
     }
     
-    global $request;
-    global $Overlay, $Overlay_type, $Overlay_msg, $Overlay_opt;
-    global $mini_infos, $mini_infos_msg;
-    
-    global $path;
+    global $request, $path;
     
     if(file_exists($path.'controlers/erreurs/'.$num.'.php'))
     {
@@ -221,7 +217,7 @@ function logfile($file, $txt, $date=true)
     if($date == true)
     {
         $date = new \BFW\Date();
-        $dateTxt = $date->jour.'-'.$date->mois.'-'.$date->annee.' '.$date->heure.':'.$date->minute.':'.$date->seconde;
+        $dateTxt = $date->getJour().'-'.$date->getMois().'-'.$date->getAnnee().' '.$date->getHeure().':'.$date->getMinute().':'.$date->getSeconde();
         $txt = '['.$dateTxt.'] '.$txt;
     }
     
@@ -277,4 +273,36 @@ function getKernel()
     }
     
     return $BFWKernel;
+}
+
+/**
+ * Détermine si la session est démarré
+ * 
+ * @link http://fr2.php.net/manual/fr/function.session-status.php#113468
+ * 
+ * @return bool
+ */
+function is_session_started()
+{
+    $isStarted = false;
+    
+    if(php_sapi_name() !== 'cli')
+    {
+        if(version_compare(phpversion(), '5.4.0', '>='))
+        {
+            if(session_status() === PHP_SESSION_ACTIVE)
+            {
+                $isStarted = true;
+            }
+        }
+        else
+        {
+            if(session_id() !== '')
+            {
+                $isStarted = true;
+            }
+        }
+    }
+    
+    return $isStarted;
 }

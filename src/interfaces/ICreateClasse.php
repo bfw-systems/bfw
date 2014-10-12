@@ -18,6 +18,7 @@ interface ICreateClasse
      * 
      * @param string $nom     Le nom de la futur classe
      * @param array  $options Les options de la classe
+     * @return void
      */
     public function __construct($nom, $options=array());
     
@@ -26,7 +27,7 @@ interface ICreateClasse
      * 
      * @return string La futur classe
      */
-    public function get_file();
+    public function getFile();
     
     /**
      * Créer un attribut à la nouvelle classe
@@ -53,6 +54,7 @@ interface ICreateClasse
      * 
      * @param string $nom    Le nom de la méthode
      * @param string $porter La porté de la méthode. Par défaut private.
+     * @return void
      */
     public function createMethode($nom, $porter='private');
     

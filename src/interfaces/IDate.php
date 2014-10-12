@@ -16,11 +16,52 @@ interface IDate
     const ZONE_DEFAULT = 'Europe/Paris'; //Le timeZone par défault
     
     /**
-     * Fonction magique, permet de lire les attributs directement
-     * 
-     * @param string $name Le nom de l'attribut auquel on veux accéder.
+     * Accesseur vers l'attribut $date
+     * @return string
      */
-    public function __get($name);
+    public function getDate();
+    
+    /**
+     * Accesseur vers l'attribut $annee
+     * @return string
+     */
+    public function getAnnee();
+    
+    /**
+     * Accesseur vers l'attribut $mois
+     * @return string
+     */
+    public function getMois();
+    
+    /**
+     * Accesseur vers l'attribut $jour
+     * @return string
+     */
+    public function getJour();
+    
+    /**
+     * Accesseur vers l'attribut $heure
+     * @return string
+     */
+    public function getHeure();
+    
+    /**
+     * Accesseur vers l'attribut $minute
+     * @return string
+     */
+    public function getMinute();
+    
+    /**
+     * Accesseur vers l'attribut $seconde
+     * @return string
+     */
+    public function getSeconde();
+    
+    /**
+     * Accesseur vers l'attribut $zone
+     * @return string
+     */
+    public function getZone();
     
     /**
      * Constructeur
@@ -28,6 +69,7 @@ interface IDate
      * S'il n'y a pas ":00" à la fin, alors c'est géré.
      * 
      * @param string $date (default: "now") La date sur laquelle travailler. Si pas indiqué, il s'agit de la date actuelle.
+     * @return void
      */
     public function __construct($date="now");
     
@@ -55,6 +97,7 @@ interface IDate
      * Modifie le timezone
      * 
      * @param string $NewZone le nouveau time zone
+     * @return void
      */
     public function setZone($NewZone);
     
@@ -68,7 +111,7 @@ interface IDate
     /**
      * Liste les continents possible pour les timezones
      * 
-     * @return array La liste des continents
+     * @return string[] La liste des continents
      */
     public function lst_TimeZoneContinent();
     
@@ -112,7 +155,7 @@ interface IDate
      *      
      *      Ou "Maintenant" (qu'importe la valeur de $tout)
      * 
-     * @param bool $tout  (default: true) Affiche la date en entier (true) ou non (false).
+     * @param integer $tout  (default: true) Affiche la date en entier (true) ou non (false).
      * @param bool $minus (default: false) Affiche la date en minuscule (true) ou non (false).
      * 
      * @return string La date simplifié

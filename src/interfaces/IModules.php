@@ -15,6 +15,7 @@ interface IModules
 {
     /**
      * Constructeur
+     * @return void
      */
     public function __construct();
     
@@ -30,6 +31,7 @@ interface IModules
      * - require (string, array) : Si le module doit avoir d'autre module de chargé avant.
      * 
      * @throws \Exception Erreur sur la déclaration des options
+     * @return void
      */ 
     public function newMod($name, $params=array());
     
@@ -58,6 +60,7 @@ interface IModules
      * @param string $path Le chemin réel du module
      * 
      * @throws \Exception Le module n'existe pas
+     * @return void
      */
     public function addPath($name, $path);
     

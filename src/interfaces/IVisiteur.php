@@ -27,12 +27,14 @@ interface IVisiteur
      * 
      * @param string $name Le nom de l'attribut
      * @param mixed  $val  La nouvelle valeure de l'attribut
+     * @return void
      */
     public function __set($name, $val);
     
     /**
      * Constructeur
      * Récupère les infos et instancie la session
+     * @return void
      */
     public function __construct();
 }
