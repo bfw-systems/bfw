@@ -1,6 +1,10 @@
 BFW : Framework PHP >= 5.3.x
 ===
 
+[![Build Status](https://travis-ci.org/bulton-fr/bfw.svg?branch=2.0)](https://travis-ci.org/bulton-fr/bfw) [![Coverage Status](https://coveralls.io/repos/bulton-fr/bfw/badge.png?branch=2.0)](https://coveralls.io/r/bulton-fr/bfw?branch=2.0) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/bulton-fr/bfw/badges/quality-score.png?b=2.0)](https://scrutinizer-ci.com/g/bulton-fr/bfw/?branch=2.0) [![Dependency Status](https://www.versioneye.com/user/projects/5413eee49e1622970f0000f1/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5413eee49e1622970f0000f1)
+
+[![Latest Stable Version](https://poser.pugx.org/bulton-fr/bfw/v/stable.svg)](https://packagist.org/packages/bulton-fr/bfw) [![Latest Unstable Version](https://poser.pugx.org/bulton-fr/bfw/v/unstable.svg)](https://packagist.org/packages/bulton-fr/bfw) [![License](https://poser.pugx.org/bulton-fr/bfw/license.svg)](https://packagist.org/packages/bulton-fr/bfw)
+
 __Liens utiles :__
 
 Doc : http://bfw.bulton.fr/doc/
