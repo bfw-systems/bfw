@@ -7,6 +7,8 @@
 
 namespace BFW;
 
+use \Exception;
+
 /**
  * Classe de gestion des dates
  * Le format de la date est aaaa-mm-jj hh:mm:ss+OO:OO
@@ -176,7 +178,9 @@ class Date extends \DateTime implements \BFWInterface\IDate
      * 
      * @param string $cond La partie à modifier : year, mouth, day, jour, minute, second
      * 
-     * @return mixed : Retourne l'objet si la modification à réussi. False si échec.
+     * @throws \Exception : Si le paramètre pour modifier n'est pas géré
+     * 
+     * @return \BFW\Date : Retourne l'objet si la modification à réussi.
      */
     public function modify($cond)
     {
@@ -226,8 +230,11 @@ class Date extends \DateTime implements \BFWInterface\IDate
         $mod2 = @parent::modify($match[1].$match[2].' '.$real);
         $dateMod2 = parent::format('Y-m-d H:i:s');
         
-        //Si la modif à fail : return false
-        if($dateOri == $dateMod2 || $mod2 == false) {return false;}
+        //Si la modif à fail : création d'une exception
+        if($dateOri == $dateMod2 || $mod2 == false)
+        {
+            throw new Exception('Parameter '.$match[3].' is unknown.');
+        }
         
         //Maj des attributs et retourne l'instance courante.
         $this->MAJ_Attributes();
