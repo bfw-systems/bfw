@@ -78,7 +78,7 @@ interface IDate
      * 
      * @param string $cond La partie à modifier : year, mouth, day, jour, minute, second
      * 
-     * @return bool True la si modif à réussi, fales si erreur
+     * @return mixed True la si modif à réussi, fales si erreur
      */
     public function modify($cond);
     
