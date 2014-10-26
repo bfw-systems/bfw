@@ -287,6 +287,8 @@ class MockCreateClasse extends \BFW\CreateClasse
 
     /**
      * Test de la méthode genereAttribut($key)
+     * 
+     * @param integer $key
      */
     public function genereAttribut($key)
     {
@@ -295,6 +297,8 @@ class MockCreateClasse extends \BFW\CreateClasse
 
     /**
      * Test de la méthode genereGet($key)
+     * 
+     * @param integer $key
      */
     public function genereGet($key)
     {
@@ -303,6 +307,8 @@ class MockCreateClasse extends \BFW\CreateClasse
 
     /**
      * Test de la méthode genereSet($key)
+     * 
+     * @param integer $key
      */
     public function genereSet($key)
     {
@@ -311,6 +317,8 @@ class MockCreateClasse extends \BFW\CreateClasse
 
     /**
      * Test de la méthode genereMethode($key)
+     * 
+     * @param integer $key
      */
     public function genereMethode($key)
     {
