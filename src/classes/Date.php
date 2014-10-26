@@ -256,14 +256,9 @@ class Date extends \DateTime implements \BFWInterface\IDate
         $date = $dateSql->format('Y-m-d');
         $heure = $dateSql->format('H:i:s');
         
-        if($decoupe)
-        {
-            return array($date, $heure);
-        }
-        else
-        {
-            return $date.' '.$heure;
-        }
+        if($decoupe) {return array($date, $heure);}
+        
+        return $date.' '.$heure;
     }
     
     /**
