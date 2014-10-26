@@ -29,7 +29,7 @@ class Modules extends atoum
     public function beforeTestMethod($testMethod)
     {
         //$this->class = new \BFW\Modules();
-        //$this->mock  = new MockModules();
+        $this->mock  = new MockModules();
     }
 
     /**
@@ -37,7 +37,8 @@ class Modules extends atoum
      */
     public function testModules()
     {
-        
+        $this->mock  = new MockModules();
+        $this->object($this->mock->_kernel)->isInstanceOf('\BFW\Kernel');
     }
 
     /**
@@ -45,7 +46,34 @@ class Modules extends atoum
      */
     public function testNewMod()
     {
+        $this->mock->newMod('test');
         
+        $this->array($this->mock->modList['test'])->isEqualTo(array(
+            'name' => 'test',
+            'time' => modulesLoadTime_EndInit,
+            'require' => array()
+        ));
+        
+        $this->mock->newMod('test2', array(
+            'require' => 'test',
+            'time'    => modulesLoadTime_Visiteur
+        ));
+        $this->array($this->mock->modList['test2'])->isEqualTo(array(
+            'name' => 'test2',
+            'time' => modulesLoadTime_Visiteur,
+            'require' => array('test')
+        ));
+        
+        $mock = $this->mock;
+        $this->exception(function() use($mock)
+        {
+            $mock->newMod('test');
+        })->message->contains('Le module test existe déjà.');
+        
+        $this->exception(function() use($mock)
+        {
+            $mock->newMod('testFail', 'test');
+        })->message->contains('Les options du module testFail doivent être déclarer sous la forme d\'un array.');
     }
 
     /**
@@ -53,7 +81,9 @@ class Modules extends atoum
      */
     public function testExists()
     {
-        
+        $this->mock->newMod('test');
+        $this->boolean($this->mock->exists('test'))->isTrue();
+        $this->boolean($this->mock->exists('test2'))->isFalse();
     }
 
     /**
@@ -61,7 +91,8 @@ class Modules extends atoum
      */
     public function testIsLoad()
     {
-        
+        $this->mock->newMod('test');
+        $this->boolean($this->mock->isLoad('test2'))->isFalse();
     }
 
     /**
@@ -69,7 +100,15 @@ class Modules extends atoum
      */
     public function testAddPath()
     {
+        $mock = $this->mock;
+        $this->exception(function() use($mock)
+        {
+            $mock->addPath('test', 'path');
+        })->message->contains('Le module test n\'existe pas.');
         
+        $this->mock->newMod('test');
+        $mock->addPath('test', 'path');
+        $this->string($this->mock->modList['test']['path'])->isEqualTo('path');
     }
 
     /**
@@ -77,7 +116,10 @@ class Modules extends atoum
      */
     public function testListToLoad()
     {
+        $this->array($this->mock->listToLoad('time'))->isEqualTo(array());
+        $this->mock->newMod('test');
         
+        $this->array($this->mock->listToLoad(modulesLoadTime_EndInit))->isEqualTo(array('test'));
     }
 
     /**
