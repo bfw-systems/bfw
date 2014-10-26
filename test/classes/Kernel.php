@@ -179,7 +179,7 @@ class MockKernelSplObserver implements \SplObserver
     /**
      * Méthode par défaut appelé lorsque l'observer se déclanche
      * 
-     * @param SplSubject $subject Le sujet déclanchant l'observer
+     * @param \SplSubject $subject Le sujet déclanchant l'observer
      */
     public function update(\SplSubject $subject)
     {
@@ -195,7 +195,7 @@ class MockKernelObserver implements \SplObserver
     /**
      * Méthode par défaut appelé lorsque l'observer se déclanche
      * 
-     * @param SplSubject $subject Le sujet déclanchant l'observer
+     * @param \SplSubject $subject Le sujet déclanchant l'observer
      */
     public function update(\SplSubject $subject)
     {
@@ -205,8 +205,8 @@ class MockKernelObserver implements \SplObserver
     /**
      * L'action à effectuer quand l'observer est déclanché
      * 
-     * @param BFW\Kernel $subject Le sujet observant
-     * @param array      $action  Les actions à effectuer
+     * @param \BFW\Kernel $subject Le sujet observant
+     * @param array       $action  Les actions à effectuer
      */
     public function updateWithAction($subject, $action)
     {

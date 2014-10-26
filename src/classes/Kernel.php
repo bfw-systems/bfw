@@ -45,7 +45,7 @@ class Kernel implements SplSubject
     /**
      * Ajouter un nouvel observateur de type autre SplObserver
      * 
-     * @param class $observer L'observateur à ajouter
+     * @param object $observer L'observateur à ajouter
      */
     public function attachOther($observer)
     {
@@ -70,7 +70,7 @@ class Kernel implements SplSubject
     /**
      * Enlever un observateur de type autre SplObserver
      * 
-     * @param class $observer L'observateur à enlever
+     * @param object $observer L'observateur à enlever
      */
     public function detachOther($observer)
     {

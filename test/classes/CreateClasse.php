@@ -25,6 +25,8 @@ class CreateClasse extends atoum
 
     /**
      * Instanciation de la class avant chaque méthode de test
+     * 
+     * @param string $testMethod
      */
     public function beforeTestMethod($testMethod)
     {
