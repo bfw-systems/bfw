@@ -18,82 +18,82 @@ class Visiteur implements \BFWInterface\IVisiteur
     /**
      * @var $_kernel L'instance du Kernel
      */
-    private $_kernel;
+    protected $_kernel;
     
     /**
      * @var $Id_Session Id de la session correspondante
      */
-    private $Id_Session = null;
+    protected $Id_Session = null;
     
     /**
      * @var $Session Instance de la classe session
      */
-    private $Session = null;
+    protected $Session = null;
     
     /**
      * @var $Nom_Page Le nom de la page sur laquel il est
      */
-    private $Nom_Page = "";
+    protected $Nom_Page = "";
     
     /**
      * @var $Ip Son ip
      */
-    private $Ip = "";
+    protected $Ip = "";
     
     /**
      * @var $Host L'hostname du visiteur
      */
-    private $Host = "";
+    protected $Host = "";
     
     /**
      * @var $Proxy S'il passe par un proxy
      */
-    private $Proxy = "";
+    protected $Proxy = "";
     
     /**
      * @var $Proxy_ip L'ip du proxy
      */
-    private $Proxy_ip = "";
+    protected $Proxy_ip = "";
     
     /**
      * @var $Proxy_host L'hostname du proxy
      */
-    private $Proxy_host = "";
+    protected $Proxy_host = "";
     
     /**
      * @var $OS Son système d'exploitation
      */
-    private $OS = "";
+    protected $OS = "";
     
     /**
      * @var $Nav Son navigateur
      */
-    private $Nav = "";
+    protected $Nav = "";
     
     /**
      * @var $Langue Sa langue (n'est pas obligatoirement celle utiliser pour le jeu)
      */
-    private $Langue = "";
+    protected $Langue = "";
     
     /**
      * @var $Langue_Initiale Les initiale de la langue
      */
-    private $Langue_Initiale = "";
+    protected $Langue_Initiale = "";
     
     /**
      * @var $Proviens L'url d'où il vient
      */
-    private $Proviens = "";
+    protected $Proviens = "";
     
     /**
      * @var $Url Son url actuelle
      */
-    private $Url = "";
+    protected $Url = "";
     
     /**
      * @var $Bot S'il s'agit d'un robot
      */
-    private $Bot = "";
+    protected $Bot = "";
 
     /**
      * Accesseur get vers les attributs
@@ -136,7 +136,7 @@ class Visiteur implements \BFWInterface\IVisiteur
     /**
      * Récupère les différentes infos sur le visiteur
      */
-    private function recup_infos()
+    protected function recup_infos()
     {
         $this->proxy_detect();
         $this->proxy_ip_detect();
@@ -165,7 +165,7 @@ class Visiteur implements \BFWInterface\IVisiteur
      * 
      * @return string L'ip réel de l'user
      */
-    private function proxy_detect()
+    protected function proxy_detect()
     {
         $array = array(
             'HTTP_X_FORWARDED_FOR',
@@ -202,7 +202,7 @@ class Visiteur implements \BFWInterface\IVisiteur
     /**
      * Rempli l'attribut $this->Proxy_ip avec l'ip du proxy, false sinon
      */
-    private function proxy_ip_detect()
+    protected function proxy_ip_detect()
     {
         if($this->Proxy != NULL)
         {
@@ -217,7 +217,7 @@ class Visiteur implements \BFWInterface\IVisiteur
     /**
      * Rempli l'attribut $this->Proxy_host avec l'host du proxy, false sinon
      */
-    private function proxy_host_detect()
+    protected function proxy_host_detect()
     {
         //Commenté car gethostbyaddr a des tendences aux lags.
         /*
@@ -230,7 +230,7 @@ class Visiteur implements \BFWInterface\IVisiteur
     /**
      * Rempli l'attribut $this->Ip avec l'ip du client (ip réel si derrière un proxy)
      */
-    private function real_ip_detect()
+    protected function real_ip_detect()
     {
         if($this->Proxy != NULL)
         {
@@ -249,7 +249,7 @@ class Visiteur implements \BFWInterface\IVisiteur
     /**
      * Rempli l'attribut $this->Host avec l'host du client (l'host réel si derrière un proxy)
      */
-    private function real_host_detect()
+    protected function real_host_detect()
     {
         //Commenté car gethostbyaddr a des tendences aux lags.
         /*
@@ -262,7 +262,7 @@ class Visiteur implements \BFWInterface\IVisiteur
     /**
      * Détecte l'os de l'user et le met dans l'attribut $this->OS
      */
-    private function system_detect()
+    protected function system_detect()
     {
         $array = array
         (
@@ -324,7 +324,7 @@ class Visiteur implements \BFWInterface\IVisiteur
     /**
      * Détecte le navigateur de l'user et le met dans l'attribut $this->Nav
      */
-    private function browser_detect()
+    protected function browser_detect()
     {
         $array=array
         (
@@ -379,7 +379,7 @@ class Visiteur implements \BFWInterface\IVisiteur
      * 
      * @return string La langue préféré de l'user au format xx-yy (exemple : fr-fr ou en-us)
      */
-    private function language_detect()
+    protected function language_detect()
     {
         /*
         $_SERVER['HTTP_ACCEPT_LANGUAGE'] -> fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4
@@ -419,7 +419,7 @@ class Visiteur implements \BFWInterface\IVisiteur
      * 
      * @return string La langue choisie. "Inconnue" si elle n'a pas été trouvée.
      */
-    private function language_convert($lang='')
+    protected function language_convert($lang='')
     {
         $array = array(
             'AF'   => 'Afrikaans',
@@ -503,7 +503,7 @@ class Visiteur implements \BFWInterface\IVisiteur
     /**
      * Indique dans l'attribut $this->Proviens l'url d'où viens l'user. "Inconnu" si elle n'a pas été trouvée.
      */
-    private function referer_detect()
+    protected function referer_detect()
     {
         if(!empty($_SERVER['HTTP_REFERER']))
         {
@@ -518,7 +518,7 @@ class Visiteur implements \BFWInterface\IVisiteur
     /**
      * Indique dans l'attribut $this->Url l'url sur laquel se trouve l'user. "Inconnu" si on trouve pas.
      */
-    private function uri_detect()
+    protected function uri_detect()
     {
         if(!empty($_SERVER['REQUEST_URI']))
         {

@@ -17,17 +17,17 @@ class Ram implements \BFWInterface\IRam
     /**
      * @var $_kernel L'instance du Kernel
      */
-    private $_kernel;
+    protected $_kernel;
     
     /**
      * @var $server_connect Permet de savoir si on est connecté au serveur.
      */
-    private $server_connect = false;
+    protected $server_connect = false;
     
     /**
      * @var $Server Le serveur
      */
-    private $Server;
+    protected $Server;
     
     /**
      * @var $debug Permet d'activer ou non le mode débug

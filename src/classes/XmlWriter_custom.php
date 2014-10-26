@@ -17,22 +17,22 @@ class XmlWriter_custom implements \BFWInterface\IXmlWriter_custom
     /**
      * @var $_kernel L'instance du Kernel
      */
-    private $_kernel;
+    protected $_kernel;
     
     /**
      * @var $xml Le contenu xml
      */
-    private $xml;
+    protected $xml;
     
     /**
      * @var $indent Par quoi on indente
      */
-    private $indent = ' ';
+    protected $indent = ' ';
     
     /**
      * @var $stack Array contenant les balises entourat les balises d'éléments
      */
-    private $stack = array();
+    protected $stack = array();
     
     /**
      * Constructeur
@@ -47,7 +47,7 @@ class XmlWriter_custom implements \BFWInterface\IXmlWriter_custom
     /**
      * Indente pour les "sous balise"
      */
-    private function _indent()
+    protected function _indent()
     {
         for($i = 0, $j = count($this->stack); $i < $j; $i++)
         {

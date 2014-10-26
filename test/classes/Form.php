@@ -100,7 +100,7 @@ class Form extends atoum
         
         
         //Test avec un mauvais token
-        $token = $this->mock->tokenCreate();
+        $this->mock->tokenCreate();
         $_POST['token'] = 'test';
         $this->boolean($this->mock->tokenVerif())->isFalse();
     }
