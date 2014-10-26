@@ -7,6 +7,8 @@
  
 namespace BFW;
 
+use \Exception;
+
 /**
  * Permet de gérer les formulaire (gestion des tokens)
  * @package bfw
@@ -16,12 +18,12 @@ class Form implements \BFWInterface\IForm
     /**
      * @var $_kernel L'instance du Kernel
      */
-    private $_kernel;
+    protected $_kernel;
     
     /**
      * @var $idForm L'id du formulaire
      */
-    private $idForm;
+    protected $idForm;
     
     /**
      * Constructeur
@@ -40,7 +42,7 @@ class Form implements \BFWInterface\IForm
      * 
      * @param string $idForm L'id du formulaire
      */
-    public function set_idForm($idForm)
+    public function setIdForm($idForm)
     {
         $this->idForm = $idForm;
     }
@@ -49,9 +51,13 @@ class Form implements \BFWInterface\IForm
      * Permet de créer un token pour le formulaire
      * 
      * @return string Le token à mettre dans un champ input de type hidden.
+     * 
+     * @throws \Exception : Si le nom du formulaire n'est pas définie.
      */
-    public function create_token()
+    public function tokenCreate()
     {
+        if(is_null($this->idForm)) {throw new Exception('Form name is undefined.');}
+        
         $Id = uniqid(rand(), true);
         $date = new Date();
         
@@ -69,7 +75,7 @@ class Form implements \BFWInterface\IForm
      * 
      * @return bool True si le toke est bon, false sinon.
      */
-    public function verif_token()
+    public function tokenVerif()
     {
         global $_SESSION, $_POST;
         

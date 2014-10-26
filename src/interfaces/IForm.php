@@ -27,20 +27,20 @@ interface IForm
      * @param string $idForm L'id du formulaire
      * @return void
      */
-    public function set_idForm($idForm);
+    public function setIdForm($idForm);
     
     /**
      * Permet de créer un token pour le formulaire
      * 
      * @return string Le token à mettre dans un champ input de type hidden.
      */
-    public function create_token();
+    public function tokenCreate();
     
     /**
      * Permet de vérifier si le token est correct
      * 
      * @return bool True si le toke est bon, false sinon.
      */
-    public function verif_token();
+    public function tokenVerif();
 }
 ?>
