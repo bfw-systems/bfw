@@ -200,7 +200,7 @@ class Date extends atoum
         );
         
         //Ce timezone n'est pas toujours présent :o
-        if(isset($lstTimeZone['Antarctica/South_Pole']))
+        if(in_array('Antarctica/South_Pole', $lstTimeZone))
         {
             $lstAntarticaTimeZone[] = 'Antarctica/South_Pole';
         }
