@@ -16,72 +16,72 @@ class CreateClasse implements \BFWInterface\ICreateClasse
     /**
      * @var $_kernel L'instance du Kernel
      */
-    private $_kernel;
+    protected $_kernel;
     
     /**
      * @var $nom Le nom de la classe
      */
-    private $nom = '';
+    protected $nom = '';
     
     /**
      * @var $indente Le ou les caractère(s) mit pour indenté
      */
-    private $indente = '    ';
+    protected $indente = '    ';
     
     /**
      * @var $extends Depuis quelle classe on hérite
      */
-    private $extends = '';
+    protected $extends = '';
     
     /**
      * @var $implements Liste les interfaces de la classe
      */
-    private $implements = array();
+    protected $implements = array();
     
     /**
      * @var $ attributs Liste tous les attributs de la futur classe
      */
-    private $attributs = array();
+    protected $attributs = array();
     
     /**
      * @var $attributs_porter La portée de tous les attributs (public/private/protected)
      */
-    private $attributs_porter = array();
+    protected $attributs_porter = array();
     
     /**
      * @var $attributs_option Les options passé à la méthode de création d'attribut pour chaque attribut
      */
-    private $attributs_option = array();
+    protected $attributs_option = array();
     
     /**
      * @var $methode Liste toutes les méthodes qui sont à créer
      */
-    private $methode = array();
+    protected $methode = array();
     
     /**
      * @var $methode_porter La portée de toutes les méthodes (public/private/protected)
      */
-    private $methode_porter = array();
+    protected $methode_porter = array();
     
     /**
      * @var $get La liste de tous les accesseur get à faire
      */
-    private $get = array();
+    protected $get = array();
     
     /**
      * @var $set La liste de tous les accesseur set à faire
      */
-    private $set = array();
+    protected $set = array();
     
     /**
      * @var $file Le contenu de la futur classe
      */
-    private $file = '';
+    protected $file = '';
     
     /**
      * @var $methode_create La liste de toutes les méthodes créé (pour éviter d'en créer en double à cause des get et set)
      */
-    private $methode_create = array();
+    protected $methode_create = array();
     
     
     /**
@@ -181,14 +181,17 @@ class CreateClasse implements \BFWInterface\ICreateClasse
      * 
      * @param string $nom    Le nom de la méthode
      * @param string $porter La porté de la méthode. Par défaut private.
+     * 
+     * @return bool
      */
-    public function createMethode($nom, $porter='private')
+    public function createMethode($nom, $porter='protected')
     {
-        if(!in_array($nom, $this->methode))
-        {
-            $this->methode[] = $nom;
-            $this->methode_porter[] = $porter;
-        }
+        if(in_array($nom, $this->methode)) {return false;}
+        
+        $this->methode[] = $nom;
+        $this->methode_porter[] = $porter;
+        
+        return true;
     }
     
     /**
@@ -247,7 +250,7 @@ class CreateClasse implements \BFWInterface\ICreateClasse
         }
         
         $javadoc .= "\n";
-        $javadoc .= $this->indente." */ \n";
+        $javadoc .= $this->indente." */\n";
         
         $this->file .= $javadoc.$code.";\n\n";
     }
@@ -262,7 +265,7 @@ class CreateClasse implements \BFWInterface\ICreateClasse
         $nom = $this->get[$key];
         
         $this->file .= $this->indente."/**\n";
-        $this->file .= $this->indente.' * Accesseur get vers '.$nom."\n".$this->indente." * \n";
+        $this->file .= $this->indente.' * Accesseur get vers '.$nom."\n".$this->indente." *\n";
         $this->file .= $this->indente.' * @return mixed : La valeur de '.$nom."\n";
         $this->file .= $this->indente." */\n";
         
@@ -281,8 +284,8 @@ class CreateClasse implements \BFWInterface\ICreateClasse
         if(!in_array('set_'.$nom, $this->methode_create))
         {
             $this->file .= $this->indente."/**\n";
-            $this->file .= $this->indente.' * Accesseur set vers '.$nom."\n".$this->indente." * \n";
-            $this->file .= $this->indente.' * @param mixed : La nouvelle valeur de '.$nom."\n".$this->indente." * \n";
+            $this->file .= $this->indente.' * Accesseur set vers '.$nom."\n".$this->indente." *\n";
+            $this->file .= $this->indente.' * @param mixed : La nouvelle valeur de '.$nom."\n".$this->indente." *\n";
             $this->file .= $this->indente." * @return bool : True si réussi, False sinon.\n";
             $this->file .= $this->indente." */\n";
             
@@ -297,17 +300,18 @@ class CreateClasse implements \BFWInterface\ICreateClasse
      * Créer une méthode
      * 
      * @param int $key La clé de la méthode à créer (tableau $this->méthode)
+     * 
+     * @return void
      */
     protected function genereMethode($key)
     {
-        if(!in_array($this->methode[$key], $this->methode_create))
-        {
-            $this->file .= $this->indente."/**\n";
-            $this->file .= $this->indente." * Description de ma méthode.\n";
-            $this->file .= $this->indente." */\n";
-            
-            $this->file .= $this->indente.$this->methode_porter[$key].' function '.$this->methode[$key].'() {}'."\n";
-        }
+        if(in_array($this->methode[$key], $this->methode_create)) {return;}
+        
+        $this->file .= $this->indente."/**\n";
+        $this->file .= $this->indente." * Description de ma méthode.\n";
+        $this->file .= $this->indente." */\n";
+        
+        $this->file .= $this->indente.$this->methode_porter[$key].' function '.$this->methode[$key].'() {}'."\n";
     }
     
     /**
