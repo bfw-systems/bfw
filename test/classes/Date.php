@@ -185,9 +185,6 @@ class Date extends atoum
      */
     public function testLst_TimeZonePays()
     {
-        $dateTimeZone = new \DateTimeZone('Europe/Paris');
-        $lstTimeZone  = $dateTimeZone->listIdentifiers();
-        
         $lstAntarticaTimeZone = array(
             'Antarctica/Casey',
             'Antarctica/Davis',
@@ -196,20 +193,27 @@ class Date extends atoum
             'Antarctica/Mawson',
             'Antarctica/McMurdo',
             'Antarctica/Palmer',
-            'Antarctica/Rothera'
+            'Antarctica/Rothera',
+            'Antarctica/South_Pole',
+            'Antarctica/Syowa',
+            'Antarctica/Troll',
+            'Antarctica/Vostok'
         );
         
-        //Ce timezone n'est pas toujours présent :o
-        if(in_array('Antarctica/South_Pole', $lstTimeZone))
+        
+        $dateTimeZone = new \DateTimeZone('Europe/Paris');
+        $lstTimeZone  = $dateTimeZone->listIdentifiers();
+        
+        $lstTimeZoneTest = array();
+        foreach($lstAntarticaTimeZone as $timeZone)
         {
-            $lstAntarticaTimeZone[] = 'Antarctica/South_Pole';
+            if(in_array($timeZone, $lstTimeZone))
+            {
+                $lstTimeZoneTest[] = $timeZone;
+            }
         }
         
-        $lstAntarticaTimeZone[] = 'Antarctica/Syowa';
-        $lstAntarticaTimeZone[] = 'Antarctica/Troll';
-        $lstAntarticaTimeZone[] = 'Antarctica/Vostok';
-        
-        $this->array($this->mock->lst_TimeZonePays('Antarctica'))->isEqualTo($lstAntarticaTimeZone);
+        $this->array($this->mock->lst_TimeZonePays('Antarctica'))->isEqualTo($lstTimeZoneTest);
     }
 
     /**
