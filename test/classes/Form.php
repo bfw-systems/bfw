@@ -28,7 +28,7 @@ class Form extends atoum
      */
     public function beforeTestMethod($testMethod)
     {
-        $this->class = new \BFW\Form();
+        //$this->class = new \BFW\Form();
         //$this->mock  = new MockForm();
     }
 
@@ -75,4 +75,5 @@ class MockForm extends \BFW\Form
      * Accesseur get
      */
     public function __get($name) {return $this->$name;}
+
 }

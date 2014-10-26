@@ -89,17 +89,17 @@ class Kernel extends atoum
     }
 
     /**
-     * Test de la méthode __call($name, $arg)
+     * Test de la méthode setDebug($debug)
      */
-    public function test__call()
+    public function testSetDebug()
     {
         
     }
 
     /**
-     * Test de la méthode set_debug($debug)
+     * Test de la méthode getDebug()
      */
-    public function testSet_debug()
+    public function testGetDebug()
     {
         
     }
@@ -115,4 +115,5 @@ class MockKernel extends \BFW\Kernel
      * Accesseur get
      */
     public function __get($name) {return $this->$name;}
+
 }

@@ -33,7 +33,7 @@ class Ram extends atoum
     }
 
     /**
-     * Test du constructeur : Ram($name=localhost)
+     * Test du constructeur : Ram($name='localhost')
      */
     public function testRam()
     {
@@ -91,4 +91,5 @@ class MockRam extends \BFW\Ram
      * Accesseur get
      */
     public function __get($name) {return $this->$name;}
+
 }

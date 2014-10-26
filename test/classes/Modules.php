@@ -41,7 +41,7 @@ class Modules extends atoum
     }
 
     /**
-     * Test de la méthode newMod($name, $params=Array)
+     * Test de la méthode newMod($name, $params=array())
      */
     public function testNewMod()
     {
@@ -81,6 +81,14 @@ class Modules extends atoum
     }
 
     /**
+     * Test de la méthode modToLoad($mod, &$arrayToLoad)
+     */
+    public function testModToLoad()
+    {
+        
+    }
+
+    /**
      * Test de la méthode listNotLoad($regen=)
      */
     public function testListNotLoad()
@@ -115,4 +123,13 @@ class MockModules extends \BFW\Modules
      * Accesseur get
      */
     public function __get($name) {return $this->$name;}
+
+    /**
+     * Test de la méthode modToLoad($mod, &$arrayToLoad)
+     */
+    public function modToLoad($mod, &$arrayToLoad)
+    {
+        return parent::modToLoad($mod, $arrayToLoad);
+    }
+
 }

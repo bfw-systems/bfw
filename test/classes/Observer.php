@@ -59,4 +59,5 @@ class MockObserver extends \BFW\Observer
      * Accesseur get
      */
     public function __get($name) {return $this->$name;}
+
 }
