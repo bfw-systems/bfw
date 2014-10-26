@@ -140,43 +140,38 @@ class CreateClasse implements \BFWInterface\ICreateClasse
      */
     public function createAttribut($nom, $opt=array())
     {
-        if(!in_array($nom, $this->attributs))
+        if(in_array($nom, $this->attributs)) {return false;}
+        
+        if(!isset($opt['porter']))
         {
-            if(!isset($opt['porter']))
-            {
-                $opt['porter'] = 'protected';
-            }
-            
-            if(!isset($opt['get']))
-            {
-                $opt['get'] = 1;
-            }
-            
-            if(!isset($opt['set']))
-            {
-                $opt['set'] = 1;
-            }
-            
-            $this->attributs[] = $nom;
-            $this->attributs_porter[] = $opt['porter'];
-            $this->attributs_option[] = $opt;
-            
-            if($opt['get'] == 1)
-            {
-                $this->get[] = $nom;
-            }
-            
-            if($opt['set'] == 1)
-            {
-                $this->set[] = $nom;
-            }
-            
-            return true;
+            $opt['porter'] = 'protected';
         }
-        else
+        
+        if(!isset($opt['get']))
         {
-            return false;
+            $opt['get'] = 1;
         }
+        
+        if(!isset($opt['set']))
+        {
+            $opt['set'] = 1;
+        }
+        
+        $this->attributs[] = $nom;
+        $this->attributs_porter[] = $opt['porter'];
+        $this->attributs_option[] = $opt;
+        
+        if($opt['get'] == 1)
+        {
+            $this->get[] = $nom;
+        }
+        
+        if($opt['set'] == 1)
+        {
+            $this->set[] = $nom;
+        }
+        
+        return true;
     }
     
     /**
