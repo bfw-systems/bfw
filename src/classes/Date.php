@@ -374,10 +374,10 @@ class Date extends \DateTime implements \BFWInterface\IDate
     public function aff_simple($tout=true, $minus=false)
     {
         //Découpage de la date donnée dans l'instance de la classe
-        $annee = $this->annee;
-        $mois = $this->mois;
-        $jour = $this->jour;
-        $heure = $this->heure;
+        $annee  = $this->annee;
+        $mois   = $this->mois;
+        $jour   = $this->jour;
+        $heure  = $this->heure;
         $minute = $this->minute;
         
         //La date actuelle
@@ -395,14 +395,14 @@ class Date extends \DateTime implements \BFWInterface\IDate
             Afficher au format date
         */
         
-        $diff = parent::diff($time);
-        $diffAnnee = $diff->format('%Y');
-        $diffMois = $diff->format('%M');
-        $diffJour = $diff->format('%D');
-        $diffHeure = $diff->format('%H');
-        $diffMinute = $diff->format('%I');
+        $diff        = parent::diff($time);
+        $diffAnnee   = $diff->format('%Y');
+        $diffMois    = $diff->format('%M');
+        $diffJour    = $diff->format('%D');
+        $diffHeure   = $diff->format('%H');
+        $diffMinute  = $diff->format('%I');
         $diffSeconde = $diff->format('%S');
-        $diffInvert = $diff->invert;
+        $diffInvert  = $diff->invert;
         
         //@TODO : All $diffXxx variable is on a string type, not int.
         if($diffAnnee == 0 && $diffMois == 0 && $diffJour == 0 && $diffHeure == 0 && $diffMinute == 0 && $diffSeconde == 0)
@@ -446,31 +446,19 @@ class Date extends \DateTime implements \BFWInterface\IDate
         else
         {
             //Sinon et bien c'était il y a plus de 48h, et on affiche la date au format habituel
-            $aff_date = 'Le '.$jour.'/'.$mois; //D'abord le jour et le mois
+            $aff_date  = 'Le '.$jour.'/'.$mois; //D'abord le jour et le mois
             $aff_heure = ' à '.$heure.':'.$minute; //Et ensuite l'heure et les minutes
             
             //Et si l'année n'est pas la meme que l'actuel, alors on rajoute l'année à la fin de la première partie l'année
-            if($diffAnnee != 0)
-            {
-                $aff_date .= '/'.$annee;
-            }
+            if($diffAnnee != 0) {$aff_date .= '/'.$annee;}
         }
         
-        //Maintenant on arrive à la partie qui dit, affiche moi toutes les infos ou seulement une partie
-        if($tout == 1) //Si on veut tout afficher (la date et l'heure)
-        {
-            $aff = $aff_date.$aff_heure;
-        }
-        else //Ou si on ne veut afficher que la date
-        {
-            $aff = $aff_date;
-        }
+        $aff = $aff_date; //On renvoi la date
+        //Si on veut tout afficher (la date et l'heure)
+        if($tout == 1) {$aff .= $aff_heure;}
         
         //Met la première lettre en minuscule dans le cas où l'ont veuille du minuscule
-        if($minus == true)
-        {
-            $aff = mb_strtolower($aff);
-        }
+        if($minus == true) {$aff = mb_strtolower($aff);}
         
         return $aff; //Et on retour la date parser :D
     }
