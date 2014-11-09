@@ -88,7 +88,6 @@ class Ram implements \BFWInterface\IRam
      */
     public function setVal($key, $data, $expire=0)
     {
-        $default = false;
         $verifParams = verifTypeData(array(
             array('type' => 'string', 'data' => $key),
             array('type' => 'int', 'data' => $expire)
@@ -120,7 +119,6 @@ class Ram implements \BFWInterface\IRam
      */
     public function majExpire($key, $exp)
     {
-        $default = false;
         $verifParams = verifTypeData(array(
             array('type' => 'string', 'data' => $key),
             array('type' => 'int', 'data' => $exp)
@@ -154,7 +152,6 @@ class Ram implements \BFWInterface\IRam
      */
     public function ifExists($key)
     {
-        $default = false;
         $verifParams = verifTypeData(array(array('type' => 'string', 'data' => $key)));
         
         if(!$verifParams)
@@ -192,7 +189,6 @@ class Ram implements \BFWInterface\IRam
      */
     public function getVal($key)
     {
-        $default = false;
         $verifParams = verifTypeData(array(array('type' => 'string', 'data' => $key)));
         
         if(!$verifParams)
