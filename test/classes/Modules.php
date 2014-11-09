@@ -92,7 +92,28 @@ class Modules extends atoum
     public function testIsLoad()
     {
         $this->mock->newMod('test');
+        $this->boolean($this->mock->isLoad('test'))->isFalse();
         $this->boolean($this->mock->isLoad('test2'))->isFalse();
+        
+        $this->mock->loaded('test');
+        $this->boolean($this->mock->isLoad('test'))->isTrue();
+    }
+
+    /**
+     * Test de la méthode loaded($name)
+     */
+    public function testLoaded()
+    {
+        $this->mock->newMod('test');
+        $this->mock->loaded('test');
+        
+        $this->array($this->mock->modLoad)->isEqualTo(array(0 => 'test'));
+        
+        $mock = $this->mock;
+        $this->exception(function() use($mock)
+        {
+            $mock->loaded('test2');
+        })->message->contains('Module test2 not exists.');
     }
 
     /**
@@ -127,15 +148,62 @@ class Modules extends atoum
      */
     public function testModToLoad()
     {
+        $arrayToLoad = array();
+        $this->mock->newMod('test');
         
+        //Test d'un module sans dépendance et non chargé
+        $this->boolean($this->mock->modToLoad($this->mock->modList['test'], $arrayToLoad))->isTrue();
+        
+        //Test d'un module sans dépendance et déjà chargé
+        $this->boolean($this->mock->modToLoad($this->mock->modList['test'], $arrayToLoad))->isTrue();
+        
+        //Test d'un module avec dépendance sans erreur
+        $this->mock->newMod('test2', array('require' => 'test'));
+        $this->boolean($this->mock->modToLoad($this->mock->modList['test2'], $arrayToLoad))->isTrue();
+        
+        $mock = &$this->mock;
+        
+        //Test d'un module avec une dépendance qui n'existe pas dans la liste des modules
+        $this->mock->newMod('test3', array('require' => 'notExist'));
+        $this->exception(function() use($mock, $arrayToLoad)
+        {
+            $mock->modToLoad($mock->modList['test3'], $arrayToLoad);
+        })->message->contains('La dépendance notExist du module test3 n\'a pas été trouvé.');
+        
+        //Test d'un module avec une dépendance qui existe mais qui n'est pas chargé.
+        $this->mock->newMod('test4', array('time' => modulesLoadTime_EndInit));
+        $this->mock->newMod('test5', array(
+            'time'    => modulesLoadTime_Visiteur,
+            'require' => 'test4'
+        ));
+        
+        $this->exception(function() use($mock, $arrayToLoad)
+        {
+            $mock->modToLoad($mock->modList['test5'], $arrayToLoad);
+        })->message->contains('La dépendance test4 du module test5 n\'est pas encore chargé. Vous devez charger votre module plus tard.');
     }
 
     /**
-     * Test de la méthode listNotLoad($regen=)
+     * Test de la méthode listNotLoad($regen=false)
      */
     public function testListNotLoad()
     {
+        //Aucun module existe, donc la liste est vide et automatiquement généré
+        $this->array($this->mock->listNotLoad())->isEqualTo(array());
         
+        $this->mock->newMod('test');
+        
+        //La liste est toujours vide car non regénéré
+        $this->array($this->mock->listNotLoad())->isEqualTo(array());
+        
+        //La liste est regénéré
+        $this->array($this->mock->listNotLoad(true))->isEqualTo(array(
+            'test' => array(
+                'name'    => 'test',
+                'time'    => 'endInit',
+                'require' => array()
+            )
+        ));
     }
 
     /**
@@ -143,7 +211,13 @@ class Modules extends atoum
      */
     public function testIsModulesNotLoad()
     {
+        $this->boolean($this->mock->isModulesNotLoad())->isFalse();
         
+        $this->mock->newMod('test');
+        $this->boolean($this->mock->isModulesNotLoad())->isFalse(); //Cache
+        
+        $this->mock->listNotLoad(true); //Kill le cache
+        $this->boolean($this->mock->isModulesNotLoad())->isTrue();
     }
 
     /**
@@ -151,7 +225,18 @@ class Modules extends atoum
      */
     public function testGetModuleInfos()
     {
+        $this->mock->newMod('test');
+        $this->array($this->mock->getModuleInfos('test'))->isEqualTo(array(
+            'name'    => 'test',
+            'time'    => 'endInit',
+            'require' => array()
+        ));
         
+        $mock = $this->mock;
+        $this->exception(function() use($mock)
+        {
+            $mock->getModuleInfos('test2');
+        })->message->contains('Le module test2 n\'existe pas.');
     }
 
 }
