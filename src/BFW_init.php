@@ -159,17 +159,18 @@ if(file_exists($rootPath.'modules'))
     while(false !== ($file = readdir($dir)))
     {
         $path = $rootPath.'modules/'.$file;
-        
-        if(is_link($path))
-        {
-            $path = readlink($path);
-        }
+        if(is_link($path)) {$path = readlink($path);}
         
         //Si le fichier existe, on inclus le fichier principal du module
         if(file_exists($path.'/'.$file.'.php'))
         {
             require_once($path.'/'.$file.'.php');
             $Modules->addPath($file, $path);
+            
+            if(!file_exists($path.'/inclus.php'))
+            {
+                $Modules->loaded($file);
+            }
         }
     }
     closedir($dir);
@@ -184,6 +185,7 @@ if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
         $infos = $Modules->getModuleInfos($moduleToLoad);
         $path = $infos['path'];
         
+        $Modules->loaded($moduleToLoad);
         require_once($path.'/inclus.php');
     }
 }
@@ -204,6 +206,7 @@ if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
         
         if(file_exists($path.'/inclus.php'))
         {
+            $Modules->loaded($moduleToLoad);
             require_once($path.'/inclus.php');
         }
     }
@@ -258,6 +261,7 @@ if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
         
         if(file_exists($path.'/inclus.php'))
         {
+            $Modules->loaded($moduleToLoad);
             require_once($path.'/inclus.php');
         }
     }

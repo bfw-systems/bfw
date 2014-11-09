@@ -111,6 +111,25 @@ class Modules implements \BFWInterface\IModules
     }
     
     /**
+     * Permet de définir un module comme chargé
+     * 
+     * @param string $name Le nom du module
+     * 
+     * @throws \Exception : Si le module n'existe pas
+     * 
+     * @return void
+     */
+    public function loaded($name)
+    {
+        if(!$this->exists($name))
+        {
+            throw new \Exception('Module '.$name.' not exists.');
+        }
+        
+        $this->modLoad[] = $name;
+    }
+    
+    /**
      * Ajoute le path pour un module donné
      * 
      * @param string $name Le nom du module
@@ -200,7 +219,7 @@ class Modules implements \BFWInterface\IModules
      */
     public function listNotLoad($regen=false)
     {
-        if($regen == true || $this->notLoad != null)
+        if($regen == true || is_null($this->notLoad))
         {
             $this->notLoad = array_diff($this->modList, $this->modLoad);
         }
