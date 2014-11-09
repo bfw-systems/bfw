@@ -8,6 +8,7 @@
 namespace BFW;
 
 use \Exception;
+use \SplSubject;
 
 /**
  * Classe Observer

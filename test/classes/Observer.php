@@ -29,7 +29,7 @@ class Observer extends atoum
     public function beforeTestMethod($testMethod)
     {
         //$this->class = new \BFW\Observer();
-        //$this->mock  = new MockObserver();
+        $this->mock  = new MockObserver();
     }
 
     /**
@@ -37,17 +37,54 @@ class Observer extends atoum
      */
     public function testUpdate()
     {
-        
+        $subject = new MockObserverSplSubject;
+        $this->mock->update($subject);
     }
 
     /**
      * Test de la méthode updateWithAction($subject, $action)
+     * 
+     * @TODO : Too complexe actually
      */
     public function testUpdateWithAction()
     {
         
     }
 
+}
+
+/**
+ * Mock pour les observers
+ */
+class MockObserverSplSubject implements \SplSubject
+{
+    /**
+     * Ajouter un nouvel observateur
+     * 
+     * @param SplObserver $observer L'observateur à ajouter
+     */
+    public function attach(SplObserver $observer)
+    {
+        
+    }
+    
+    /**
+     * Enlever un observateur
+     * 
+     * @param SplObserver $observer L'observateur à enlever
+     */
+    public function detach(SplObserver $observer)
+    {
+        
+    }
+    
+    /**
+     * Déclanche la notification vers les observers.
+     */
+    public function notify()
+    {
+        
+    }
 }
 
 /**
