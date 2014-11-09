@@ -12,7 +12,7 @@ namespace BFW;
  * Permet de générer un fichier xml
  * @package bfw
  */
-class XmlWriter_custom implements \BFWInterface\IXmlWriter_custom
+class XmlWriterCustom implements \BFWInterface\IXmlWriterCustom
 {
     /**
      * @var $_kernel L'instance du Kernel
