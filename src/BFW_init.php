@@ -130,7 +130,11 @@ foreach($modulesToLoad as $key => $moduleLoad)
 //Load module
 
 //Serveur memcache (permet de stocker des infos direct sur la ram avec ou sans limite dans le temps)
-$Memcache = new BFW\Ram;
+$Memcache = null;
+if($memcache_enabled === true)
+{
+    $Memcache = new BFW\Ram($memcache_host, $memcache_port);
+}
 //Fin Serveur memcache
 
 //Inclusions des modules

@@ -15,13 +15,16 @@ interface IRam
 {
     /**
      * Constructeur
-     * Se connecte au serveur memcache indiqué, par défaut au localhost
+     * Se connecte au serveur memcache indiqué
      * 
-     * @param string $name (default:"localhost") le nom du serveur memcache
+     * @param string  $host l'host du serveur memcache
+     * @param integer $port le port du serveur memcache
      * 
-     * @return bool
+     * @throws Exception : Si l'extension php-memcache n'est présente
+     *                     Si les infos sont pas au bon format
+     *                     Si la connexion échoue
      */
-    public function __construct($name='localhost');
+    public function __construct($host, $port);
     
     /**
      * Permet de stocker une clé en mémoire ou de la mettre à jour
