@@ -21,6 +21,7 @@ env: MEMCACHED__HOST=localhost
 
 # execute any number of scripts before the test run, custom env's are available as variables
 before_script:
+  - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - wget http://downloads.atoum.org/nightly/mageekguy.atoum.phar;
   - composer install;
 
