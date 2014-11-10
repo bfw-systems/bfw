@@ -90,7 +90,7 @@ class Ram implements \BFWInterface\IRam
     {
         $verifParams = verifTypeData(array(
             array('type' => 'string', 'data' => $key),
-            array('type' => 'int', 'data' => $expire)
+            array('type' => 'int',    'data' => $expire)
         ));
         
         if(!$verifParams || gettype($data) == 'resource')
@@ -121,7 +121,7 @@ class Ram implements \BFWInterface\IRam
     {
         $verifParams = verifTypeData(array(
             array('type' => 'string', 'data' => $key),
-            array('type' => 'int', 'data' => $exp)
+            array('type' => 'int',    'data' => $exp)
         ));
         
         if(!$verifParams)
@@ -133,9 +133,9 @@ class Ram implements \BFWInterface\IRam
         
         //On la "modifie" en remettant la même valeur mais en changeant le temps
         //avant expiration si une valeur a été retournée
-        if($ret !== false)
+        if($ret !== false && $this->Server->replace($key, $ret, 0, $exp))
         {
-            if($this->Server->replace($key, $ret, 0, $exp)) {return true;}
+            return true;
         }
         
         return false;
@@ -174,6 +174,13 @@ class Ram implements \BFWInterface\IRam
      */
     public function delete($key)
     {
+        $verifParams = verifTypeData(array(array('type' => 'string', 'data' => $key)));
+        
+        if(!$verifParams)
+        {
+            throw new \Exception('Erreur dans les paramètres de Ram->delete()');
+        }
+        
         if($this->Server->delete($key)) {return true;}
         return false;
     }
