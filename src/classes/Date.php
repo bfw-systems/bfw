@@ -71,6 +71,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $annee
+     * 
+     * @return string
      */
     public function getAnnee()
     {
@@ -79,6 +81,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $mois
+     * 
+     * @return string
      */
     public function getMois()
     {
@@ -87,6 +91,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $jour
+     * 
+     * @return string
      */
     public function getJour()
     {
@@ -95,6 +101,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $heure
+     * 
+     * @return string
      */
     public function getHeure()
     {
@@ -103,6 +111,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $minute
+     * 
+     * @return string
      */
     public function getMinute()
     {
@@ -111,6 +121,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $seconde
+     * 
+     * @return string
      */
     public function getSeconde()
     {
@@ -119,6 +131,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $zone
+     * 
+     * @return string
      */
     public function getZone()
     {
