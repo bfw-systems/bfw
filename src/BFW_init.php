@@ -219,11 +219,6 @@ if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
 
 //Chemin
 /**
- * @name path_cache : Chemin vers la racine du dossier cache
- */
-define('path_cache', $rootPath.'cache/');
-
-/**
  * @name path_controler : Chemin vers la racine du dossier controlers
  */
 define('path_controllers', $rootPath.'controllers/');
