@@ -7,11 +7,14 @@
 
 namespace BFW;
 
+use \SplObserver;
+use \SplSubject;
+
 /**
  * Classe Noyau.
  * @package bfw
  */
-class Kernel implements \SplSubject
+class Kernel implements SplSubject
 {
     /**
      * @var array $observers Liste des observateurs instanciés
@@ -42,7 +45,7 @@ class Kernel implements \SplSubject
     /**
      * Ajouter un nouvel observateur de type autre SplObserver
      * 
-     * @param class $observer L'observateur à ajouter
+     * @param object $observer L'observateur à ajouter
      */
     public function attachOther($observer)
     {
@@ -56,9 +59,9 @@ class Kernel implements \SplSubject
      */
     public function detach(SplObserver $observer)
     {
-        $key = array_search($observer, $this->observers);
+        $key = array_search($observer, $this->observers, true);
         
-        if($key)
+        if($key !== false)
         {
             unset($this->observers[$key]);
         }
@@ -67,11 +70,11 @@ class Kernel implements \SplSubject
     /**
      * Enlever un observateur de type autre SplObserver
      * 
-     * @param class $observer L'observateur à enlever
+     * @param object $observer L'observateur à enlever
      */
     public function detachOther($observer)
     {
-        $key = array_search($observer, $this->observers);
+        $key = array_search($observer, $this->observers, true);
         
         if($key)
         {

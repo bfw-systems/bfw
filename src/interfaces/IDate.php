@@ -78,7 +78,9 @@ interface IDate
      * 
      * @param string $cond La partie à modifier : year, mouth, day, jour, minute, second
      * 
-     * @return bool True la si modif à réussi, fales si erreur
+     * @throws \Exception : Si le paramètre pour modifier n'est pas géré
+     * 
+     * @return \BFW\Date : Retourne l'objet si la modification à réussi.
      */
     public function modify($cond);
     

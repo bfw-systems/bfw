@@ -18,104 +18,175 @@ class Visiteur implements \BFWInterface\IVisiteur
     /**
      * @var $_kernel L'instance du Kernel
      */
-    private $_kernel;
+    protected $_kernel;
     
     /**
-     * @var $Id_Session Id de la session correspondante
+     * @var $idSession Id de la session correspondante
      */
-    private $Id_Session = null;
+    protected $idSession = null;
     
     /**
-     * @var $Session Instance de la classe session
+     * @var $ip Son ip
      */
-    private $Session = null;
+    protected $ip = '';
     
     /**
-     * @var $Nom_Page Le nom de la page sur laquel il est
+     * @var $host L'hostname du visiteur
      */
-    private $Nom_Page = "";
+    protected $host = '';
     
     /**
-     * @var $Ip Son ip
+     * @var $proxy S'il passe par un proxy
      */
-    private $Ip = "";
+    protected $proxy = '';
     
     /**
-     * @var $Host L'hostname du visiteur
+     * @var $proxyIp L'ip du proxy
      */
-    private $Host = "";
+    protected $proxyIp = '';
     
     /**
-     * @var $Proxy S'il passe par un proxy
+     * @var $proxyHost L'hostname du proxy
      */
-    private $Proxy = "";
+    protected $proxyHost = '';
     
     /**
-     * @var $Proxy_ip L'ip du proxy
+     * @var $os Son système d'exploitation
      */
-    private $Proxy_ip = "";
+    protected $os = '';
     
     /**
-     * @var $Proxy_host L'hostname du proxy
+     * @var $nav Son navigateur
      */
-    private $Proxy_host = "";
+    protected $nav = '';
     
     /**
-     * @var $OS Son système d'exploitation
+     * @var $langue Sa langue (n'est pas obligatoirement celle utiliser pour le jeu)
      */
-    private $OS = "";
+    protected $langue = '';
     
     /**
-     * @var $Nav Son navigateur
+     * @var $langueInitiale Les initiale de la langue
      */
-    private $Nav = "";
+    protected $langueInitiale = '';
     
     /**
-     * @var $Langue Sa langue (n'est pas obligatoirement celle utiliser pour le jeu)
+     * @var $proviens L'url d'où il vient
      */
-    private $Langue = "";
+    protected $proviens = '';
     
     /**
-     * @var $Langue_Initiale Les initiale de la langue
+     * @var $url Son url actuelle
      */
-    private $Langue_Initiale = "";
+    protected $url = '';
     
     /**
-     * @var $Proviens L'url d'où il vient
+     * @var $bot S'il s'agit d'un robot
      */
-    private $Proviens = "";
+    protected $bot = '';
     
     /**
-     * @var $Url Son url actuelle
+     * Accesseur vers l'attribut $idSession
      */
-    private $Url = "";
-    
-    /**
-     * @var $Bot S'il s'agit d'un robot
-     */
-    private $Bot = "";
-
-    /**
-     * Accesseur get vers les attributs
-     * 
-     * @param string $name Le nom de l'attribut
-     * 
-     * @return mixed La valeur de l'attribut
-     */
-    public function __get($name)
+    public function getIdSession()
     {
-        return $this->$name;
+        return $this->idSession;
     }
     
     /**
-     * Accesseur set vers les attributs
-     * 
-     * @param string $name Le nom de l'attribut
-     * @param mixed  $val  La nouvelle valeure de l'attribut
+     * Accesseur vers l'attribut $ip
      */
-    public function __set($name, $val)
+    public function getIp()
     {
-        $this->$name = $val;
+        return $this->ip;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $host
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $proxy
+     */
+    public function getProxy()
+    {
+        return $this->proxy;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $proxyIp
+     */
+    public function getProxyIp()
+    {
+        return $this->proxyIp;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $proxyHost
+     */
+    public function getProxyHost()
+    {
+        return $this->proxyHost;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $os
+     */
+    public function getOs()
+    {
+        return $this->os;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $nav
+     */
+    public function getNav()
+    {
+        return $this->nav;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $langue
+     */
+    public function getLangue()
+    {
+        return $this->langue;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $langueInitiale
+     */
+    public function getLangueInitiale()
+    {
+        return $this->langueInitiale;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $proviens
+     */
+    public function getProviens()
+    {
+        return $this->proviens;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $url
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+    
+    /**
+     * Accesseur vers l'attribut $bot
+     */
+    public function getBot()
+    {
+        return $this->bot;
     }
     
     /**
@@ -129,29 +200,29 @@ class Visiteur implements \BFWInterface\IVisiteur
         $this->recup_infos();
         if(isset($_SESSION['idSess']))
         {
-            $this->Id_Session = $_SESSION['idSess'];
+            $this->idSession = $_SESSION['idSess'];
         }
     }
     
     /**
      * Récupère les différentes infos sur le visiteur
      */
-    private function recup_infos()
+    protected function recup_infos()
     {
-        $this->proxy_detect();
-        $this->proxy_ip_detect();
-        $this->proxy_host_detect();
-        $this->real_ip_detect();
-        $this->real_host_detect();
+        $this->proxyDetect();
+        $this->proxyIpDetect();
+        $this->proxyHostDetect();
+        $this->realIpDetect();
+        $this->realHostDetect();
         //$this->port_detect();
-        $this->system_detect();
-        $this->browser_detect();
+        $this->systemDetect();
+        $this->browserDetect();
         
-        $this->Langue_Initiale = $this->language_detect();
-        $this->Langue = $this->language_convert($this->Langue_Initiale);
+        $this->langueInitiale = $this->languageDetect();
+        $this->langue = $this->languageConvert($this->langueInitiale);
         
-        $this->referer_detect();
-        $this->uri_detect();
+        $this->refererDetect();
+        $this->uriDetect();
     }
     
     /********************************************************************
@@ -163,9 +234,9 @@ class Visiteur implements \BFWInterface\IVisiteur
     /**
      * Trouve l'ip réelle si un proxy est detecté
      * 
-     * @return string L'ip réel de l'user
+     * @return string|null L'ip réel de l'user
      */
-    private function proxy_detect()
+    protected function proxyDetect()
     {
         $array = array(
             'HTTP_X_FORWARDED_FOR',
@@ -178,91 +249,79 @@ class Visiteur implements \BFWInterface\IVisiteur
             'HTTP_CLIENT_IP'
         );
         
-        $ret = false;
         foreach($array as $key)
         {
             if(isset($_SERVER[$key]) && !empty($_SERVER[$key]))
             {
-                if($ret == false)
-                {
-                    $this->Proxy = $_SERVER[$key];
-                }
-                $ret = true;
+                $this->proxy = $_SERVER[$key];
+                return $this->proxy;
             }
         }
         
-        if($ret == false)
-        {
-            $this->Proxy = NULL;
-        }
-        
-        return $this->Proxy;
+        $this->proxy = null;
+        return $this->proxy;
     }
     
     /**
-     * Rempli l'attribut $this->Proxy_ip avec l'ip du proxy, false sinon
+     * Rempli l'attribut $this->proxyIp avec l'ip du proxy, false sinon
      */
-    private function proxy_ip_detect()
+    protected function proxyIpDetect()
     {
-        if($this->Proxy != NULL)
+        $this->proxyIp = '';
+        
+        if($this->proxy != NULL)
         {
-            $this->Proxy_ip = $_SERVER['REMOTE_ADDR'];
-        }
-        else
-        {
-            $this->Proxy_ip = '';
+            $this->proxyIp = $_SERVER['REMOTE_ADDR'];
         }
     }
     
     /**
-     * Rempli l'attribut $this->Proxy_host avec l'host du proxy, false sinon
+     * Rempli l'attribut $this->proxyHost avec l'host du proxy, false sinon
      */
-    private function proxy_host_detect()
+    protected function proxyHostDetect()
     {
         //Commenté car gethostbyaddr a des tendences aux lags.
         /*
-        if($this->Proxy != NULL) {$this->Proxy_host = @gethostbyaddr($_SERVER['REMOTE_ADDR']);}
-        else {$this->Proxy_host = FALSE;}
+        if($this->proxy != NULL) {$this->proxyHost = @gethostbyaddr($_SERVER['REMOTE_ADDR']);}
+        else {$this->proxyHost = FALSE;}
         */
-        $this->Proxy_host = '';
+        $this->proxyHost = '';
     }
     
     /**
-     * Rempli l'attribut $this->Ip avec l'ip du client (ip réel si derrière un proxy)
+     * Rempli l'attribut $this->ip avec l'ip du client (ip réel si derrière un proxy)
      */
-    private function real_ip_detect()
+    protected function realIpDetect()
     {
-        if($this->Proxy != NULL)
+        $this->ip = 'Unknown';
+        
+        if($this->proxy != NULL)
         {
-            $this->Ip = $this->Proxy;
+            $this->ip = $this->proxy;
         }
         elseif(isset($_SERVER['REMOTE_ADDR']))
         {
-            $this->Ip = $_SERVER['REMOTE_ADDR'];
-        }
-        else
-        {
-            $this->Ip = 'Unknown';
+            $this->ip = $_SERVER['REMOTE_ADDR'];
         }
     }
     
     /**
-     * Rempli l'attribut $this->Host avec l'host du client (l'host réel si derrière un proxy)
+     * Rempli l'attribut $this->host avec l'host du client (l'host réel si derrière un proxy)
      */
-    private function real_host_detect()
+    protected function realHostDetect()
     {
         //Commenté car gethostbyaddr a des tendences aux lags.
         /*
-        if($this->Proxy != NULL) {$this->Host = @gethostbyaddr($this->Proxy);}
-        else {$this->Host = @gethostbyaddr($_SERVER['REMOTE_ADDR']);}
+        if($this->proxy != NULL) {$this->host = @gethostbyaddr($this->proxy);}
+        else {$this->host = @gethostbyaddr($_SERVER['REMOTE_ADDR']);}
         */
-        $this->Host = '';
+        $this->host = '';
     }
     
     /**
      * Détecte l'os de l'user et le met dans l'attribut $this->OS
      */
-    private function system_detect()
+    protected function systemDetect()
     {
         $array = array
         (
@@ -301,30 +360,23 @@ class Visiteur implements \BFWInterface\IVisiteur
             'os/2'                              => 'OS/2'
         );
         
-        $ret = false;
         foreach($array as $reg => $system)
         {
             //Mozilla/5.0 (Windows; U; Windows NT 6.0; fr; rv:1.8.1.20) Gecko/20081217 Firefox/2.0.0.20
-            if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match('#'.$reg.'#', $_SERVER['HTTP_USER_AGENT']))
+            if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match('#'.$reg.'#i', $_SERVER['HTTP_USER_AGENT']))
             {
-                if($ret == false)
-                {
-                    $this->OS = $system;
-                }
-                $ret = true;
+                $this->os = $system;
+                return;
             }
         }
         
-        if($ret == false)
-        {
-            $this->OS = 'Inconnu';
-        }
+        $this->os = 'Inconnu';
     }
     
     /**
-     * Détecte le navigateur de l'user et le met dans l'attribut $this->Nav
+     * Détecte le navigateur de l'user et le met dans l'attribut $this->nav
      */
-    private function browser_detect()
+    protected function browserDetect()
     {
         $array=array
         (
@@ -348,30 +400,25 @@ class Visiteur implements \BFWInterface\IVisiteur
             '(Mozilla)'    => 'Mozilla'
         );
         
-        $ret = false;
         if(isset($_SERVER['HTTP_USER_AGENT']))
         {
             foreach($array as $reg => $browser)
             {
-                if(preg_match('#'.$reg.'#', $_SERVER['HTTP_USER_AGENT']))
+                $match = array();
+                if(preg_match('#'.$reg.'#i', $_SERVER['HTTP_USER_AGENT'], $match))
                 {
-                    if($ret == false)
+                    $this->nav = $browser;
+                    if($browser == 'Search engine')
                     {
-                        $this->Nav = $browser;
-                        if($browser == 'Search engine')
-                        {
-                            $this->Bot = $reg;
-                        }
+                        $this->bot = $match[1];
                     }
-                    $ret = true;
+                    
+                    return;
                 }
             }
         }
         
-        if($ret == false)
-        {
-            $this->Nav = 'Inconnu';
-        }
+        $this->nav = 'Inconnu';
     }
     
     /**
@@ -379,7 +426,7 @@ class Visiteur implements \BFWInterface\IVisiteur
      * 
      * @return string La langue préféré de l'user au format xx-yy (exemple : fr-fr ou en-us)
      */
-    private function language_detect()
+    protected function languageDetect()
     {
         /*
         $_SERVER['HTTP_ACCEPT_LANGUAGE'] -> fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4
@@ -389,24 +436,20 @@ class Visiteur implements \BFWInterface\IVisiteur
         Puis en (préférence 0.4/1)
         */
         
+        $lang = 'Unknown';
         if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
         {
             $language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-            $ex = explode(',', $language);
+            $ex       = explode(',', $language);
             
-            $ex2 = explode(';', $ex[0]);
-            $lang_user = strtolower($ex2[0]);
-            $lang = $lang_user;
+            $ex2  = explode(';', $ex[0]);
+            $lang = strtolower($ex2[0]);
             
             if(strpos($lang, '-') !== false)
             {
-                $ex3 = explode('-', $lang);
+                $ex3  = explode('-', $lang);
                 $lang = $ex3[0];
             }
-        }
-        else
-        {
-            $lang = 'Unknown';
         }
         
         return $lang;
@@ -419,7 +462,7 @@ class Visiteur implements \BFWInterface\IVisiteur
      * 
      * @return string La langue choisie. "Inconnue" si elle n'a pas été trouvée.
      */
-    private function language_convert($lang='')
+    protected function languageConvert($lang='')
     {
         $array = array(
             'AF'   => 'Afrikaans',
@@ -494,39 +537,31 @@ class Visiteur implements \BFWInterface\IVisiteur
         {
             return $array[$lang];
         }
-        else
-        {
-            return 'Inconnue';
-        }
+        
+        return 'Inconnue';
     }
     
     /**
-     * Indique dans l'attribut $this->Proviens l'url d'où viens l'user. "Inconnu" si elle n'a pas été trouvée.
+     * Indique dans l'attribut $this->proviens l'url d'où viens l'user. "Inconnu" si elle n'a pas été trouvée.
      */
-    private function referer_detect()
+    protected function refererDetect()
     {
+        $this->proviens = 'Inconnu';
         if(!empty($_SERVER['HTTP_REFERER']))
         {
-            $this->Proviens = $_SERVER['HTTP_REFERER'];
-        }
-        else
-        {
-            $this->Proviens = 'Inconnu';
+            $this->proviens = $_SERVER['HTTP_REFERER'];
         }
     }
     
     /**
-     * Indique dans l'attribut $this->Url l'url sur laquel se trouve l'user. "Inconnu" si on trouve pas.
+     * Indique dans l'attribut $this->url l'url sur laquel se trouve l'user. "Inconnu" si on trouve pas.
      */
-    private function uri_detect()
+    protected function uriDetect()
     {
+        $this->url = 'Inconnu';
         if(!empty($_SERVER['REQUEST_URI']))
         {
-            $this->Url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-        }
-        else
-        {
-            $this->Url = 'Inconnu';
+            $this->url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
         }
     }
 }

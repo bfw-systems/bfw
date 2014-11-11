@@ -8,15 +8,6 @@
 BFWfail=false
 echo '\033[0;33mInstallation du framework :\033[0m'
 
-#Create dir cache
-echo -n '  > Création du dossier cache ...'
-if mkdir -p cache ;then
-	echo '\033[1;32m Done\033[0m'
-else
-	echo '\033[1;31m Fail\033[0m'
-	BFWfail=true
-fi
-
 #Create dir configs
 if [ "$BFWfail" = false ] ;then
 	echo -n '  > Création du dossier configs ...'

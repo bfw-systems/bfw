@@ -29,15 +29,87 @@ class Date extends atoum
     public function beforeTestMethod($testMethod)
     {
         //$this->class = new \BFW\Date();
-        //$this->mock  = new MockDate();
+        $this->mock = new MockDate('2014-10-26 15:01:00+01:00');
     }
 
     /**
-     * Test du constructeur : Date($date=now)
+     * Test de la méthode getDate()
+     */
+    public function testGetDate()
+    {
+        $this->string($this->mock->getDate())->isEqualTo('2014-10-26 15:01:00+0100');
+    }
+
+    /**
+     * Test de la méthode getAnnee()
+     */
+    public function testGetAnnee()
+    {
+        $this->string($this->mock->getAnnee())->isEqualTo('2014');
+    }
+
+    /**
+     * Test de la méthode getMois()
+     */
+    public function testGetMois()
+    {
+        $this->string($this->mock->getMois())->isEqualTo('10');
+    }
+
+    /**
+     * Test de la méthode getJour()
+     */
+    public function testGetJour()
+    {
+        $this->string($this->mock->getJour())->isEqualTo('26');
+    }
+
+    /**
+     * Test de la méthode getHeure()
+     */
+    public function testGetHeure()
+    {
+        $this->string($this->mock->getHeure())->isEqualTo('15');
+    }
+
+    /**
+     * Test de la méthode getMinute()
+     */
+    public function testGetMinute()
+    {
+        $this->string($this->mock->getMinute())->isEqualTo('01');
+    }
+
+    /**
+     * Test de la méthode getSeconde()
+     */
+    public function testGetSeconde()
+    {
+        $this->string($this->mock->getSeconde())->isEqualTo('00');
+    }
+
+    /**
+     * Test de la méthode getZone()
+     */
+    public function testGetZone()
+    {
+        $this->string($this->mock->getZone())->isEqualTo('+01:00');
+    }
+
+    /**
+     * Test du constructeur : Date($date="now")
      */
     public function testDate()
     {
+        $this->mock = new MockDate;
+        $date = new \DateTime;
+        $this->string($this->mock->getDate())->isEqualTo($date->format('Y-m-d H:i:sO'));
         
+        $this->mock = new MockDate('2014-10-26 15:01:00+01:00');
+        $this->string($this->mock->getDate())->isEqualTo('2014-10-26 15:01:00+0100');
+        
+        $this->mock = new MockDate('2014-10-26 15:01:00+01');
+        $this->string($this->mock->getDate())->isEqualTo('2014-10-26 15:01:00+0100');
     }
 
     /**
@@ -45,7 +117,18 @@ class Date extends atoum
      */
     public function testModify()
     {
+        $this->mock->modify('+1 day');
+        $this->string($this->mock->getDate())->isEqualTo('2014-10-27 15:01:00+0100');
         
+        $this->mock = new MockDate('2014-10-26 15:01:00+01:00');
+        $this->mock->modify('+1 jour');
+        $this->string($this->mock->getDate())->isEqualTo('2014-10-27 15:01:00+0100');
+        
+        $mock = $this->mock;
+        $this->exception(function() use($mock)
+        {
+            $mock->modify('+1 test');
+        })->message->contains('Parameter test is unknown.');
     }
 
     /**
@@ -53,7 +136,8 @@ class Date extends atoum
      */
     public function testGetSql()
     {
-        
+        $this->string($this->mock->getSql())->isEqualTo('2014-10-26 15:01:00');
+        $this->array($this->mock->getSql(true))->isEqualTo(array('2014-10-26', '15:01:00'));
     }
 
     /**
@@ -61,7 +145,9 @@ class Date extends atoum
      */
     public function testSetZone()
     {
-        
+        $this->mock->setZone('Europe/Paris');
+        $dateTimeZone = new \DateTimeZone('Europe/Paris');
+        $this->object($this->mock->getTimezone())->isCloneOf($dateTimeZone);
     }
 
     /**
@@ -69,7 +155,10 @@ class Date extends atoum
      */
     public function testLst_TimeZone()
     {
+        $dateTimeZone = new \DateTimeZone('Europe/Paris');
+        $lstTimeZone  = $dateTimeZone->listIdentifiers();
         
+        $this->array($this->mock->lst_TimeZone())->isEqualTo($lstTimeZone); 
     }
 
     /**
@@ -77,7 +166,18 @@ class Date extends atoum
      */
     public function testLst_TimeZoneContinent()
     {
-        
+        $this->array($this->mock->lst_TimeZoneContinent())->isEqualTo(array(
+            'africa', 
+            'america', 
+            'antartica', 
+            'arctic', 
+            'asia', 
+            'atlantic', 
+            'australia', 
+            'europe', 
+            'indian', 
+            'pacific'
+        ));
     }
 
     /**
@@ -85,7 +185,35 @@ class Date extends atoum
      */
     public function testLst_TimeZonePays()
     {
+        $lstAntarticaTimeZone = array(
+            'Antarctica/Casey',
+            'Antarctica/Davis',
+            'Antarctica/DumontDUrville',
+            'Antarctica/Macquarie',
+            'Antarctica/Mawson',
+            'Antarctica/McMurdo',
+            'Antarctica/Palmer',
+            'Antarctica/Rothera',
+            'Antarctica/South_Pole',
+            'Antarctica/Syowa',
+            'Antarctica/Troll',
+            'Antarctica/Vostok'
+        );
         
+        
+        $dateTimeZone = new \DateTimeZone('Europe/Paris');
+        $lstTimeZone  = $dateTimeZone->listIdentifiers();
+        
+        $lstTimeZoneTest = array();
+        foreach($lstAntarticaTimeZone as $timeZone)
+        {
+            if(in_array($timeZone, $lstTimeZone))
+            {
+                $lstTimeZoneTest[] = $timeZone;
+            }
+        }
+        
+        $this->array($this->mock->lst_TimeZonePays('Antarctica'))->isEqualTo($lstTimeZoneTest);
     }
 
     /**
@@ -93,135 +221,31 @@ class Date extends atoum
      */
     public function testAff_simple()
     {
+        //echo $this->mock->aff_simple();
         
-    }
-
-    /**
-     * Test de la méthode __wakeup()
-     */
-    public function test__wakeup()
-    {
+        $this->mock = new MockDate;
+        $this->string($this->mock->aff_simple())->isEqualTo('Maintenant');
         
-    }
-
-    /**
-     * Test de la méthode __set_state()
-     */
-    public function test__set_state()
-    {
+        $this->mock->modify('-30 second');
+        $this->string($this->mock->aff_simple())->isEqualTo('Il y a 30s');
         
-    }
-
-    /**
-     * Test de la méthode createFromFormat($format, $time, $object)
-     */
-    public function testCreateFromFormat()
-    {
+        $this->mock->modify('-50 minute');
+        $this->string($this->mock->aff_simple())->isEqualTo('Il y a 50min');
         
-    }
-
-    /**
-     * Test de la méthode getLastErrors()
-     */
-    public function testGetLastErrors()
-    {
+        $this->mock->modify('-10 minute');
+        $this->string($this->mock->aff_simple())->isEqualTo('Il y a 01h');
         
-    }
-
-    /**
-     * Test de la méthode format($format)
-     */
-    public function testFormat()
-    {
+        $this->mock->modify('-10 minute');
+        $this->string($this->mock->aff_simple())->isEqualTo('Il y a 01h');
         
-    }
-
-    /**
-     * Test de la méthode add($interval)
-     */
-    public function testAdd()
-    {
+        $this->mock->modify('-20 hour');
+        $this->string($this->mock->aff_simple())->isEqualTo('Hier à '.$this->mock->format('H:i'));
         
-    }
-
-    /**
-     * Test de la méthode sub($interval)
-     */
-    public function testSub()
-    {
+        $this->mock->modify('-14 day');
+        $this->string($this->mock->aff_simple())->isEqualTo('Le '.$this->mock->format('d/m').' à '.$this->mock->format('H:i'));
         
-    }
-
-    /**
-     * Test de la méthode getTimezone()
-     */
-    public function testGetTimezone()
-    {
-        
-    }
-
-    /**
-     * Test de la méthode setTimezone($timezone)
-     */
-    public function testSetTimezone()
-    {
-        
-    }
-
-    /**
-     * Test de la méthode getOffset()
-     */
-    public function testGetOffset()
-    {
-        
-    }
-
-    /**
-     * Test de la méthode setTime($hour, $minute, $second)
-     */
-    public function testSetTime()
-    {
-        
-    }
-
-    /**
-     * Test de la méthode setDate($year, $month, $day)
-     */
-    public function testSetDate()
-    {
-        
-    }
-
-    /**
-     * Test de la méthode setISODate($year, $week, $day)
-     */
-    public function testSetISODate()
-    {
-        
-    }
-
-    /**
-     * Test de la méthode setTimestamp($unixtimestamp)
-     */
-    public function testSetTimestamp()
-    {
-        
-    }
-
-    /**
-     * Test de la méthode getTimestamp()
-     */
-    public function testGetTimestamp()
-    {
-        
-    }
-
-    /**
-     * Test de la méthode diff($object, $absolute)
-     */
-    public function testDiff()
-    {
-        
+        $this->mock->modify('-1 year');
+        $this->string($this->mock->aff_simple())->isEqualTo('Le '.$this->mock->format('d/m/Y').' à '.$this->mock->format('H:i'));
     }
 
 }
@@ -235,4 +259,5 @@ class MockDate extends \BFW\Date
      * Accesseur get
      */
     public function __get($name) {return $this->$name;}
+
 }

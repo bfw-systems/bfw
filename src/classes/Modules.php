@@ -16,22 +16,22 @@ class Modules implements \BFWInterface\IModules
     /**
      * @var $_kernel L'instance du Kernel
      */
-    private $_kernel;
+    protected $_kernel;
     
     /**
      * @var $modList Liste des modules inclus
      */
-    private $modList = array();
+    protected $modList = array();
     
     /**
      * @var $modLoad Liste des modules chargé
      */
-    private $modLoad = array();
+    protected $modLoad = array();
     
     /**
      * @var $notLoad Liste des modules qui n'ont pas été chargé.
      */
-    private $notLoad = null;
+    protected $notLoad = null;
     
     /**
      * Constructeur
@@ -61,26 +61,22 @@ class Modules implements \BFWInterface\IModules
             throw new \Exception('Le module '.$name.' existe déjà.');
         }
         
-        $time = (isset($params['time'])) ? $params['time'] : modulesLoadTime_EndInit;
-        $require = array();
-        
-        if(is_array($params))
-        {
-            if(isset($params['require']))
-            {
-                if(is_string($params['require']))
-                {
-                    $require = array($params['require']);
-                }
-                elseif(is_array($params['require']))
-                {
-                    $require = $params['require'];
-                }
-            }
-        }
-        else
+        if(!is_array($params))
         {
             throw new \Exception('Les options du module '.$name.' doivent être déclarer sous la forme d\'un array.');
+        }
+        
+        $time    = (isset($params['time'])) ? $params['time'] : modulesLoadTime_EndInit;
+        $require = array();
+        
+        if(isset($params['require']))
+        {
+            if(is_string($params['require']))
+            {
+                $params['require'] = array($params['require']);
+            }
+            
+            $require = $params['require'];
         }
         
         $this->modList[$name] = array(
@@ -115,6 +111,25 @@ class Modules implements \BFWInterface\IModules
     }
     
     /**
+     * Permet de définir un module comme chargé
+     * 
+     * @param string $name Le nom du module
+     * 
+     * @throws \Exception : Si le module n'existe pas
+     * 
+     * @return void
+     */
+    public function loaded($name)
+    {
+        if(!$this->exists($name))
+        {
+            throw new \Exception('Module '.$name.' not exists.');
+        }
+        
+        $this->modLoad[] = $name;
+    }
+    
+    /**
      * Ajoute le path pour un module donné
      * 
      * @param string $name Le nom du module
@@ -124,14 +139,8 @@ class Modules implements \BFWInterface\IModules
      */
     public function addPath($name, $path)
     {
-        if($this->exists($name))
-        {
-            $this->modList[$name]['path'] = $path;
-        }
-        else
-        {
-            throw new \Exception('Le module '.$name.' n\'existe pas.');
-        }
+        if(!$this->exists($name)) {throw new \Exception('Le module '.$name.' n\'existe pas.');}
+        $this->modList[$name]['path'] = $path;
     }
     
     /**
@@ -151,10 +160,8 @@ class Modules implements \BFWInterface\IModules
         {
             if($mod['time'] == $timeToLoad)
             {
-                if(!$this->modToLoad($mod, $arrayToLoad))
-                {
-                    throw new \Exception('Une erreur est survenu au chargement du module '.$mod['name']);
-                }
+                //Une exception est levé par modToLoad s'il y a une problème;
+                $this->modToLoad($mod, $arrayToLoad);
             }
         }
         
@@ -176,7 +183,7 @@ class Modules implements \BFWInterface\IModules
         if(!in_array($mod['name'], $arrayToLoad))
         {
             $require = $mod['require'];
-            $load = true;
+            $load    = true;
             
             if(count($require) > 0)
             {
@@ -186,25 +193,17 @@ class Modules implements \BFWInterface\IModules
                     {
                         throw new \Exception('La dépendance '.$modRequire.' du module '.$mod['name'].' n\'a pas été trouvé.');
                     }
-                    else
+                    
+                    if(!$this->isLoad($modRequire) && $this->modList[$modRequire]['time'] != $mod['time'])
                     {
-                        if(!$this->isLoad($modRequire) && $this->modList[$modRequire]['time'] != $mod['time'])
-                        {
-                            throw new \Exception('La dépendance '.$modRequire.' du module '.$mod['name'].' n\'est pas encore chargé. Vous devez charger votre module plus tard.');
-                        }
-                        else
-                        {
-                            $load = $this->modToLoad($this->modList[$modRequire], $arrayToLoad);
-                        }
+                        throw new \Exception('La dépendance '.$modRequire.' du module '.$mod['name'].' n\'est pas encore chargé. Vous devez charger votre module plus tard.');
                     }
+                    
+                    $load = $this->modToLoad($this->modList[$modRequire], $arrayToLoad);
                 }
             }
             
-            if($load)
-            {
-                $arrayToLoad[] = $mod['name'];
-            }
-            
+            if($load) {$arrayToLoad[] = $mod['name'];}
             return $load;
         }
         
@@ -220,7 +219,7 @@ class Modules implements \BFWInterface\IModules
      */
     public function listNotLoad($regen=false)
     {
-        if($regen == true || $this->notLoad != null)
+        if($regen == true || is_null($this->notLoad))
         {
             $this->notLoad = array_diff($this->modList, $this->modLoad);
         }
@@ -237,14 +236,8 @@ class Modules implements \BFWInterface\IModules
     {
         $diff = $this->listNotLoad();
         
-        if(count($diff) > 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        if(count($diff) > 0) {return true;}
+        return false;
     }
     
     /**
@@ -258,13 +251,7 @@ class Modules implements \BFWInterface\IModules
      */
     public function getModuleInfos($name)
     {
-        if($this->exists($name))
-        {
-            return $this->modList[$name];
-        }
-        else
-        {
-            throw new \Exception('Le module '.$name.' n\'existe pas.');
-        }
+        if(!$this->exists($name)) {throw new \Exception('Le module '.$name.' n\'existe pas.');}
+        return $this->modList[$name];
     }
 }

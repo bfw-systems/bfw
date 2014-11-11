@@ -7,6 +7,8 @@
 
 namespace BFW;
 
+use \Exception;
+
 /**
  * Classe de gestion des dates
  * Le format de la date est aaaa-mm-jj hh:mm:ss+OO:OO
@@ -69,6 +71,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $annee
+     * 
+     * @return string
      */
     public function getAnnee()
     {
@@ -77,6 +81,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $mois
+     * 
+     * @return string
      */
     public function getMois()
     {
@@ -85,6 +91,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $jour
+     * 
+     * @return string
      */
     public function getJour()
     {
@@ -93,6 +101,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $heure
+     * 
+     * @return string
      */
     public function getHeure()
     {
@@ -101,6 +111,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $minute
+     * 
+     * @return string
      */
     public function getMinute()
     {
@@ -109,6 +121,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $seconde
+     * 
+     * @return string
      */
     public function getSeconde()
     {
@@ -117,6 +131,8 @@ class Date extends \DateTime implements \BFWInterface\IDate
     
     /**
      * Accesseur vers l'attribut $zone
+     * 
+     * @return string
      */
     public function getZone()
     {
@@ -176,63 +192,67 @@ class Date extends \DateTime implements \BFWInterface\IDate
      * 
      * @param string $cond La partie à modifier : year, mouth, day, jour, minute, second
      * 
-     * @return mixed : Retourne l'objet si la modification à réussi. False si échec.
+     * @throws \Exception : Si le paramètre pour modifier n'est pas géré
+     * 
+     * @return \BFW\Date : Retourne l'objet si la modification à réussi.
      */
     public function modify($cond)
     {
+        //Date actuel
         $dateOri = parent::format('Y-m-d H:i:s');
-        $mod = @parent::modify($cond);
+        
+        //On tente la modif avec le paramètre de la fonction
+        $mod = @parent::modify($cond); //@ pour éviter une erreur car on permet d'autres format
         $dateMod = parent::format('Y-m-d H:i:s');
         
-        if($dateOri == $dateMod || $mod == false)
-        {
-            $match = array();
-            preg_match('#(\+|\-)([0-9]+) ([a-z]+)#i', $cond, $match);
-            $match[3] = strtolower($match[3]);
-            
-            if($match[3] == 'an' || $match[3] == 'ans')
-            {
-                $real = 'year';
-            }
-            elseif($match[3] == 'mois')
-            {
-                $real = 'month';
-            }
-            elseif($match[3] == 'jour' || $match[3] == 'jours')
-            {
-                $real = 'day';
-            }
-            elseif($match[3] == 'heure' || $match[3] == 'heures')
-            {
-                $real = 'hour';
-            }
-            elseif($match[3] == 'minutes')
-            {
-                $real = 'minute';
-            }
-            elseif($match[3] == 'seconde' || $match[3] == 'secondes')
-            {
-                $real = 'second';
-            }
-            
-            $mod2 = @parent::modify($match[1].$match[2].' '.$real);
-            $dateMod2 = parent::format('Y-m-d H:i:s');
-            
-            if($dateOri == $dateMod2 || $mod2 == false)
-            {
-                return false;
-            }
-            else
-            {
-                $this->MAJ_Attributes();
-                return $this;
-            }
-        }
-        else
+        //Si la modif à marcher direct, on met à jour et on sort.
+        if(!($dateOri == $dateMod || $mod == false))
         {
             $this->MAJ_Attributes();
             return $this;
         }
+        
+        $match = array();
+        //Regex sur le paramètre pour récupéré le type de modification
+        preg_match('#(\+|\-)([0-9]+) ([a-z]+)#i', $cond, $match);
+        $match[3] = strtolower($match[3]);
+        
+        //Liste des possibilités qu'on permet
+        $search = array(
+            'an', 'ans',
+            'mois',
+            'jour', 'jours',
+            'heure', 'heures',
+            'minutes',
+            'seconde', 'secondes'
+        );
+        
+        //Liste des équivalent pour la fonction modify de DateTime
+        $replace = array(
+            'year', 'year',
+            'month',
+            'day', 'day',
+            'hour', 'hour',
+            'minute',
+            'second', 'second'
+        );
+        
+        //On remplace le type de modification par sa valeur pour DateTime
+        $real = str_replace($search, $replace, $match[3]);
+        
+        //Et on retente la modif
+        $mod2 = @parent::modify($match[1].$match[2].' '.$real);
+        $dateMod2 = parent::format('Y-m-d H:i:s');
+        
+        //Si la modif à fail : création d'une exception
+        if($dateOri == $dateMod2 || $mod2 == false)
+        {
+            throw new Exception('Parameter '.$match[3].' is unknown.');
+        }
+        
+        //Maj des attributs et retourne l'instance courante.
+        $this->MAJ_Attributes();
+        return $this;
     }
     
     /**
@@ -250,14 +270,9 @@ class Date extends \DateTime implements \BFWInterface\IDate
         $date = $dateSql->format('Y-m-d');
         $heure = $dateSql->format('H:i:s');
         
-        if($decoupe)
-        {
-            return array($date, $heure);
-        }
-        else
-        {
-            return $date.' '.$heure;
-        }
+        if($decoupe) {return array($date, $heure);}
+        
+        return $date.' '.$heure;
     }
     
     /**
@@ -368,10 +383,10 @@ class Date extends \DateTime implements \BFWInterface\IDate
     public function aff_simple($tout=true, $minus=false)
     {
         //Découpage de la date donnée dans l'instance de la classe
-        $annee = $this->annee;
-        $mois = $this->mois;
-        $jour = $this->jour;
-        $heure = $this->heure;
+        $annee  = $this->annee;
+        $mois   = $this->mois;
+        $jour   = $this->jour;
+        $heure  = $this->heure;
         $minute = $this->minute;
         
         //La date actuelle
@@ -389,14 +404,14 @@ class Date extends \DateTime implements \BFWInterface\IDate
             Afficher au format date
         */
         
-        $diff = parent::diff($time);
-        $diffAnnee = $diff->format('%Y');
-        $diffMois = $diff->format('%M');
-        $diffJour = $diff->format('%D');
-        $diffHeure = $diff->format('%H');
-        $diffMinute = $diff->format('%I');
+        $diff        = parent::diff($time);
+        $diffAnnee   = $diff->format('%Y');
+        $diffMois    = $diff->format('%M');
+        $diffJour    = $diff->format('%D');
+        $diffHeure   = $diff->format('%H');
+        $diffMinute  = $diff->format('%I');
         $diffSeconde = $diff->format('%S');
-        $diffInvert = $diff->invert;
+        $diffInvert  = $diff->invert;
         
         //@TODO : All $diffXxx variable is on a string type, not int.
         if($diffAnnee == 0 && $diffMois == 0 && $diffJour == 0 && $diffHeure == 0 && $diffMinute == 0 && $diffSeconde == 0)
@@ -440,31 +455,19 @@ class Date extends \DateTime implements \BFWInterface\IDate
         else
         {
             //Sinon et bien c'était il y a plus de 48h, et on affiche la date au format habituel
-            $aff_date = 'Le '.$jour.'/'.$mois; //D'abord le jour et le mois
+            $aff_date  = 'Le '.$jour.'/'.$mois; //D'abord le jour et le mois
             $aff_heure = ' à '.$heure.':'.$minute; //Et ensuite l'heure et les minutes
             
             //Et si l'année n'est pas la meme que l'actuel, alors on rajoute l'année à la fin de la première partie l'année
-            if($diffAnnee != 0)
-            {
-                $aff_date .= '/'.$annee;
-            }
+            if($diffAnnee != 0) {$aff_date .= '/'.$annee;}
         }
         
-        //Maintenant on arrive à la partie qui dit, affiche moi toutes les infos ou seulement une partie
-        if($tout == 1) //Si on veut tout afficher (la date et l'heure)
-        {
-            $aff = $aff_date.$aff_heure;
-        }
-        else //Ou si on ne veut afficher que la date
-        {
-            $aff = $aff_date;
-        }
+        $aff = $aff_date; //On renvoi la date
+        //Si on veut tout afficher (la date et l'heure)
+        if($tout == 1) {$aff .= $aff_heure;}
         
         //Met la première lettre en minuscule dans le cas où l'ont veuille du minuscule
-        if($minus == true)
-        {
-            $aff = mb_strtolower($aff);
-        }
+        if($minus == true) {$aff = mb_strtolower($aff);}
         
         return $aff; //Et on retour la date parser :D
     }

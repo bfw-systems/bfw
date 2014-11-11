@@ -8,6 +8,8 @@
 
 namespace BFW;
 
+use \Exception;
+
 /**
  * Gestion du serveur avec memcache
  * @package bfw
@@ -17,17 +19,17 @@ class Ram implements \BFWInterface\IRam
     /**
      * @var $_kernel L'instance du Kernel
      */
-    private $_kernel;
+    protected $_kernel;
     
     /**
      * @var $server_connect Permet de savoir si on est connecté au serveur.
      */
-    private $server_connect = false;
+    protected $server_connect = false;
     
     /**
      * @var $Server Le serveur
      */
-    private $Server;
+    protected $Server;
     
     /**
      * @var $debug Permet d'activer ou non le mode débug
@@ -37,26 +39,40 @@ class Ram implements \BFWInterface\IRam
     
     /**
      * Constructeur
-     * Se connecte au serveur memcache indiqué, par défaut au localhost
+     * Se connecte au serveur memcache indiqué
      * 
-     * @param string $name (default:"localhost") le nom du serveur memcache
+     * @param string  $host l'host du serveur memcache
+     * @param integer $port le port du serveur memcache
      * 
-     * @return boolean|null
+     * @throws Exception : Si l'extension php-memcache n'est présente
+     *                     Si les infos sont pas au bon format
+     *                     Si la connexion échoue
      */
-    public function __construct($name='localhost')
+    public function __construct($host, $port)
     {
         $this->_kernel = getKernel();
         
-        if(extension_loaded('memcache') && is_string($name))
+        //Vérification si l'extension memcache est bien loadé
+        if(!extension_loaded('memcache'))
         {
-            $this->Server = new \Memcache;
-            if($this->Server->connect($name))
-            {
-                $this->server_connect = true;
-                return true;
-            }
-            else {return false;}
+            throw new Exception('Memcache php extension is not loaded.');
         }
+        
+        //Vérifie que les infos sont bien au bon typage
+        if(!(is_string($host) && is_integer($port)))
+        {
+            throw new Exception('Memcache connexion informations format is not correct.');
+        }
+        
+        $this->Server = new \Memcache;
+        
+        //Se connexion ... exception si fail
+        if($this->Server->connect($host, $port) === false)
+        {
+            throw new Exception('Memcache connect fail.');
+        }
+        
+        $this->server_connect = true;
     }
     
     /**
@@ -72,41 +88,23 @@ class Ram implements \BFWInterface\IRam
      */
     public function setVal($key, $data, $expire=0)
     {
-        $default = false;
         $verifParams = verifTypeData(array(
             array('type' => 'string', 'data' => $key),
-            array('type' => 'int', 'data' => $expire)
+            array('type' => 'int',    'data' => $expire)
         ));
         
         if(!$verifParams || gettype($data) == 'resource')
         {
-            if($this->_kernel->getDebug()) {throw new \Exception('Erreur dans les paramètres de Ram->setVal()');}
-            else {return $default;}
+            throw new \Exception('Erreur dans les paramètres de Ram->setVal()');
         }
         
-        if($this->server_connect == true)
+        $valDataServer = $this->Server->get($key);
+        if($valDataServer !== false)
         {
-            $valDataServer = $this->Server->get($key);
-            
-            if($valDataServer !== false)
-            {
-                return $this->Server->replace($key, $data, 0, $expire);
-            }
-            else
-            {
-                return $this->Server->set($key, $data, 0, $expire);
-            }
+            return $this->Server->replace($key, $data, 0, $expire);
         }
-        else
-        {
-            global $path;
-            
-            $stock = array('expire' => $expire, 'create' => time(), 'data' => $data);
-            $filePutContentReturn = file_put_contents($path.'kernel/Memcache_ifnoExt/'.$key.'.txt', json_encode($stock));
-            
-            if($filePutContentReturn === false) {return false;}
-            return true;
-        }
+        
+        return $this->Server->set($key, $data, 0, $expire);
     }
     
     /**
@@ -121,47 +119,26 @@ class Ram implements \BFWInterface\IRam
      */
     public function majExpire($key, $exp)
     {
-        $default = false;
         $verifParams = verifTypeData(array(
             array('type' => 'string', 'data' => $key),
-            array('type' => 'int', 'data' => $exp)
+            array('type' => 'int',    'data' => $exp)
         ));
         
         if(!$verifParams)
         {
-            if($this->_kernel->getDebug()) {throw new \Exception('Erreur dans les paramètres de Ram->majExpire()');}
-            else {return $default;}
+            throw new \Exception('Erreur dans les paramètres de Ram->majExpire()');
         }
         
+        $ret = $this->Server->get($key); //Récupère la valeur
         
-        
-        if($this->server_connect == true)
+        //On la "modifie" en remettant la même valeur mais en changeant le temps
+        //avant expiration si une valeur a été retournée
+        if($ret !== false && $this->Server->replace($key, $ret, 0, $exp))
         {
-            $ret = $this->Server->get($key); //Récupère la valeur
-            
-            //On la "modifie" en remettant la même valeur mais en changeant le temps
-            //avant expiration si une valeur a été retournée
-            if($ret !== false)
-            {
-                if($this->Server->replace($key, $ret, 0, $exp)) {return true;}
-            }
-            return false;
+            return true;
         }
-        else
-        {
-            global $path;
-            if(file_exists($path.'kernel/Memcache_ifnoExt/'.$key.'.txt'))
-            {
-                $data = json_decode(file_get_contents($path.'kernel/Memcache_ifnoExt/'.$key.'.txt'));
-                $data->expire = $exp;
-                $data->create = time();
-                
-                $filePutContentReturn = file_put_contents($path.'kernel/Memcache_ifnoExt/'.$key.'.txt', json_encode($data));
-                
-                if($filePutContentReturn === false) {return false;}
-                return true;
-            }
-        }
+        
+        return false;
     }
     
     /**
@@ -175,27 +152,17 @@ class Ram implements \BFWInterface\IRam
      */
     public function ifExists($key)
     {
-        $default = false;
         $verifParams = verifTypeData(array(array('type' => 'string', 'data' => $key)));
         
         if(!$verifParams)
         {
-            if($this->_kernel->getDebug()) {throw new \Exception('Erreur dans les paramètres de Ram->ifExists()');}
-            else {return $default;}
+            throw new \Exception('Erreur dans les paramètres de Ram->ifExists()');
         }
         
-        if($this->server_connect == true)
-        {
-            $ret = $this->Server->get($key); //Récupère la valeur
-            
-            if($ret === false) {return false;}
-            else {return true;}
-        }
-        else
-        {
-            global $path;
-            return file_exists($path.'kernel/Memcache_ifnoExt/'.$key.'.txt');
-        }
+        $ret = $this->Server->get($key); //Récupère la valeur
+        
+        if($ret === false) {return false;}
+        return true;
     }
     
     /**
@@ -207,21 +174,15 @@ class Ram implements \BFWInterface\IRam
      */
     public function delete($key)
     {
-        if($this->server_connect == true)
+        $verifParams = verifTypeData(array(array('type' => 'string', 'data' => $key)));
+        
+        if(!$verifParams)
         {
-            if($this->Server->delete($key)) {return true;}
-            else {return false;}
+            throw new \Exception('Erreur dans les paramètres de Ram->delete()');
         }
-        else
-        {
-            global $path;
-            
-            if(file_exists($path.'kernel/Memcache_ifnoExt/'.$key.'.txt'))
-            {
-                return unlink($path.'kernel/Memcache_ifnoExt/'.$key.'.txt');
-            }
-            return true;
-        }
+        
+        if($this->Server->delete($key)) {return true;}
+        return false;
     }
     
     /**
@@ -235,48 +196,13 @@ class Ram implements \BFWInterface\IRam
      */
     public function getVal($key)
     {
-        $default = false;
         $verifParams = verifTypeData(array(array('type' => 'string', 'data' => $key)));
         
         if(!$verifParams)
         {
-            if($this->_kernel->getDebug()) {throw new \Exception('Erreur dans les paramètres de Ram->getVal()');}
-            else {return $default;}
+            throw new \Exception('Erreur dans les paramètres de Ram->getVal()');
         }
         
-        if($this->server_connect == true) //Récupère la valeur
-        {
-            return $this->Server->get($key);
-        }
-        else
-        {
-            global $path;
-                
-            if(file_exists($path.'kernel/Memcache_ifnoExt/'.$key.'.txt'))
-            {
-                $json = json_decode(file_get_contents($path.'kernel/Memcache_ifnoExt/'.$key.'.txt'));
-                
-                $expire = $json->expire;
-                $create = $json->create;
-                
-                if($expire != 0)
-                {
-                    $calcul = $create+$expire;
-                    $now = time();
-                    
-                    if($calcul >= $now)
-                    {
-                        $data = $json->data;
-                    }
-                }
-                else
-                {
-                    $data = $json->data;
-                }
-            }
-            
-            if(empty($data)) {return false;}
-            return $data;
-        }
+        return $this->Server->get($key);
     }
 }
