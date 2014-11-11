@@ -14,22 +14,69 @@ namespace BFWInterface;
 interface IVisiteur
 {
     /**
-     * Accesseur get vers les attributs
-     * 
-     * @param string $name Le nom de l'attribut
-     * 
-     * @return mixed La valeur de l'attribut
+     * Accesseur vers l'attribut $idSession
      */
-    public function __get($name);
+    public function getIdSession();
     
     /**
-     * Accesseur set vers les attributs
-     * 
-     * @param string $name Le nom de l'attribut
-     * @param mixed  $val  La nouvelle valeure de l'attribut
-     * @return void
+     * Accesseur vers l'attribut $ip
      */
-    public function __set($name, $val);
+    public function getIp();
+    
+    /**
+     * Accesseur vers l'attribut $host
+     */
+    public function getHost();
+    
+    /**
+     * Accesseur vers l'attribut $proxy
+     */
+    public function getProxy();
+    
+    /**
+     * Accesseur vers l'attribut $proxyIp
+     */
+    public function getProxyIp();
+    
+    /**
+     * Accesseur vers l'attribut $proxyHost
+     */
+    public function getProxyHost();
+    
+    /**
+     * Accesseur vers l'attribut $os
+     */
+    public function getOs();
+    
+    /**
+     * Accesseur vers l'attribut $nav
+     */
+    public function getNav();
+    
+    /**
+     * Accesseur vers l'attribut $langue
+     */
+    public function getLangue();
+    
+    /**
+     * Accesseur vers l'attribut $langueInitiale
+     */
+    public function getLangueInitiale();
+    
+    /**
+     * Accesseur vers l'attribut $proviens
+     */
+    public function getProviens();
+    
+    /**
+     * Accesseur vers l'attribut $url
+     */
+    public function getUrl();
+    
+    /**
+     * Accesseur vers l'attribut $bot
+     */
+    public function getBot();
     
     /**
      * Constructeur
