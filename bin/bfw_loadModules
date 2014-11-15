@@ -186,8 +186,14 @@ if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpat
 					}
 					else {$result .= "\033[0;33m 0 fichier trouvé. \033[0m\n";}
 					
+					//Si le module contient un script d'installation qui lui est spécifique
+					if(isset($installRun) && $installRun === true)
+					{
+						require_once(realpath($moduleFindPath).'/runInstallModule.php');
+					}
+					
 					//et on supprime les variables qui indiquait les configs pour le module lu pour pas qu'elles soient utilisé pour les modules lu après.
-					unset($modulePath, $configFiles);
+					unset($modulePath, $configFiles, $installRun);
 				}
 				else {$result .= "...\033[1;31m Fail !";}
 			}
