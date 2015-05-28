@@ -165,6 +165,7 @@ class Modules implements \BFWInterface\IModules
             }
         }
         
+        asort($arrayToLoad);
         return $arrayToLoad;
     }
     

@@ -74,7 +74,7 @@ if($DebugMode)
         <!doctype html>
         <html lang="fr">
             <head>
-                <title>Une erreur est parmit nous !</title>
+                <title>Une erreur est parmi nous !</title>
                 <style>
                     html {padding:0; margin:0; background-color:#e3e3e3; font-family:sans-serif; font-size: 1em; word-wrap:break-word;}
                     div {position:relative; margin:auto; width:950px; border: 1px solid #a6c9e2; top: 30px; margin-bottom:10px;}
