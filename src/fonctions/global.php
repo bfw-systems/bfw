@@ -40,7 +40,7 @@ function secure($string, $html=false, $null_cslashe=false)
         {
             unset($string[$key]); #Dans le cas où après si $key est modifié, alors la valeur pour la clé non sécurisé existerais toujours et la sécurisation ne servirais à rien.
             $key = secure($key, true);
-            $val = secure($val);
+            $val = secure($val, $html);
             $string[$key] = $val;
         }
     }
