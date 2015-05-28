@@ -21,8 +21,8 @@ function hashage($val)
  * Permet de sécuriser une variable
  * 
  * @param mixed $string       : la variable à sécuriser (les types string, nombre et array sont géré)
- * @param bool  $html         : mettre à true pour que la variable ne subisse pas un htmlentities()
- * @param bool  $null_cslashe : mettre à true si on agit sur le nom d'une variable car par exemple "cou_cou" devient "cou\_cou"
+ * @param bool  $html         : (default: false) mettre à true pour que la variable ne subisse pas un htmlentities()
+ * @param bool  $null_cslashe : (default: false) mettre à true si on agit sur le nom d'une variable car par exemple "cou_cou" devient "cou\_cou"
  * 
  * @return mixed
  */
@@ -118,8 +118,8 @@ function redirection($page)
  * Sécurise la valeur du post demandé et la renvoie
  * 
  * @param string $key      : La donnée post demandée
- * @param mixed  $default  : [opt] La valeur par défault qui sera retourné si le get existe pas. Null si pas indiqué
- * @param bool   $html     : Savoir si on applique l'htmlentities (false pour oui, true pour non)
+ * @param mixed  $default  : (default: null) La valeur par défault qui sera retourné si le get existe pas. Null si pas indiqué
+ * @param bool   $html     : (default: false) Savoir si on applique l'htmlentities (false pour oui, true pour non)
  * 
  * @return string : La valeur demandé sécurisé
  */
@@ -146,7 +146,7 @@ function post($key, $default=null, $html=false)
  * Sécurise la valeur du get demandé et la renvoie
  * 
  * @param string $key     : La donnée get demandée
- * @param mixed  $default : [opt] La valeur par défault qui sera retourné si le get existe pas. Null si pas indiqué
+ * @param mixed  $default : (default: null) La valeur par défault qui sera retourné si le get existe pas. Null si pas indiqué
  * 
  * @return string : La valeur demandé sécurisé
  */
@@ -178,7 +178,7 @@ function valid_mail($mail)
  * Affiche une page d'erreur
  * 
  * @param mixed $num        : Le n° d'erreur à afficher ou l'erreur au format texte
- * @param bool  $cleanCache : Indique si le cache du tampon de sortie doit être vidé ou pas
+ * @param bool  $cleanCache : (default: true) Indique si le cache du tampon de sortie doit être vidé ou pas
  */
 function ErrorView($num, $cleanCache=true)
 {
@@ -210,7 +210,7 @@ function ErrorView($num, $cleanCache=true)
  * 
  * @param string  $file : Le lien vers le fichier
  * @param string  $txt  : La ligne de texte à écrire
- * @param boolean $date : Si à true, la date est ajouté au début de la ligne. Si false elle n'est pas mise.
+ * @param boolean $date : (default: true) Si à true, la date est ajouté au début de la ligne. Si false elle n'est pas mise.
  */
 function logfile($file, $txt, $date=true)
 {

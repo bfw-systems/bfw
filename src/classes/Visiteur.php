@@ -61,7 +61,7 @@ class Visiteur implements \BFWInterface\IVisiteur
     protected $nav = '';
     
     /**
-     * @var $langue Sa langue (n'est pas obligatoirement celle utiliser pour le jeu)
+     * @var $langue La langue de l'utilisateur
      */
     protected $langue = '';
     
