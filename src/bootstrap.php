@@ -17,19 +17,37 @@ if(!isset($rootPath))
 
 require_once($rootPath.'configs/bfw_config.php');
 
+//Récupération de la page appelé avec le host (sans les paramètre)
+$requestAll = $_SERVER['REQUEST_URI'];
+$requestExplode = explode('?', $requestAll);
+$request = $requestExplode[0];
+
+//Si multi-domain, recherche du domaine courant
+$base_url_config = $base_url;
+if(is_array($base_url))
+{
+    foreach($base_url as $url)
+    {
+        if(strpos($request, $url) !== false)
+        {
+            $base_url = $url;
+            break;
+        }
+    }
+    
+    //Si pas trouvé, on prend le premier domaine
+    if(is_array($base_url)) {$base_url = $base_url[0];}
+}
+
 if(substr($base_url, -1) == '/')
 {
     $base_url = substr($base_url, 0, -1);
 }
 
 /** Gestion à faire à cause de l'url rewriting qui prend en compte tous les fichiers, css/js/images y compris. **/
-$requestAll = $_SERVER['REQUEST_URI'];
-
-$requestExplode = explode('?', $requestAll);
-$request = $requestExplode[0];
 $error = null;
-
 $exBaseUrl = explode('/', $base_url);
+
 if(count($exBaseUrl) > 3)
 {
     unset($exBaseUrl[0], $exBaseUrl[1], $exBaseUrl[2]);
