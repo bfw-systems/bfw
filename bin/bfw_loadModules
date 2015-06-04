@@ -28,6 +28,35 @@ do
 }
 while(!$exist);
 
+$pathInstall = realpath($rootPath);
+
+//S'il ne trouve pas l'installation du framework, check du cas capistrano
+if(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpath($rootPath.'/..').'/modules/'))
+{
+    $rootPath = realpath($rootPath);
+    $vendorName   = substr($rootPath, strrpos($rootPath, '/')+1);
+    $sharedPos    = strpos($rootPath, 'shared/');
+    
+    var_dump($rootPath);
+    
+    if($sharedPos === false)
+    {
+        echo "\033[1;31mLe cas de capistrano n'a pu être trouvé !\033[0m\n";
+    }
+    
+    $rootPath = substr($rootPath, 0, $sharedPos).'current';
+    $rootPath = realpath($rootPath);
+    
+    if(!file_exists($rootPath.'/'.$vendorName))
+    {
+        echo "\033[1;31mLe répertoire contenant le vendor n'a pu être trouvé !\033[0m\n";
+        die;
+    }
+    
+    $pathInstall = $rootPath;
+    $rootPath .= '/vendor';
+}
+
 $listModulesFind = array();
 
 //Class de lecture des dossiers.
@@ -94,7 +123,7 @@ class readDir
 }
 
 //si les dossiers du framework qu'on utilise sont bien présent...
-if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpath($rootPath.'/..').'/modules/')))
+if(!(!file_exists($pathInstall.'/configs/') || !file_exists($pathInstall.'/modules/')))
 {
 	//Lance la lecture du dossier vendor
 	$read = new readDir();
@@ -114,10 +143,10 @@ if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpat
 			$result = ''; //Ce qui sera affiché à la fin dans la console.
 			
 			//Si le module n'a pas déjà été installé dans le dossier /modules
-			if(!file_exists(realpath($rootPath.'/..').'/modules/'.$module))
+			if(!file_exists($pathInstall.'/modules/'.$module))
 			{
 				//Si on arrive à créer le lien symbolique
-				if(symlink(realpath($moduleFindPath), realpath($rootPath.'/..').'/modules/'.$module))
+				if(symlink(realpath($moduleFindPath), $pathInstall.'/modules/'.$module))
 				{
 					$result .= "...\033[1;32m Done\033[0m\n";
 					
@@ -134,10 +163,10 @@ if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpat
 						$createConfigDirFail = false; //Permet de savoir si la création du dossier pour la config du module à fail
 						
 						//Si le dossier contenant la config du module dans /configs n'existe pas
-						if(!file_exists(realpath($rootPath.'/..').'/configs/'.$module))
+						if(!file_exists($pathInstall.'/configs/'.$module))
 						{
 							//On tente de le créer
-							if(mkdir(realpath($rootPath.'/..').'/configs/'.$module, 0755))
+							if(mkdir($pathInstall.'/configs/'.$module, 0755))
 							{
 								$result .= "...\033[1;32m Done";
 							}
@@ -160,13 +189,13 @@ if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpat
 								$result .= '        > Copie du fichier '.$config.' : ';
 								
 								//On vérifie qu'il n'existe pas déjà
-								if(!file_exists(realpath($rootPath.'/..').'/configs/'.$module.'/'.$config))
+								if(!file_exists($pathInstall.'/configs/'.$module.'/'.$config))
 								{
 									//Si le fichier source indiqué existe bien
 									if(file_exists(realpath($moduleFindPath).'/'.$modulePath.'/'.$config))
 									{
 										//Alors on copie le fichier vers le dossier /configs/[monModule]/
-										if(copy(realpath($moduleFindPath).'/'.$modulePath.'/'.$config, realpath($rootPath.'/..').'/configs/'.$module.'/'.$config))
+										if(copy(realpath($moduleFindPath).'/'.$modulePath.'/'.$config, $pathInstall.'/configs/'.$module.'/'.$config))
 										{
 											$result .= "...\033[1;32m Done";
 										}
