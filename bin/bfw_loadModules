@@ -37,8 +37,6 @@ if(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpath(
     $vendorName   = substr($rootPath, strrpos($rootPath, '/')+1);
     $sharedPos    = strpos($rootPath, 'shared/');
     
-    var_dump($rootPath);
-    
     if($sharedPos === false)
     {
         echo "\033[1;31mLe cas de capistrano n'a pu être trouvé !\033[0m\n";
@@ -56,6 +54,7 @@ if(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpath(
     $pathInstall = $rootPath;
     $rootPath .= '/vendor';
 }
+else {$pathInstall = realpath($rootPath.'/..');}
 
 $listModulesFind = array();
 
