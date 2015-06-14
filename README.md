@@ -9,7 +9,7 @@ __Liens utiles :__
 
 Doc : http://bfw.bulton.fr/doc/
 
-How-To : http://bfw.bulton.fr/howto/
+How-To : https://github.com/bulton-fr/bfw/wiki
 
 Bug Tracker et avancement : https://github.com/bulton-fr/bfw/issues
 
