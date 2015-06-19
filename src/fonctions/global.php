@@ -39,8 +39,8 @@ function secure($string, $html=false, $null_cslashe=false)
         foreach($string as $key => $val)
         {
             unset($string[$key]); #Dans le cas où après si $key est modifié, alors la valeur pour la clé non sécurisé existerais toujours et la sécurisation ne servirais à rien.
-            $key = secure($key, true);
-            $val = secure($val, $html);
+            $key = secure($key, true, $null_cslashe);
+            $val = secure($val, $html, $null_cslashe);
             $string[$key] = $val;
         }
     }
