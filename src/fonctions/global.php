@@ -267,7 +267,7 @@ function getKernel()
 {
     global $BFWKernel;
     
-    if(!(isset($BFWKernel) && is_object($BFWKernel) && get_class($BFWKernel) == '\BFW\Kernel'))
+    if(!(isset($BFWKernel) && is_object($BFWKernel) && get_class($BFWKernel) == 'BFW\Kernel'))
     {
         $BFWKernel = new \BFW\Kernel;
     }
