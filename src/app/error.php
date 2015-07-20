@@ -1,5 +1,5 @@
 <?php
-if($DebugMode)
+if($DebugMode && $errorRender)
 {
     function exception_handler($exception)
     {
@@ -61,7 +61,8 @@ if($DebugMode)
         elseif($err_severity == E_DEPRECATED || $err_severity == E_USER_DEPRECATED) {$erreurType = 'Deprecated';}
         else {$erreurType = 'Unknow';}
         
-        displayPHPError($erreurType, $err_msg, $err_file, $err_line, debug_backtrace());
+        global $errorRender;
+        $errorRender($erreurType, $err_msg, $err_file, $err_line, debug_backtrace());
     });
         
     /**
