@@ -189,15 +189,22 @@ function ErrorView($num, $cleanCache=true)
     
     global $request, $path;
     
-    if(file_exists($path.'controlers/erreurs/'.$num.'.php'))
+    //Envoi du status http
+    if(function_exists('http_response_code')) //php >= 5.4
     {
-        require_once($path.'controlers/erreurs/'.$num.'.php');
+        http_response_code($num);
+    }
+    else //php < 5.4
+    {
+        header(':', true, $num);
+    }
+    
+    if(file_exists(path_controllers.'erreurs/'.$num.'.php'))
+    {
+        require_once(path_controllers.'erreurs/'.$num.'.php');
     }
     else
     {
-        if(function_exists('http_response_code')) {http_response_code($num);}
-        else {header(':', true, $num);}
-        
         echo 'Erreur '.$num;
     }
     
