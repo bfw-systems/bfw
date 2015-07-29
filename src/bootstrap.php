@@ -28,7 +28,7 @@ if(is_array($base_url))
 {
     foreach($base_url as $url)
     {
-        if(strpos($request, $url) !== false)
+        if(strpos($url, $_SERVER['SERVER_NAME']) !== false)
         {
             $base_url = $url;
             break;
