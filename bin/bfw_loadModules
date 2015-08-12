@@ -6,55 +6,63 @@
 # version : 2.0.0
 # author : bulton-fr
 
-$rootPath = __DIR__.'/..';
 
-$exist = false;
-$iTest = 0;
-do
+//**** Récupération des paramètres cli ****
+$cliOptions = getopt('', array('help::', 'path:', 'vendor_name:'));
+
+if(array_key_exists('help', $cliOptions))
 {
-	if(!file_exists($rootPath.'/autoload.php') && !file_exists($rootPath.'/composer'))
-	{
-		$rootPath .= '/..';
-	}
-	else {$exist = true;}
-	
-	if($iTest > 9) //Securité
-	{
-		echo "\033[1;31mLe répertoire contenant composer n'a pu être trouvé !\033[0m\n";
-		die;
-	}
-	
-	$iTest++;
+	echo 'COMMANDE HELP'."\n";
+	echo '--path : Le chemin vers la racine du projet BFW'."\n";
+	echo '--vendor_name : Le nom du dossier de composer s\'il est différent de "vendor"'."\n";
+	exit;
 }
-while(!$exist);
 
-$pathInstall = realpath($rootPath);
-
-//S'il ne trouve pas l'installation du framework, check du cas capistrano
-if(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpath($rootPath.'/..').'/modules/'))
+$pathInstall = null;
+if(isset($cliOptions['path']))
 {
-    $rootPath = realpath($rootPath);
-    $vendorName   = substr($rootPath, strrpos($rootPath, '/')+1);
-    $sharedPos    = strpos($rootPath, 'shared/');
-    
-    if($sharedPos === false)
-    {
-        echo "\033[1;31mLe cas de capistrano n'a pu être trouvé !\033[0m\n";
-    }
-    
-    $rootPath = substr($rootPath, 0, $sharedPos).'current';
-    $rootPath = realpath($rootPath);
-    
-    if(!file_exists($rootPath.'/'.$vendorName))
-    {
-        echo "\033[1;31mLe répertoire contenant le vendor n'a pu être trouvé !\033[0m\n";
-        die;
-    }
-    
-    $pathInstall = $rootPath;
-    $rootPath .= '/vendor';
+	$pathInstall = $cliOptions['path'];
 }
-else {$pathInstall = realpath($rootPath.'/..');}
+
+$vendorName = 'vendor';
+if(isset($cliOptions['vendor_name']))
+{
+	$vendorName = $cliOptions['vendor_name'];
+}
+//**** Récupération des paramètres cli ****
+
+//--- Si le path n'a pas été indiqué, on le recherche ---
+if($pathInstall === null)
+{
+    $rootPath = __DIR__.'/..';
+
+    $exist = false;
+    $iTest = 0;
+    do
+    {
+        if(!file_exists($rootPath.'/autoload.php') && !file_exists($rootPath.'/composer'))
+        {
+            $rootPath .= '/..';
+        }
+        else {$exist = true;}
+        
+        if($iTest > 9) //Securité
+        {
+            echo "\033[1;31mLe répertoire contenant composer n'a pu être trouvé !\033[0m\n";
+            die;
+        }
+        
+        $iTest++;
+    }
+    while(!$exist);
+
+    $pathInstall = realpath($rootPath.'/..');
+}
+else
+{
+    $rootPath = $pathInstall.'/'.$vendorName;
+}
+//--- Si le path n'a pas été indiqué, on le recherche ---
 
 $listModulesFind = array();
 
