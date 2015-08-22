@@ -96,7 +96,7 @@ $runner->addReport($coverallsReport);
 
 if(file_exists('/home/travis'))
 {
-	$cloverWriter = new atoum\writers\file('./build/logs/clover.xml');
+	$cloverWriter = new atoum\writers\file('clover.xml');
 	$cloverReport = new atoum\reports\asynchronous\clover();
 	$cloverReport->addWriter($cloverWriter);
 
