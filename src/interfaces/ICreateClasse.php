@@ -18,7 +18,6 @@ interface ICreateClasse
      * 
      * @param string $nom     Le nom de la futur classe
      * @param array  $options Les options de la classe
-     * @return void
      */
     public function __construct($nom, $options=array());
     
@@ -65,4 +64,3 @@ interface ICreateClasse
      */
     public function genere();
 }
-?>

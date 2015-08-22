@@ -162,4 +162,3 @@ class Kernel implements SplSubject
         return $this->debug;
     }
 }
-?>

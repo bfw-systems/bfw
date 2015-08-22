@@ -17,7 +17,6 @@ interface IForm
      * Constructeur
      * 
      * @param string $idForm L'id du formulaire
-     * @return void
      */
     public function __construct($idForm=null);
     
@@ -43,4 +42,3 @@ interface IForm
      */
     public function tokenVerif();
 }
-?>

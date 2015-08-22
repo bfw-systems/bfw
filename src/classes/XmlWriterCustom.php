@@ -154,4 +154,3 @@ class XmlWriterCustom implements \BFWInterface\IXmlWriterCustom
         return $this->xml;
     }
 }
-?>

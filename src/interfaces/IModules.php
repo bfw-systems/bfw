@@ -31,7 +31,6 @@ interface IModules
      * - require (string, array) : Si le module doit avoir d'autre module de chargé avant.
      * 
      * @throws \Exception Erreur sur la déclaration des options
-     * @return void
      */ 
     public function newMod($name, $params=array());
     
@@ -102,4 +101,3 @@ interface IModules
      */
     public function getModuleInfos($name);
 }
-?>

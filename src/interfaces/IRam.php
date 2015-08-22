@@ -82,4 +82,3 @@ interface IRam
      */
     public function getVal($key);
 }
-?>

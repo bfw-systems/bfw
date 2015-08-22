@@ -220,7 +220,7 @@ class Modules implements \BFWInterface\IModules
      */
     public function listNotLoad($regen=false)
     {
-        if($regen == true || is_null($this->notLoad))
+        if($regen === true || is_null($this->notLoad))
         {
             $this->notLoad = array_diff($this->modList, $this->modLoad);
         }

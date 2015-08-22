@@ -224,13 +224,13 @@ class CreateClasse implements \BFWInterface\ICreateClasse
         $code .= $this->attributs_porter[$key].' $'.$this->attributs[$key];
         
         //S'il y a une valeur par défaut
-        if($default == true)
+        if($default === true)
         {
             $javadoc .= ' Par défaut à ';
             $code .= ' = ';
             
             //Si la valeur par défaut est dite un string. On ajoute des '
-            if($default_string == true)
+            if($default_string === true)
             {
                 $javadoc .= '\'';
                 $code .= '\'';
@@ -240,7 +240,7 @@ class CreateClasse implements \BFWInterface\ICreateClasse
             $code .= $this->attributs_option[$key]['default'];
             
             //Si la valeur par défaut est dite un string. On ajoute des '
-            if($default_string == true)
+            if($default_string === true)
             {
                 $javadoc .= '\'';
                 $code .= '\'';
@@ -380,4 +380,3 @@ class CreateClasse implements \BFWInterface\ICreateClasse
         return $this->file;
     }
 }
-?>

@@ -39,8 +39,8 @@ function secure($string, $html=false, $null_cslashe=false)
         foreach($string as $key => $val)
         {
             unset($string[$key]); #Dans le cas où après si $key est modifié, alors la valeur pour la clé non sécurisé existerais toujours et la sécurisation ne servirais à rien.
-            $key = secure($key, true);
-            $val = secure($val, $html);
+            $key = secure($key, true, $null_cslashe);
+            $val = secure($val, $html, $null_cslashe);
             $string[$key] = $val;
         }
     }
@@ -59,7 +59,7 @@ function secure($string, $html=false, $null_cslashe=false)
             //commenté car problème de notice si php < 5.4
             //if(defined(ENT_HTML401)) {$optHtmlentities .= ' | '.ENT_HTML401;} //à partir de php5.4
             
-            if($html == false)
+            if($html === false)
             {
                 $string = htmlentities($string, $optHtmlentities, 'UTF-8');
             }
@@ -69,7 +69,7 @@ function secure($string, $html=false, $null_cslashe=false)
                 $string = DB_protect($string);
             }
             
-            if($null_cslashe == false)
+            if($null_cslashe === false)
             {
                 $string = addcslashes($string, '%_');
             }
@@ -189,15 +189,22 @@ function ErrorView($num, $cleanCache=true)
     
     global $request, $path;
     
-    if(file_exists($path.'controlers/erreurs/'.$num.'.php'))
+    //Envoi du status http
+    if(function_exists('http_response_code')) //php >= 5.4
     {
-        require_once($path.'controlers/erreurs/'.$num.'.php');
+        http_response_code($num);
+    }
+    else //php < 5.4
+    {
+        header(':', true, $num);
+    }
+    
+    if(file_exists(path_controllers.'erreurs/'.$num.'.php'))
+    {
+        require_once(path_controllers.'erreurs/'.$num.'.php');
     }
     else
     {
-        if(function_exists('http_response_code')) {http_response_code($num);}
-        else {header(':', true, $num);}
-        
         echo 'Erreur '.$num;
     }
     
@@ -214,7 +221,7 @@ function ErrorView($num, $cleanCache=true)
  */
 function logfile($file, $txt, $date=true)
 {
-    if($date == true)
+    if($date === true)
     {
         $date = new \BFW\Date();
         $dateTxt = $date->getJour().'-'.$date->getMois().'-'.$date->getAnnee().' '.$date->getHeure().':'.$date->getMinute().':'.$date->getSeconde();
@@ -267,7 +274,7 @@ function getKernel()
 {
     global $BFWKernel;
     
-    if(!(isset($BFWKernel) && is_object($BFWKernel) && get_class($BFWKernel) == '\BFW\Kernel'))
+    if(!(isset($BFWKernel) && is_object($BFWKernel) && get_class($BFWKernel) == 'BFW\Kernel'))
     {
         $BFWKernel = new \BFW\Kernel;
     }

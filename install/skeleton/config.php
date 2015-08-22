@@ -7,6 +7,7 @@
  
 //*** Config BFW ***
 $DebugMode    = true;     //True pour du dev (affiche toutes les erreurs), false pour de la prod (n'affiche rien)
+$errorRender  = 'displayPHPError'; //Fonction d'erreur PHP personnalisé du framework. false pour désactiver
 $myVendorName = 'vendor'; //Le nom du dossier où sont les libs de composer (default: "vendor")
 //*** Config BFW ***
 
@@ -36,4 +37,3 @@ $base_url = 'http://localhost';
 //*** Controler par défaut ***
 $DefaultController = 'index'; //Il s'agit du modele de page qui sera utilisé comme page index du site
 //*** Controler par défaut ***
-?>

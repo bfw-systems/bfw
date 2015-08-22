@@ -6,27 +6,63 @@
 # version : 2.0.0
 # author : bulton-fr
 
-$rootPath = __DIR__.'/..';
 
-$exist = false;
-$iTest = 0;
-do
+//**** Récupération des paramètres cli ****
+$cliOptions = getopt('', array('help::', 'path:', 'vendor_name:'));
+
+if(array_key_exists('help', $cliOptions))
 {
-	if(!file_exists($rootPath.'/autoload.php') && !file_exists($rootPath.'/composer'))
-	{
-		$rootPath .= '/..';
-	}
-	else {$exist = true;}
-	
-	if($iTest > 9) //Securité
-	{
-		echo "\033[1;31mLe répertoire contenant composer n'a pu être trouvé !\033[0m\n";
-		die;
-	}
-	
-	$iTest++;
+	echo 'COMMANDE HELP'."\n";
+	echo '--path : Le chemin vers la racine du projet BFW'."\n";
+	echo '--vendor_name : Le nom du dossier de composer s\'il est différent de "vendor"'."\n";
+	exit;
 }
-while(!$exist);
+
+$pathInstall = null;
+if(isset($cliOptions['path']))
+{
+	$pathInstall = $cliOptions['path'];
+}
+
+$vendorName = 'vendor';
+if(isset($cliOptions['vendor_name']))
+{
+	$vendorName = $cliOptions['vendor_name'];
+}
+//**** Récupération des paramètres cli ****
+
+//--- Si le path n'a pas été indiqué, on le recherche ---
+if($pathInstall === null)
+{
+    $rootPath = __DIR__.'/..';
+
+    $exist = false;
+    $iTest = 0;
+    do
+    {
+        if(!file_exists($rootPath.'/autoload.php') && !file_exists($rootPath.'/composer'))
+        {
+            $rootPath .= '/..';
+        }
+        else {$exist = true;}
+        
+        if($iTest > 9) //Securité
+        {
+            echo "\033[1;31mLe répertoire contenant composer n'a pu être trouvé !\033[0m\n";
+            die;
+        }
+        
+        $iTest++;
+    }
+    while(!$exist);
+
+    $pathInstall = realpath($rootPath.'/..');
+}
+else
+{
+    $rootPath = $pathInstall.'/'.$vendorName;
+}
+//--- Si le path n'a pas été indiqué, on le recherche ---
 
 $listModulesFind = array();
 
@@ -94,7 +130,7 @@ class readDir
 }
 
 //si les dossiers du framework qu'on utilise sont bien présent...
-if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpath($rootPath.'/..').'/modules/')))
+if(!(!file_exists($pathInstall.'/configs/') || !file_exists($pathInstall.'/modules/')))
 {
 	//Lance la lecture du dossier vendor
 	$read = new readDir();
@@ -114,10 +150,10 @@ if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpat
 			$result = ''; //Ce qui sera affiché à la fin dans la console.
 			
 			//Si le module n'a pas déjà été installé dans le dossier /modules
-			if(!file_exists(realpath($rootPath.'/..').'/modules/'.$module))
+			if(!file_exists($pathInstall.'/modules/'.$module))
 			{
 				//Si on arrive à créer le lien symbolique
-				if(symlink(realpath($moduleFindPath), realpath($rootPath.'/..').'/modules/'.$module))
+				if(symlink(realpath($moduleFindPath), $pathInstall.'/modules/'.$module))
 				{
 					$result .= "...\033[1;32m Done\033[0m\n";
 					
@@ -134,10 +170,10 @@ if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpat
 						$createConfigDirFail = false; //Permet de savoir si la création du dossier pour la config du module à fail
 						
 						//Si le dossier contenant la config du module dans /configs n'existe pas
-						if(!file_exists(realpath($rootPath.'/..').'/configs/'.$module))
+						if(!file_exists($pathInstall.'/configs/'.$module))
 						{
 							//On tente de le créer
-							if(mkdir(realpath($rootPath.'/..').'/configs/'.$module, 0755))
+							if(mkdir($pathInstall.'/configs/'.$module, 0755))
 							{
 								$result .= "...\033[1;32m Done";
 							}
@@ -160,13 +196,13 @@ if(!(!file_exists(realpath($rootPath.'/..').'/configs/') || !file_exists(realpat
 								$result .= '        > Copie du fichier '.$config.' : ';
 								
 								//On vérifie qu'il n'existe pas déjà
-								if(!file_exists(realpath($rootPath.'/..').'/configs/'.$module.'/'.$config))
+								if(!file_exists($pathInstall.'/configs/'.$module.'/'.$config))
 								{
 									//Si le fichier source indiqué existe bien
 									if(file_exists(realpath($moduleFindPath).'/'.$modulePath.'/'.$config))
 									{
 										//Alors on copie le fichier vers le dossier /configs/[monModule]/
-										if(copy(realpath($moduleFindPath).'/'.$modulePath.'/'.$config, realpath($rootPath.'/..').'/configs/'.$module.'/'.$config))
+										if(copy(realpath($moduleFindPath).'/'.$modulePath.'/'.$config, $pathInstall.'/configs/'.$module.'/'.$config))
 										{
 											$result .= "...\033[1;32m Done";
 										}
