@@ -105,4 +105,3 @@ class Observer implements \SplObserver
         }
     }
 }
-?>

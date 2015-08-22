@@ -266,4 +266,3 @@ if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
     }
 }
 //Chargement des modules
-?>

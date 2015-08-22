@@ -93,8 +93,6 @@ interface IVisiteur
     /**
      * Constructeur
      * Récupère les infos et instancie la session
-     * @return void
      */
     public function __construct();
 }
-?>

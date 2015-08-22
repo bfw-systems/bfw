@@ -37,4 +37,3 @@ $base_url = 'http://localhost';
 //*** Controler par défaut ***
 $DefaultController = 'index'; //Il s'agit du modele de page qui sera utilisé comme page index du site
 //*** Controler par défaut ***
-?>

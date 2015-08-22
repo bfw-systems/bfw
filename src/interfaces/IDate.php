@@ -69,7 +69,6 @@ interface IDate
      * S'il n'y a pas ":00" à la fin, alors c'est géré.
      * 
      * @param string $date (default: "now") La date sur laquelle travailler. Si pas indiqué, il s'agit de la date actuelle.
-     * @return void
      */
     public function __construct($date="now");
     
@@ -164,4 +163,3 @@ interface IDate
      */
     public function aff_simple($tout=1, $minus=false);
 }
-?>

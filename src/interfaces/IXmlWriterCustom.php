@@ -15,7 +15,6 @@ interface IXmlWriter_custom
 {
     /**
      * Constructeur
-     * @return void
      */
     public function __construct();
     
@@ -70,4 +69,3 @@ interface IXmlWriter_custom
      */
     public function getXml();
 }
-?>

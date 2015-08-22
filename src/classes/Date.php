@@ -467,7 +467,7 @@ class Date extends \DateTime implements \BFWInterface\IDate
         if($tout == 1) {$aff .= $aff_heure;}
         
         //Met la première lettre en minuscule dans le cas où l'ont veuille du minuscule
-        if($minus == true) {$aff = mb_strtolower($aff);}
+        if($minus === true) {$aff = mb_strtolower($aff);}
         
         return $aff; //Et on retour la date parser :D
     }

@@ -23,7 +23,6 @@ interface IRam
      * @throws Exception : Si l'extension php-memcache n'est présente
      *                     Si les infos sont pas au bon format
      *                     Si la connexion échoue
-     * @return void
      */
     public function __construct($host, $port);
     
@@ -83,4 +82,3 @@ interface IRam
      */
     public function getVal($key);
 }
-?>

@@ -59,7 +59,7 @@ function secure($string, $html=false, $null_cslashe=false)
             //commenté car problème de notice si php < 5.4
             //if(defined(ENT_HTML401)) {$optHtmlentities .= ' | '.ENT_HTML401;} //à partir de php5.4
             
-            if($html == false)
+            if($html === false)
             {
                 $string = htmlentities($string, $optHtmlentities, 'UTF-8');
             }
@@ -69,7 +69,7 @@ function secure($string, $html=false, $null_cslashe=false)
                 $string = DB_protect($string);
             }
             
-            if($null_cslashe == false)
+            if($null_cslashe === false)
             {
                 $string = addcslashes($string, '%_');
             }
@@ -221,7 +221,7 @@ function ErrorView($num, $cleanCache=true)
  */
 function logfile($file, $txt, $date=true)
 {
-    if($date == true)
+    if($date === true)
     {
         $date = new \BFW\Date();
         $dateTxt = $date->getJour().'-'.$date->getMois().'-'.$date->getAnnee().' '.$date->getHeure().':'.$date->getMinute().':'.$date->getSeconde();
