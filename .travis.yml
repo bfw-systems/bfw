@@ -13,6 +13,8 @@ php:
   - 5.5
   # aliased to a recent 5.6.x version
   - 5.6
+  # aliased to a recent 7.0.x version
+  - 7.0
 
 # execute any number of scripts before the test run, custom env's are available as variables
 before_script:
@@ -21,3 +23,8 @@ before_script:
 
 script:
   - php mageekguy.atoum.phar -d test/classes/ -c .atoum.php;
+
+after_script:
+ ## Scrutinizer
+ - wget https://scrutinizer-ci.com/ocular.phar
+ - php ocular.phar code-coverage:upload --format=php-clover clover.xml
