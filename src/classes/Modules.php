@@ -79,10 +79,17 @@ class Modules implements \BFWInterface\IModules
             $require = $params['require'];
         }
         
+        $priority = 0;
+        if(isset($params['priority']))
+        {
+            $priority = (int) $params['priority'];
+        }
+        
         $this->modList[$name] = array(
             'name' => $name,
             'time' => $time,
-            'require' => $require
+            'require' => $require,
+            'priority' => $priority
         );
     }
     
@@ -155,18 +162,45 @@ class Modules implements \BFWInterface\IModules
     public function listToLoad($timeToLoad)
     {
         $arrayToLoad = array();
+        $toLoad = array();
         
-        foreach($this->modList as $mod)
+        foreach($this->modList as &$mod)
         {
             if($mod['time'] == $timeToLoad)
             {
-                //Une exception est levé par modToLoad s'il y a une problème;
-                $this->modToLoad($mod, $arrayToLoad);
+                $toLoad[] = $mod;
             }
         }
+        unset($mod); //kill ref
         
-        asort($arrayToLoad);
+        uasort($toLoad, array($this, 'sortPriority'));
+        
+        foreach($toLoad as &$mod)
+        {
+            //Une exception est levé par modToLoad s'il y a une problème;
+            $this->modToLoad($mod, $arrayToLoad);
+        }
+        unset($mod); //kill ref
+        
+        /*
+        var_dump($arrayToLoad);
+        if($timeToLoad == 'endInit') {exit;}
+        //*/
+        
         return $arrayToLoad;
+    }
+    
+    protected function sortPriority($mod1, $mod2)
+    {
+        $prio1 = $mod1['priority'];
+        $prio2 = $mod2['priority'];
+        
+        if($prio1 === $prio2)
+        {
+            return 0;
+        }
+        
+        return ($prio1 > $prio2) ? -1 : 1;
     }
     
     /**
@@ -179,10 +213,12 @@ class Modules implements \BFWInterface\IModules
      * 
      * @return bool Si le module peut être chargé ou non.
      */
-    protected function modToLoad($mod, &$arrayToLoad)
+    protected function modToLoad(&$mod, &$arrayToLoad, $waitToLoad=array())
     {
-        if(!in_array($mod['name'], $arrayToLoad))
+        if(!in_array($mod['name'], $arrayToLoad) && !isset($waitToLoad[$mod['name']]))
         {
+            $waitToLoad[$mod['name']] = true;
+            
             $require = $mod['require'];
             $load    = true;
             
@@ -195,16 +231,19 @@ class Modules implements \BFWInterface\IModules
                         throw new \Exception('La dépendance '.$modRequire.' du module '.$mod['name'].' n\'a pas été trouvé.');
                     }
                     
-                    if(!$this->isLoad($modRequire) && $this->modList[$modRequire]['time'] != $mod['time'])
+                    if(!$this->isLoad($modRequire))
                     {
-                        throw new \Exception('La dépendance '.$modRequire.' du module '.$mod['name'].' n\'est pas encore chargé. Vous devez charger votre module plus tard.');
+                        $load = $this->modToLoad($this->modList[$modRequire], $arrayToLoad, $waitToLoad);
                     }
-                    
-                    $load = $this->modToLoad($this->modList[$modRequire], $arrayToLoad);
                 }
             }
             
-            if($load) {$arrayToLoad[] = $mod['name'];}
+            if($load)
+            {
+                $arrayToLoad[] = $mod['name'];
+                unset($waitToLoad[$mod['name']]);
+            }
+            
             return $load;
         }
         
