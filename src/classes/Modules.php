@@ -34,6 +34,11 @@ class Modules implements \BFWInterface\IModules
     protected $notLoad = null;
     
     /**
+     * @var array $loadOrder Liste de l'ordre de chargement des modules pour chaque temps de chargement
+     */
+    protected $loadOrder = array();
+    
+    /**
      * Constructeur
      */
     public function __construct()
@@ -187,6 +192,8 @@ class Modules implements \BFWInterface\IModules
         if($timeToLoad == 'endInit') {exit;}
         //*/
         
+        $this->loadOrder[$timeToLoad] = $arrayToLoad;
+        
         return $arrayToLoad;
     }
     
@@ -293,5 +300,15 @@ class Modules implements \BFWInterface\IModules
     {
         if(!$this->exists($name)) {throw new \Exception('Le module '.$name.' n\'existe pas.');}
         return $this->modList[$name];
+    }
+    
+    /**
+     * Retourne le tableau loggant l'ordre de chargements des modules
+     * 
+     * @return array
+     */
+    public function getLoadOrder()
+    {
+        return $this->loadOrder;
     }
 }
