@@ -42,6 +42,6 @@ $script
     ->addDirectory(__DIR__)
     
     ->setProjectName('BFW')
-    ->setProjectUrl('http://bfw.bulton.fr')
-    ->setOutputDirectory('/home/bubu-blog/www/atoum/bfw-v2/treemap')
+    ->setProjectUrl('http://bfw.test.bulton.fr')
+    ->setOutputDirectory('/home/bfw/www/treemap/bfw-v2')
 ;
