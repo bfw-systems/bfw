@@ -145,6 +145,8 @@ class Modules implements \BFWInterface\IModules
      */
     protected function initParameters(&$params, $key, $default)
     {
+        if(!is_array($params)) {return;}
+        
         if(!isset($params[$key]))
         {
             $params[$key] = $default;
