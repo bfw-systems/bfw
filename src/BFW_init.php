@@ -89,36 +89,38 @@ foreach($modulesToLoad as $key => $moduleLoad)
     if(!empty($moduleLoad['name']))
     {
         $pathToModule = $rootPath.'modules/'.$moduleLoad['name'];
-        if(!empty($pathToModule))
+        if(empty($pathToModule))
         {
-            if(is_link($pathToModule))
+            continue;
+        }
+        
+        if(is_link($pathToModule))
+        {
+            $pathToModule = readlink($pathToModule);
+            
+            if(file_exists($pathToModule.'/bfw_modules_info.php'))
             {
-                $pathToModule = readlink($pathToModule);
+                require_once($pathToModule.'/bfw_modules_info.php');
                 
-                if(file_exists($pathToModule.'/bfw_modules_info.php'))
+                if(!empty($modulePath))
                 {
-                    require_once($pathToModule.'/bfw_modules_info.php');
-                    
-                    if(!empty($modulePath))
-                    {
-                        $pathToModule .= '/'.$modulePath;
-                    }
+                    $pathToModule .= '/'.$modulePath;
                 }
             }
-            
-            if(!file_exists($pathToModule.'/kernel_init.php'))
-            {
-                define('kernelModuleLoad_'.$key.'_test', false);
-                throw new \Exception('Module '.$moduleLoad['name'].' not found.');
-            }
-            
-            define('kernelModuleLoad_'.$key.'_test', true);
-            define('kernelModuleLoad_'.$key.'_path', $pathToModule.'/kernel_init.php');
-            
-            if($moduleLoad['action'] == 'load')
-            {
-                require_once($pathToModule.'/kernel_init.php');
-            }
+        }
+        
+        if(!file_exists($pathToModule.'/kernel_init.php'))
+        {
+            define('kernelModuleLoad_'.$key.'_test', false);
+            throw new \Exception('Module '.$moduleLoad['name'].' not found.');
+        }
+        
+        define('kernelModuleLoad_'.$key.'_test', true);
+        define('kernelModuleLoad_'.$key.'_path', $pathToModule.'/kernel_init.php');
+        
+        if($moduleLoad['action'] == 'load')
+        {
+            require_once($pathToModule.'/kernel_init.php');
         }
     }
     
@@ -160,21 +162,27 @@ if(file_exists($rootPath.'modules'))
     $dir = opendir($rootPath.'modules');
     $dir_arr = array('.', '..', '.htaccess');
     
-    while(false !== ($file = readdir($dir)))
+    while(false !== ($moduleName = readdir($dir)))
     {
-        $path = $rootPath.'modules/'.$file;
+        $path = $rootPath.'modules/'.$moduleName;
         if(is_link($path)) {$path = readlink($path);}
         
         //Si le fichier existe, on inclus le fichier principal du module
-        if(file_exists($path.'/'.$file.'.php'))
+        if(file_exists($path.'/module.json'))
         {
-            require_once($path.'/'.$file.'.php');
-            $Modules->addPath($file, $path);
-            
-            if(!file_exists($path.'/inclus.php'))
-            {
-                $Modules->loaded($file);
-            }
+            $Modules->newFromJson($path);
+        }
+        elseif(file_exists($path.'/'.$moduleName.'.php'))
+        {
+            require_once($path.'/'.$moduleName.'.php');
+            $Modules->addPath($moduleName, $path);
+        }
+        else {continue;}
+        
+        $moduleInfos = $Modules->getModuleInfos($moduleName);
+        if(!file_exists($path.'/'.$moduleInfos['runFile']))
+        {
+            $Modules->loaded($moduleName);
         }
     }
     closedir($dir);
@@ -190,7 +198,7 @@ if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
         $path = $infos['path'];
         
         $Modules->loaded($moduleToLoad);
-        require_once($path.'/inclus.php');
+        require_once($path.'/'.$infos['runFile']);
     }
 }
 //Inclusions des modules
@@ -208,10 +216,10 @@ if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
         $infos = $Modules->getModuleInfos($moduleToLoad);
         $path = $infos['path'];
         
-        if(file_exists($path.'/inclus.php'))
+        if(file_exists($path.'/'.$infos['runFile']))
         {
             $Modules->loaded($moduleToLoad);
-            require_once($path.'/inclus.php');
+            require_once($path.'/'.$infos['runFile']);
         }
     }
 }
@@ -258,11 +266,12 @@ if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
         $infos = $Modules->getModuleInfos($moduleToLoad);
         $path = $infos['path'];
         
-        if(file_exists($path.'/inclus.php'))
+        if(file_exists($path.'/'.$infos['runFile']))
         {
             $Modules->loaded($moduleToLoad);
-            require_once($path.'/inclus.php');
+            require_once($path.'/'.$infos['runFile']);
         }
     }
 }
+
 //Chargement des modules
