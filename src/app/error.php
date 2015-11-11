@@ -123,7 +123,7 @@ if($DebugMode && $errorRender)
         </html>
         ';
         
-        ob_end_flush();
+        ob_flush();
         exit;
     }
 }
