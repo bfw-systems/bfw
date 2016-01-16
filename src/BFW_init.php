@@ -53,20 +53,8 @@ header('Content-Type: text/html; charset=utf-8'); //On indique un header en utf-
 require_once(__DIR__.'/app/error.php'); //Page d'erreur personnalisée
 
 //Inclusion fonction
-$dir = opendir(__DIR__.'/fonctions'); //Ouverture du dossier fonctions se trouvant à la racine
-$dir_arr = array('.', '..'); //Les fichiers & dossiers à ignorer à la lecture
-
-while(false !== ($file = readdir($dir))) //Si on a un fichier
-{
-    //Si c'est un fichier, et que ce n'est pas une sauvegarde auto, on inclu.
-    if(!in_array($file, $dir_arr) && !preg_match("#~$#", $file))
-    {
-        require_once(__DIR__.'/fonctions/'.$file);
-    }
-}
-
-closedir($dir); //Fermeture du dossier
-unset($dir, $dir_arr, $file); //Suppression des variables
+require_once(__DIR__.'/fonctions/global.php');
+require_once(__DIR__.'/fonctions/cli.php');
 //Fin Inclusion fonction
 
 //Load module

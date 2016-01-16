@@ -1,5 +1,7 @@
 <?php
 //--- Config pour le kernel BFW ---
+define('cliMode', false);
+
 //Si besoin.
 //--- Config pour le kernel BFW ---
 

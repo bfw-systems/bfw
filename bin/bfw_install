@@ -8,6 +8,18 @@
 BFWfail=false
 echo '\033[0;33mInstallation du framework :\033[0m'
 
+#Create dir cli
+if [ "$BFWfail" = false ] ;then
+	echo -n '  > Création du dossier cli ...'
+	
+	if mkdir -p cli ;then
+		echo '\033[1;32m Done\033[0m'
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
+
 #Create dir configs
 if [ "$BFWfail" = false ] ;then
 	echo -n '  > Création du dossier configs ...'
@@ -124,6 +136,28 @@ if [ "$BFWfail" = false ] ;then
 	echo -n "  > Copie du fichier index d'exemple dans web ..."
 
 	if cp $DIR/install/skeleton/index.php web/index.php ;then
+		echo '\033[1;32m Done\033[0m'
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
+
+if [ "$BFWfail" = false ] ;then
+	echo -n "  > Copie du fichier cli à la racine ..."
+
+	if cp $DIR/install/skeleton/cli.php cli.php ;then
+		echo '\033[1;32m Done\033[0m'
+	else
+		echo '\033[1;31m Fail\033[0m'
+		BFWfail=true
+	fi
+fi
+
+if [ "$BFWfail" = false ] ;then
+	echo -n "  > Copie du fichier cli d'exemple dans cli ..."
+
+	if cp $DIR/install/skeleton/cli/exemple.php cli/exemple.php ;then
 		echo '\033[1;32m Done\033[0m'
 	else
 		echo '\033[1;31m Fail\033[0m'
