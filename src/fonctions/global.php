@@ -205,6 +205,10 @@ function ErrorView($num, $cleanCache = true)
     {
         require_once(path_controllers.'erreurs/'.$num.'.php');
     }
+    elseif (file_exists(path_controllers.'erreurs.php')) 
+    {
+        require_once(path_controllers.'erreurs.php');
+    }
     else
     {
         echo 'Erreur '.$num;
