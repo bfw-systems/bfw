@@ -1,36 +1,36 @@
 #!/usr/bin/env php
 <?php
-# Load BFW Modules script : Read all dir in vendor for find bfw modules and create symlink to modules dir
-#
-# dateCreate : 2014-03-04
-# version : 2.0.0
-# author : bulton-fr
-
+/*
+ * Load BFW Modules script : Read all dir in vendor for find bfw modules and create symlink to modules dir
+ *
+ * dateCreate : 2014-03-04
+ * version : 2.2.0
+ * author : bulton-fr
+ */
 
 //**** Récupération des paramètres cli ****
 $cliOptions = getopt('', array('help::', 'path:', 'vendor_name:'));
 
 if(array_key_exists('help', $cliOptions))
 {
-	echo 'COMMANDE HELP'."\n";
-	echo '--path : Le chemin vers la racine du projet BFW'."\n";
-	echo '--vendor_name : Le nom du dossier de composer s\'il est différent de "vendor"'."\n";
-	exit;
+    echo 'COMMANDE HELP'."\n";
+    echo '--path : Le chemin vers la racine du projet BFW'."\n";
+    echo '--vendor_name : Le nom du dossier de composer s\'il est différent de "vendor"'."\n";
+    exit;
 }
 
 $pathInstall = null;
 if(isset($cliOptions['path']))
 {
-	$pathInstall = $cliOptions['path'];
+    $pathInstall = $cliOptions['path'];
 }
 
 $vendorName = 'vendor';
 if(isset($cliOptions['vendor_name']))
 {
-	$vendorName = $cliOptions['vendor_name'];
+    $vendorName = $cliOptions['vendor_name'];
 }
 //**** Récupération des paramètres cli ****
-
 //--- Si le path n'a pas été indiqué, on le recherche ---
 if($pathInstall === null)
 {
@@ -44,17 +44,19 @@ if($pathInstall === null)
         {
             $rootPath .= '/..';
         }
-        else {$exist = true;}
-        
+        else
+        {
+            $exist = true;
+        }
+
         if($iTest > 9) //Securité
         {
             echo "\033[1;31mLe répertoire contenant composer n'a pu être trouvé !\033[0m\n";
             die;
         }
-        
+
         $iTest++;
-    }
-    while(!$exist);
+    } while(!$exist);
 
     $pathInstall = realpath($rootPath.'/..');
 }
@@ -70,177 +72,229 @@ $listModulesFind = array();
 //Une class pour éviter de tomber dans les sécurités de récursivité d'appel de fonction
 class readDir
 {
-	/**
-	 * @var $list : Référence vers l'array stockant la liste des path de modules trouvés
-	 */
-	private $list = array();
-	
-	/**
-	 * @var $ignore : Les éléments à ignorer lors de la lecture du dossier
-	 */
-	private $ignore = array('.', '..');
-	
-	/*
-	 * Constructeur
-	 * 
-	 * @param array (ref) $listModuleFind : Liste des modules trouvé
-	 */
-	public function __construct()
-	{
-		global $listModulesFind;	
-		$this->list = &$listModulesFind;
-	}
-	
-	/**
-	 * Méthode de lecture d'un dossier
-	 *
-	 * @param string $path : Le chemin à lire
-	 */
-	public function read($path)
-	{
-		$dir = opendir($path); //Ouverture du dossier à lire
-		
-		if($dir !== false)
-		{
-			//Tant qu'il y a des fichiers à lire dans le dossier
-			while(($file = readdir($dir)) !== false)
-			{
-				if(!in_array($file, $this->ignore))
-				{
-					//Si le fichier d'initialisation du modules existes
-					if(file_exists($path.'/bfw_modules_info.php'))
-					{
-						$this->list[] = $path; //On ajoute le chemin courant à la liste
-						break;
-					}
-					
-					//Si l'élément lu est un dossier
-					if(is_dir($path.'/'.$file))
-					{
-						//On le lit à son tour
-						$read = new readDir();
-						$read->read($path.'/'.$file);
-					}
-				}
-			}
-			
-			closedir($dir); //Fermeture du dossier lu
-		}
-	}
+    /**
+     * @var $list : Référence vers l'array stockant la liste des path de modules trouvés
+     */
+    private $list = array();
+
+    /**
+     * @var $ignore : Les éléments à ignorer lors de la lecture du dossier
+     */
+    private $ignore = array('.', '..');
+
+    /*
+     * Constructeur
+     * 
+     * @param array (ref) $listModuleFind : Liste des modules trouvé
+     */
+
+    public function __construct()
+    {
+        global $listModulesFind;
+        $this->list = &$listModulesFind;
+    }
+
+    /**
+     * Méthode de lecture d'un dossier
+     *
+     * @param string $path : Le chemin à lire
+     */
+    public function read($path)
+    {
+        $dir = opendir($path); //Ouverture du dossier à lire
+
+        if($dir === false)
+        {
+            return;
+        }
+
+        //Tant qu'il y a des fichiers à lire dans le dossier
+        while(($file = readdir($dir)) !== false)
+        {
+            if(in_array($file, $this->ignore))
+            {
+                continue;
+            }
+
+            //Si le fichier d'initialisation du modules existes
+            if(file_exists($path.'/bfw_modules_info.php'))
+            {
+                $this->list[] = $path; //On ajoute le chemin courant à la liste
+                break;
+            }
+
+            //Si l'élément lu est un dossier
+            if(is_dir($path.'/'.$file))
+            {
+                //On le lit à son tour
+                $read = new readDir();
+                $read->read($path.'/'.$file);
+            }
+        }
+
+        closedir($dir); //Fermeture du dossier lu
+    }
 }
 
 //si les dossiers du framework qu'on utilise sont bien présent...
-if(!(!file_exists($pathInstall.'/configs/') || !file_exists($pathInstall.'/modules/')))
+if(!file_exists($pathInstall.'/configs/') || !file_exists($pathInstall.'/modules/'))
 {
-	//Lance la lecture du dossier vendor
-	$read = new readDir();
-	$read->read($rootPath.'/');
-
-	//Si des modules ont été trouvé
-	if(count($listModulesFind) > 0)
-	{
-		//Pour chaque module trouvé dans le vendor
-		foreach($listModulesFind as $moduleFindPath)
-		{
-			//On obtient le nom du module
-			$modules = explode('/', $moduleFindPath);
-			$module = $modules[(count($modules)-1)];
-			
-			echo 'Création du lien symbolique de '.$module.' : ';
-			$result = ''; //Ce qui sera affiché à la fin dans la console.
-			
-			//Si le module n'a pas déjà été installé dans le dossier /modules
-			if(!file_exists($pathInstall.'/modules/'.$module))
-			{
-				//Si on arrive à créer le lien symbolique
-				if(symlink(realpath($moduleFindPath), $pathInstall.'/modules/'.$module))
-				{
-					$result .= "...\033[1;32m Done\033[0m\n";
-					
-					//Les fichiers de configs du modules lu
-					$result .= '    Recherche de fichiers de configs ... ';
-					//On inclus le fichier contenant les infos sur les fichiers de configs
-					require_once(realpath($moduleFindPath).'/bfw_modules_info.php');
-					//Si les 2 variables utile existe et on le bon type.
-					if(isset($modulePath) && isset($configFiles) && is_array($configFiles) && is_string($modulePath))
-					{
-						$result .= "\033[0;33m ".count($configFiles)." fichier(s) trouvé(s)\033[0m\n";
-						
-						$result .= '    Création du répertoire de config pour le module ...';
-						$createConfigDirFail = false; //Permet de savoir si la création du dossier pour la config du module à fail
-						
-						//Si le dossier contenant la config du module dans /configs n'existe pas
-						if(!file_exists($pathInstall.'/configs/'.$module))
-						{
-							//On tente de le créer
-							if(mkdir($pathInstall.'/configs/'.$module, 0755))
-							{
-								$result .= "...\033[1;32m Done";
-							}
-							else
-							{
-								$result .= "...\033[1;31m Fail !";
-								$createConfigDirFail = true;
-							}
-						}
-						else {$result .= "...\033[1;33m Existe déjà.";}
-						$result .= "\033[0m\n";
-						
-						//Si on a de quoi stocké les fichiers de configs
-						if($createConfigDirFail == false)
-						{
-							$result .= '    Copie des fichiers de configs : '."\n";
-							//Pour chaque fichier de config indiqué
-							foreach($configFiles as $config)
-							{
-								$result .= '        > Copie du fichier '.$config.' : ';
-								
-								//On vérifie qu'il n'existe pas déjà
-								if(!file_exists($pathInstall.'/configs/'.$module.'/'.$config))
-								{
-									//Si le fichier source indiqué existe bien
-									if(file_exists(realpath($moduleFindPath).'/'.$modulePath.'/'.$config))
-									{
-										//Alors on copie le fichier vers le dossier /configs/[monModule]/
-										if(copy(realpath($moduleFindPath).'/'.$modulePath.'/'.$config, $pathInstall.'/configs/'.$module.'/'.$config))
-										{
-											$result .= "...\033[1;32m Done";
-										}
-										else {$result .= "...\033[1;31m Fail !";}
-									}
-									else {$result .= "...\033[1;31m Fichier source non trouvé : Fail !";}
-								}
-								else {$result .= "...\033[1;33m Existe déjà.";}
-							}
-						}
-						else
-						{
-							$result .= "...\033[1;31m Fail !";
-							$result .= 'Les fichiers de configs n\'ont pas été copié.';
-						}
-						$result .= "\n";
-					}
-					else {$result .= "\033[0;33m 0 fichier trouvé.";}
-					
-					//Si le module contient un script d'installation qui lui est spécifique
-					if(isset($installRun) && $installRun === true)
-					{
-						$result .= "\033[0m\n";
-						$result .= '    Lancement du script d\'installation propre au module ...'."\n";
-						require_once(realpath($moduleFindPath).'/runInstallModule.php');
-					}
-					
-					//et on supprime les variables qui indiquait les configs pour le module lu pour pas qu'elles soient utilisé pour les modules lu après.
-					unset($modulePath, $configFiles, $installRun);
-				}
-				else {$result .= "...\033[1;31m Fail !";}
-			}
-			else {$result .= "...\033[1;33m Non créer. Le module existe déjà !";}
-			
-			echo $result."\033[0m\n";
-		}
-	}
-	else {echo "\033[0;33m Aucun module trouvé dans le vendor \033[0m\n";}
+    echo "\033[1;31mErreur : Les dossiers configs et/ou modules n'ont pas été trouvé.\nVeuillez réinstaller le framework !\033[0m\n";
+    exit;
 }
-else {echo "\033[1;31mErreur : Les dossiers configs et/ou modules n'ont pas été trouvé.\nVeuillez réinstaller le framework !\033[0m\n";}
-?>
+
+//Lance la lecture du dossier vendor
+$read = new readDir();
+$read->read($rootPath.'/');
+
+//Si des modules ont été trouvé
+if(count($listModulesFind) <= 0)
+{
+    echo "\033[0;33m Aucun module trouvé dans le vendor \033[0m\n";
+    exit;
+}
+
+$displayEOF = "\033[0m\n";
+
+//Pour chaque module trouvé dans le vendor
+foreach($listModulesFind as $moduleFindPath)
+{
+    //On obtient le nom du module
+    $modules = explode('/', $moduleFindPath);
+    $module  = $modules[(count($modules) - 1)];
+
+    //On inclus le fichier contenant les infos sur les fichiers de configs
+    require_once(realpath($moduleFindPath).'/bfw_modules_info.php');
+    
+    if(isset($modulePath) && is_string($modulePath))
+    {
+        $moduleFindPath .= '/'.$modulePath;
+    }
+
+    echo 'Création du lien symbolique de '.$module.' : ';
+    $result = ''; //Ce qui sera affiché à la fin dans la console.
+    
+    //Si le module n'a pas déjà été installé dans le dossier /modules
+    if(file_exists($pathInstall.'/modules/'.$module))
+    {
+        echo "...\033[1;33m Non créer. Le module existe déjà !".$displayEOF;
+        
+        //et on supprime les variables qui indiquait les configs pour le module 
+        //lu pour pas qu'elles soient utilisé pour les modules lu après.
+        unset($modulePath, $configFiles, $installRun);
+        
+        continue;
+    }
+
+    //Si on arrive à créer le lien symbolique
+    if(!symlink(realpath($moduleFindPath), $pathInstall.'/modules/'.$module))
+    {
+        echo "...\033[1;31m Fail !".$displayEOF;
+        
+        //et on supprime les variables qui indiquait les configs pour le module 
+        //lu pour pas qu'elles soient utilisé pour les modules lu après.
+        unset($modulePath, $configFiles, $installRun);
+        
+        continue;
+    }
+    
+    $result .= "...\033[1;32m Done\033[0m\n";
+
+    //Les fichiers de configs du modules lu
+    $result .= '    Recherche de fichiers de configs ... ';
+
+    //Si les 2 variables utile existe et on le bon type.
+    if(isset($modulePath) && isset($configFiles) && is_array($configFiles) && is_string($modulePath))
+    {
+        $result .= "\033[0;33m ".count($configFiles)." fichier(s) trouvé(s)\033[0m\n";
+
+        $result .= '    Création du répertoire de config pour le module ...';
+        $createConfigDirFail = false; //Permet de savoir si la création du dossier pour la config du module à fail
+
+        //Si le dossier contenant la config du module dans /configs n'existe pas
+        if(!file_exists($pathInstall.'/configs/'.$module))
+        {
+            //On tente de le créer
+            if(mkdir($pathInstall.'/configs/'.$module, 0755))
+            {
+                $result .= "...\033[1;32m Done";
+            }
+            else
+            {
+                $result .= "...\033[1;31m Fail !";
+                $createConfigDirFail = true;
+            }
+        }
+        else
+        {
+            $result .= "...\033[1;33m Existe déjà.";
+        }
+        
+        $result .= "\033[0m\n";
+
+        //Si on a de quoi stocké les fichiers de configs
+        if($createConfigDirFail == false)
+        {
+            $result .= '    Copie des fichiers de configs : '."\n";
+
+            //Pour chaque fichier de config indiqué
+            foreach($configFiles as $config)
+            {
+                $result .= '        > Copie du fichier '.$config.' : ';
+
+                //On vérifie qu'il n'existe pas déjà
+                if(!file_exists($pathInstall.'/configs/'.$module.'/'.$config))
+                {
+                    //Si le fichier source indiqué existe bien
+                    if(file_exists(realpath($moduleFindPath).'/'.$config))
+                    {
+                        //Alors on copie le fichier vers le dossier /configs/[monModule]/
+                        if(copy(realpath($moduleFindPath).'/'.$config, $pathInstall.'/configs/'.$module.'/'.$config))
+                        {
+                            $result .= "...\033[1;32m Done";
+                        }
+                        else
+                        {
+                            $result .= "...\033[1;31m Fail !";
+                        }
+                    }
+                    else
+                    {
+                        $result .= "...\033[1;31m Fichier source non trouvé : Fail !";
+                    }
+                }
+                else
+                {
+                    $result .= "...\033[1;33m Existe déjà.";
+                }
+				
+				$result .= "\033[0m\n";
+            }
+        }
+        else
+        {
+            $result .= "...\033[1;31m Fail !";
+            $result .= 'Les fichiers de configs n\'ont pas été copié.';
+        }
+
+        $result .= "\n";
+    }
+    else
+    {
+        $result .= "\033[0;33m 0 fichier trouvé.";
+    }
+
+    //Si le module contient un script d'installation qui lui est spécifique
+    if(isset($installRun) && $installRun === true)
+    {
+        $result .= "\033[0m\n";
+        $result .= '    Lancement du script d\'installation propre au module ...'."\n";
+        require_once(realpath($moduleFindPath).'/runInstallModule.php');
+    }
+
+    //et on supprime les variables qui indiquait les configs pour le module 
+    //lu pour pas qu'elles soient utilisé pour les modules lu après.
+    unset($modulePath, $configFiles, $installRun);
+    
+    echo $result."\033[0m\n";
+}

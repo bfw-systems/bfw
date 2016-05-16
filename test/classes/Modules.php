@@ -51,17 +51,22 @@ class Modules extends atoum
         $this->array($this->mock->modList['test'])->isEqualTo(array(
             'name' => 'test',
             'time' => modulesLoadTime_EndInit,
-            'require' => array()
+            'require' => array(),
+            'runFile' => 'inclus.php',
+            'priority' => 0
         ));
         
         $this->mock->newMod('test2', array(
             'require' => 'test',
-            'time'    => modulesLoadTime_Visiteur
+            'time'    => modulesLoadTime_Visiteur,
+            'priority' => 1
         ));
         $this->array($this->mock->modList['test2'])->isEqualTo(array(
             'name' => 'test2',
             'time' => modulesLoadTime_Visiteur,
-            'require' => array('test')
+            'require' => array('test'),
+            'runFile' => 'inclus.php',
+            'priority' => 1
         ));
         
         $mock = $this->mock;
@@ -152,14 +157,17 @@ class Modules extends atoum
         $this->mock->newMod('test');
         
         //Test d'un module sans dépendance et non chargé
-        $this->boolean($this->mock->modToLoad($this->mock->modList['test'], $arrayToLoad))->isTrue();
+        $testModInfos = $this->mock->modList['test'];
+        $this->boolean($this->mock->modToLoad($testModInfos, $arrayToLoad))->isTrue();
         
         //Test d'un module sans dépendance et déjà chargé
-        $this->boolean($this->mock->modToLoad($this->mock->modList['test'], $arrayToLoad))->isTrue();
+        $testModInfos = $this->mock->modList['test'];
+        $this->boolean($this->mock->modToLoad($testModInfos, $arrayToLoad))->isTrue();
         
         //Test d'un module avec dépendance sans erreur
         $this->mock->newMod('test2', array('require' => 'test'));
-        $this->boolean($this->mock->modToLoad($this->mock->modList['test2'], $arrayToLoad))->isTrue();
+        $test2ModInfos = $this->mock->modList['test'];
+        $this->boolean($this->mock->modToLoad($test2ModInfos, $arrayToLoad))->isTrue();
         
         $mock = &$this->mock;
         
@@ -167,7 +175,8 @@ class Modules extends atoum
         $this->mock->newMod('test3', array('require' => 'notExist'));
         $this->exception(function() use($mock, $arrayToLoad)
         {
-            $mock->modToLoad($mock->modList['test3'], $arrayToLoad);
+            $test3ModInfos = $mock->modList['test3'];
+            $mock->modToLoad($test3ModInfos, $arrayToLoad);
         })->message->contains('La dépendance notExist du module test3 n\'a pas été trouvé.');
         
         //Test d'un module avec une dépendance qui existe mais qui n'est pas chargé.
@@ -176,11 +185,6 @@ class Modules extends atoum
             'time'    => modulesLoadTime_Visiteur,
             'require' => 'test4'
         ));
-        
-        $this->exception(function() use($mock, $arrayToLoad)
-        {
-            $mock->modToLoad($mock->modList['test5'], $arrayToLoad);
-        })->message->contains('La dépendance test4 du module test5 n\'est pas encore chargé. Vous devez charger votre module plus tard.');
     }
 
     /**
@@ -201,7 +205,9 @@ class Modules extends atoum
             'test' => array(
                 'name'    => 'test',
                 'time'    => 'endInit',
-                'require' => array()
+                'require' => array(),
+                'runFile' => 'inclus.php',
+                'priority' => 0
             )
         ));
     }
@@ -229,7 +235,9 @@ class Modules extends atoum
         $this->array($this->mock->getModuleInfos('test'))->isEqualTo(array(
             'name'    => 'test',
             'time'    => 'endInit',
-            'require' => array()
+            'require' => array(),
+            'runFile' => 'inclus.php',
+            'priority' => 0
         ));
         
         $mock = $this->mock;
@@ -252,11 +260,10 @@ class MockModules extends \BFW\Modules
     public function __get($name) {return $this->$name;}
 
     /**
-     * Test de la méthode modToLoad($mod, &$arrayToLoad)
+     * Test de la méthode modToLoad(&$mod, &$arrayToLoad, $waitToLoad)
      */
-    public function modToLoad($mod, &$arrayToLoad)
+    public function modToLoad(&$mod, &$arrayToLoad, $waitToLoad=array())
     {
-        return parent::modToLoad($mod, $arrayToLoad);
+        return parent::modToLoad($mod, $arrayToLoad, $waitToLoad);
     }
-
 }

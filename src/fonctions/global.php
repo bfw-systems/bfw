@@ -26,56 +26,62 @@ function hashage($val)
  * 
  * @return mixed
  */
-function secure($string, $html=false, $null_cslashe=false)
+function secure($string, $html = false, $null_cslashe = false)
 {
     /*
-    A propos de $null_cslashes ; 
-        A désactivé si on le fait sur le nom de variable, car sur un nom comme coucou ça passe, sur cou_cou, ça devient cou\_cou ^^
-        (peut être génant sur un nom de variable dans le cas par exemple de $_POST['coucou'] ou $_POST['cou_cou'] pour l'exemple au-dessus)
-    */
-    
+      A propos de $null_cslashes ;
+      A désactivé si on le fait sur le nom de variable, car sur un nom comme coucou ça passe, sur cou_cou, ça devient cou\_cou ^^
+      (peut être génant sur un nom de variable dans le cas par exemple de $_POST['coucou'] ou $_POST['cou_cou'] pour l'exemple au-dessus)
+     */
+
     if(is_array($string)) //Au cas où la valeur à vérifier soit un array (peut arriver avec les POST)
     {
         foreach($string as $key => $val)
         {
-            unset($string[$key]); #Dans le cas où après si $key est modifié, alors la valeur pour la clé non sécurisé existerais toujours et la sécurisation ne servirais à rien.
+            //Dans le cas où après si $key est modifié, alors la valeur pour 
+            //la clé non sécurisé existerais toujours et la sécurisation 
+            //ne servirais à rien.
+            unset($string[$key]);
+
             $key = secure($key, true, $null_cslashe);
             $val = secure($val, $html, $null_cslashe);
+
             $string[$key] = $val;
         }
-    }
-    else
-    {
-        // On regarde si le type de string est un nombre entier (int)
-        if(ctype_digit($string))
-        {
-            $string = intval($string);
-        }
-        else // Pour tous les autres types
-        {
-            global $DB;
-            
-            $optHtmlentities = ENT_COMPAT;
-            //commenté car problème de notice si php < 5.4
-            //if(defined(ENT_HTML401)) {$optHtmlentities .= ' | '.ENT_HTML401;} //à partir de php5.4
-            
-            if($html === false)
-            {
-                $string = htmlentities($string, $optHtmlentities, 'UTF-8');
-            }
 
-            if(function_exists('DB_protect'))
-            {
-                $string = DB_protect($string);
-            }
-            
-            if($null_cslashe === false)
-            {
-                $string = addcslashes($string, '%_');
-            }
-        }
+        return $string;
     }
-    
+
+
+    // On regarde si le type de string est un nombre entier (int)
+    if(ctype_digit($string))
+    {
+        $string = intval($string);
+        return $string;
+    }
+
+    // Pour tous les autres types
+    global $DB;
+
+    $optHtmlentities = ENT_COMPAT;
+    //commenté car problème de notice si php < 5.4
+    //if(defined(ENT_HTML401)) {$optHtmlentities .= ' | '.ENT_HTML401;} //à partir de php5.4
+
+    if($html === false)
+    {
+        $string = htmlentities($string, $optHtmlentities, 'UTF-8');
+    }
+
+    if(function_exists('DB_protect'))
+    {
+        $string = DB_protect($string);
+    }
+
+    if($null_cslashe === false)
+    {
+        $string = addcslashes($string, '%_');
+    }
+
     return $string;
 }
 
@@ -87,7 +93,7 @@ function secure($string, $html=false, $null_cslashe=false)
  */
 function create_cookie($name, $val)
 {
-    $two_weeks = time()+2*7*24*3600; //Durée d'existance du cookie
+    $two_weeks = time() + 2 * 7 * 24 * 3600; //Durée d'existance du cookie
     @setcookie($name, $val, $two_weeks);
 }
 
@@ -123,23 +129,21 @@ function redirection($page)
  * 
  * @return string : La valeur demandé sécurisé
  */
-function post($key, $default=null, $html=false)
+function post($key, $default = null, $html = false)
 {
-    if(isset($_POST[$key]))
-    {
-        $post = $_POST[$key];
-        
-        if(is_string($post))
-        {
-            $post = trim($post);
-        }
-        
-        return secure($post, $html);
-    }
-    else
+    if(!isset($_POST[$key]))
     {
         return $default;
     }
+
+    $post = $_POST[$key];
+
+    if(is_string($post))
+    {
+        $post = trim($post);
+    }
+
+    return secure($post, $html);
 }
 
 /**
@@ -150,16 +154,14 @@ function post($key, $default=null, $html=false)
  * 
  * @return string : La valeur demandé sécurisé
  */
-function get($key, $default=null)
+function get($key, $default = null)
 {
-    if(isset($_GET[$key]))
-    {
-        return secure(trim($_GET[$key]));
-    }
-    else
+    if(!isset($_GET[$key]))
     {
         return $default;
     }
+
+    return secure(trim($_GET[$key]));
 }
 
 /**
@@ -171,7 +173,7 @@ function get($key, $default=null)
  */
 function valid_mail($mail)
 {
-    return preg_match('#^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$#i', $mail);
+    return filter_var($mail, FILTER_VALIDATE_EMAIL);
 }
 
 /**
@@ -180,15 +182,15 @@ function valid_mail($mail)
  * @param mixed $num        : Le n° d'erreur à afficher ou l'erreur au format texte
  * @param bool  $cleanCache : (default: true) Indique si le cache du tampon de sortie doit être vidé ou pas
  */
-function ErrorView($num, $cleanCache=true)
+function ErrorView($num, $cleanCache = true)
 {
     if($cleanCache)
     {
-       ob_clean(); //On efface tout ce qui a pu être mis dans le buffer pour l'affichage
+        ob_clean(); //On efface tout ce qui a pu être mis dans le buffer pour l'affichage
     }
-    
+
     global $request, $path;
-    
+
     //Envoi du status http
     if(function_exists('http_response_code')) //php >= 5.4
     {
@@ -198,16 +200,20 @@ function ErrorView($num, $cleanCache=true)
     {
         header(':', true, $num);
     }
-    
+
     if(file_exists(path_controllers.'erreurs/'.$num.'.php'))
     {
         require_once(path_controllers.'erreurs/'.$num.'.php');
+    }
+    elseif (file_exists(path_controllers.'erreurs.php')) 
+    {
+        require_once(path_controllers.'erreurs.php');
     }
     else
     {
         echo 'Erreur '.$num;
     }
-    
+
     exit;
 }
 
@@ -219,17 +225,29 @@ function ErrorView($num, $cleanCache=true)
  * @param string  $txt  : La ligne de texte à écrire
  * @param boolean $date : (default: true) Si à true, la date est ajouté au début de la ligne. Si false elle n'est pas mise.
  */
-function logfile($file, $txt, $date=true)
+function logfile($file, $txt, $date = true)
 {
     if($date === true)
     {
-        $date = new \BFW\Date();
-        $dateTxt = $date->getJour().'-'.$date->getMois().'-'.$date->getAnnee().' '.$date->getHeure().':'.$date->getMinute().':'.$date->getSeconde();
+        $date    = new \BFW\Date();
+        $dateTxt = $date->getJour()
+                .'-'.$date->getMois()
+                .'-'.$date->getAnnee()
+                .' '.$date->getHeure()
+                .':'.$date->getMinute()
+                .':'.$date->getSeconde();
+
         $txt = '['.$dateTxt.'] '.$txt;
     }
-    
-    try {file_put_contents($file, rtrim($txt)."\n", FILE_APPEND);}
-    catch(\Exception $e) {echo '<br/>Impossible d\'écrire dans le fichier : '.$file.'<br/>';}
+
+    try
+    {
+        file_put_contents($file, rtrim($txt)."\n", FILE_APPEND);
+    }
+    catch(\Exception $e)
+    {
+        echo '<br/>Impossible d\'écrire dans le fichier : '.$file.'<br/>';
+    }
 }
 
 /**
@@ -241,27 +259,44 @@ function logfile($file, $txt, $date=true)
  */
 function verifTypeData($vars)
 {
-    if(is_array($vars))
+    if(!is_array($vars))
     {
-        foreach($vars as $var)
+        return false;
+    }
+
+    foreach($vars as $var)
+    {
+        if(!is_array($var))
         {
-            if(is_array($var))
-            {
-                if(!empty($var['type']) && isset($var['data']))
-                {
-                    if($var['type'] == 'int') {$var['type'] = 'integer';}
-                    if($var['type'] == 'float') {$var['type'] = 'double';}
-                    
-                    if(!is_string($var['type'])) {return false;}
-                    if(gettype($var['data']) != $var['type']) {return false;}
-                }
-                else {return false;}
-            }
-            else {return false;}
+            return false;
+        }
+
+        if(!(!empty($var['type']) && isset($var['data'])))
+        {
+            return false;
+        }
+
+        if($var['type'] == 'int')
+        {
+            $var['type'] = 'integer';
+        }
+
+        if($var['type'] == 'float')
+        {
+            $var['type'] = 'double';
+        }
+
+        if(!is_string($var['type']))
+        {
+            return false;
+        }
+
+        if(gettype($var['data']) != $var['type'])
+        {
+            return false;
         }
     }
-    else {return false;}
-    
+
     return true;
 }
 
@@ -273,12 +308,12 @@ function verifTypeData($vars)
 function getKernel()
 {
     global $BFWKernel;
-    
+
     if(!(isset($BFWKernel) && is_object($BFWKernel) && get_class($BFWKernel) == 'BFW\Kernel'))
     {
         $BFWKernel = new \BFW\Kernel;
     }
-    
+
     return $BFWKernel;
 }
 
@@ -291,25 +326,25 @@ function getKernel()
  */
 function is_session_started()
 {
-    $isStarted = false;
-    
-    if(php_sapi_name() !== 'cli')
+    if(php_sapi_name() === 'cli')
     {
-        if(version_compare(phpversion(), '5.4.0', '>='))
-        {
-            if(session_status() === PHP_SESSION_ACTIVE)
-            {
-                $isStarted = true;
-            }
-        }
-        else
-        {
-            if(session_id() !== '')
-            {
-                $isStarted = true;
-            }
-        }
+        return false;
     }
-    
-    return $isStarted;
+
+    if(PHP_VERSION_ID >= 50400) //PHP >= 5.4.0
+    {
+        if(session_status() === PHP_SESSION_ACTIVE)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    if(session_id() !== '')
+    {
+        return true;
+    }
+
+    return false;
 }

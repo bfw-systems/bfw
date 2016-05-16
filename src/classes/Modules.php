@@ -45,9 +45,40 @@ class Modules implements \BFWInterface\IModules
     {
         $this->_kernel = getKernel();
     }
-
+    
+    /**
+     * Permet de déclarer un nouveau module depuis un fichier json
+     * 
+     * @param string $path : Le chemin vers le fichier json
+     * 
+     * @throws \Exception Erreur sur la déclaration des options
+     */
+    public function newFromJson($path)
+    {
+        $filePath = $path.'/module.json';
+        $jsonInfo = file_get_contents($filePath);
+        $modInfo  = json_decode($jsonInfo, true);
+        
+        if(!isset($modInfo['name']))
+        {
+            throw new \Exception('Le nom du module n\'est pas déclaré (path: '.$path.').');
+        }
+        
+        if(isset($modInfo['params']) && !is_array($modInfo['params']))
+        {
+            throw new \Exception('Les paramètres du module '.$name.' n\'est pas au bon format.');
+        }
+        
+        $name   = $modInfo['name'];
+        $params = $modInfo['params'];
+        
+        $this->initMod($name, $params);
+        $this->addPath($name, $path);
+    }
+    
     /**
      * Permet de déclarer un nouveau modules
+     * 
      * @param string $name   Le nom du modules
      * @param array  $params Options pour le chargement des modules.
      * Liste des clés du tableau : 
@@ -61,6 +92,26 @@ class Modules implements \BFWInterface\IModules
      */ 
     public function newMod($name, $params=array())
     {
+        $this->initParameters($params, 'runFile', 'inclus.php');
+        $this->initMod($name, $params);
+    }
+    
+    /**
+     * Permet de déclarer un nouveau modules
+     * 
+     * @param string $name   Le nom du modules
+     * @param array  $params Options pour le chargement des modules.
+     * Liste des clés du tableau : 
+     * - time (string, constante) : Le moment auquel sera chargé le module. Plusieurs valeurs possible. Ce sont des constantes
+     *     modulesLoadTime_Module : Chargement immédiat. Avant la classe visiteur et les path en constante
+     *     modulesLoadTime_Visiteur : Après la classe Visiteur. Les path en constante n'existe pas
+     *     modulesLoadTime_EndInit : A la fin de l'initialisation du framework (défaut)
+     * - require (string, array) : Si le module doit avoir d'autre module de chargé avant.
+     * 
+     * @throws \Exception Erreur sur la déclaration des options
+     */ 
+    protected function initMod($name, $params=array())
+    {
         if($this->exists($name))
         {
             throw new \Exception('Le module '.$name.' existe déjà.');
@@ -70,32 +121,48 @@ class Modules implements \BFWInterface\IModules
         {
             throw new \Exception('Les options du module '.$name.' doivent être déclarer sous la forme d\'un array.');
         }
-        
-        $time    = (isset($params['time'])) ? $params['time'] : modulesLoadTime_EndInit;
-        $require = array();
-        
-        if(isset($params['require']))
-        {
-            if(is_string($params['require']))
-            {
-                $params['require'] = array($params['require']);
-            }
-            
-            $require = $params['require'];
-        }
-        
-        $priority = 0;
-        if(isset($params['priority']))
-        {
-            $priority = (int) $params['priority'];
-        }
+
+        $time     = $this->initParameters($params, 'time', modulesLoadTime_EndInit);
+        $require  = $this->initParameters($params, 'require', array());
+        $priority = $this->initParameters($params, 'priority', 0);
+        $runFile  = $this->initParameters($params, 'runFile', false);
         
         $this->modList[$name] = array(
             'name' => $name,
             'time' => $time,
             'require' => $require,
-            'priority' => $priority
+            'priority' => $priority,
+            'runFile' => $runFile
         );
+    }
+    
+    /**
+     * Permet d'initialiser un paramètre
+     * 
+     * @param array  &$params : Les paramètres du module
+     * @param string $key     : La clé du paramètre à initialiser
+     * @param mixed  $default : La valeur par défaut
+     */
+    protected function initParameters(&$params, $key, $default)
+    {
+        if(!is_array($params)) {return;}
+        
+        if(!isset($params[$key]))
+        {
+            $params[$key] = $default;
+        }
+        
+        if(is_int($default))
+        {
+            $params[$key] = (int) $params[$key];
+        }
+        
+        if(is_array($default) && !is_array($params[$key]))
+        {
+            $params[$key] = array($params[$key]);
+        }
+        
+        return $params[$key];
     }
     
     /**
@@ -222,39 +289,36 @@ class Modules implements \BFWInterface\IModules
      */
     protected function modToLoad(&$mod, &$arrayToLoad, $waitToLoad=array())
     {
-        if(!in_array($mod['name'], $arrayToLoad) && !isset($waitToLoad[$mod['name']]))
+        if(in_array($mod['name'], $arrayToLoad) || isset($waitToLoad[$mod['name']]))
         {
-            $waitToLoad[$mod['name']] = true;
-            
-            $require = $mod['require'];
-            $load    = true;
-            
-            if(count($require) > 0)
-            {
-                foreach($require as $modRequire)
-                {
-                    if(!array_key_exists($modRequire, $this->modList))
-                    {
-                        throw new \Exception('La dépendance '.$modRequire.' du module '.$mod['name'].' n\'a pas été trouvé.');
-                    }
-                    
-                    if(!$this->isLoad($modRequire))
-                    {
-                        $load = $this->modToLoad($this->modList[$modRequire], $arrayToLoad, $waitToLoad);
-                    }
-                }
-            }
-            
-            if($load)
-            {
-                $arrayToLoad[] = $mod['name'];
-                unset($waitToLoad[$mod['name']]);
-            }
-            
-            return $load;
+            return true;
         }
         
-        return true;
+        $waitToLoad[$mod['name']] = true;
+        
+        $require = $mod['require'];
+        $load    = true;
+        
+        foreach($require as $modRequire)
+        {
+            if(!array_key_exists($modRequire, $this->modList))
+            {
+                throw new \Exception('La dépendance '.$modRequire.' du module '.$mod['name'].' n\'a pas été trouvé.');
+            }
+            
+            if(!$this->isLoad($modRequire))
+            {
+                $load = $this->modToLoad($this->modList[$modRequire], $arrayToLoad, $waitToLoad);
+            }
+        }
+        
+        if($load)
+        {
+            $arrayToLoad[] = $mod['name'];
+            unset($waitToLoad[$mod['name']]);
+        }
+        
+        return $load;
     }
     
     /**
