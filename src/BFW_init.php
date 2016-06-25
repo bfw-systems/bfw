@@ -185,8 +185,11 @@ if(is_array($modulesToLoad) && count($modulesToLoad) > 0)
         $infos = $Modules->getModuleInfos($moduleToLoad);
         $path = $infos['path'];
         
-        $Modules->loaded($moduleToLoad);
-        require_once($path.'/'.$infos['runFile']);
+        if(file_exists($path.'/'.$infos['runFile']))
+        {
+            $Modules->loaded($moduleToLoad);
+            require_once($path.'/'.$infos['runFile']);
+        }
     }
 }
 //Inclusions des modules
