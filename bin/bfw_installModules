@@ -1,0 +1,107 @@
+#!/usr/bin/env php
+<?php
+/*
+ * Load BFW Modules script : Read all dir in vendor for find bfw modules and create symlink to modules dir
+ *
+ * @created : 2016-05-28
+ * @version : 3.0.0
+ * @author : bulton-fr <bulton.fr@gmail.com>
+ */
+
+//**** Get CLI parameters ****
+$cliArgs = getopt(
+    '',
+    [
+        'help::',
+        'bfw-path:',
+        'vendor-path::',
+        'reinstall::',
+        'module::'
+    ]
+);
+
+if(array_key_exists('help', $cliArgs)) {
+    echo 'HELP COMMAND'."\n";
+    echo '--bfw-path : Path to root BFW project'."\n";
+    echo '--vendor-path : Path to vendor directory. Default is "./vendor/" from root BFW project'."\n";
+    echo '--reinstall : Force reinstall'."\n";
+    echo '--module : Only action on this module'."\n";
+    
+    exit;
+}
+
+$bfwPath = '';
+if(isset($cliArgs['bfw-path'])) {
+    $pathInstall = $cliArgs['path'];
+}
+
+$vendorPath = $bfwPath.'./vendor/';
+if(isset($cliArgs['vendor-path'])) {
+    $vendorPath = $cliArgs['vendor-path'];
+}
+
+$reinstall = false;
+if(isset($cliArgs['reinstall'])) {
+    if($cliArgs['reinstall'] === 'true') {
+        $reinstall = true;
+    }
+}
+
+$specificModule = '';
+if(isset($cliArgs['module'])) {
+    $specificModule = $cliArgs['module'];
+}
+//**** End Get CLI parameters ****
+
+//**** Load composer autoloader ****
+require($vendorPath.'/autoload.php');
+//**** END Load composer autoloader ****
+
+//**** Define variable used to save all the modules path detected ****/
+$listModulesFind = [];
+//**** END Define variable used to save all the modules path detected ****/
+
+//Check if a part of framework structure is find on declared path
+if(!file_exists($bfwPath.'/configs/') || !file_exists($bfwPath.'/modules/'))
+{
+    $errorMsg = 'Directory "config" or "modules" is not found in bfw-path. '
+                .'Check your path or reinstall the framework.';
+    
+    trigger_error($errorMsg, E_USER_ERROR);
+    echo "\033[1;31mError: ".$errorMsg."\033[0m\n";
+    exit;
+}
+
+//Run search of modules in vendor directory
+$readDir = new ReadDirLoadModule($listModulesFind);
+$readDir->run($vendorPath.'/');
+
+//If no module has been found in vendor directory
+if(count($listModulesFind) <= 0)
+{
+    echo "\033[0;33m No module found in vendor-path. \033[0m\n";
+    exit;
+}
+
+$displayEOL = "\033[0m\n";
+
+define('MODULES_DIR', ''); //Hack constant for Module class
+
+//Pour chaque module trouvé dans le vendor
+foreach($listModulesFind as $moduleFindPath)
+{
+    $module = new \BFW\Install\ModuleInstall($bfwPath, realpath($moduleFindPath));
+    
+    try {    
+        $module->loadInfos();
+    }
+    catch(\Exception $e) {
+        echo "...\033[1;31m Module ".$module->getName().' error : '.$e->getMessage().$displayEOL;
+    }
+    
+    $moduleName = $module->getName();
+    
+    if($specificModule === '' || $specificModule === $module->getName()) {
+        $module->install($reinstall);
+    }
+}

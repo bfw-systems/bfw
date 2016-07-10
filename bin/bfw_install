@@ -1,174 +1,217 @@
-#!/bin/bash
+#!/bin/sh
 # Install BFW script
 #
 # dateCreate : 2014-02-11
-# version : 2.0.0
-# author : bulton-fr
+# version : 3.0.0
+# author : bulton-fr <bulton.fr@gmail.com>
 
 BFWfail=false
-echo '\033[0;33mInstallation du framework :\033[0m'
+echo '\033[0;33mBFW Installation :\033[0m'
 
-#Create dir cli
+## app Directory ##
+#Create dir "app"
 if [ "$BFWfail" = false ] ;then
-	echo -n '  > Création du dossier cli ...'
-	
-	if mkdir -p cli ;then
-		echo '\033[1;32m Done\033[0m'
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
+    echo -n '  > Create app directory ...'
+
+    if mkdir -p app ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
 fi
 
-#Create dir configs
+#Create dir "app/config"
 if [ "$BFWfail" = false ] ;then
-	echo -n '  > Création du dossier configs ...'
-	
-	if mkdir -p configs ;then
-		echo '\033[1;32m Done\033[0m'
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
+    echo -n '  > Create app/config directory ...'
+
+    if mkdir -p app/config ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
 fi
 
-#Create dir controllers
+#Create dir "app/config/bfw"
 if [ "$BFWfail" = false ] ;then
-	echo -n '  > Création du dossier controllers ...'
-	
-	if mkdir -p controllers ;then
-		echo '\033[1;32m Done\033[0m'
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
+    echo -n '  > Create app/config/bfw directory ...'
+
+    if mkdir -p app/config/bfw ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
 fi
 
-#Create dir modeles
+#Create dir "app/modules"
 if [ "$BFWfail" = false ] ;then
-	echo -n '  > Création du dossier modeles ...'
-	
-	if mkdir -p modeles ;then
-		echo '\033[1;32m Done\033[0m'
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
+    echo -n '  > Create app/modules directory ...'
+
+    if mkdir -p app/modules ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
+fi
+## END app Directory ##
+
+## src Directory ##
+#Create dir "src"
+if [ "$BFWfail" = false ] ;then
+    echo -n '  > Create src directory ...'
+
+    if mkdir -p src ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
 fi
 
-#Create dir modules
+#Create dir src/cli
 if [ "$BFWfail" = false ] ;then
-	echo -n '  > Création du dossier modules ...'
-	
-	if mkdir -p modules ;then
-		echo '\033[1;32m Done\033[0m'
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
+    echo -n '  > Create src/cli directory ...'
+
+    if mkdir -p src/cli ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
 fi
 
-#Create dir view
+#Create dir src/controllers
 if [ "$BFWfail" = false ] ;then
-	echo -n '  > Création du dossier view ...'
+    echo -n '  > Create src/controllers directory ...'
 
-	if mkdir -p view ;then
-		echo '\033[1;32m Done\033[0m'
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
+    if mkdir -p src/controllers ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
 fi
 
+#Create dir src/modeles
+if [ "$BFWfail" = false ] ;then
+    echo -n '  > Create src/modeles directory ...'
+
+    if mkdir -p src/modeles ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
+fi
+
+#Create dir src/view
+if [ "$BFWfail" = false ] ;then
+    echo -n '  > Create src/view directory ...'
+
+    if mkdir -p src/view ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
+fi
+## END src Directory ##
+
+## web Directory ##
 #Create dir web
 if [ "$BFWfail" = false ] ;then
-	echo -n '  > Création du dossier web ...'
+    echo -n '  > Create web directory ...'
 
-	if mkdir -p web ;then
-		echo '\033[1;32m Done\033[0m'
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
+    if mkdir -p web ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
+fi
+## END web Directory ##
+
+# Define DIR variable to know current directory
+if [ "$BFWfail" = false ] ;then
+    echo -n '  > Search skeleton directory path ...'
+
+    if PHP=`which php` ;then
+        if DIR=`$PHP -r "echo dirname(dirname(realpath('$0')));"` ;then
+            echo '\033[1;32m Done\033[0m'
+        else
+            echo '\033[1;31m Fail\033[0m'
+            BFWfail=true
+        fi
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
 fi
 
-
+# Copy .htaccess file to root project directory
 if [ "$BFWfail" = false ] ;then
-	echo -n '  > Détermination des chemins vers le skeleton ...'
-	
-	if PHP=`which php` ;then
-		if DIR=`$PHP -r "echo dirname(dirname(realpath('$0')));"` ;then
-			echo '\033[1;32m Done\033[0m'
-		else
-			echo '\033[1;31m Fail\033[0m'
-			BFWfail=true
-		fi
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
+    echo -n '  > Copy .htaccess file ...'
+
+    if cp $DIR/install/skeleton/.htaccess ./.htaccess ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
 fi
 
-
+# Copy bfw config file into app/config directory
 if [ "$BFWfail" = false ] ;then
-	echo -n '  > Copie du fichier .htaccess ...'
+    echo -n '  > Copy config file ...'
 
-	if cp $DIR/install/skeleton/.htaccess ./.htaccess ;then
-		echo '\033[1;32m Done\033[0m'
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
-fi
-
-if [ "$BFWfail" = false ] ;then
-	echo -n '  > Copie du fichier de config ...'
-
-	if cp $DIR/install/skeleton/config.php ./configs/bfw_config.php ;then
-		echo '\033[1;32m Done\033[0m'
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
-fi
-
-if [ "$BFWfail" = false ] ;then
-	echo -n "  > Copie du fichier index d'exemple dans web ..."
-
-	if cp $DIR/install/skeleton/index.php web/index.php ;then
-		echo '\033[1;32m Done\033[0m'
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
+    if cp $DIR/install/skeleton/config.php ./app/config/bfw/config.php ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
 fi
 
 if [ "$BFWfail" = false ] ;then
-	echo -n "  > Copie du fichier cli à la racine ..."
+    echo -n "  > Copy example index file into web directory ..."
 
-	if cp $DIR/install/skeleton/cli.php cli.php ;then
-		echo '\033[1;32m Done\033[0m'
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
+    if cp $DIR/install/skeleton/index.php web/index.php ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
 fi
 
 if [ "$BFWfail" = false ] ;then
-	echo -n "  > Copie du fichier cli d'exemple dans cli ..."
+    echo -n "  > Copy cli.php file to root project directory ..."
 
-	if cp $DIR/install/skeleton/cli/exemple.php cli/exemple.php ;then
-		echo '\033[1;32m Done\033[0m'
-	else
-		echo '\033[1;31m Fail\033[0m'
-		BFWfail=true
-	fi
+    if cp $DIR/install/skeleton/cli.php cli.php ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
+fi
+
+if [ "$BFWfail" = false ] ;then
+    echo -n "  > Copy example cli file into app/cli directory ..."
+
+    if cp $DIR/install/skeleton/cli/exemple.php src/cli/exemple.php ;then
+        echo '\033[1;32m Done\033[0m'
+    else
+        echo '\033[1;31m Fail\033[0m'
+        BFWfail=true
+    fi
 fi
 
 echo ''
-echo -n '\033[0;33mInstallation du framework : '
+echo -n '\033[0;33mBFW installation status : '
 if [ "$BFWfail" = false ] ;then
-	echo '\033[1;32msuccess\033[0m'
+    echo '\033[1;32msuccess\033[0m'
 else
-	echo '\033[1;31mFail\033[0m'
+    echo '\033[1;31mFail\033[0m'
 fi
