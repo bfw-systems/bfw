@@ -1,45 +1,54 @@
 {
-	"name": "bulton-fr/bfw",
-	"type": "library",
-	"description": "Framework PHP5.3",
-	"keywords": ["framework", "php", "simple"],
-	"homepage": "https://github.com/bulton-fr/bfw",
-	"time": "2014-02-07",
-	"license": "LGPL-3.0",
-	"authors":
-	[
-		{
-			"name": "Vermeulen Maxime / Bulton",
-			"homepage": "http://www.bulton.fr",
-			"email": "bulton.fr@bulton.fr"
-		}
-	],
-	"support":
-	{
-		"email": "support@bulton.fr",
-		"issues": "https://github.com/bulton-fr/bfw/issues",
-		"source": "https://github.com/bulton-fr/bfw"
-	},
-	"require":
-	{
-		"php": ">=5.3.0"
-	},
-	"suggest":
-	{
-		"ext-memcache": "*",
-		"lib-memcache": "*",
-		"bulton-fr/bfw-controller": "@stable",
-		"bulton-fr/bfw-sql": "@stable",
-		"bulton-fr/bfw-template": "@stable"
-	},
-	"minimum-stability": "stable",
-	"autoload":
-	{
-		"psr-4":
-		{
-			"BFW\\": "src/classes/",
-			"BFWInterface\\": "src/interfaces/"
-		}
-	},
-	"bin": ["bin/bfw_install", "bin/bfw_loadModules"]
+    "name": "bulton-fr/bfw",
+    "type": "library",
+    "description": "Framework PHP",
+    "keywords": [
+        "framework",
+        "php",
+        "simple"
+    ],
+    "homepage": "https://github.com/bulton-fr/bfw",
+    "time": "2016-05-29",
+    "license": "LGPL-3.0",
+    "authors": [
+        {
+            "name": "Vermeulen Maxime / Bulton",
+            "homepage": "http://www.bulton.fr",
+            "email": "bulton.fr@bulton.fr"
+        }
+    ],
+    "support": {
+        "email": "support@bulton.fr",
+        "issues": "https://github.com/bulton-fr/bfw/issues",
+        "source": "https://github.com/bulton-fr/bfw"
+    },
+    "require": {
+        "php": ">=5.6.0",
+        "bulton-fr/dependency-tree": "@stable"
+    },
+    "suggest": {
+        "ext-memcache": "*",
+        "lib-memcache": "*",
+        "bulton-fr/bfw-controller": "@stable",
+        "bulton-fr/bfw-sql": "@stable"
+    },
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "BFW\\": [
+                "src/class",
+                "src/trait"
+            ],
+            "BFW\\Core\\": "src/class/core",
+            "BFW\\Memcache\\": "src/class/memcache"
+        },
+        "files": [
+            "src/fonctions/global.php",
+            "src/fonctions/cli.php"
+        ]
+    },
+    "bin": [
+        "bin/bfw_install",
+        "bin/bfw_installModules"
+    ]
 }
