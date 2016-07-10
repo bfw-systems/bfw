@@ -1,6 +1,1 @@
-<IfModule mod_rewrite.c>
-	RewriteEngine On
-	RewriteBase /
-	
-	RewriteRule ^.*$ web/index.php [NC,L]
-</IfModule>
+FallbackResource /index.php
