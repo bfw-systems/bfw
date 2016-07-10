@@ -1,4 +1,9 @@
 <?php
+
+namespace BFW;
+
+use \Exception;
+
 /**
  * Toutes les fonctions de base utilisé un peu partout dans les scripts
  * @author Vermeulen Maxime <bulton.fr@gmail.com>
@@ -6,105 +11,120 @@
  */
 
 /**
- * Permet d'hasher un mot de passe
+ * Permet d'hasher une chaine de texte, par exemple un mot de passe
  * 
- * @param string $val : le mot de passe en clair
+ * @param string $val : la chaine à haser
  * 
- * @return string le mot de passe hashé
+ * @return string la chaine hashé
  */
 function hashage($val)
 {
     return substr(hash('sha256', md5($val)), 0, 32);
 }
 
-/**
- * Permet de sécuriser une variable
- * 
- * @param mixed $string       : la variable à sécuriser (les types string, nombre et array sont géré)
- * @param bool  $html         : (default: false) mettre à true pour que la variable ne subisse pas un htmlentities()
- * @param bool  $null_cslashe : (default: false) mettre à true si on agit sur le nom d'une variable car par exemple "cou_cou" devient "cou\_cou"
- * 
- * @return mixed
- */
-function secure($string, $html = false, $null_cslashe = false)
+function securiseKnownTypes($data, $type)
 {
-    /*
-      A propos de $null_cslashes ;
-      A désactivé si on le fait sur le nom de variable, car sur un nom comme coucou ça passe, sur cou_cou, ça devient cou\_cou ^^
-      (peut être génant sur un nom de variable dans le cas par exemple de $_POST['coucou'] ou $_POST['cou_cou'] pour l'exemple au-dessus)
-     */
+    //--- Gestion de type de data ---
+    $filterType = 'text';
 
-    if(is_array($string)) //Au cas où la valeur à vérifier soit un array (peut arriver avec les POST)
-    {
-        foreach($string as $key => $val)
-        {
-            //Dans le cas où après si $key est modifié, alors la valeur pour 
-            //la clé non sécurisé existerais toujours et la sécurisation 
-            //ne servirais à rien.
-            unset($string[$key]);
+    if($type === 'int' || $type === 'integer') {
+        $filterType = FILTER_VALIDATE_INT;
+    }
+    elseif($type === 'float' || $type === 'double') {
+        $filterType = FILTER_VALIDATE_FLOAT;
+    }
+    elseif($type === 'bool' || $type === 'boolean') {
+        $filterType = FILTER_VALIDATE_BOOLEAN;
+    }
+    elseif($type === 'email') {
+        $filterType = FILTER_VALIDATE_EMAIL;
+    }
+    //--- FIN Gestion de type de data ---
 
-            $key = secure($key, true, $null_cslashe);
-            $val = secure($val, $html, $null_cslashe);
+    if($filterType === 'text') {
+        throw new Exception('Unknown type');
+    }
 
-            $string[$key] = $val;
+    return filter_var($data, $filterType);
+}
+
+function securise($data, $type, $htmlentities)
+{
+    if(is_array($data)) {
+        foreach($data as $key => $val) {
+            unset($data[$key]);
+
+            $key = securise($key, true);
+            $val = securise($val, $htmlentities);
+
+            $data[$key] = $val;
         }
 
-        return $string;
+        return $data;
+    }
+    
+    try {
+        return securiseKnownTypes($data, $type);
+    }
+    catch(Exception $ex) {
+        if($ex->getMessage() !== 'Unknown type') {
+            throw new Exception($ex->getCode(), $ex->getMessage());
+        }
+        //Else : Use securise text type
+    }
+    
+    $sqlSecureMethod = getSqlSecureMethod();
+    if($sqlSecureMethod !== false) {
+        $data = $sqlSecureMethod($data);
+    } else {
+        $data = addslashes($data);
     }
 
-
-    // On regarde si le type de string est un nombre entier (int)
-    if(ctype_digit($string))
-    {
-        $string = intval($string);
-        return $string;
+    if($htmlentities === false) {
+        $data = htmlentities($data, ENT_COMPAT | ENT_HTML401, 'UTF-8');
     }
 
-    // Pour tous les autres types
-    global $DB;
+    return $data;
+}
 
-    $optHtmlentities = ENT_COMPAT;
-    //commenté car problème de notice si php < 5.4
-    //if(defined(ENT_HTML401)) {$optHtmlentities .= ' | '.ENT_HTML401;} //à partir de php5.4
+function getSqlSecureMethod()
+{
+    $app = \BFW\Application::getInstance();
+    $fct = $app->getConfig('sqlSecureMethod');
 
-    if($html === false)
-    {
-        $string = htmlentities($string, $optHtmlentities, 'UTF-8');
+    $callableName = '';
+    if(!is_callable($fct, true, $callableName)) {
+        return false;
     }
 
-    if(function_exists('DB_protect'))
-    {
-        $string = DB_protect($string);
-    }
-
-    if($null_cslashe === false)
-    {
-        $string = addcslashes($string, '%_');
-    }
-
-    return $string;
+    return $callableName;
 }
 
 /**
  * Fonction de création de cookie
  * 
- * @param string $name : le nom du cookie
- * @param string $val  : la valeur du cookie
+ * @param string $name   : le nom du cookie
+ * @param string $value  : la valeur du cookie
+ * @param int    $expire : (default: 1209600) durée du cookie en seconde.
+ *                          Par défault sur 2 semaines
+ * 
+ * @return void
  */
-function create_cookie($name, $val)
+function createCookie($name, $value, $expire = 1209600)
 {
-    $two_weeks = time() + 2 * 7 * 24 * 3600; //Durée d'existance du cookie
-    @setcookie($name, $val, $two_weeks);
+    $expireTime = time() + $expire; //Durée d'existance du cookie
+    setcookie($name, $value, $expireTime);
 }
 
 /**
- * Fonction nl2br refait. Celle de php AJOUTE <br/> APRES les \n, il ne les remplace pas.
+ * Fonction nl2br refait.
+ * Celle de php AJOUTE <br/> APRES les \n, il ne les remplace pas.
  * 
  * @param string $str : le texte à convertir
  * 
  * @return string : le texte converti
  */
-function nl2br_replace($str)
+function nl2brReplace($str)
 {
     return str_replace("\n", '<br>', $str);
 }
@@ -112,56 +132,38 @@ function nl2br_replace($str)
 /**
  * Permet de rediriger une page
  * 
- * @param string $page : la page vers laquelle rediriger
+ * @param string $page    : la page vers laquelle rediriger
+ * @param bool   $permaet : If it's a permanent redirection for this url or not
  */
-function redirection($page)
+function redirection($page, $permanent=false)
 {
+    $httpStatus = 302;
+    if($permanent === true) {
+        $httpStatus = 301;
+    }
+    
+    http_response_code($httpStatus);
     header('Location: '.$page);
     exit;
 }
 
-/**
- * Sécurise la valeur du post demandé et la renvoie
- * 
- * @param string $key      : La donnée post demandée
- * @param mixed  $default  : (default: null) La valeur par défault qui sera retourné si le get existe pas. Null si pas indiqué
- * @param bool   $html     : (default: false) Savoir si on applique l'htmlentities (false pour oui, true pour non)
- * 
- * @return string : La valeur demandé sécurisé
- */
-function post($key, $default = null, $html = false)
+function getSecurisedKeyInArray(&$array, $key, $type, $htmlentities = false)
 {
-    if(!isset($_POST[$key]))
-    {
-        return $default;
+    if(!isset($array[$key])) {
+        throw new Exception('The key '.$key.' not exist');
     }
-
-    $post = $_POST[$key];
-
-    if(is_string($post))
-    {
-        $post = trim($post);
-    }
-
-    return secure($post, $html);
+    
+    return securise(trim($array[$key]), $type, $htmlentities);
 }
 
-/**
- * Sécurise la valeur du get demandé et la renvoie
- * 
- * @param string $key     : La donnée get demandée
- * @param mixed  $default : (default: null) La valeur par défault qui sera retourné si le get existe pas. Null si pas indiqué
- * 
- * @return string : La valeur demandé sécurisé
- */
-function get($key, $default = null)
+function getSecurisedPostKey($key, $type, $htmlentities = false)
 {
-    if(!isset($_GET[$key]))
-    {
-        return $default;
-    }
+    return getSecurisedKeyInArray($_POST, $type, $htmlentities);
+}
 
-    return secure(trim($_GET[$key]));
+function getSecurisedGetKey($key, $type, $htmlentities = false)
+{
+    return getSecurisedKeyInArray($_GET, $type, $htmlentities);
 }
 
 /**
@@ -171,128 +173,47 @@ function get($key, $default = null)
  * 
  * @return integer : 
  */
-function valid_mail($mail)
+function validMail($mail)
 {
-    return filter_var($mail, FILTER_VALIDATE_EMAIL);
-}
-
-/**
- * Affiche une page d'erreur
- * 
- * @param mixed $num        : Le n° d'erreur à afficher ou l'erreur au format texte
- * @param bool  $cleanCache : (default: true) Indique si le cache du tampon de sortie doit être vidé ou pas
- */
-function ErrorView($num, $cleanCache = true)
-{
-    if($cleanCache)
-    {
-        ob_clean(); //On efface tout ce qui a pu être mis dans le buffer pour l'affichage
-    }
-
-    global $request, $path;
-
-    //Envoi du status http
-    if(function_exists('http_response_code')) //php >= 5.4
-    {
-        http_response_code($num);
-    }
-    else //php < 5.4
-    {
-        header(':', true, $num);
-    }
-
-    if(file_exists(path_controllers.'erreurs/'.$num.'.php'))
-    {
-        require_once(path_controllers.'erreurs/'.$num.'.php');
-    }
-    elseif (file_exists(path_controllers.'erreurs.php')) 
-    {
-        require_once(path_controllers.'erreurs.php');
-    }
-    else
-    {
-        echo 'Erreur '.$num;
-    }
-
-    exit;
-}
-
-/**
- * Permet de logger une information. En temps normal il s'agit d'écrire ligne par ligne.
- * Si le fichier indiqué n'existe pas, il est créé, sinon c'est ajouté à la fin du fichier.
- * 
- * @param string  $file : Le lien vers le fichier
- * @param string  $txt  : La ligne de texte à écrire
- * @param boolean $date : (default: true) Si à true, la date est ajouté au début de la ligne. Si false elle n'est pas mise.
- */
-function logfile($file, $txt, $date = true)
-{
-    if($date === true)
-    {
-        $date    = new \BFW\Date();
-        $dateTxt = $date->getJour()
-                .'-'.$date->getMois()
-                .'-'.$date->getAnnee()
-                .' '.$date->getHeure()
-                .':'.$date->getMinute()
-                .':'.$date->getSeconde();
-
-        $txt = '['.$dateTxt.'] '.$txt;
-    }
-
-    try
-    {
-        file_put_contents($file, rtrim($txt)."\n", FILE_APPEND);
-    }
-    catch(\Exception $e)
-    {
-        echo '<br/>Impossible d\'écrire dans le fichier : '.$file.'<br/>';
-    }
+    return securise($mail, 'email');
 }
 
 /**
  * Vérifie le type d'un ensemble de variable
  * 
- * @param array $vars : Les variables à vérifier array(array('type' => 'monType', 'data' => 'mesData), array(...)...)
+ * @param array $vars : Les variables à vérifier 
+ *  array(array('type' => 'monType', 'data' => 'mesData), array(...)...)
  * 
  * @return bool
  */
 function verifTypeData($vars)
 {
-    if(!is_array($vars))
-    {
+    if(!is_array($vars)) {
         return false;
     }
 
-    foreach($vars as $var)
-    {
-        if(!is_array($var))
-        {
+    foreach($vars as $var) {
+        if(!is_array($var)) {
             return false;
         }
 
-        if(!(!empty($var['type']) && isset($var['data'])))
-        {
+        if(!(!empty($var['type']) && isset($var['data']))) {
             return false;
         }
 
-        if($var['type'] == 'int')
-        {
+        if(!is_string($var['type'])) {
+            return false;
+        }
+
+        if($var['type'] === 'int') {
             $var['type'] = 'integer';
         }
 
-        if($var['type'] == 'float')
-        {
+        if($var['type'] === 'float') {
             $var['type'] = 'double';
         }
 
-        if(!is_string($var['type']))
-        {
-            return false;
-        }
-
-        if(gettype($var['data']) != $var['type'])
-        {
+        if(gettype($var['data']) !== $var['type']) {
             return false;
         }
     }
@@ -305,16 +226,9 @@ function verifTypeData($vars)
  * 
  * @return \BFW\Kernel
  */
-function getKernel()
+function getApplication()
 {
-    global $BFWKernel;
-
-    if(!(isset($BFWKernel) && is_object($BFWKernel) && get_class($BFWKernel) == 'BFW\Kernel'))
-    {
-        $BFWKernel = new \BFW\Kernel;
-    }
-
-    return $BFWKernel;
+    return \BFW\Application::getInstance();
 }
 
 /**
@@ -324,25 +238,13 @@ function getKernel()
  * 
  * @return bool
  */
-function is_session_started()
+function sessionIsStarted()
 {
-    if(php_sapi_name() === 'cli')
-    {
+    if(PHP_SAPI === 'cli') {
         return false;
     }
 
-    if(PHP_VERSION_ID >= 50400) //PHP >= 5.4.0
-    {
-        if(session_status() === PHP_SESSION_ACTIVE)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    if(session_id() !== '')
-    {
+    if(session_status() === PHP_SESSION_ACTIVE) {
         return true;
     }
 
