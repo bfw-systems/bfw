@@ -40,6 +40,7 @@
                 "src/trait"
             ],
             "BFW\\Core\\": "src/class/core",
+            "BFW\\Install\\": "install/class/",
             "BFW\\Memcache\\": "src/class/memcache"
         },
         "files": [
