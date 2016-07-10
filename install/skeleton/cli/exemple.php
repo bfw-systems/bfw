@@ -1,12 +1,15 @@
 <?php
 
-displayMsg('CLI Exemple file');
+use function BFW\Cli\displayMsg;
+use function BFW\Cli\getCliParams;
+
+displayMsg('CLI Exemple file', 'green');
 
 $opt = getCliParams('vhp', array('version::', 'help::', 'parameters::'));
 
 if(isset($opt['v']) || isset($opt['version']))
 {
-    displayMsg('v0.1');
+    displayMsg('v0.2');
 }
 
 if(isset($opt['p']) || isset($opt['paramters']))

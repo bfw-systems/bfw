@@ -1,21 +1,26 @@
 <?php
 
-//--- Config pour le kernel BFW ---
-$rootPath = realpath(__DIR__.'/').'/';
-
-//Fake $_SERVER pour les scripts créé pour du apache
-$_SERVER['HTTP_HOST']      = '';
-$_SERVER['SERVER_NAME']    = '';
-$_SERVER['REQUEST_URI']    = '/';
-$_SERVER['REQUEST_METHOD'] = 'GET';
-
+//Define cli mode to true
 define('cliMode', true);
-//--- Config pour le kernel BFW ---
 
-if(PHP_SAPI != 'cli')
-{
-    echo 'Fichier utilisable en mode CLI uniquement.';
+//If this file is not call from cli, we display an error
+if(PHP_SAPI !== 'cli') {
+    echo 'cli.php should be used only from the command.';
     exit;
 }
 
-require_once('vendor/bulton-fr/bfw/src/bootstrap.php');
+//Get path of root and vendor directories
+$rootDir   = realpath(__DIR__);
+$vendorDir = realpath($rootDir.'/vendor');
+
+//Load composer autoloader
+require_once($vendorDir.'/autoload.php');
+
+//Initialise BFW application
+$app = \BFW\Application::init([
+    'rootDir'   => $rootDir,
+    'vendorDir' => $vendorDir
+]);
+
+//Run BFW application
+$app->run();
