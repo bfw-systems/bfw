@@ -1,8 +1,20 @@
 <?php
-//--- Config pour le kernel BFW ---
+
+//Define cliMode to false (http(s) mode)
 define('cliMode', false);
 
-//Si besoin.
-//--- Config pour le kernel BFW ---
+//Get path of root and vendor directories
+$rootDir   = realpath(__DIR__.'/../');
+$vendorDir = realpath($rootDir.'/vendor');
 
-require_once('../vendor/bulton-fr/bfw/src/bootstrap.php');
+//Load composer autoloader
+require_once($vendorDir.'/autoload.php');
+
+//Initialise BFW application
+$app = \BFW\Application::init([
+    'rootDir'   => $rootDir,
+    'vendorDir' => $vendorDir
+]);
+
+//Run BFW application
+$app->run();
