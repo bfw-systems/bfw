@@ -6,9 +6,7 @@ use \Exception;
 
 class Options
 {
-    protected $defaultOptions = [];
-
-    protected $options        = [];
+    protected $options = [];
 
     public function __construct($defaultOptions, $options)
     {
