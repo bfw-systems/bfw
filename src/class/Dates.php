@@ -153,7 +153,7 @@ class Dates extends DateTime
         );
         
         $dateDepart = clone $this;
-         //Yeurk, but I preferer send a Exception, not an error
+        //Yeurk, but I preferer sends an Exception, not an error
         @parent::modify($match[1].$match[2].' '.$keyword);
         
         if ($dateDepart == $this) {
