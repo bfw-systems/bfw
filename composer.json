@@ -26,6 +26,9 @@
         "php": ">=5.6.0",
         "bulton-fr/dependency-tree": "@stable"
     },
+    "require-dev": {
+        "atoum/atoum": "~2.5"
+    },
     "suggest": {
         "ext-memcache": "*",
         "lib-memcache": "*",
