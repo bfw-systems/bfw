@@ -225,22 +225,22 @@ class ModuleInstall
         $targetDirectory = $this->bfwConfigPath;
         $alreadyExist    = file_exists($targetDirectory);
         
-        if($alreadyExist && $this->forceReinstall === true) {
+        if ($alreadyExist && $this->forceReinstall === true) {
             echo '[Force Reinstall: Remove symlink] ';
             $alreadyExist = false;
             
-            if(!rmdir($targetDirectory)) {
+            if (!rmdir($targetDirectory)) {
                 echo "\033[1;31m Remove module config directory fail.\033[0m\n";
                 throw new Exception('Reinstall fail. Remove module config directory error.');
             }
         }
         
-        if($alreadyExist) {
+        if ($alreadyExist) {
             echo "\033[1;33m Already exist.\033[0m\n";
             return true;
         }
             
-        if(mkdir($targetDirectory, 0755)) {
+        if (mkdir($targetDirectory, 0755)) {
             echo "\033[1;32m Created. \033[0m\n";
             return true;
         }

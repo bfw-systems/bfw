@@ -53,31 +53,31 @@ function getCliParams($options, $longopts = array())
  */
 function displayMsg($msg, $colorTxt = null, $colorBg = null, $style = 'normal')
 {
-    if($colorTxt == null) {
+    if ($colorTxt == null) {
         echo $msg."\n";
         return;
     }
 
     //Gestion cas avec couleur
     $styleNum = styleForShell($style);
-    if($styleNum === false) {
+    if ($styleNum === false) {
         $styleNum = styleForShell('normal');
     }
 
     $colorTxtNum = colorForShell('white', 'txt');
-    if($colorTxt !== null) {
+    if ($colorTxt !== null) {
         $colorTxtNumArg = colorForShell($colorTxt, 'txt');
 
-        if($colorTxtNumArg !== false) {
+        if ($colorTxtNumArg !== false) {
             $colorTxtNum = $colorTxtNumArg;
         }
     }
 
     $colorBgNum = colorForShell('black', 'bg');
-    if($colorBg !== null) {
+    if ($colorBg !== null) {
         $colorBgNumArg = colorForShell($colorBg, 'bg');
 
-        if($colorBgNumArg !== false) {
+        if ($colorBgNumArg !== false) {
             $colorBgNum = $colorBgNumArg;
         }
     }

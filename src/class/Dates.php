@@ -142,8 +142,8 @@ class Dates extends DateTime
         $match    = [];
         
         //Regex sur le paramètre pour récupéré le type de modification
-        if(preg_match('#(\+|\-)([0-9]+) ([a-z]+)#i', $modify, $match) !== 1) {
-            throw new Exceptio('Date::modify pattern not match.');
+        if (preg_match('#(\+|\-)([0-9]+) ([a-z]+)#i', $modify, $match) !== 1) {
+            throw new Exception('Date::modify pattern not match.');
         }
         
         $keyword = str_replace(
@@ -155,7 +155,7 @@ class Dates extends DateTime
         $dateDepart = clone $this;
         parent::modify($match[1].$match[2].' '.$keyword);
         
-        if($dateDepart == $this) {
+        if ($dateDepart == $this) {
             throw new Exception('Parameter '.$match[3].' is unknown.');
         }
     }
