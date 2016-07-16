@@ -10,7 +10,7 @@ class Dates extends DateTime
     protected static $humainReadableI18n = [
         'now'       => 'Now',
         'since'     => 'Since',
-        'yesterday' => 'Testerday',
+        'yesterday' => 'Yesterday',
         'the'       => 'The',
         'at'        => 'at'
     ];
@@ -97,9 +97,9 @@ class Dates extends DateTime
     public function modify($modify)
     {
         $dateDepart = clone $this;
-        parent::modify($modify);
+        @parent::modify($modify); //Yeurk, but for personnal pattern, no choice
 
-        if ($dateDepart == $this) {
+        if ($dateDepart != $this) {
             return $this;
         }
 
@@ -143,7 +143,7 @@ class Dates extends DateTime
         
         //Regex sur le paramètre pour récupéré le type de modification
         if (preg_match('#(\+|\-)([0-9]+) ([a-z]+)#i', $modify, $match) !== 1) {
-            throw new Exception('Date::modify pattern not match.');
+            throw new Exception('Dates::modify pattern not match.');
         }
         
         $keyword = str_replace(
@@ -153,10 +153,13 @@ class Dates extends DateTime
         );
         
         $dateDepart = clone $this;
-        parent::modify($match[1].$match[2].' '.$keyword);
+         //Yeurk, but I preferer send a Exception, not an error
+        @parent::modify($match[1].$match[2].' '.$keyword);
         
         if ($dateDepart == $this) {
-            throw new Exception('Parameter '.$match[3].' is unknown.');
+            throw new Exception(
+                'Dates::modify Parameter '.$match[3].' is unknown.'
+            );
         }
     }
     
@@ -170,7 +173,7 @@ class Dates extends DateTime
      * Si string : aaaa-mm-jj hh:mm:ss
      * Si array : [0]=>partie date (aaaa-mm-jj), [1]=>partie heure (hh:mm:ss)
      */
-    public function getSql($returnArray = false)
+    public function getSqlFormat($returnArray = false)
     {
         $date  = $this->format('Y-m-d');
         $heure = $this->format('H:i:s');
@@ -251,7 +254,7 @@ class Dates extends DateTime
             //A l'instant
 
             $returnTxt->date = self::$humainReadableI18n['now'];
-        } elseif ($actual->format('d') !== parent::format('d')) {
+        } elseif ($diff->d === 1 && $diff->m === 0 && $diff->y === 0) {
             //Hier
 
             $returnTxt->date = self::$humainReadableI18n['yesterday'];
@@ -263,12 +266,12 @@ class Dates extends DateTime
         } elseif ($diff->days === 0) {
             //Aujourd'hui
 
-            $returnTxt->date = self::$humainReadableI18n['since'];
+            $returnTxt->date = self::$humainReadableI18n['since'].' ';
 
-            if ($diff->h === 0 && $diff->m === 0) {
+            if ($diff->h === 0 && $diff->i === 0) {
                 $returnTxt->date .= $diff->s.'s';
             } elseif ($diff->h === 0) {
-                $returnTxt->date .= $diff->s.'min';
+                $returnTxt->date .= $diff->i.'min';
             } else {
                 $returnTxt->date .= $diff->h.'h';
             }
@@ -277,7 +280,6 @@ class Dates extends DateTime
             if ($actual->format('Y') === parent::format('Y')) {
                 $dateFormat = self::$humainReadableFormats['dateSameYear'];
             }
-
 
             $returnTxt->date = self::$humainReadableI18n['the']
                 .' '
