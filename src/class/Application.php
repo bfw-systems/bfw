@@ -240,7 +240,7 @@ class Application extends Subjects
     protected function loadModule($moduleName)
     {
         $this->notify('load_module_'.$moduleName);
-        $this->modules->getModule($moduleName)->initModule();
+        $this->modules->getModule($moduleName)->runModule();
     }
 
     protected function runCliFile()
