@@ -150,7 +150,7 @@ class Dates extends DateTime
             $keywords->search,
             $keywords->replace,
             strtolower($match[3])
-         );
+        );
         
         $dateDepart = clone $this;
         parent::modify($match[1].$match[2].' '.$keyword);
