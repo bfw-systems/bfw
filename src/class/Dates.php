@@ -187,7 +187,7 @@ class Dates extends DateTime
      * 
      * @return array La liste des timezone possible
      */
-    public function lst_TimeZone()
+    public function lstTimeZone()
     {
         return parent::getTimezone()->listIdentifiers();
     }
@@ -197,7 +197,7 @@ class Dates extends DateTime
      * 
      * @return string[] La liste des continents
      */
-    public function lst_TimeZoneContinent()
+    public function lstTimeZoneContinent()
     {
         return [
             'africa',
@@ -220,9 +220,9 @@ class Dates extends DateTime
      * 
      * @return array La liste des pays pour le continent donné
      */
-    public function lst_TimeZonePays($continent)
+    public function lstTimeZonePays($continent)
     {
-        $lst_all = $this->lst_TimeZone();
+        $lst_all = $this->lstTimeZone();
         $return  = [];
 
         $pos = false;

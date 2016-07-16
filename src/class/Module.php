@@ -17,25 +17,34 @@ class Module
 
     protected $status;
 
-    public function __construct($pathName)
+    public function __construct($pathName, $loadModule = true)
     {
         $this->pathName = $pathName;
-
+        
+        if ($loadModule === true) {
+            $this->loadModule();
+        }
+    }
+    
+    public function loadModule()
+    {
         $this->status       = new stdClass();
         $this->status->load = false;
         $this->status->run  = false;
 
         $this->loadConfig();
-        $this->loadModulesInstallInfos();
-        $this->loadModulesInfos();
+        $this->loadModuleInstallInfos();
+        $this->loadModuleInfos();
 
         $this->status->load = true;
     }
 
     public static function installInfos($pathName)
     {
-        $this->loadModulesInstallInfos();
-        return $this->installInfos;
+        $module = new self($pathName, false);
+        $module->loadModuleInstallInfos();
+        
+        return $module->getInstallInfos();
     }
 
     public function getPathName()
@@ -73,7 +82,7 @@ class Module
         return $this->status->run;
     }
 
-    protected function loadConfig()
+    public function loadConfig()
     {
         if (!file_exists(CONFIG_DIR.$this->pathName)) {
             return;
@@ -82,14 +91,14 @@ class Module
         $this->config = new \BFW\Config($this->pathName);
     }
 
-    protected function loadModulesInstallInfos()
+    public function loadModuleInstallInfos()
     {
         $this->installInfos = $this->loadJsonFile(
             MODULES_DIR.$this->pathName.'/bfwModuleInstall.json'
         );
     }
 
-    protected function loadModulesInfos()
+    public function loadModuleInfos()
     {
         $this->loadInfos = $this->loadJsonFile(
             MODULES_DIR.$this->pathName
@@ -139,7 +148,7 @@ class Module
         return $runnerFile;
     }
 
-    public function initModule()
+    public function runModule()
     {
         $runnerFile = $this->getRunnerFile();
 

@@ -4,7 +4,6 @@ namespace \BFW\Traits;
 
 trait Memcache
 {
-
     /**
      * Permet de savoir si la clé existe
      * 
@@ -47,11 +46,11 @@ trait Memcache
 
         if (!$verifParams) {
             throw new \Exception(
-            'Once of parameters $key or $expire not have a correct type.'
+                'Once of parameters $key or $expire not have a correct type.'
             );
         }
 
-        $value = $this->Server->get($key); //Récupère la valeur
+        $value = $this->get($key); //Récupère la valeur
         //On la "modifie" en remettant la même valeur mais en changeant le temps
         //avant expiration si une valeur a été retournée
         if ($value !== false && $this->replace($key, $value, 0, $expire)) {

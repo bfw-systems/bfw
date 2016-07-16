@@ -25,7 +25,7 @@ class Form
     {
         global $_SESSION;
 
-        $_SESSION['token'][$this->idForm] = $saveInfos;
+        $_SESSION['token'][$this->formId] = $saveInfos;
     }
 
     protected function getToken()
@@ -51,7 +51,7 @@ class Form
 
     public function createToken()
     {
-        if (is_null($this->idForm)) {
+        if (is_null($this->formId)) {
             throw new Exception('Form id is undefined.');
         }
 
@@ -85,7 +85,7 @@ class Form
             return false;
         }
 
-        unset($_SESSION['token'][$this->idForm]);
+        unset($_SESSION['token'][$this->formId]);
         return true;
     }
 }

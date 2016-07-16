@@ -128,8 +128,8 @@ function nl2brReplace($str)
 /**
  * Permet de rediriger une page
  * 
- * @param string $page    : la page vers laquelle rediriger
- * @param bool   $permaet : If it's a permanent redirection for this url or not
+ * @param string $page      : la page vers laquelle rediriger
+ * @param bool   $permanent : If it's a permanent redirection or not
  */
 function redirection($page, $permanent = false)
 {
@@ -154,12 +154,12 @@ function getSecurisedKeyInArray(&$array, $key, $type, $htmlentities = false)
 
 function getSecurisedPostKey($key, $type, $htmlentities = false)
 {
-    return getSecurisedKeyInArray($_POST, $type, $htmlentities);
+    return getSecurisedKeyInArray($_POST, $key, $type, $htmlentities);
 }
 
 function getSecurisedGetKey($key, $type, $htmlentities = false)
 {
-    return getSecurisedKeyInArray($_GET, $type, $htmlentities);
+    return getSecurisedKeyInArray($_GET, $key, $type, $htmlentities);
 }
 
 /**

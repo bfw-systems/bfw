@@ -21,6 +21,8 @@ class Application extends Subjects
     protected $request;
 
     protected $modules;
+    
+    protected $errors;
 
     protected function __construct($options)
     {
