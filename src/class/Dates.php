@@ -14,43 +14,43 @@ class Dates extends DateTime
         'the'       => 'The',
         'at'        => 'at'
     ];
-    
+
     protected static $humainReadableFormats = [
         'dateSameYear'      => 'm-d',
         'dateDifferentYear' => 'Y-m-d',
         'time'              => 'H:i'
     ];
-    
+
     public static function getHumainReadableI18n()
     {
         return self::$humainReadableI18n;
     }
-    
+
     public static function setHumainReadableI18nKey($key, $value)
     {
         self::$humainReadableI18n[$key] = $value;
     }
-    
+
     public static function setHumainReadableI18n($value)
     {
         self::$humainReadableI18n = $value;
     }
-    
+
     public static function getHumainReadableFormats()
     {
         return self::$humainReadableFormats;
     }
-    
+
     public static function setHumainReadableFormatsKey($key, $value)
     {
         self::$humainReadableFormats[$key] = $value;
     }
-    
+
     public static function setHumainReadableFormats($value)
     {
         self::$humainReadableFormats = $value;
     }
-    
+
     /**
      * Accesseur vers l'attribut $date
      */
@@ -91,23 +91,23 @@ class Dates extends DateTime
 
     public function getZone()
     {
-        return parent::format('P');;
+        return parent::format('P');
     }
-    
+
     public function modify($modify)
     {
         $dateDepart = clone $this;
         parent::modify($modify);
-        
-        if($dateDepart == $this) {
+
+        if ($dateDepart == $this) {
             return $this;
         }
-        
+
         $this->modifyOthersKeywords($modify);
-        
+
         return $this;
     }
-    
+
     protected function getModifyOthersKeywors()
     {
         //Liste des possibilités qu'on permet
@@ -119,7 +119,7 @@ class Dates extends DateTime
             'minutes',
             'seconde', 'secondes'
         ];
-        
+
         //Liste des équivalent pour la fonction modify de DateTime
         $replace = [
             'year', 'year',
@@ -174,14 +174,14 @@ class Dates extends DateTime
     {
         $date  = $this->format('Y-m-d');
         $heure = $this->format('H:i:s');
-        
-        if($returnArray) {
+
+        if ($returnArray) {
             return [$date, $heure];
         }
-        
+
         return $date.' '.$heure;
     }
-    
+
     /**
      * Liste tous les timezone qui existe
      * 
@@ -191,7 +191,7 @@ class Dates extends DateTime
     {
         return parent::getTimezone()->listIdentifiers();
     }
-    
+
     /**
      * Liste les continents possible pour les timezones
      * 
@@ -200,19 +200,19 @@ class Dates extends DateTime
     public function lst_TimeZoneContinent()
     {
         return [
-            'africa', 
-            'america', 
-            'antartica', 
-            'arctic', 
-            'asia', 
-            'atlantic', 
-            'australia', 
-            'europe', 
-            'indian', 
+            'africa',
+            'america',
+            'antartica',
+            'arctic',
+            'asia',
+            'atlantic',
+            'australia',
+            'europe',
+            'indian',
             'pacific'
         ];
     }
-    
+
     /**
      * Liste des pays possible pour un continent donné
      * 
@@ -224,81 +224,81 @@ class Dates extends DateTime
     {
         $lst_all = $this->lst_TimeZone();
         $return  = [];
-        
+
         $pos = false;
-        foreach($lst_all as $val) {
+        foreach ($lst_all as $val) {
             $pos = strpos($val, $continent);
-            
-            if($pos !== false) {
+
+            if ($pos !== false) {
                 $return[] = $val;
             }
         }
-        
+
         return $return;
     }
-    
+
     public function humainReadable($returnDateAndTime = true, $toLower = false)
     {
-        $actual      = new Dates;
-        $diff        = parent::diff($actual);
-        
+        $actual = new Dates;
+        $diff   = parent::diff($actual);
+
         $returnTxt = (object) [
             'date' => '',
             'time' => ''
         ];
-        
-        if($actual == $this) {
+
+        if ($actual == $this) {
             //A l'instant
-            
+
             $returnTxt->date = self::$humainReadableI18n['now'];
-        } elseif($actual->format('d') !== parent::format('d')) {
+        } elseif ($actual->format('d') !== parent::format('d')) {
             //Hier
-            
+
             $returnTxt->date = self::$humainReadableI18n['yesterday'];
             $returnTxt->time = self::$humainReadableI18n['at']
-                                .' '
-                                .parent::format(
-                                    self::$humainReadableFormats['time']
-                                );
-        } elseif($diff->days === 0) {
+                .' '
+                .parent::format(
+                    self::$humainReadableFormats['time']
+                );
+        } elseif ($diff->days === 0) {
             //Aujourd'hui
-            
+
             $returnTxt->date = self::$humainReadableI18n['since'];
-            
-            if($diff->h === 0 && $diff->m === 0) {
+
+            if ($diff->h === 0 && $diff->m === 0) {
                 $returnTxt->date .= $diff->s.'s';
-            } elseif($diff->h === 0) {
+            } elseif ($diff->h === 0) {
                 $returnTxt->date .= $diff->s.'min';
             } else {
                 $returnTxt->date .= $diff->h.'h';
             }
         } else {
             $dateFormat = self::$humainReadableFormats['dateDifferentYear'];
-            if($actual->format('Y') === parent::format('Y')) {
+            if ($actual->format('Y') === parent::format('Y')) {
                 $dateFormat = self::$humainReadableFormats['dateSameYear'];
             }
-            
-            
+
+
             $returnTxt->date = self::$humainReadableI18n['the']
-                                .' '
-                                .parent::format($dateFormat);
-            
+                .' '
+                .parent::format($dateFormat);
+
             $returnTxt->time = self::$humainReadableI18n['at']
-                                .' '
-                                .parent::format(
-                                    self::$humainReadableFormats['time']
-                                );
+                .' '
+                .parent::format(
+                    self::$humainReadableFormats['time']
+                );
         }
-        
+
         $txtReturn = $returnTxt->date;
-        if($returnDateAndTime === true && $returnTxt->time !== '') {
+        if ($returnDateAndTime === true && $returnTxt->time !== '') {
             $txtReturn .= ' '.$returnTxt->time;
         }
-        
-        if($toLower === true) {
+
+        if ($toLower === true) {
             $txtReturn = mb_strtolower($txtReturn);
         }
-        
+
         return $txtReturn;
     }
 }

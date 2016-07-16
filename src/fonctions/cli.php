@@ -109,14 +109,13 @@ function colorForShell($color, $type)
         'white'   => 7
     ];
 
-    if(!in_array($color, $colorList)) {
+    if (!in_array($color, $colorList)) {
         throw new Exception('Color '.$color.' is not available in function.');
     }
 
-    if($type === 'txt') {
+    if ($type === 'txt') {
         return $colorList[$color] + 30;
-    }
-    elseif($type === 'bg') {
+    } elseif ($type === 'bg') {
         return $colorList[$color] + 40;
     }
 
@@ -139,10 +138,10 @@ function styleForShell($style)
         'reverse'       => 7,
         'not-reverse'   => 27
     ];
-    
-    if(!in_array($style, $styleList)) {
+
+    if (!in_array($style, $styleList)) {
         return false;
     }
-    
+
     return $styleList[$style];
 }

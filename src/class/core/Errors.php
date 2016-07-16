@@ -31,8 +31,12 @@ class Errors
         );
     }
     
-    public static function errorHandler($errSeverity, $errMsg, $errFile, $errLine)
-    {
+    public static function errorHandler(
+        $errSeverity,
+        $errMsg,
+        $errFile,
+        $errLine
+    ) {
         //List : http://fr2.php.net/manual/fr/function.set-error-handler.php#113567
         $map = [
             E_ERROR             => 'Fatal',
@@ -52,31 +56,54 @@ class Errors
             E_DEPRECATED        => 'Deprecated',
             E_USER_DEPRECATED   => 'Deprecated'
         ];
-        
+
         $erreurType = 'Unknown';
-        if(isset($map[$errSeverity])) {
+        if (isset($map[$errSeverity])) {
             $erreurType = $map[$errSeverity];
         }
-        
+
         $errorRenderFcts = self::errorGetRender();
-        $errorRender      = $errorRenderFcts['default'];
-        
-        if(PHP_SAPI === 'cli') {
+        $errorRender     = $errorRenderFcts['default'];
+
+        if (PHP_SAPI === 'cli') {
             $errorRender = $errorRenderFcts['cli'];
         }
+
+        $errorRender(
+            $erreurType,
+            $errMsg,
+            $errFile,
+            $errLine,
+            debug_backtrace()
+        );
+    }
+
+    public static function defaultCliErrorRender(
+        $erreurType,
+        $errMsg,
+        $errFile,
+        $errLine,
+        $backtrace
+    ) {
+        $msgError = $erreurType.' Error : '.$errMsg.
+            ' in '.$errFile.' at line '.$errLine;
         
-        $errorRender($erreurType, $errMsg, $errFile, $errLine, debug_backtrace());
+        \BFW\Cli\displayMsg(
+            $msgError,
+            'white',
+            'red'
+        );
     }
-    
-    public static function defaultCliErrorRender($erreurType, $errMsg, $errFile, $errLine, $backtrace)
-    {
-        \BFW\Cli\displayMsg($erreurType.' Error : <strong>'.$errMsg.'</strong> in '.$errFile.' at line '.$errLine, 'white', 'red');
-    }
-    
-    public static function defaultErrorRender($erreurType, $errMsg, $errFile, $errLine, $backtrace)
-    {
+
+    public static function defaultErrorRender(
+        $erreurType,
+        $errMsg,
+        $errFile,
+        $errLine,
+        $backtrace
+    ) {
         ob_clean();
-        
+
         echo '
         <!doctype html>
         <html lang="fr">
@@ -97,33 +124,30 @@ class Errors
                     <p class="title">Niarf, a error is detected !</p>
                     <p class="info">'.$erreurType.' Error : <strong>'.$errMsg.'</strong> in '.$errFile.' at line '.$errLine.'</p>
                     <fieldset><pre>';
-                        foreach($backtrace as $i => $info) {
+                        foreach ($backtrace as $i => $info) {
                             echo '#'.$i.'  '.$info['function'];
-                            
-                            if(isset($info['args']) && count($info['args']) > 0) {
+
+                            if (isset($info['args']) && count($info['args']) > 0) {
                                 echo '(';
-                                
-                                foreach($info['args'] as $iArgs => $args) {
-                                    if($iArgs > 0) {
+
+                                foreach ($info['args'] as $iArgs => $args) {
+                                    if ($iArgs > 0) {
                                         echo ', ';
                                     }
-                                    
-                                    if(is_array($args) || is_object($args)) {
+
+                                    if (is_array($args) || is_object($args)) {
                                         echo gettype($args);
-                                        
-                                    }
-                                    elseif(is_null($args)) {
+                                    } elseif (is_null($args)) {
                                         echo 'null';
-                                    }
-                                    else {
+                                    } else {
                                         echo htmlentities($args);
                                     }
                                 }
-                                
+
                                 echo ')';
                             }
-                            
-                            if(isset($info['file'], $info['line'])) {
+
+                            if (isset($info['file'], $info['line'])) {
                                 echo ' called at ['.$info['file'].' line '.$info['line'].']';
                             }
                             echo "\n\n";
@@ -133,7 +157,7 @@ class Errors
             <body>
         </html>
         ';
-        
+
         ob_flush();
         exit;
     }

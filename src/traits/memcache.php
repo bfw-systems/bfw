@@ -17,11 +17,11 @@ trait Memcache
     public function ifExists($key)
     {
         $verifParams = verifTypeData([['type' => 'string', 'data' => $key]]);
-        if(!$verifParams) {
+        if (!$verifParams) {
             throw new \Exception('The $key parameters must be a string');
         }
 
-        if($this->get($key) === false) {
+        if ($this->get($key) === false) {
             return false;
         }
 
@@ -45,17 +45,16 @@ trait Memcache
             ['type' => 'int', 'data' => $expire]
         ]);
 
-        if(!$verifParams) {
+        if (!$verifParams) {
             throw new \Exception(
-                'Once of parameters $key or $expire not have a correct type.'
+            'Once of parameters $key or $expire not have a correct type.'
             );
         }
 
         $value = $this->Server->get($key); //Récupère la valeur
-        
         //On la "modifie" en remettant la même valeur mais en changeant le temps
         //avant expiration si une valeur a été retournée
-        if($value !== false && $this->replace($key, $value, 0, $expire)) {
+        if ($value !== false && $this->replace($key, $value, 0, $expire)) {
             return true;
         }
 

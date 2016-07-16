@@ -27,21 +27,18 @@ function securiseKnownTypes($data, $type)
     //--- Gestion de type de data ---
     $filterType = 'text';
 
-    if($type === 'int' || $type === 'integer') {
+    if ($type === 'int' || $type === 'integer') {
         $filterType = FILTER_VALIDATE_INT;
-    }
-    elseif($type === 'float' || $type === 'double') {
+    } elseif ($type === 'float' || $type === 'double') {
         $filterType = FILTER_VALIDATE_FLOAT;
-    }
-    elseif($type === 'bool' || $type === 'boolean') {
+    } elseif ($type === 'bool' || $type === 'boolean') {
         $filterType = FILTER_VALIDATE_BOOLEAN;
-    }
-    elseif($type === 'email') {
+    } elseif ($type === 'email') {
         $filterType = FILTER_VALIDATE_EMAIL;
     }
     //--- FIN Gestion de type de data ---
 
-    if($filterType === 'text') {
+    if ($filterType === 'text') {
         throw new Exception('Unknown type');
     }
 
@@ -50,8 +47,8 @@ function securiseKnownTypes($data, $type)
 
 function securise($data, $type, $htmlentities)
 {
-    if(is_array($data)) {
-        foreach($data as $key => $val) {
+    if (is_array($data)) {
+        foreach ($data as $key => $val) {
             unset($data[$key]);
 
             $key = securise($key, true);
@@ -62,25 +59,24 @@ function securise($data, $type, $htmlentities)
 
         return $data;
     }
-    
+
     try {
         return securiseKnownTypes($data, $type);
-    }
-    catch(Exception $ex) {
-        if($ex->getMessage() !== 'Unknown type') {
+    } catch (Exception $ex) {
+        if ($ex->getMessage() !== 'Unknown type') {
             throw new Exception($ex->getCode(), $ex->getMessage());
         }
         //Else : Use securise text type
     }
-    
+
     $sqlSecureMethod = getSqlSecureMethod();
-    if($sqlSecureMethod !== false) {
+    if ($sqlSecureMethod !== false) {
         $data = $sqlSecureMethod($data);
     } else {
         $data = addslashes($data);
     }
 
-    if($htmlentities === false) {
+    if ($htmlentities === false) {
         $data = htmlentities($data, ENT_COMPAT | ENT_HTML401, 'UTF-8');
     }
 
@@ -93,7 +89,7 @@ function getSqlSecureMethod()
     $fct = $app->getConfig('sqlSecureMethod');
 
     $callableName = '';
-    if(!is_callable($fct, true, $callableName)) {
+    if (!is_callable($fct, true, $callableName)) {
         return false;
     }
 
@@ -135,13 +131,13 @@ function nl2brReplace($str)
  * @param string $page    : la page vers laquelle rediriger
  * @param bool   $permaet : If it's a permanent redirection for this url or not
  */
-function redirection($page, $permanent=false)
+function redirection($page, $permanent = false)
 {
     $httpStatus = 302;
-    if($permanent === true) {
+    if ($permanent === true) {
         $httpStatus = 301;
     }
-    
+
     http_response_code($httpStatus);
     header('Location: '.$page);
     exit;
@@ -149,10 +145,10 @@ function redirection($page, $permanent=false)
 
 function getSecurisedKeyInArray(&$array, $key, $type, $htmlentities = false)
 {
-    if(!isset($array[$key])) {
+    if (!isset($array[$key])) {
         throw new Exception('The key '.$key.' not exist');
     }
-    
+
     return securise(trim($array[$key]), $type, $htmlentities);
 }
 
@@ -188,32 +184,32 @@ function validMail($mail)
  */
 function verifTypeData($vars)
 {
-    if(!is_array($vars)) {
+    if (!is_array($vars)) {
         return false;
     }
 
-    foreach($vars as $var) {
-        if(!is_array($var)) {
+    foreach ($vars as $var) {
+        if (!is_array($var)) {
             return false;
         }
 
-        if(!(!empty($var['type']) && isset($var['data']))) {
+        if (!(!empty($var['type']) && isset($var['data']))) {
             return false;
         }
 
-        if(!is_string($var['type'])) {
+        if (!is_string($var['type'])) {
             return false;
         }
 
-        if($var['type'] === 'int') {
+        if ($var['type'] === 'int') {
             $var['type'] = 'integer';
         }
 
-        if($var['type'] === 'float') {
+        if ($var['type'] === 'float') {
             $var['type'] = 'double';
         }
 
-        if(gettype($var['data']) !== $var['type']) {
+        if (gettype($var['data']) !== $var['type']) {
             return false;
         }
     }
@@ -240,11 +236,11 @@ function getApplication()
  */
 function sessionIsStarted()
 {
-    if(PHP_SAPI === 'cli') {
+    if (PHP_SAPI === 'cli') {
         return false;
     }
 
-    if(session_status() === PHP_SESSION_ACTIVE) {
+    if (session_status() === PHP_SESSION_ACTIVE) {
         return true;
     }
 
