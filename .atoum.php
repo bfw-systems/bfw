@@ -13,16 +13,15 @@ More information on documentation:
 use \mageekguy\atoum,
     \mageekguy\atoum\reports;
 
+/* Atoum Logo (add slash to start of this line for enable/disable)
 $report = $script->addDefaultReport();
-
-/*
-LOGO
-*/
-// This will add the atoum logo before each run.
-$report->addField(new atoum\report\fields\runner\atoum\logo());
-
-// This will add a green or red logo after each run depending on its status.
-$report->addField(new atoum\report\fields\runner\result\logo());
+$report->addField(new atoum\report\fields\runner\atoum\logo()); //Start
+$report->addField(new atoum\report\fields\runner\result\logo()); //End status
+/*/
+//Nyancat
+$stdout = new \mageekguy\atoum\writers\std\out;
+$report = new \mageekguy\atoum\reports\realtime\nyancat;
+$script->addReport($report->addWriter($stdout));
 /**/
 
 /*
@@ -30,37 +29,25 @@ CODE COVERAGE SETUP
 */
 if(!file_exists('/home/travis'))
 {
-    // Please replace in next line "Project Name" by your project name and "/path/to/destination/directory" by your destination directory path for html files.
-    $coverageField = new atoum\report\fields\runner\coverage\html('BFW', '/home/bfw/www/reports/bfw-v2');
-    
-    // Please replace in next line http://url/of/web/site by the root url of your code coverage web site.
-    $coverageField->setRootUrl('http://bfw.test.bulton.fr/reports/bfw-v2/');
-    
+    $coverageField = new atoum\report\fields\runner\coverage\html('BFW', '/home/bfw/www/reports/bfw-v3');
+    $coverageField->setRootUrl('http://bfw.test.bulton.fr/reports/bfw-v3/');
     $report->addField($coverageField);
+    
+    $treemapField = new atoum\report\fields\runner\coverage\treemap('BFW', '/home/bfw/www/treemap/bfw-v3');
+    $treemapField->setHtmlReportBaseUrl('http://bfw.test.bulton.fr/treemap/bfw-v3/');
+    $report->addField($treemapField);
 }
 /**/
 
 /*
 TEST GENERATOR SETUP
 */
-$testGenerator = new atoum\test\generator();
-
-// Please replace in next line "/path/to/your/tests/units/classes/directory" by your unit test's directory.
-$testGenerator->setTestClassesDirectory(__DIR__.'/test/classes');
-
-// Please replace in next line "your\project\namespace\tests\units" by your unit test's namespace.
-$testGenerator->setTestClassNamespace('BFW\test\unit');
-
-// Please replace in next line "/path/to/your/classes/directory" by your classes directory.
-$testGenerator->setTestedClassesDirectory(__DIR__.'/src/classes');
-
-// Please replace in next line "your\project\namespace" by your project namespace.
-$testGenerator->setTestedClassNamespace('BFW');
-
-// Please replace in next line "path/to/your/tests/units/runner.php" by path to your unit test's runner.
-//$testGenerator->setRunnerPath('path/to/your/tests/units/runner.php');
-
-$script->getRunner()->setTestGenerator($testGenerator);
+$script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/install/class');
+$script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/class');
+$script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/class/core');
+$script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/class/memcache');
+//$script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/functions');
+//$script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/trait');
 /**/
 
 
