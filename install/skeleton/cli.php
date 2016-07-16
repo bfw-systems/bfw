@@ -4,7 +4,7 @@
 define('cliMode', true);
 
 //If this file is not call from cli, we display an error
-if(PHP_SAPI !== 'cli') {
+if (PHP_SAPI !== 'cli') {
     echo 'cli.php should be used only from the command.';
     exit;
 }
