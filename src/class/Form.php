@@ -51,7 +51,7 @@ class Form
 
     public function createToken()
     {
-        if (is_null($this->formId)) {
+        if (empty($this->formId)) {
             throw new Exception('Form id is undefined.');
         }
 
