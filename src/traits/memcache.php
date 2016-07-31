@@ -28,10 +28,12 @@ trait Memcache
     }
 
     /**
-     * On modifie le temps avant expiration des infos sur le serveur memcached pour une clé choisie.
+     * On modifie le temps avant expiration des infos sur
+     * le serveur memcached pour une clé choisie.
      * 
      * @param string $key    la clé disignant les infos concerné
-     * @param int    $expire le nouveau temps avant expiration (0: pas d'expiration, max 30jours)
+     * @param int    $expire le nouveau temps avant expiration
+     *                          (0: pas d'expiration, max 30jours)
      * 
      * @throws \Exception Erreur dsans les paramètres donnée à la méthode
      * 
