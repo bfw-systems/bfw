@@ -62,7 +62,7 @@ class Request
         return $this->request;
     }
 
-    public function getServerVar($keyName)
+    public static function getServerVar($keyName)
     {
         if (!isset($_SERVER[$keyName])) {
             return '';
@@ -96,7 +96,7 @@ class Request
          * End "en" (preference 0.4/1)
          **/
 
-        $acceptLang  = $this->getServerVar('HTTP_ACCEPT_LANGUAGE');
+        $acceptLang  = self::getServerVar('HTTP_ACCEPT_LANGUAGE');
         $acceptLangs = explode(',', $acceptLang);
 
         $firstLang = explode(';', $acceptLangs[0]);
@@ -112,19 +112,19 @@ class Request
 
     protected function detectReferer()
     {
-        $this->referer = $this->getServerVar('HTTP_REFERER');
+        $this->referer = self::getServerVar('HTTP_REFERER');
     }
 
     protected function detectMethod()
     {
-        $this->method = $this->getServerVar('REQUEST_METHOD');
+        $this->method = self::getServerVar('REQUEST_METHOD');
     }
 
     protected function detectSsl()
     {
-        $serverHttps = $this->getServerVar('HTTPS');
-        $fwdProto    = $this->getServerVar('HTTP_X_FORWARDED_PROTO');
-        $fwdSsl      = $this->getServerVar('HTTP_X_FORWARDED_SSL');
+        $serverHttps = self::getServerVar('HTTPS');
+        $fwdProto    = self::getServerVar('HTTP_X_FORWARDED_PROTO');
+        $fwdSsl      = self::getServerVar('HTTP_X_FORWARDED_SSL');
 
         $this->ssl = false;
 
@@ -139,11 +139,11 @@ class Request
 
     protected function detectRequest()
     {
-        $parseUrl = parse_url($this->getServerVar('REQUEST_URI'));
+        $parseUrl = parse_url(self::getServerVar('REQUEST_URI'));
 
         $this->request = [
             'scheme'   => '',
-            'host'     => $this->getServerVar('HTTP_HOST'),
+            'host'     => self::getServerVar('HTTP_HOST'),
             'port'     => '',
             'user'     => '',
             'pass'     => '',
@@ -152,6 +152,6 @@ class Request
             'fragment' => '',
         ];
 
-        $this->request = (object) array_merge($parseUrl, $this->request);
+        $this->request = (object) array_merge($this->request, $parseUrl);
     }
 }
