@@ -17,8 +17,6 @@ class Module extends atoum
      */
     public function beforeTestMethod($testMethod)
     {
-        //$this->mock = new Mock...;
-        
         define('CONFIG_DIR', 'config/');
         define('MODULES_DIR', 'modules/');
     }
