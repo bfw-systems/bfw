@@ -46,7 +46,7 @@ class Config
             }
 
             if (is_dir($readPath)) {
-                $this->searchAllConfigsFiles($readPath, $pathFromRoot.'/');
+                $this->searchAllConfigsFiles($readPath, $pathFromRoot.$file.'/');
                 continue;
             }
         }
@@ -109,7 +109,7 @@ class Config
             throw new Exception('The file '.$file.' not exist for config '.$key);
         }
 
-        $config = &$this->config[$file];
+        $config = (array) $this->config[$file];
 
         if (!isset($config[$key])) {
             throw new Exception('The config key '.$key.' not exist in config');
