@@ -141,7 +141,7 @@ class Module
 
         if (!file_exists($runnerFile)) {
             throw new Exception(
-            'Runner file for module '.$this->pathName.' not found.'
+                'Runner file for module '.$this->pathName.' not found.'
             );
         }
 
@@ -153,6 +153,10 @@ class Module
         $runnerFile = $this->getRunnerFile();
 
         $initFunction = function() use ($runnerFile) {
+            if($runnerFile === null) {
+                return;
+            }
+            
             require(realpath($runnerFile));
         };
 
