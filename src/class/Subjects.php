@@ -9,6 +9,28 @@ class Subjects implements SplSubject
     protected $observers = [];
     protected $action = '';
     protected $context = null;
+    
+    public function getAction()
+    {
+        return $this->action;
+    }
+    
+    public function setAction($action)
+    {
+        $this->action = $action;
+        return $this;
+    }
+    
+    public function getContext()
+    {
+        return $this->context;
+    }
+    
+    public function setContext($context)
+    {
+        $this->context = $context;
+        return $this;
+    }
 
     public function attach(SplObserver $observer)
     {
@@ -43,27 +65,5 @@ class Subjects implements SplSubject
         $this->notify();
         
         return $this;
-    }
-    
-    public function setAction($action)
-    {
-        $this->action = $action;
-        return $this;
-    }
-    
-    public function setContext($context)
-    {
-        $this->context = $context;
-        return $this;
-    }
-    
-    public function getAction()
-    {
-        return $this->action;
-    }
-    
-    public function getContext()
-    {
-        return $this->context;
     }
 }
