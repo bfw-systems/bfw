@@ -3,6 +3,7 @@
 namespace BFW;
 
 use \SplSubject;
+use \SplObserver;
 
 class Subjects implements SplSubject
 {
