@@ -103,7 +103,7 @@ class Module
         $this->loadInfos = $this->loadJsonFile(
             MODULES_DIR.$this->pathName
             .'/'.$this->installInfos->srcPath
-            .'/modules.json'
+            .'/module.json'
         );
     }
 
