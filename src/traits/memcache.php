@@ -53,12 +53,11 @@ trait Memcache
         }
 
         $value = $this->get($key); //Récupère la valeur
-        //On la "modifie" en remettant la même valeur mais en changeant le temps
-        //avant expiration si une valeur a été retournée
-        if ($value !== false && $this->replace($key, $value, 0, $expire)) {
-            return true;
-        }
-
-        return false;
+        
+        //On la "modifie" en remettant la même valeur mais en changeant
+        //le temps avant expiration
+        $this->replace($key, $value, 0, $expire);
+        
+        return true;
     }
 }
