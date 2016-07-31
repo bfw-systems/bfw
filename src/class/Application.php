@@ -167,10 +167,10 @@ class Application extends Subjects
                 $notifyAction = $action[1];
             }
 
-            $this->notify('apprun_'.$notifyAction);
+            $this->notifyAction('apprun_'.$notifyAction);
         }
 
-        $this->notify('bfw_run_finish');
+        $this->notifyAction('bfw_run_finish');
     }
 
     protected function loadMemcached()
@@ -239,7 +239,7 @@ class Application extends Subjects
 
     protected function loadModule($moduleName)
     {
-        $this->notify('load_module_'.$moduleName);
+        $this->notifyAction('load_module_'.$moduleName);
         $this->modules->getModule($moduleName)->runModule();
     }
 
@@ -263,7 +263,7 @@ class Application extends Subjects
             require_once(CLI_DIR.$file.'.php');
         };
 
-        $this->notify('run_cli_file');
+        $this->notifyAction('run_cli_file');
         $fctExecuteFile();
     }
 }
