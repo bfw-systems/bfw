@@ -10,6 +10,11 @@ class Subjects implements SplSubject
     protected $action = '';
     protected $context = null;
     
+    public function getObservers()
+    {
+        return $this->observers;
+    }
+    
     public function getAction()
     {
         return $this->action;
