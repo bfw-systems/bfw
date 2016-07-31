@@ -20,12 +20,7 @@ class Request
 
     protected function __construct()
     {
-        $this->detectIp();
-        $this->detectLang();
-        $this->detectReferer();
-        $this->detectMethod();
-        $this->detectSsl();
-        $this->detectRequest();
+        $this->runDetect();
     }
 
     public static function getInstance()
@@ -75,10 +70,20 @@ class Request
 
         return $_SERVER[$keyName];
     }
+    
+    public function runDetect()
+    {
+        $this->detectIp();
+        $this->detectLang();
+        $this->detectReferer();
+        $this->detectMethod();
+        $this->detectSsl();
+        $this->detectRequest();
+    }
 
     protected function detectIp()
     {
-        $this->ip = $this->getServerVar('REMOTE_ADDR');
+        $this->ip = self::getServerVar('REMOTE_ADDR');
     }
 
     protected function detectLang()
