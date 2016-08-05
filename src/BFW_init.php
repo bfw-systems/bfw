@@ -18,6 +18,18 @@ if(!isset($rootPath))
     $rootPath = substr(__DIR__, 0, strpos(__DIR__, $myVendorName));
 }
 
+//Issue #69 : Ce n'est pas à htmlentities de forcer le charset.
+//Possibilité de demander à ne pas le redéfinir
+if(!isset($notDefineDefaultCharset))
+{
+    $notDefineDefaultCharset = false;
+}
+
+if($notDefineDefaultCharset === false)
+{
+    ini_set('default_charset', 'UTF-8');
+}
+
 //Fichier de config
 if(!isset($forceConfig) || (isset($forceConfig) && $forceConfig == false))
 {

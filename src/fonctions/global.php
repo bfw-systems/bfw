@@ -69,7 +69,7 @@ function secure($string, $html = false, $null_cslashe = false)
 
     if($html === false)
     {
-        $string = htmlentities($string, $optHtmlentities, 'UTF-8');
+        $string = htmlentities($string, $optHtmlentities);
     }
 
     if(function_exists('DB_protect'))
