@@ -109,6 +109,7 @@ class Application extends Subjects
     protected function initConfig()
     {
         $this->config = new \BFW\Config('bfw');
+        $this->config->loadFiles();
     }
 
     protected function initRequest()

@@ -18,9 +18,15 @@ class Config
     {
         $this->configDirName = $configDirName;
         $this->configDir     = CONFIG_DIR.$this->configDirName;
-
+    }
+    
+    public function loadFiles()
+    {
         $this->searchAllConfigsFiles($this->configDir);
-        $this->loadAllConfigsFiles();
+        
+        foreach ($this->configFiles as $fileKey => $filePath) {
+            $this->loadConfigFile($fileKey, $filePath);
+        }
     }
 
     protected function searchAllConfigsFiles($dirPath, $pathFromRoot = '')
@@ -49,13 +55,6 @@ class Config
                 $this->searchAllConfigsFiles($readPath, $pathFromRoot.$file.'/');
                 continue;
             }
-        }
-    }
-
-    protected function loadAllConfigsFiles()
-    {
-        foreach ($this->configFiles as $fileKey => $filePath) {
-            $this->loadConfigFile($fileKey, $filePath);
         }
     }
 

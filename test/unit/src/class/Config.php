@@ -26,13 +26,15 @@ class Config extends atoum
         
         define('CONFIG_DIR', '');
         
-        //$this->class = new \BFW\Config;
+        $this->class = new \BFW\Config('unit_test');
     }
     
     public function testConfigWithNoFile()
     {
         $this->assert('test config with no file to found')
-            ->given($config = new \BFW\Config('unit_test'))
+            ->if($this->class->loadFiles())
+            ->given($config = $this->class)
+            ->then
             ->exception(function() use ($config) {
                 $config->getConfig('test');
             })->hasMessage('The file  not exist for config test');
@@ -54,10 +56,10 @@ class Config extends atoum
             ->and($this->function->is_file = true)
             ->and($this->function->file_get_contents = $configJson)
             ->then
-            ->given($config = new \BFW\Config('unit_test'))
-            ->boolean($config->getConfig('debug'))
+            ->given($this->class->loadFiles())
+            ->boolean($this->class->getConfig('debug'))
                 ->isFalse()
-            ->object($errorRenderFct = $config->getConfig('errorRenderFct'))
+            ->object($errorRenderFct = $this->class->getConfig('errorRenderFct'))
             ->string($errorRenderFct->default)
                 ->isEqualTo('\BFW\Core\Errors::defaultErrorRender')
             ->string($errorRenderFct->cli)
@@ -70,7 +72,8 @@ class Config extends atoum
             ->and($this->function->file_get_contents = substr($configJson, 0, -1))
             ->then
             ->exception(function() {
-                new \BFW\Config('unit_test');
+                $config = new \BFW\Config('unit_test');
+                $config->loadFiles();
             })->hasMessage('Syntax error');
     }
     
@@ -83,7 +86,9 @@ class Config extends atoum
             ->and($this->function->scandir = ['.', '..', 'test.php'])
             ->and($this->function->is_file = true)
             ->then
-            ->given($config = new MockConfigForPhpFile('unit_test'))
+            ->if($config = new MockConfigForPhpFile('unit_test'))
+            ->and($config->loadFiles())
+            ->then
             ->boolean($config->getConfig('debug'))
                 ->isFalse()
             ->object($errorRenderFct = $config->getConfig('errorRenderFct'))
@@ -100,7 +105,9 @@ class Config extends atoum
             ->and($this->function->scandir = ['.', '..', 'test.yml'])
             ->and($this->function->is_file = true)
             ->then
-            ->given($config = new \BFW\Config('unit_test'))
+            ->if($this->class->loadFiles())
+            ->given($config = $this->class)
+            ->then
             ->exception(function() use ($config) {
                 $config->getConfig('test');
             })->hasMessage('The file  not exist for config test');
@@ -116,8 +123,8 @@ class Config extends atoum
             ->and($this->function->realpath = '/tmp/test.json')
             ->and($this->function->file_get_contents = '{"debug": false}')
             ->then
-            ->given($config = new \BFW\Config('unit_test'))
-            ->boolean($config->getConfig('debug'))
+            ->given($this->class->loadFiles())
+            ->boolean($this->class->getConfig('debug'))
                 ->isFalse();
     }
     
@@ -125,7 +132,9 @@ class Config extends atoum
     {
         $this->assert('test searchAllConfigsFiles for a dir')
             ->given(define('CONFIG_DIR', __DIR__.'/../'))
-            ->given($config = new MockConfigForPhpFile('class'))
+            ->and($config = new MockConfigForPhpFile('class'))
+            ->and($config->loadFiles())
+            ->then
             ->boolean($config->getConfig('debug', 'core/Options.php'))
                 ->isTrue()
             ->boolean($config->getConfig('debug', 'core/Errors.php'))
@@ -137,13 +146,17 @@ class Config extends atoum
         define('CONFIG_DIR', __DIR__.'/../');
         
         $this->assert('test getConfig exception no file specified')
-            ->given($config = new MockConfigForPhpFile('class'))
+            ->if($config = new MockConfigForPhpFile('class'))
+            ->and($config->loadFiles())
+            ->then
             ->exception(function() use ($config) {
                 $config->getConfig('debug');
             })->hasMessage('Please indicate a file for get config debug');
         
         $this->assert('test getConfig exception unknown key')
-            ->given($config = new MockConfigForPhpFile('class'))
+            ->if($config = new MockConfigForPhpFile('class'))
+            ->and($config->loadFiles())
+            ->then
             ->exception(function() use ($config) {
                 $config->getConfig('bulton', 'core/Options.php');
             })->hasMessage('The config key bulton not exist in config');

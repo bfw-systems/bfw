@@ -89,6 +89,7 @@ class Module
         }
 
         $this->config = new \BFW\Config($this->pathName);
+        $this->config->loadFiles();
     }
 
     public function loadModuleInstallInfos()
