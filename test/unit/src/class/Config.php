@@ -1,7 +1,9 @@
 <?php
 
 namespace BFW\test\unit;
+
 use \atoum;
+use \BFW\test\unit\mocks\ConfigForPhpFile as MockConfigForPhpFile;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
@@ -160,27 +162,5 @@ class Config extends atoum
             ->exception(function() use ($config) {
                 $config->getConfig('bulton', 'core/Options.php');
             })->hasMessage('The config key bulton not exist in config');
-    }
-}
-
-/**
- * Atoum doesn't overload protected method.
- */
-class MockConfigForPhpFile extends \BFW\Config
-{
-    protected function loadPhpConfigFile($fileKey, $filePath)
-    {
-        $debugValue = false;
-        if (strpos($filePath, '/class/core/Options.php') !== false) {
-            $debugValue = true;
-        }
-        
-        $this->config[$fileKey] = (object) [
-            'debug' => $debugValue,
-            'errorRenderFct' => (object) [
-                'default' => '\BFW\Core\Errors::defaultErrorRender',
-                'cli'     => '\BFW\Core\Errors::defaultCliErrorRender'
-            ]
-        ];
     }
 }

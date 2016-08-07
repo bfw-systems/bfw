@@ -42,7 +42,8 @@
             "BFW\\Core\\": "src/class/core",
             "BFW\\Install\\": "install/class/",
             "BFW\\Memcache\\": "src/class/memcache",
-            "BFW\\Traits\\": "src/traits"
+            "BFW\\Traits\\": "src/traits",
+            "BFW\\test\\unit\\mocks\\": "test/unit/mocks"
         },
         "files": [
             "src/fonctions/global.php",
