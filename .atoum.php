@@ -10,12 +10,10 @@ More information on documentation:
 [fr] http://docs.atoum.org/fr/chapter3.html#Fichier-de-configuration
 */
 
-use \mageekguy\atoum,
-    \mageekguy\atoum\reports;
+use \mageekguy\atoum;
+//use \mageekguy\atoum\reports;
 
-/*
-CODE COVERAGE SETUP
-*/
+// CODE COVERAGE SETUP
 if(!file_exists('/home/travis'))
 {
     /* Atoum Logo (add slash to start of this line for enable/disable)
@@ -50,22 +48,18 @@ $script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/class/memcac
 //$script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/trait');
 /**/
 
-
+/*
 if(file_exists('/home/travis'))
 {
-    /*
-    Publish code coverage report on coveralls.io
-    */
+    // Publish code coverage report on coveralls.io
     $sources = './src';
     $token = 'ycIQWlEx47Xh3QzvlQ4kxh3jOHHo55m1E';
     $coverallsReport = new reports\asynchronous\coveralls($sources, $token);
     
-    /*
-    If you are using Travis-CI (or any other CI tool), you should customize the report
-    * https://coveralls.io/docs/api
-    * http://about.travis-ci.org/docs/user/ci-environment/#Environment-variables
-    * https://wiki.jenkins-ci.org/display/JENKINS/Building+a+software+project#Buildingasoftwareproject-JenkinsSetEnvironmentVariables
-    */
+    // If you are using Travis-CI (or any other CI tool), you should customize the report
+    // https://coveralls.io/docs/api
+    // http://about.travis-ci.org/docs/user/ci-environment/#Environment-variables
+    // https://wiki.jenkins-ci.org/display/JENKINS/Building+a+software+project#Buildingasoftwareproject-JenkinsSetEnvironmentVariables
     $defaultFinder = $coverallsReport->getBranchFinder();
     $coverallsReport
         ->setBranchFinder(function() use ($defaultFinder) {
@@ -90,3 +84,4 @@ if(file_exists('/home/travis'))
 
 	$runner->addReport($cloverReport);
 }
+*/
