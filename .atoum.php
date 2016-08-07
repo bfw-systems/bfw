@@ -13,22 +13,22 @@ More information on documentation:
 use \mageekguy\atoum,
     \mageekguy\atoum\reports;
 
-/* Atoum Logo (add slash to start of this line for enable/disable)
-$report = $script->addDefaultReport();
-$report->addField(new atoum\report\fields\runner\atoum\logo()); //Start
-$report->addField(new atoum\report\fields\runner\result\logo()); //End status
-/*/
-//Nyancat
-$stdout = new \mageekguy\atoum\writers\std\out;
-$report = new \mageekguy\atoum\reports\realtime\nyancat;
-$script->addReport($report->addWriter($stdout));
-/**/
-
 /*
 CODE COVERAGE SETUP
 */
 if(!file_exists('/home/travis'))
 {
+    /* Atoum Logo (add slash to start of this line for enable/disable)
+    $report = $script->addDefaultReport();
+    $report->addField(new atoum\report\fields\runner\atoum\logo()); //Start
+    $report->addField(new atoum\report\fields\runner\result\logo()); //End status
+    /*/
+    //Nyancat
+    $stdout = new \mageekguy\atoum\writers\std\out;
+    $report = new \mageekguy\atoum\reports\realtime\nyancat;
+    $script->addReport($report->addWriter($stdout));
+    /**/
+
     $coverageField = new atoum\report\fields\runner\coverage\html('BFW', '/home/bfw/www/reports/bfw-v3');
     $coverageField->setRootUrl('http://bfw.test.bulton.fr/reports/bfw-v3/');
     $report->addField($coverageField);
