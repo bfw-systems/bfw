@@ -46,7 +46,9 @@ class Application extends Subjects
     public static function getInstance($options = [])
     {
         if (self::$instance === null) {
-            self::$instance = new self($options);
+            $calledClass = get_called_class(); //Autorize extends this class
+            
+            self::$instance = new $calledClass($options);
         }
 
         return self::$instance;
