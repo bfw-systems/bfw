@@ -134,7 +134,7 @@ class Application extends Subjects
 
     protected function initErrors()
     {
-        $this->errors = new \BFW\Core\Errors;
+        $this->errors = new \BFW\Core\Errors($this);
     }
 
     protected function initModules()
