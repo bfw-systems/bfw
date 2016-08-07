@@ -54,6 +54,11 @@ class Application extends Subjects
         return self::$instance;
     }
 
+    public static function init($options = [])
+    {
+        return self::getInstance($options);
+    }
+
     public function getComposerLoader()
     {
         return $this->composerLoader;
@@ -67,11 +72,6 @@ class Application extends Subjects
     public function getOption($optionKey)
     {
         return $this->options->getOption($optionKey);
-    }
-
-    public static function init($options = [])
-    {
-        return self::getInstance($options);
     }
 
     protected function initOptions($options)
