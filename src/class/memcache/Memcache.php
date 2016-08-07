@@ -10,7 +10,7 @@ class Memcache extends \Memcache
 
     protected $config;
 
-    public function __construct($app)
+    public function __construct(\BFW\Application $app)
     {
         $this->app    = $app;
         $this->config = $this->app->getConfig('memcached');
