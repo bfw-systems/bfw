@@ -45,8 +45,8 @@ class Errors
     public static function getExceptionRender()
     {
         $calledClass = get_called_class();
-        $app         = self::getApp();
-        $renderFcts  = $calledClass->getConfig('exceptionRenderFct');
+        $app         = $calledClass::getApp();
+        $renderFcts  = $app->getConfig('exceptionRenderFct');
         
         return self::defineRenderToUse($renderFcts);
     }
