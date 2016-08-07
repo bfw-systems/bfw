@@ -41,7 +41,7 @@ if(!file_exists('/home/travis'))
 
 /*
 TEST GENERATOR SETUP
-*/
+*//*
 $script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/install/class');
 $script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/class');
 $script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/class/core');
