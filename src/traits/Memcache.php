@@ -1,6 +1,6 @@
 <?php
 
-namespace \BFW\Traits;
+namespace BFW\Traits;
 
 trait Memcache
 {
