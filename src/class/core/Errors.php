@@ -14,12 +14,12 @@ class Errors
         $calledClass = get_called_class();
         
         $errorRender = $calledClass::getErrorRender();
-        if($errorRender !== false) {
+        if (!empty($errorRender)) {
             set_error_handler(['\BFW\Core\Errors', 'errorHandler']);
         }
         
         $exceptionRender = $calledClass::getExceptionRender();
-        if ($exceptionRender !== false) {
+        if (!empty($exceptionRender)) {
             set_exception_handler(['\BFW\Core\Errors', 'exceptionHandler']);
         }
     }
