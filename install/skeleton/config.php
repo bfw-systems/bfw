@@ -10,6 +10,12 @@
 return [
     'debug' => false,
     'errorRenderFct' => [
+        'active'  => false,
+        'default' => '\BFW\Core\Errors::defaultErrorRender',
+        'cli'     => '\BFW\Core\Errors::defaultCliErrorRender'
+    ],
+    'exceptionRenderFct' => [
+        'active'  => false,
         'default' => '\BFW\Core\Errors::defaultErrorRender',
         'cli'     => '\BFW\Core\Errors::defaultCliErrorRender'
     ],

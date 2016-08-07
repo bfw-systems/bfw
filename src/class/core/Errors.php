@@ -6,22 +6,69 @@ use \BFW\Application;
 
 class Errors
 {
-    public function __construct()
+    protected static $app = null;
+    
+    public function __construct(\BFW\Application $app)
     {
-        set_exception_handler(['\BFW\Core\Errors', 'exceptionHandler']);
-        set_error_handler(['\BFW\Core\Errors', 'errorHandler']);
+        self::$app   = $app;
+        $calledClass = get_called_class();
+        
+        $errorRender = $calledClass::getErrorRender();
+        if($errorRender !== false) {
+            set_error_handler(['\BFW\Core\Errors', 'errorHandler']);
+        }
+        
+        $exceptionRender = $calledClass::getExceptionRender();
+        if ($exceptionRender !== false) {
+            set_exception_handler(['\BFW\Core\Errors', 'exceptionHandler']);
+        }
     }
     
-    public static function errorGetRender()
+    protected static function getApp()
     {
-        $app = Application::getInstance();
-        return $app->getConfig('errorRenderFct');
+        if(is_null(self::$app)) {
+            self::$app = Application::getInstance();
+        }
+        
+        return self::$app;
+    }
+    
+    public static function getErrorRender()
+    {
+        $calledClass = get_called_class();
+        $app         = $calledClass::getApp();
+        $renderFcts  = $app->getConfig('errorRenderFct');
+        
+        return self::defineRenderToUse($renderFcts);
+    }
+    
+    public static function getExceptionRender()
+    {
+        $calledClass = get_called_class();
+        $app         = self::getApp();
+        $renderFcts  = $calledClass->getConfig('exceptionRenderFct');
+        
+        return self::defineRenderToUse($renderFcts);
+    }
+    
+    protected static function defineRenderToUse($renderConfig)
+    {
+        if (PHP_SAPI === 'cli' && isset($renderConfig['cli'])) {
+            return $renderConfig['cli'];
+        }
+        
+        if(isset($renderConfig['default'])) {
+            return $renderConfig['default'];
+        }
+        
+        return false;
     }
     
     public static function exceptionHandler($exception)
     {
-        //trigger_error($exception->getMessage(), E_USER_WARNING);
-        $errorRender = self::errorGetRender();
+        $calledClass = get_called_class();
+        $errorRender = $calledClass::getExceptionRender();
+        
         $errorRender(
             'Fatal', 
             $exception->getMessage(), 
@@ -37,6 +84,21 @@ class Errors
         $errFile,
         $errLine
     ) {
+        $calledClass = get_called_class();
+        $erreurType  = $calledClass::getErrorType($errSeverity);
+        $errorRender = $calledClass::getErrorRender();
+
+        $errorRender(
+            $erreurType,
+            $errMsg,
+            $errFile,
+            $errLine,
+            debug_backtrace()
+        );
+    }
+    
+    protected static function getErrorType($errSeverity)
+    {
         //List : http://fr2.php.net/manual/fr/function.set-error-handler.php#113567
         $map = [
             E_ERROR             => 'Fatal',
@@ -61,21 +123,8 @@ class Errors
         if (isset($map[$errSeverity])) {
             $erreurType = $map[$errSeverity];
         }
-
-        $errorRenderFcts = self::errorGetRender();
-        $errorRender     = $errorRenderFcts['default'];
-
-        if (PHP_SAPI === 'cli') {
-            $errorRender = $errorRenderFcts['cli'];
-        }
-
-        $errorRender(
-            $erreurType,
-            $errMsg,
-            $errFile,
-            $errLine,
-            debug_backtrace()
-        );
+        
+        return $erreurType;
     }
 
     public static function defaultCliErrorRender(
