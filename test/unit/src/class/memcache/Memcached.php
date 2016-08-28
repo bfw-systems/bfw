@@ -154,7 +154,7 @@ class Memcached extends atoum
             ->exception(function() use ($app) {
                 new \BFW\Memcache\Memcached($app);
             })
-                ->hasMessage($memcachedVersion)
+                ->hasMessage($exceptionMsg)
         ;
     }
     /*
