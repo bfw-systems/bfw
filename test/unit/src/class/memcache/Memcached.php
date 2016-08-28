@@ -87,6 +87,8 @@ class Memcached extends atoum
             throw new \Exception('Error : Could not be define memcached version. Return is '.$cmdReturn);
         }
         
+        var_dump('memcachedVersion', $cmdReturn, $matches);
+        
         return $matches[2];
     }
     
