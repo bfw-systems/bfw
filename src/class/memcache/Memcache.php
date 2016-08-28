@@ -12,6 +12,12 @@ class Memcache extends \Memcache
 
     public function __construct(\BFW\Application $app)
     {
+        if(PHP_VERSION_ID > 70000) {
+            throw new Exception(
+                'PHP Memcache Extension not supported for PHP 7'
+            );
+        }
+        
         $this->app    = $app;
         $this->config = $this->app->getConfig('memcached');
 
