@@ -21,14 +21,16 @@ return [
     ],
     'sqlSecureMethod' => '',
     'memcached' => [
-        'enabled' => false,
-        'class'   => '\BFW\Memcache\Memcached',
-        'server'  => [
+        'enabled'      => false,
+        'class'        => '\BFW\Memcache\Memcached',
+        'persistentId' => null,
+        'server'       => [
             [
                 'host'       => '',
                 'port'       => 0,
                 'timeout'    => null,
                 'persistent' => false,
+                'weight'     => 0
             ]
         ]
     ],
