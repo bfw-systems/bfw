@@ -78,11 +78,11 @@ class Memcached extends atoum
         var_dump(shell_exec('php --re memcached | grep "version"'));
         
         
-        $cmdReturn = shell_exec('pecl info memcached | grep "API Version"');
+        $cmdReturn = trim(shell_exec('php --re memcached | grep "version"'));
         
         $matches = [];
         $pregMatch = preg_match(
-            '/( .*)version ((\d+).(\d+).(\d+))(.*)/',
+            '/(.*)version ((\d+).(\d+).(\d+))(.*)/gmi',
             $cmdReturn,
             $matches
         );
