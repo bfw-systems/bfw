@@ -198,9 +198,10 @@ class Memcache extends atoum
     public function testMajExpire()
     {
         $this->connectToServer(__METHOD__);
+        $this->class->delete('test');
+        sleep(2);
         
         $this->assert('test majExpire with a key which does not exist')
-            ->if($this->class->delete('test'))
             ->given($class = $this->class)
             ->exception(function() use ($class) {
                 $class->majExpire('test', 150);
