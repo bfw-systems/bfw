@@ -2,6 +2,8 @@
 
 namespace BFW\Traits;
 
+use \Exception;
+
 trait Memcache
 {
     /**
@@ -9,7 +11,7 @@ trait Memcache
      * 
      * @param string $key la clé disignant les infos concernées
      * 
-     * @throws \Exception Erreur dsans les paramètres donnée à la méthode
+     * @throws Exception Erreur dsans les paramètres donnée à la méthode
      * 
      * @return bool
      */
@@ -25,7 +27,7 @@ trait Memcache
         );
         
         if (!$verifParams) {
-            throw new \Exception('The $key parameters must be a string');
+            throw new Exception('The $key parameters must be a string');
         }
 
         if ($this->get($key) === false) {
@@ -43,7 +45,7 @@ trait Memcache
      * @param int    $expire le nouveau temps avant expiration
      *                          (0: pas d'expiration, max 30jours)
      * 
-     * @throws \Exception Erreur dsans les paramètres donnée à la méthode
+     * @throws Exception Erreur dsans les paramètres donnée à la méthode
      * 
      * @return boolean|null
      */
@@ -57,13 +59,15 @@ trait Memcache
         );
 
         if (!$verifParams) {
-            throw new \Exception(
+            throw new Exception(
                 'Once of parameters $key or $expire not have a correct type.'
             );
         }
         
         if(!$this->ifExists($key)) {
-            return false;
+            throw new Exception(
+                'The key '.$key.' not exist on memcache(d) server'
+            );
         }
 
         $value = $this->get($key); //Récupère la valeur

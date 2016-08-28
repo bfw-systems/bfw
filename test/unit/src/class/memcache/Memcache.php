@@ -201,8 +201,11 @@ class Memcache extends atoum
         
         $this->assert('test majExpire with a key which does not exist')
             ->if($this->class->delete('test'))
-            ->boolean($this->class->majExpire('test', 150))
-                ->isFalse();
+            ->given($class = $this->class)
+            ->exception(function() use ($class) {
+                $class->majExpire('test', 150);
+            })
+                ->hasMessage('The key test not exist on memcache(d) server');
         
         $this->assert('test majExpire with a key which does exist')
             ->if($this->class->set('test', 'unit test', null, 3600))
