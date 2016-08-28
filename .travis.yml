@@ -10,6 +10,14 @@ php:
   # aliased to a recent 7.0.x version
   - 7.0
 
+services:
+  - memcached
+
+before_install:
+  - pecl install memcache
+  - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
 # execute any number of scripts before the test run, custom env's are available as variables
 before_script:
 #   - wget http://downloads.atoum.org/nightly/mageekguy.atoum.phar;
