@@ -22,6 +22,8 @@ before_install:
 before_script:
 #   - wget http://downloads.atoum.org/nightly/mageekguy.atoum.phar;
   - composer install;
+  # Ensure the memcache extension is available
+  - composer show --platform ext-memcache
 
 script:
   - ./vendor/bin/atoum -c .atoum.php -d test/unit/src/class/ ;
