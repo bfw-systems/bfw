@@ -61,13 +61,15 @@ trait Memcache
                 'Once of parameters $key or $expire not have a correct type.'
             );
         }
+        
+        if(!$this->ifExists($key)) {
+            return false;
+        }
 
         $value = $this->get($key); //Récupère la valeur
         
         //On la "modifie" en remettant la même valeur mais en changeant
         //le temps avant expiration
-        $this->replace($key, $value, 0, $expire);
-        
-        return true;
+        return $this->replace($key, $value, 0, $expire);
     }
 }
