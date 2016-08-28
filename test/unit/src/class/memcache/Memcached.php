@@ -130,6 +130,13 @@ class Memcached extends atoum
     
     public function testConstructorWithBadServer()
     {
+        $exceptionMsg     = 'Memcached server localhost:11212 not connected';
+        $memcachedVersion = $this->getMemcachedVersion();
+        
+        if($memcachedVersion >= '3.0.0') {
+            $exceptionMsg = 'No memcached server connected.';
+        }
+        
         $this->assert('test constructor with a bad memcache server infos')
             ->if($this->forcedConfig['memcached']['server'][0] = [
                     'host' => 'localhost',
@@ -141,7 +148,7 @@ class Memcached extends atoum
             ->exception(function() use ($app) {
                 new \BFW\Memcache\Memcached($app);
             })
-                ->hasMessage('Memcached server localhost:11212 not connected')
+                ->hasMessage($memcachedVersion)
         ;
     }
     /*

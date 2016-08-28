@@ -65,6 +65,10 @@ class Memcached extends \Memcached
         $stats = $this->getStats();
         var_dump('$stats', $stats);
         
+        if (!is_array($stats)) {
+            throw new Exception('No memcached server connected.');
+        }
+        
         foreach ($stats as $serverName => $serverStat) {
             if ($serverStat['uptime'] < 1) {
                 throw new Exception(
