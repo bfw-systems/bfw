@@ -82,7 +82,7 @@ class Memcached extends atoum
         
         $matches = [];
         $pregMatch = preg_match(
-            '/(.*)version ((\d+).(\d+).(\d+))(.*)/gmi',
+            '/(.*)version ((\d+).(\d+).(\d+))(.*)/mi',
             $cmdReturn,
             $matches
         );
