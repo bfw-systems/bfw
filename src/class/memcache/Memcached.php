@@ -31,8 +31,6 @@ class Memcached extends \Memcached
         $addServers  = [];
         $serversList = $this->generateServerList();
         
-        var_dump('config server list', $this->config['server']);
-        
         foreach ($this->config['server'] as $server) {
             $host   = isset($server['host']) ? $server['host'] : null;
             $port   = isset($server['port']) ? $server['port'] : null;
@@ -63,7 +61,6 @@ class Memcached extends \Memcached
     protected function testConnect()
     {
         $stats = $this->getStats();
-        var_dump('$stats', $stats);
         
         if (!is_array($stats)) {
             throw new Exception('No memcached server connected.');
@@ -82,8 +79,6 @@ class Memcached extends \Memcached
     {
         $serversList = $this->getServerList();
         $servers     = [];
-        
-        var_dump('$serversList', $serversList);
         
         foreach ($serversList as $serverInfos) {
             $servers[] = $serverInfos['host'].':'.$serverInfos['port'];

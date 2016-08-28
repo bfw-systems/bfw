@@ -74,10 +74,6 @@ class Memcached extends atoum
     
     protected function getMemcachedVersion()
     {
-        var_dump(shell_exec('pecl info memcached'));
-        var_dump(shell_exec('php --re memcached | grep "version"'));
-        
-        
         $cmdReturn = trim(shell_exec('php --re memcached | grep "version"'));
         
         $matches = [];
@@ -90,8 +86,6 @@ class Memcached extends atoum
         if($pregMatch === false) {
             throw new \Exception('Error : Could not be define memcached version. Return is '.$cmdReturn);
         }
-        
-        var_dump('memcachedVersion', $cmdReturn, $matches);
         
         return $matches[2];
     }
@@ -167,7 +161,7 @@ class Memcached extends atoum
                 ->hasMessage($exceptionMsg)
         ;
     }
-    /*
+    
     public function testIfExists()
     {
         $this->connectToServer(__METHOD__);
@@ -222,5 +216,4 @@ class Memcached extends atoum
         
         $this->and($this->class->quit());
     }
-    */
 }
