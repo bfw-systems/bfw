@@ -205,7 +205,7 @@ class Memcache extends atoum
                 ->isFalse();
         
         $this->assert('test majExpire with a key which does exist')
-            ->if($this->class->set('test', 'unit test', null, 100))
+            ->if($this->class->set('test', 'unit test', null, 3600))
             ->then
             ->boolean($this->class->majExpire('test', 150))
                 ->isTrue()
