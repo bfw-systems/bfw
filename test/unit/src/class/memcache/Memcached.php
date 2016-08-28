@@ -75,6 +75,7 @@ class Memcached extends atoum
     protected function getMemcachedVersion()
     {
         var_dump(shell_exec('pecl info memcached'));
+        var_dump(shell_exec('php --re memcached | grep "version"'));
         
         
         $cmdReturn = shell_exec('pecl info memcached | grep "API Version"');
