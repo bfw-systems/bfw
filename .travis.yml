@@ -22,7 +22,7 @@ before_script:
 #   - wget http://downloads.atoum.org/nightly/mageekguy.atoum.phar;
   - composer install;
   # Ensure the memcache extension is available
-  - composer show --platform ext-memcache
+  - if [ $(phpenv version-name) = "5.6" ]; then composer show --platform ext-memcache; fi
 
 script:
   - ./vendor/bin/atoum -c .atoum.php -d test/unit/src/class/ ;
