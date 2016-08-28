@@ -175,49 +175,6 @@ function validMail($mail)
 }
 
 /**
- * Vérifie le type d'un ensemble de variable
- * 
- * @param array $vars : Les variables à vérifier 
- *  array(array('type' => 'monType', 'data' => 'mesData), array(...)...)
- * 
- * @return bool
- */
-function verifTypeData($vars)
-{
-    if (!is_array($vars)) {
-        return false;
-    }
-
-    foreach ($vars as $var) {
-        if (!is_array($var)) {
-            return false;
-        }
-
-        if (!(!empty($var['type']) && isset($var['data']))) {
-            return false;
-        }
-
-        if (!is_string($var['type'])) {
-            return false;
-        }
-
-        if ($var['type'] === 'int') {
-            $var['type'] = 'integer';
-        }
-
-        if ($var['type'] === 'float') {
-            $var['type'] = 'double';
-        }
-
-        if (gettype($var['data']) !== $var['type']) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-/**
  * Retourne l'instance courrante du kernel. La créé si elle n'est pas trouvé.
  * 
  * @return \BFW\Kernel

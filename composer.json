@@ -40,6 +40,7 @@
         "psr-4": {
             "BFW\\": "src/class",
             "BFW\\Core\\": "src/class/core",
+            "BFW\\Helpers\\": "src/helpers",
             "BFW\\Install\\": "install/class/",
             "BFW\\Memcache\\": "src/class/memcache",
             "BFW\\Traits\\": "src/traits",
