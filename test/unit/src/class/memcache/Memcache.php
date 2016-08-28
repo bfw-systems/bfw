@@ -7,6 +7,9 @@ use \BFW\test\unit\mocks\ApplicationForceConfig as MockApp;
 
 require_once(__DIR__.'/../../../../../vendor/autoload.php');
 
+/**
+ * @engine isolate
+ */
 class Memcache extends atoum
 {
     /**
@@ -168,7 +171,6 @@ class Memcache extends atoum
     {
         $this->connectToServer(__METHOD__);
         $this->class->delete('test');
-        sleep(2);
         
         $this->assert('test ifExists with a key which does not exist')
             ->boolean($this->class->ifExists('test'))
@@ -176,7 +178,6 @@ class Memcache extends atoum
         
         $this->assert('test ifExists with a key which does exist')
             ->if($this->class->set('test', 'unit test', null, 100))
-            ->and(sleep(2))
             ->then
             ->boolean($this->class->ifExists('test'))
                 ->isTrue()
@@ -199,7 +200,6 @@ class Memcache extends atoum
     {
         $this->connectToServer(__METHOD__);
         $this->class->delete('test');
-        sleep(2);
         
         $this->assert('test majExpire with a key which does not exist')
             ->given($class = $this->class)
@@ -210,7 +210,6 @@ class Memcache extends atoum
         
         $this->assert('test majExpire with a key which does exist')
             ->if($this->class->set('test', 'unit test', null, 3600))
-            ->and(sleep(2))
             ->then
             ->boolean($this->class->majExpire('test', 150))
                 ->isTrue()
