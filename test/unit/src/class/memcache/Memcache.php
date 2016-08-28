@@ -57,9 +57,6 @@ class Memcache extends atoum
         //$this->class = new \BFW\Memcache\Memcache($this->app);
     }
     
-    /**
-     * @php <= 7.0
-     */
     protected function connectToServer($testName)
     {
         $this->assert('Connect to server for test '.$testName)
