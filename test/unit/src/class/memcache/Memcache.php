@@ -57,6 +57,9 @@ class Memcache extends atoum
         //$this->class = new \BFW\Memcache\Memcache($this->app);
     }
     
+    /**
+     * @php <= 7.0
+     */
     protected function connectToServer($testName)
     {
         $this->assert('Connect to server for test '.$testName)
@@ -69,6 +72,9 @@ class Memcache extends atoum
             ->and($this->class = new \BFW\Memcache\Memcache($this->app));
     }
     
+    /**
+     * @php <= 7.0
+     */
     public function testConstructorWithoutServer()
     {
         $this->assert('test constructor without memcache server')
@@ -76,6 +82,9 @@ class Memcache extends atoum
                 ->isInstanceOf('\BFW\Memcache\Memcache');
     }
     
+    /**
+     * @php <= 7.0
+     */
     public function testConstructorWithServer()
     {
         $this->assert('test constructor with a memcache server')
@@ -90,6 +99,9 @@ class Memcache extends atoum
             ->and($this->class->close());
     }
     
+    /**
+     * @php <= 7.0
+     */
     public function testConstructorWithBadServer()
     {
         $this->assert('test constructor with a bad memcache server infos')
@@ -115,6 +127,7 @@ class Memcache extends atoum
     }
     
     /**
+     * @php <= 7.0
      * @TODO I don't know how to test the effect of "timeout".
      */
     public function testConstructorWithTimeout()
@@ -133,6 +146,7 @@ class Memcache extends atoum
     }
     
     /**
+     * @php <= 7.0
      * @TODO I don't know how to test the effect of "persistent" in this context.
      */
     public function testConstructorWithPersistant()
@@ -150,6 +164,9 @@ class Memcache extends atoum
             ->and($this->class->close());
     }
     
+    /**
+     * @php <= 7.0
+     */
     public function testIfExists()
     {
         $this->connectToServer(__METHOD__);
@@ -175,6 +192,9 @@ class Memcache extends atoum
         $this->and($this->class->close());
     }
     
+    /**
+     * @php <= 7.0
+     */
     public function testMajExpire()
     {
         $this->connectToServer(__METHOD__);
