@@ -82,7 +82,7 @@ class Memcached extends atoum
         
         $matches = [];
         $pregMatch = preg_match(
-            '/API Version ( *)((\d+).(\d+).(\d+))(.*)/',
+            '/( .*)version ((\d+).(\d+).(\d+))(.*)/',
             $cmdReturn,
             $matches
         );
