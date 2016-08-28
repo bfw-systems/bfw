@@ -20,8 +20,28 @@ class Memcache extends \Memcache
 
     protected function connectToServers()
     {
-        foreach ($this->config['memcached']['server'] as $server) {
-            $this->addServer($server['host'], $server['port']);
+        foreach ($this->config['server'] as $server) {
+            $host       = isset($server['host']) ? $server['host'] : null;
+            $port       = isset($server['port']) ? $server['port'] : null;
+            $timeout    = isset($server['timeout']) ? $server['timeout'] : null;
+            $persistent = isset($server['persistent']) ? $server['persistent'] : false;
+            
+            //not check if port = (int) 0; Doc said to define to 0 for socket.
+            if (empty($host) || $port === null) {
+                continue;
+            }
+            
+            $methodName = 'connect';
+            if($persistent === true) {
+                $methodName = 'pconnect';
+            }
+            
+            if($timeout !== null) {
+                $this->{$methodName}($host, $port, $timeout);
+                return;
+            }
+            
+            $this->{$methodName}($host, $port);
         }
     }
 }

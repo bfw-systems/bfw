@@ -25,8 +25,10 @@ return [
         'class'   => '\BFW\Memcache\Memcached',
         'server'  => [
             [
-                'host' => '',
-                'port' => ''
+                'host'       => '',
+                'port'       => 0,
+                'timeout'    => null,
+                'persistent' => false,
             ]
         ]
     ],
