@@ -98,9 +98,19 @@ class Memcached extends atoum
     
     public function testConstructorWithoutServer()
     {
-        $this->assert('test constructor without memcache server')
-            ->object($this->class = new \BFW\Memcache\Memcached($this->app))
-                ->isInstanceOf('\BFW\Memcache\Memcached');
+        $memcachedVersion = $this->getMemcachedVersion();
+        $this->assert('test constructor without memcache server');
+        
+        if($memcachedVersion < '3.0.0') {
+            $this->object($this->class = new \BFW\Memcache\Memcached($this->app))
+                    ->isInstanceOf('\BFW\Memcache\Memcached');
+        } else {
+            $this->given($app = $this->app)
+                ->exception(function() use ($app) {
+                    new \BFW\Memcache\Memcached($app);
+                })
+                    ->hasMessage('No memcached server connected.');
+        }
     }
     
     public function testConstructorWithServer()
