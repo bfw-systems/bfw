@@ -15,7 +15,15 @@ trait Memcache
      */
     public function ifExists($key)
     {
-        $verifParams = verifTypeData([['type' => 'string', 'data' => $key]]);
+        $verifParams = \BFW\Helpers\Datas::checkTypes(
+            [
+                [
+                    'type' => 'string',
+                    'data' => $key
+                ]
+            ]
+        );
+        
         if (!$verifParams) {
             throw new \Exception('The $key parameters must be a string');
         }
@@ -41,10 +49,12 @@ trait Memcache
      */
     public function majExpire($key, $expire)
     {
-        $verifParams = verifTypeData([
-            ['type' => 'string', 'data' => $key],
-            ['type' => 'int', 'data' => $expire]
-        ]);
+        $verifParams = \BFW\Helpers\Datas::checkTypes(
+            [
+                ['type' => 'string', 'data' => $key],
+                ['type' => 'int', 'data' => $expire]
+            ]
+        );
 
         if (!$verifParams) {
             throw new \Exception(
