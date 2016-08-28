@@ -31,6 +31,8 @@ class Memcached extends \Memcached
         $addServers  = [];
         $serversList = $this->generateServerList();
         
+        var_dump('config server list', $this->config['server']);
+        
         foreach ($this->config['server'] as $server) {
             $host   = isset($server['host']) ? $server['host'] : null;
             $port   = isset($server['port']) ? $server['port'] : null;
@@ -61,6 +63,7 @@ class Memcached extends \Memcached
     protected function testConnect()
     {
         $stats = $this->getStats();
+        var_dump('$stats', $stats);
         
         foreach ($stats as $serverName => $serverStat) {
             if ($serverStat['uptime'] < 1) {
@@ -75,6 +78,8 @@ class Memcached extends \Memcached
     {
         $serversList = $this->getServerList();
         $servers     = [];
+        
+        var_dump('$serversList', $serversList);
         
         foreach ($serversList as $serverInfos) {
             $servers[] = $serverInfos['host'].':'.$serverInfos['port'];

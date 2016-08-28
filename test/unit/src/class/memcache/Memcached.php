@@ -126,7 +126,7 @@ class Memcached extends atoum
                 ->hasMessage('Memcached server localhost:11212 not connected')
         ;
     }
-    
+    /*
     public function testIfExists()
     {
         $this->connectToServer(__METHOD__);
@@ -181,4 +181,5 @@ class Memcached extends atoum
         
         $this->and($this->class->quit());
     }
+    */
 }
