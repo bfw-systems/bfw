@@ -72,6 +72,24 @@ class Memcached extends atoum
             ->and($this->class = new \BFW\Memcache\Memcached($this->app));
     }
     
+    protected function getMemcachedVersion()
+    {
+        $cmdReturn = shell_exec('pecl info memcached | grep "API Version"');
+        
+        $matches = [];
+        $pregMatch = preg_match(
+            '/API Version ( *)((\d+).(\d+).(\d+))(.*)/',
+            $cmdReturn,
+            $matches
+        );
+        
+        if($pregMatch === false) {
+            throw new \Exception('Error : Could not be define memcached version. Return is '.$cmdReturn);
+        }
+        
+        return $matches[2];
+    }
+    
     public function testConstructorWithoutServer()
     {
         $this->assert('test constructor without memcache server')
