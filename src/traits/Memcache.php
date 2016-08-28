@@ -74,6 +74,11 @@ trait Memcache
         
         //On la "modifie" en remettant la même valeur mais en changeant
         //le temps avant expiration
-        return $this->replace($key, $value, 0, $expire);
+        
+        if (is_subclass_of($this, '\Memcache')) {
+            return $this->replace($key, $value, 0, $expire);
+        } elseif (is_subclass_of($this, '\Memcached')) {
+            return $this->replace($key, $value, $expire);
+        }
     }
 }
