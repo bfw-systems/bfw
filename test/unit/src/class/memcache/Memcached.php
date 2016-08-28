@@ -172,7 +172,7 @@ class Memcached extends atoum
                 ->isFalse();
         
         $this->assert('test ifExists with a key which does exist')
-            ->if($this->class->set('test', 'unit test', null, 100))
+            ->if($this->class->set('test', 'unit test', 100))
             ->then
             ->boolean($this->class->ifExists('test'))
                 ->isTrue()
@@ -201,7 +201,7 @@ class Memcached extends atoum
                 ->hasMessage('The key test not exist on memcache(d) server');
         
         $this->assert('test majExpire with a key which does exist')
-            ->if($this->class->set('test', 'unit test', null, 3600))
+            ->if($this->class->set('test', 'unit test', 3600))
             ->then
             ->boolean($this->class->majExpire('test', 150))
                 ->isTrue()
