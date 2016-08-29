@@ -2,7 +2,7 @@
 
 namespace BFW;
 
-use Constants;
+use \BFW\Helpers\Constants;
 
 class Application extends Subjects
 {
