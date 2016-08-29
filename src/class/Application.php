@@ -2,6 +2,8 @@
 
 namespace BFW;
 
+use Constants;
+
 class Application extends Subjects
 {
     protected static $instance = null;
@@ -92,19 +94,19 @@ class Application extends Subjects
 
     protected function initConstants()
     {
-        define('ROOT_DIR', $this->options->getOption('rootDir'));
+        Constants::create('ROOT_DIR', $this->options->getOption('rootDir'));
 
-        define('APP_DIR', ROOT_DIR.'app/');
-        define('SRC_DIR', ROOT_DIR.'src/');
-        define('WEB_DIR', ROOT_DIR.'web/');
+        Constants::create('APP_DIR', ROOT_DIR.'app/');
+        Constants::create('SRC_DIR', ROOT_DIR.'src/');
+        Constants::create('WEB_DIR', ROOT_DIR.'web/');
 
-        define('CONFIG_DIR', APP_DIR.'config/');
-        define('MODULES_DIR', APP_DIR.'modules/');
+        Constants::create('CONFIG_DIR', APP_DIR.'config/');
+        Constants::create('MODULES_DIR', APP_DIR.'modules/');
 
-        define('CLI_DIR', SRC_DIR.'cli/');
-        define('CTRL_DIR', SRC_DIR.'controllers/');
-        define('MODELES_DIR', SRC_DIR.'modeles/');
-        define('VIEW_DIR', SRC_DIR.'view/');
+        Constants::create('CLI_DIR', SRC_DIR.'cli/');
+        Constants::create('CTRL_DIR', SRC_DIR.'controllers/');
+        Constants::create('MODELES_DIR', SRC_DIR.'modeles/');
+        Constants::create('VIEW_DIR', SRC_DIR.'view/');
     }
 
     protected function initComposerLoader()
