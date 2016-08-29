@@ -2,6 +2,7 @@
 
 namespace BFW;
 
+use \Exception;
 use \BFW\Helpers\Constants;
 
 class Application extends Subjects
