@@ -73,6 +73,11 @@ class Application extends Subjects
     {
         return $this->options->getOption($optionKey);
     }
+    
+    public function getRequest()
+    {
+        return $this->request;
+    }
 
     protected function initOptions($options)
     {
