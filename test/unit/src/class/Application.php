@@ -66,6 +66,12 @@ class Application extends atoum
             return;
         }
         
+        //All condition is on the test method.
+        //If I put all condition here => no effect oO
+        if ($testMethod === 'testInitSessionDisabled') {
+            return;
+        }
+        
         $options = [
             'forceConfig' => $this->forcedConfig,
             'vendorDir'   => __DIR__.'/../../../../vendor',
@@ -226,18 +232,23 @@ class Application extends atoum
         
     }
     
-    public function testInitSession()
+    public function testInitSessionEnabled()
     {
         $this->assert('test initSession enabled')
             ->string(session_id())
                 ->isNotEmpty();
-        
+    }
+    
+    public function testInitSessionDisabled()
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_destroy();
+        }
         
         //Strange to be forced to put that here !!
         //beforeTestMethod should be doing this.
         $this->assert('test initSession disabled')
-            ->if(session_destroy())
-            ->and(MockApp::removeInstance())
+            ->if(MockApp::removeInstance())
             ->and($this->mock = MockApp::init([
                 'forceConfig' => $this->forcedConfig,
                 'vendorDir'   => __DIR__.'/../../../../vendor',
@@ -246,13 +257,6 @@ class Application extends atoum
             ->then
             ->string(session_id())
                 ->isEmpty();
-        
-        //Reinit (WTF !). It's should be the job of beforeTestMethod !!!
-        MockApp::removeInstance();
-        $this->mock = MockApp::init([
-            'forceConfig' => $this->forcedConfig,
-            'vendorDir'   => __DIR__.'/../../../../vendor'
-        ]);
     }
     
     public function testInitErrors()
