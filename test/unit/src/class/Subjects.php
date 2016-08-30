@@ -1,7 +1,9 @@
 <?php
 
 namespace BFW\test\unit;
+
 use \atoum;
+use \BFW\test\unit\mocks\Observer as MockObserver;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
@@ -30,7 +32,7 @@ class Subjects extends atoum
             ->array($getObservers = $this->class->getObservers())
                 ->hasSize(1)
             ->object($getObservers[0])
-                ->isInstanceOf('BFW\test\unit\MockObserver')
+                ->isInstanceOf('\BFW\test\unit\mocks\Observer')
                 ->isEqualTo($observer);
     }
     
@@ -80,12 +82,12 @@ class Subjects extends atoum
             ->given($class = $this->class)
             ->output(function() use ($class) {
                 $class->notify();
-            })->isEqualTo('')
+            })->isEqualTo("\n")
             ->if($this->class->setAction('unit_test'))
             ->then
             ->output(function() use ($class) {
                 $class->notify();
-            })->isEqualTo('unit_test');
+            })->isEqualTo('unit_test'."\n");
     }
     
     public function testNotifyAction()
@@ -96,14 +98,6 @@ class Subjects extends atoum
             ->given($class = $this->class)
             ->output(function() use ($class) {
                 $class->notifyAction('unit_test');
-            })->isEqualTo('unit_test');
-    }
-}
-
-class MockObserver implements \SplObserver
-{
-    public function update(\SplSubject $subject)
-    {
-        echo $subject->getAction();
+            })->isEqualTo('unit_test'."\n");
     }
 }
