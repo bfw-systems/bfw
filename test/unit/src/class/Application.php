@@ -4,6 +4,7 @@ namespace BFW\test\unit;
 
 use \atoum;
 use \BFW\test\unit\mocks\Application as MockApp;
+use \BFW\test\unit\mocks\Observer as MockObserver;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
@@ -82,6 +83,7 @@ class Application extends atoum
             $options['runSession'] = false;
         }
         
+        $this->function->scandir = ['.', '..'];
         $this->mock = MockApp::init($options);
     }
     
@@ -324,10 +326,169 @@ class Application extends atoum
                 ->isEqualTo('runCliFile');
     }
     
-    /*
-    public function testRun()
+    public function testRunNotify()
     {
+        $notifyText = 'apprun_loadMemcached'."\n"
+                    .'apprun_readAllModules'."\n"
+                    .'apprun_loadAllCoreModules'."\n"
+                    .'apprun_loadAllAppModules'."\n"
+                    .'apprun_runCliFile'."\n"
+                    .'bfw_run_finish'."\n";
+        
         $this->assert('test run')
-            ->variable($this->mock->run());
-    }*/
+            ->given($app = $this->mock)
+            ->given($observer = new MockObserver)
+            ->if($this->mock->attach($observer))
+            ->output(function() use ($app) {
+                $app->run();
+            })
+                ->isEqualTo($notifyText);
+    }
+    
+    public function testLoadMemcached()
+    {
+        $app = $this->mock;
+        
+        $this->assert('test loadMemcached enabled without class')
+            ->if($this->forcedConfig['memcached']['enabled'] = true)
+            ->and($this->mock->forceConfig($this->forcedConfig))
+            ->then
+            ->exception(function() use ($app) {
+                $app->run();
+            })
+                ->hasMessage('Memcached is active but no class is define');
+        
+        $this->assert('test loadMemcached enabled without class exist')
+            ->if($this->forcedConfig['memcached']['class'] = 'TestMemcached')
+            ->and($this->mock->forceConfig($this->forcedConfig))
+            ->then
+            ->exception(function() use ($app) {
+                $app->run();
+            })
+                ->hasMessage('Memcache class TestMemcached not found.');
+        
+        $this->assert('test loadMemcached enabled without class exist')
+            ->if($this->forcedConfig['memcached']['class'] = '\BFW\Memcache\Memcached')
+            ->and($this->mock->forceConfig($this->forcedConfig))
+            ->then
+            ->variable($this->mock->run())
+                ->isNull();
+    }
+    
+    public function testReadAllModulesWithoutModule()
+    {
+        $this->assert('test readAllModules without modules')
+            ->given($this->mock->run())
+            ->array($this->mock->getModules()->getLoadTree())
+                ->size
+                    ->isEqualTo(0);
+    }
+    
+    public function testReadAllModulesWithOneGoodModule()
+    {
+        $this->assert('test readAllModules with one module')
+            ->if($this->mock->modulesToAdd['test1'] = (object) [
+                'config'       => (object) [],
+                'loadInfos'    => (object) [],
+                'installInfos' => (object) [
+                    'priority' => 1
+                ]
+            ])
+            ->and($this->function->scandir = ['.', '..', 'test1'])
+            ->and($this->function->realpath = 'test1')
+            ->and($this->function->is_dir = true)
+            ->then
+            ->given($this->mock->run())
+            ->array($this->mock->getModules()->getLoadTree())
+                ->size
+                    ->isGreaterThan(0);
+        
+        $this->assert('test loadAllAppModules')
+            ->boolean($this->mock->getModules()->getModule('test1')->isRun())
+                ->isTrue();
+    }
+    
+    public function testReadAllModulesWithOneBadModule()
+    {
+        $this->assert('test readAllModules with one module')
+            ->if($this->mock->modulesToAdd['test1'] = (object) [
+                'config'       => (object) [],
+                'loadInfos'    => (object) [],
+                'installInfos' => (object) [
+                    'priority' => 1
+                ]
+            ])
+            ->and($this->function->scandir = ['.', '..', 'test1'])
+            ->and($this->function->realpath = 'test1')
+            ->and($this->function->is_dir = false)
+            ->then
+            ->given($this->mock->run())
+            ->array($this->mock->getModules()->getLoadTree())
+                ->size
+                    ->isEqualTo(0);
+    }
+    
+    public function testLoadAllCoreModulesWithoutModule()
+    {
+        $this->assert('test loadAllCoreModules')
+            ->given($app = $this->mock)
+            ->given($observer = new MockObserver)
+            ->if($this->mock->attach($observer))
+            ->output(function() use ($app) {
+                $app->run();
+            })
+                ->notContains('load_module_');
+    }
+    
+    public function testLoadAllCoreModulesWithOneModule()
+    {
+        $this->assert('test loadAllCoreModules')
+            ->given($app = $this->mock)
+            ->given($observer = new MockObserver)
+            ->if($this->mock->attach($observer))
+            ->and($this->forcedConfig['modules']['controller']['name'] = 'test1')
+            ->and($this->forcedConfig['modules']['controller']['enabled'] = true)
+            ->and($this->mock->forceConfig($this->forcedConfig))
+            ->and($this->mock->modulesToAdd['test1'] = (object) [
+                'config'       => (object) [],
+                'loadInfos'    => (object) [],
+                'installInfos' => (object) [
+                    'priority' => 1
+                ]
+            ])
+            ->and($this->function->scandir = ['.', '..', 'test1'])
+            ->and($this->function->realpath = 'test1')
+            ->and($this->function->is_dir = true)
+            ->then
+            ->output(function() use ($app) {
+                $app->run();
+            })
+                ->contains('load_module_test1')
+            ->boolean($this->mock->getModules()->getModule('test1')->isRun())
+                ->isTrue();
+    }
+    
+    /**
+     * Tested on testReadAllModulesWithOneGoodModule
+     */
+    public function testloadAllAppModules()
+    {
+        
+    }
+    
+    /**
+     * Tested on testReadAllModulesWithOneGoodModule and testLoadAllCoreModulesWithOneModule
+     */
+    public function testLoadModule()
+    {
+        
+    }
+    
+    /**
+     * Tested on test installer scripts
+     */
+    public function testRunCliFile()
+    {
+        
+    }
 }
