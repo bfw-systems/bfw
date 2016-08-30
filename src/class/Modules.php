@@ -28,7 +28,7 @@ class Modules
     public function getModule($moduleName)
     {
         if (!isset($this->modules[$moduleName])) {
-            throw new Exception('Module '.$moduleName.' not find.');
+            throw new Exception('Module '.$moduleName.' not found.');
         }
 
         return $this->modules[$moduleName];

@@ -83,7 +83,7 @@ class Modules extends atoum
             ->given($class = $this->class)
             ->exception(function() use ($class) {
                 $class->getModule('bulton');
-            })->hasMessage('Module bulton not find.');
+            })->hasMessage('Module bulton not found.');
     }
     
     protected function writeModuleJson($runner, $priority, $require)
