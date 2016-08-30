@@ -369,6 +369,10 @@ class Application extends atoum
         
         $this->assert('test loadMemcached enabled without class exist')
             ->if($this->forcedConfig['memcached']['class'] = '\BFW\Memcache\Memcached')
+            ->and($this->forcedConfig['memcached']['server'][0] = [
+                    'host' => 'localhost',
+                    'port' => 11211
+            ])
             ->and($this->mock->forceConfig($this->forcedConfig))
             ->then
             ->variable($this->mock->run())
