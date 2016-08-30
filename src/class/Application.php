@@ -201,7 +201,7 @@ class Application extends Subjects
             throw new Exception('Memcache class '.$class.' not found.');
         }
 
-        $this->memcached = new $class;
+        $this->memcached = new $class($this);
     }
 
     protected function readAllModules()
