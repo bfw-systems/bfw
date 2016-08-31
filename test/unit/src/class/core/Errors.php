@@ -6,7 +6,7 @@ use \atoum;
 use \BFW\test\unit\mocks\ApplicationForceConfig as MockApp;
 
 require_once(__DIR__.'/../../../../../vendor/autoload.php');
-require_once(__DIR__.'/../../../mocks/ErrorsFunctions.php');
+require_once(__DIR__.'/../../../mocks/src/core/ErrorsFunctions.php');
 
 /**
  * @engine isolate
@@ -75,13 +75,13 @@ class Errors extends atoum
             return;
         }
         
-        $this->mock = new \BFW\test\unit\mocks\Errors($this->app);
+        $this->mock = new \BFW\Core\test\unit\mocks\Errors($this->app);
     }
     
     public function testConstructor()
     {
         $this->assert('test constructor')
-            ->object($this->mock = new \BFW\test\unit\mocks\Errors($this->app))
+            ->object($this->mock = new \BFW\Core\test\unit\mocks\Errors($this->app))
                 ->isInstanceOf('\BFW\Core\Errors');
     }
     
@@ -101,14 +101,14 @@ class Errors extends atoum
         $this->assert('test defineErrorHandler with a class render')
             ->if($this->forcedConfig['errorRenderFct']['active'] = true)
             ->and($this->forcedConfig['errorRenderFct']['cli'] = [
-                'class'  => '\BFW\test\unit\mocks\Errors',
+                'class'  => '\BFW\Core\test\unit\mocks\Errors',
                 'method' => 'mockRender'
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
             ->array($this->mock->callDefineErrorHandler())
                 ->isEqualTo([
-                    '\BFW\test\unit\mocks\Errors',
+                    '\BFW\Core\test\unit\mocks\Errors',
                     'mockRender'
                 ]);
     }
@@ -129,14 +129,14 @@ class Errors extends atoum
         $this->assert('test defineExceptionHandler with a class render')
             ->if($this->forcedConfig['exceptionRenderFct']['active'] = true)
             ->and($this->forcedConfig['exceptionRenderFct']['cli'] = [
-                'class'  => '\BFW\test\unit\mocks\Errors',
+                'class'  => '\BFW\Core\test\unit\mocks\Errors',
                 'method' => 'mockRender'
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
             ->array($this->mock->callDefineExceptionHandler())
                 ->isEqualTo([
-                    '\BFW\test\unit\mocks\Errors',
+                    '\BFW\Core\test\unit\mocks\Errors',
                     'mockRender'
                 ]);
     }
@@ -258,7 +258,7 @@ class Errors extends atoum
             ))
             ->if($this->forcedConfig['exceptionRenderFct']['active'] = true)
             ->and($this->forcedConfig['exceptionRenderFct']['cli'] = [
-                'class'  => '\BFW\test\unit\mocks\Errors',
+                'class'  => '\BFW\Core\test\unit\mocks\Errors',
                 'method' => 'mockRender'
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
@@ -287,7 +287,7 @@ class Errors extends atoum
             ->then
             ->if($this->forcedConfig['errorRenderFct']['active'] = true)
             ->and($this->forcedConfig['errorRenderFct']['cli'] = [
-                'class'  => '\BFW\test\unit\mocks\Errors',
+                'class'  => '\BFW\Core\test\unit\mocks\Errors',
                 'method' => 'mockRender'
             ])
             ->and($this->app->forceConfig($this->forcedConfig))

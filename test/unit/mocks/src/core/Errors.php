@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\test\unit\mocks;
+namespace BFW\Core\test\unit\mocks;
 
 use \BFW\test\unit\mocks\ApplicationForceConfig as MockApp;
 
@@ -42,7 +42,7 @@ class Errors extends \BFW\Core\Errors
         parent::defineErrorHandler();
         
         //Get last render declared
-        $lastErrorRender = set_error_handler(['\BFW\test\unit\mocks\Errors', 'mockRender']);
+        $lastErrorRender = set_error_handler(['\BFW\Core\test\unit\mocks\Errors', 'mockRender']);
         restore_error_handler();
         
         //Disable handler create in defineErrorHandler()
@@ -56,7 +56,7 @@ class Errors extends \BFW\Core\Errors
         parent::defineExceptionHandler();
         
         //Get last render declared
-        $lastExceptionRender = set_exception_handler(['\BFW\test\unit\mocks\Errors', 'mockRender']);
+        $lastExceptionRender = set_exception_handler(['\BFW\Core\test\unit\mocks\Errors', 'mockRender']);
         restore_exception_handler();
         
         //Disable handler create in defineErrorHandler()
