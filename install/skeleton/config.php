@@ -8,8 +8,8 @@
  */
 
 return [
-    'debug' => false,
-    'errorRenderFct' => [
+    'debug'              => false,
+    'errorRenderFct'     => [
         'active'  => false,
         'default' => [
             'class'  => '\BFW\Core\Errors',
@@ -31,12 +31,12 @@ return [
             'method' => 'defaultCliErrorRender'
         ]
     ],
-    'sqlSecureMethod' => '',
+    'sqlSecureMethod'    => '',
     
     /**
      * Memcache(d) server(s) config
      */
-    'memcached' => [
+    'memcached'          => [
         /**
          * @var boolean enabled : Enable or not connection to memcache(d)
          */
@@ -110,8 +110,8 @@ return [
             ]
         ]
     ],
-    'modules' => [
-        'db' => [
+    'modules'            => [
+        'db'         => [
             'name'    => '',
             'enabled' => false
         ],
@@ -119,13 +119,13 @@ return [
             'name'    => '',
             'enabled' => false
         ],
-        'routing' => [
+        'routing'    => [
             'name'    => '',
             'enabled' => false
         ],
-        'template' => [
-            'name'   => '',
-            'enabled'=> false
+        'template'   => [
+            'name'    => '',
+            'enabled' => false
         ]
     ]
 ];
