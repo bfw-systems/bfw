@@ -21,13 +21,26 @@ class Application extends atoum
     protected $forcedConfig = [
         'debug'              => false,
         'errorRenderFct'     => [
-            'default' => '',
-            'cli'     => ''
+            'active'  => false,
+            'default' => [
+                'class'  => '',
+                'method' => ''
+            ],
+            'cli'     => [
+                'class'  => '',
+                'method' => ''
+            ]
         ],
         'exceptionRenderFct' => [
             'active'  => false,
-            'default' => '',
-            'cli'     => ''
+            'default' => [
+                'class'  => '',
+                'method' => ''
+            ],
+            'cli'     => [
+                'class'  => '',
+                'method' => ''
+            ]
         ],
         'sqlSecureMethod' => '',
         'memcached'          => [
@@ -113,8 +126,15 @@ class Application extends atoum
                 ->isFalse()
             ->array($this->mock->getConfig('errorRenderFct'))
                 ->isEqualto([
-                    'default' => '',
-                    'cli'     => ''
+                    'active'  => false,
+                    'default' => [
+                        'class'  => '',
+                        'method' => ''
+                    ],
+                    'cli'     => [
+                        'class'  => '',
+                        'method' => ''
+                    ]
                 ]);
         
         $this->assert('test getConfig exception')

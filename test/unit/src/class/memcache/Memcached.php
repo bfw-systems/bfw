@@ -28,13 +28,26 @@ class Memcached extends atoum
         $this->forcedConfig = [
             'debug'              => false,
             'errorRenderFct'     => [
-                'default' => '',
-                'cli'     => ''
+                'active'  => false,
+                'default' => [
+                    'class'  => '',
+                    'method' => ''
+                ],
+                'cli'     => [
+                    'class'  => '',
+                    'method' => ''
+                ]
             ],
             'exceptionRenderFct' => [
                 'active'  => false,
-                'default' => '',
-                'cli'     => ''
+                'default' => [
+                    'class'  => '',
+                    'method' => ''
+                ],
+                'cli'     => [
+                    'class'  => '',
+                    'method' => ''
+                ]
             ],
             'memcached'          => [
                 'enabled'      => false,

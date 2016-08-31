@@ -8,20 +8,52 @@ class Errors
 {
     protected static $app = null;
     
-    public function __construct(\BFW\Application $app)
+    public function __construct(Application $app)
     {
         self::$app   = $app;
+        
+        $this->defineErrorHandler();
+        $this->defineExceptionHandler();
+    }
+    
+    protected function defineErrorHandler()
+    {
         $calledClass = get_called_class();
-        
         $errorRender = $calledClass::getErrorRender();
-        if (!empty($errorRender)) {
-            set_error_handler(['\BFW\Core\Errors', 'errorHandler']);
+        
+        if ($errorRender === false) {
+            return;
         }
         
-        $exceptionRender = $calledClass::getExceptionRender();
-        if (!empty($exceptionRender)) {
-            set_exception_handler(['\BFW\Core\Errors', 'exceptionHandler']);
+        $errorHandlerArgs = $errorRender['method'];
+        if (!empty($errorRender['class'])) {
+            $errorHandlerArgs = [
+                $errorRender['class'],
+                $errorRender['method']
+            ];
         }
+
+        set_error_handler($errorHandlerArgs);
+    }
+    
+    protected function defineExceptionHandler()
+    {
+        $calledClass     = get_called_class();
+        $exceptionRender = $calledClass::getExceptionRender();
+        
+        if ($exceptionRender === false) {
+            return;
+        }
+        
+        $erxceptionHandlerArgs = $exceptionRender['method'];
+        if (!empty($exceptionRender['class'])) {
+            $erxceptionHandlerArgs = [
+                $exceptionRender['class'],
+                $exceptionRender['method']
+            ];
+        }
+
+        set_exception_handler($erxceptionHandlerArgs);
     }
     
     protected static function getApp()
@@ -53,6 +85,10 @@ class Errors
     
     protected static function defineRenderToUse($renderConfig)
     {
+        if($renderConfig['active'] === false) {
+            return false;
+        }
+        
         if (PHP_SAPI === 'cli' && isset($renderConfig['cli'])) {
             return $renderConfig['cli'];
         }
@@ -69,7 +105,8 @@ class Errors
         $calledClass = get_called_class();
         $errorRender = $calledClass::getExceptionRender();
         
-        $errorRender(
+        $calledClass::callRender(
+            $errorRender,
             'Fatal', 
             $exception->getMessage(), 
             $exception->getFile(), 
@@ -87,13 +124,46 @@ class Errors
         $calledClass = get_called_class();
         $erreurType  = $calledClass::getErrorType($errSeverity);
         $errorRender = $calledClass::getErrorRender();
-
-        $errorRender(
+        
+        $calledClass::callRender(
+            $errorRender,
             $erreurType,
             $errMsg,
             $errFile,
             $errLine,
             debug_backtrace()
+        );
+    }
+    
+    protected static function callRender(
+        $renderInfos,
+        $erreurType,
+        $errMsg,
+        $errFile,
+        $errLine,
+        $backtrace
+    ) {
+        $class  = $renderInfos['class'];
+        $method = $renderInfos['method'];
+        
+        if (!empty($class)) {
+            $class::$method(
+                $erreurType,
+                $errMsg,
+                $errFile,
+                $errLine,
+                $backtrace
+            );
+            
+            return;
+        }
+        
+        $method(
+            $erreurType,
+            $errMsg,
+            $errFile,
+            $errLine,
+            $backtrace
         );
     }
     

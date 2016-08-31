@@ -11,13 +11,25 @@ return [
     'debug' => false,
     'errorRenderFct' => [
         'active'  => false,
-        'default' => '\BFW\Core\Errors::defaultErrorRender',
-        'cli'     => '\BFW\Core\Errors::defaultCliErrorRender'
+        'default' => [
+            'class'  => '\BFW\Core\Errors',
+            'method' => 'defaultErrorRender'
+        ],
+        'cli'     => [
+            'class'  => '\BFW\Core\Errors',
+            'method' => 'defaultCliErrorRender'
+        ]
     ],
     'exceptionRenderFct' => [
         'active'  => false,
-        'default' => '\BFW\Core\Errors::defaultErrorRender',
-        'cli'     => '\BFW\Core\Errors::defaultCliErrorRender'
+        'default' => [
+            'class'  => '\BFW\Core\Errors',
+            'method' => 'defaultErrorRender'
+        ],
+        'cli'     => [
+            'class'  => '\BFW\Core\Errors',
+            'method' => 'defaultCliErrorRender'
+        ]
     ],
     'sqlSecureMethod' => '',
     
