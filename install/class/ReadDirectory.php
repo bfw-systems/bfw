@@ -55,9 +55,8 @@ class ReadDirectory
 
             //If it's a directory and not a file
             if (is_dir($dir.'/'.$file)) {
-                //We run the reading of this directory
-                $read = new readDirectory($this->list);
-                $read->run($dir.'/'.$file);
+                $this->dirAction($dir.'/'.$file);
+                continue;
             }
         }
 
@@ -69,5 +68,17 @@ class ReadDirectory
         if (in_array($fileName, $this->ignore)) {
             return 'continue';
         }
+    }
+    
+    /**
+     * Recall ReadDirectory to read this directory
+     * This is to avoid having the recursion error
+     * 
+     * @param type $directory
+     */
+    protected function dirAction($directory)
+    {
+        $read = new $this->calledClass($this->list);
+        $read->run($directory);
     }
 }
