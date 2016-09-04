@@ -45,6 +45,7 @@
             "BFW\\Memcache\\": "src/class/memcache",
             "BFW\\Traits\\": "src/traits",
             "BFW\\test\\unit\\mocks\\": "test/unit/mocks/src",
+            "BFW\\test\\helpers\\": "test/unit/helpers",
             "BFW\\Core\\test\\unit\\mocks\\": "test/unit/mocks/src/core"
         },
         "files": [
