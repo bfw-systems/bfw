@@ -24,9 +24,11 @@ before_script:
   # Ensure the memcache extension is available
   - if [ $(phpenv version-name) = "5.6" ]; then composer show --platform ext-memcache; fi
   - composer show --platform ext-memcached
+  - chmod +x ./test/bin/installFwk.php
 
 script:
   - ./vendor/bin/atoum -c .atoum.php -d test/unit/src/class/ ;
+  - php ./test/bin/installFwk.php
 
 after_script:
  ## Scrutinizer
