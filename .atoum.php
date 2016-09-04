@@ -48,7 +48,6 @@ $script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/class/memcac
 //$script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/trait');
 /**/
 
-/*
 if(file_exists('/home/travis'))
 {
     // Publish code coverage report on coveralls.io
@@ -84,4 +83,3 @@ if(file_exists('/home/travis'))
 
 	$runner->addReport($cloverReport);
 }
-*/
