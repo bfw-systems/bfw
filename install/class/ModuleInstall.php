@@ -281,7 +281,7 @@ class ModuleInstall
     {
         echo ' >> Copy '.$configFileName.' ... ';
 
-        $sourceFile = realpath($this->configFiles.'/'.$configFileName);
+        $sourceFile = realpath($this->configPath.'/'.$configFileName);
         $targetFile = realpath($this->bfwConfigPath.'/'.$configFileName);
 
         //Check if config file already exist
