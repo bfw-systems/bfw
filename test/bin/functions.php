@@ -7,7 +7,7 @@ function testDirectoryOrFile($dir)
     echo ' >> Exists ';
     if (file_exists($dir)) {
         echo "\033[1;31m[Fail]\033[0m\n";
-        fwrite(STDERR, 'Directory '.$dir.' not exists.');
+        fwrite(STDERR, 'Directory '.$dir.' not exists.'."\n");
         
         return false;
     }
@@ -16,7 +16,7 @@ function testDirectoryOrFile($dir)
     echo ' >> Readable ';
     if (is_readable($dir)) {
         echo "\033[1;31m[Fail]\033[0m\n";
-        fwrite(STDERR, 'Directory '.$dir.' is not readable.');
+        fwrite(STDERR, 'Directory '.$dir.' is not readable.'."\n");
         
         return false;
     }
@@ -25,7 +25,7 @@ function testDirectoryOrFile($dir)
     echo ' >> Writable ';
     if (is_writable($dir)) {
         echo "\033[1;31m[Fail]\033[0m\n";
-        fwrite(STDERR, 'Directory '.$dir.' not writable.');
+        fwrite(STDERR, 'Directory '.$dir.' not writable.'."\n");
         
         return false;
     }
