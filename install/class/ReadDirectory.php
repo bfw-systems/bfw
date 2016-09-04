@@ -16,7 +16,7 @@ class ReadDirectory
     protected $list;
 
     /**
-     * @var $ignore : Item to ignored during the reading of directories
+     * @var array $ignore : Item to ignored during the reading of directories
      */
     private $ignore = ['.', '..'];
 
@@ -52,8 +52,8 @@ class ReadDirectory
             } elseif ($action === 'break') {
                 break;
             }
-
-            //If it's a directory and not a file
+            
+            //If it's a directory
             if (is_dir($dir.'/'.$file)) {
                 $this->dirAction($dir.'/'.$file);
                 continue;
@@ -63,6 +63,14 @@ class ReadDirectory
         closedir($dir);
     }
 
+    /**
+     * Action to do when a file is found.
+     * 
+     * @param string $fileName Name of the file
+     * @param string $pathToFile Path of the file
+     * 
+     * @return string
+     */
     protected function fileAction($fileName, $pathToFile)
     {
         if (in_array($fileName, $this->ignore)) {
