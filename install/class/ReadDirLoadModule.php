@@ -1,6 +1,6 @@
 <?php
 
-namespace \BFW\Install;
+namespace BFW\Install;
 
 class ReadDirLoadModule extends ReadDirectory
 {
