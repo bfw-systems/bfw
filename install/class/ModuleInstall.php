@@ -189,7 +189,7 @@ class ModuleInstall
 
         //If symbolic link create fail.
         if (!symlink($this->srcPath, $targetPath)) {
-            echo "...\033[1;31m Symbolic link creation fail.\033[0m\n";
+            echo "\033[1;31m Symbolic link creation fail.\033[0m\n";
             return;
         }
 
