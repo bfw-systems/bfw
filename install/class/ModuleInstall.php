@@ -99,6 +99,12 @@ class ModuleInstall
         $this->bfwModulePath .= $this->name;
 
         $infos = $this->getInfosFromModule();
+        
+        if (!property_exists($infos, 'srcPath')) {
+            throw new Exception(
+                'srcPath must be present in install json file for module '.$this->name
+            );
+        }
 
         $this->srcPath    = $infos->srcPath;
         $this->configPath = $infos->srcPath;
