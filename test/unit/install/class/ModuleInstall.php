@@ -414,7 +414,7 @@ class ModuleInstall extends atoum
                         .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
-        $this->assert('test install with config files and the "force" mode. It must be a rmdir error.')
+        $this->assert('test install with config files and an error with the creation of the config directory')
             ->if($this->mock->forceInfos([
                 'srcPath' => 'src',
                 'configPath'    => 'config',
@@ -474,7 +474,7 @@ class ModuleInstall extends atoum
                         .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
-        $this->assert('test install with config files and all must be good')
+        $this->assert('test install with config files and an error because the config file not exist in source')
             ->if($this->mock->forceInfos([
                 'srcPath' => 'src',
                 'configPath'    => 'config',
@@ -544,7 +544,7 @@ class ModuleInstall extends atoum
                         .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
-        $this->assert('test install with config files and all must be good')
+        $this->assert('test install with config files and an error with copy')
             ->if($this->mock->forceInfos([
                 'srcPath' => 'src',
                 'configPath'    => 'config',
@@ -611,7 +611,7 @@ class ModuleInstall extends atoum
                         .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
-        $this->assert('test install with config files and all must be good')
+        $this->assert('test install with config files and copy call without error.')
             ->if($this->mock->forceInfos([
                 'srcPath' => 'src',
                 'configPath'    => 'config',
@@ -662,7 +662,7 @@ class ModuleInstall extends atoum
                         .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
-        $this->assert('test install with config files and all must be good')
+        $this->assert('test install without config file')
             ->if($this->mock->forceInfos([
                 'srcPath' => 'src',
                 'configPath'    => 'config',
