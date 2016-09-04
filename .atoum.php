@@ -53,7 +53,7 @@ if(file_exists('/home/travis'))
     // Publish code coverage report on coveralls.io
     $sources = './src';
     $token = 'ycIQWlEx47Xh3QzvlQ4kxh3jOHHo55m1E';
-    $coverallsReport = new reports\asynchronous\coveralls($sources, $token);
+    $coverallsReport = new atoum\reports\asynchronous\coveralls($sources, $token);
     
     // If you are using Travis-CI (or any other CI tool), you should customize the report
     // https://coveralls.io/docs/api
