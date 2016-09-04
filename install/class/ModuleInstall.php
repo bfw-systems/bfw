@@ -98,7 +98,7 @@ class ModuleInstall
         $this->bfwConfigPath .= $this->name;
         $this->bfwModulePath .= $this->name;
 
-        $infos = \BFW\Module::installInfos($this->pathToModule);
+        $infos = $this->getInfosFromModule();
 
         $this->srcPath    = $infos->srcPath;
         $this->configPath = $infos->srcPath;
@@ -116,6 +116,17 @@ class ModuleInstall
         }
 
         $this->srcPath = realpath($this->pathToModule.'/'.$this->srcPath);
+    }
+    
+    /**
+     * Get infos for this module from BFW Module class
+     * It's a separate method for easy override.
+     * 
+     * @return \stdClass
+     */
+    protected function getInfosFromModule()
+    {
+        return \BFW\Module::installInfos($this->pathToModule);
     }
 
     /**
