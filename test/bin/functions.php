@@ -7,7 +7,7 @@ function testDirectoryOrFile($dir)
     echo ' >> Exists ';
     if (file_exists($dir)) {
         echo "\033[1;31m[Fail]\033[0m\n";
-        `exit 1`;
+        exit(1);
         
         return false;
     }
@@ -16,7 +16,7 @@ function testDirectoryOrFile($dir)
     echo ' >> Readable ';
     if (is_readable($dir)) {
         echo "\033[1;31m[Fail]\033[0m\n";
-        `exit 1`;
+        exit(1);
         
         return false;
     }
@@ -25,7 +25,7 @@ function testDirectoryOrFile($dir)
     echo ' >> Writable ';
     if (is_writable($dir)) {
         echo "\033[1;31m[Fail]\033[0m\n";
-        `exit 1`;
+        exit(1);
         
         return false;
     }
