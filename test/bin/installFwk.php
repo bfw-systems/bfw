@@ -77,6 +77,8 @@ for ($installIndex = 0; $installIndex < 2; $installIndex++) {
     exec('cd '.$installDir.' && ./vendor/bin/bfw_install', $installOutput);
     $installOutput = implode("\n", $installOutput);
     
+    echo $installOutput;
+    
     echo 'Test output returned by script : ';
     if ($installOutput !== $exceptedOutput[$installIndex]) {
         echo "\033[1;31m[Fail]\033[0m\n";
