@@ -46,7 +46,8 @@
             "BFW\\Traits\\": "src/traits",
             "BFW\\test\\unit\\mocks\\": "test/unit/mocks/src",
             "BFW\\test\\helpers\\": "test/unit/helpers",
-            "BFW\\Core\\test\\unit\\mocks\\": "test/unit/mocks/src/core"
+            "BFW\\Core\\test\\unit\\mocks\\": "test/unit/mocks/src/core",
+            "BFW\\Install\\test\\unit\\mocks\\": "test/unit/mocks/install"
         },
         "files": [
             "src/fonctions/global.php",
