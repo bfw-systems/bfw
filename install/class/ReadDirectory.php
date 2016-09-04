@@ -5,9 +5,15 @@ namespace BFW\Install;
 class ReadDirectory
 {
     /**
-     * @var $list : List all path found
+     * @var string $calledClass : Name of the current class.
+     * For recall this correct class when she's extended.
      */
-    protected $list = [];
+    protected $calledClass = '';
+    
+    /**
+     * @var array $list : List all path found
+     */
+    protected $list;
 
     /**
      * @var $ignore : Item to ignored during the reading of directories
@@ -21,7 +27,8 @@ class ReadDirectory
      */
     public function __construct(&$listFiles)
     {
-        $this->list = &$listFiles;
+        $this->calledClass = get_called_class();
+        $this->list        = &$listFiles;
     }
 
     /**
