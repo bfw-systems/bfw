@@ -46,7 +46,7 @@ class ReadDirLoadModule extends atoum
     public function testRun()
     {
         $this->assert('test run (call fileAction and dirAction).')
-            ->if($this->function->opendir = 'dirPath')
+            ->if($this->function->opendir = true)
             ->and($this->function->readdir = function() {
                 $this->readdirIndex++;
                 
@@ -65,7 +65,7 @@ class ReadDirLoadModule extends atoum
                 return false;
             })
             ->and($this->function->is_dir = function($path) {
-                if($path === 'dirPath/test') {
+                if($path === 'dirPath/test2') {
                     return true;
                 }
                 
@@ -74,7 +74,7 @@ class ReadDirLoadModule extends atoum
             ->and($this->function->closedir = true)
             ->then
             
-            ->if($this->class->run(''))
+            ->if($this->class->run('dirPath'))
             ->array($this->list)
                 ->isEqualTo(['dirPath'])
                 ->size

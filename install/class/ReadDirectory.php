@@ -45,7 +45,7 @@ class ReadDirectory
 
         //Tant qu'il y a des fichiers à lire dans le dossier
         while (($file = readdir($dir)) !== false) {
-            $action = $this->fileAction($file, $dir);
+            $action = $this->fileAction($file, $path);
 
             if ($action === 'continue') {
                 continue;
@@ -54,8 +54,8 @@ class ReadDirectory
             }
             
             //If it's a directory
-            if (is_dir($dir.'/'.$file)) {
-                $this->dirAction($dir.'/'.$file);
+            if (is_dir($path.'/'.$file)) {
+                $this->dirAction($path.'/'.$file);
                 continue;
             }
         }
