@@ -4,27 +4,50 @@ namespace BFW\Core;
 
 use \BFW\Application;
 
+/**
+ * Class used to have a personnal message/page for errors and exceptions
+ */
 class Errors
 {
+    /**
+     * @var \BFW\Application $app : L'instance d'Application
+     */
     protected static $app = null;
     
+    /**
+     * Constructeur
+     * 
+     * @param \BFW\Application $app : L'instance d'Application à utiliser
+     */
     public function __construct(Application $app)
     {
         self::$app = $app;
         
+        //Find and create the handler for errors
         $this->defineErrorHandler();
+        
+        //Find and create the handler for exceptions
         $this->defineExceptionHandler();
     }
     
+    /**
+     * Find and create the handler for errors
+     * 
+     * @return void
+     */
     protected function defineErrorHandler()
     {
+        //Find the correct class to call (return the child class if extended)
         $calledClass = get_called_class();
         $errorRender = $calledClass::getErrorRender();
         
+        //If not render to use
         if ($errorRender === false) {
             return;
         }
         
+        //Define the arg for set_error_render
+        //Only "method" if function, of array this class if method.
         $errorHandlerArgs = $errorRender['method'];
         if (!empty($errorRender['class'])) {
             $errorHandlerArgs = [
@@ -33,18 +56,28 @@ class Errors
             ];
         }
 
+        //add the handler for errors
         set_error_handler($errorHandlerArgs);
     }
     
+    /**
+     * Find and create the handler for exceptions
+     * 
+     * @return type
+     */
     protected function defineExceptionHandler()
     {
+        //Find the correct class to call (return the child class if extended)
         $calledClass     = get_called_class();
         $exceptionRender = $calledClass::getExceptionRender();
         
+        //If not render to use
         if ($exceptionRender === false) {
             return;
         }
         
+        //Define the arg for set_exception_handler
+        //Only "method" if function, of array this class if method.
         $erxceptionHandlerArgs = $exceptionRender['method'];
         if (!empty($exceptionRender['class'])) {
             $erxceptionHandlerArgs = [
@@ -53,9 +86,16 @@ class Errors
             ];
         }
 
+        //add the handler for exceptions
         set_exception_handler($erxceptionHandlerArgs);
     }
     
+    /**
+     * Get the Application instance
+     * It's a method to allow override
+     * 
+     * @return \BFW\Application
+     */
     protected static function getApp()
     {
         if (is_null(self::$app)) {
@@ -65,6 +105,13 @@ class Errors
         return self::$app;
     }
     
+    /**
+     * get the error render from config for cli or default
+     * 
+     * @return boolean|array Render infos
+     *      Boolean : false if no render to use
+     *      Array   : Infos from config
+     */
     public static function getErrorRender()
     {
         $calledClass = get_called_class();
@@ -74,6 +121,13 @@ class Errors
         return self::defineRenderToUse($renderFcts);
     }
     
+    /**
+     * get the exception render from config for cli or default
+     * 
+     * @return boolean|array Render infos
+     *      Boolean : false if no render to use
+     *      Array   : Infos from config
+     */
     public static function getExceptionRender()
     {
         $calledClass = get_called_class();
@@ -83,16 +137,29 @@ class Errors
         return self::defineRenderToUse($renderFcts);
     }
     
+    /**
+     * Find the render to use with the config
+     * If cli render is not define, it's use the default render.
+     * 
+     * @param array $renderConfig : Render infos from config
+     * 
+     * @return boolean|array : Render to use
+     *      Boolean : false is no enable or no render define
+     *      Array : The render used
+     */
     protected static function defineRenderToUse($renderConfig)
     {
+        //Check enabled
         if ($renderConfig['active'] === false) {
             return false;
         }
         
+        //The cli render if cli mode
         if (PHP_SAPI === 'cli' && isset($renderConfig['cli'])) {
             return $renderConfig['cli'];
         }
         
+        //The default render or cli if cli mode and no cli render configured
         if (isset($renderConfig['default'])) {
             return $renderConfig['default'];
         }
@@ -100,11 +167,20 @@ class Errors
         return false;
     }
     
+    /**
+     * The default exception handler included in BFW
+     * 
+     * @param \Exception $exception : Exception informations
+     * 
+     * @return void
+     */
     public static function exceptionHandler($exception)
     {
+        //Get the current class (childs class if extended)
         $calledClass = get_called_class();
         $errorRender = $calledClass::getExceptionRender();
         
+        //Call the "callRender" method for this class (or child class)
         $calledClass::callRender(
             $errorRender,
             'Fatal', 
@@ -115,16 +191,28 @@ class Errors
         );
     }
     
+    /**
+     * The default error handler included in BFW
+     * 
+     * @param type $errSeverity : Error severity
+     * @param type $errMsg : Error message
+     * @param type $errFile : File where the error is triggered
+     * @param type $errLine : Line where the error is triggered
+     * 
+     * @return void
+     */
     public static function errorHandler(
         $errSeverity,
         $errMsg,
         $errFile,
         $errLine
     ) {
+        //Get the current class (childs class if extended)
         $calledClass = get_called_class();
         $erreurType  = $calledClass::getErrorType($errSeverity);
         $errorRender = $calledClass::getErrorRender();
         
+        //Call the "callRender" method for this class (or child class)
         $calledClass::callRender(
             $errorRender,
             $erreurType,
@@ -135,6 +223,19 @@ class Errors
         );
     }
     
+    /**
+     * Call the personnal class-method or function declared on config where
+     * an exception or an error is triggered.
+     * 
+     * @param array $renderInfos : Infos from config
+     * @param type $erreurType : Error severity
+     * @param type $errMsg : Error/exception message
+     * @param type $errFile : File where the error/exception is triggered
+     * @param type $errLine : Line where the error/exception is triggered
+     * @param type $backtrace : Error/exception backtrace
+     * 
+     * @return void
+     */
     protected static function callRender(
         $renderInfos,
         $erreurType,
@@ -146,6 +247,7 @@ class Errors
         $class  = $renderInfos['class'];
         $method = $renderInfos['method'];
         
+        //If is a class, call "$class::$method" (compatibility 5.x)
         if (!empty($class)) {
             $class::$method(
                 $erreurType,
@@ -158,6 +260,7 @@ class Errors
             return;
         }
         
+        //If is not a class, it's a function.
         $method(
             $erreurType,
             $errMsg,
@@ -167,9 +270,17 @@ class Errors
         );
     }
     
+    /**
+     * Map array to have a human readable severity.
+     * 
+     * @see http://fr2.php.net/manual/fr/function.set-error-handler.php#113567
+     * 
+     * @param int $errSeverity : The error severity with PHP constant
+     * 
+     * @return string
+     */
     protected static function getErrorType($errSeverity)
     {
-        //List : http://fr2.php.net/manual/fr/function.set-error-handler.php#113567
         $map = [
             E_ERROR             => 'Fatal',
             E_CORE_ERROR        => 'Fatal',
@@ -188,7 +299,10 @@ class Errors
             E_USER_DEPRECATED   => 'Deprecated'
         ];
 
+        //Default value if the error is not found in the map array
         $erreurType = 'Unknown';
+        
+        //Search in map array
         if (isset($map[$errSeverity])) {
             $erreurType = $map[$errSeverity];
         }
@@ -196,6 +310,17 @@ class Errors
         return $erreurType;
     }
 
+    /**
+     * The default cli render in BFW
+     * 
+     * @param type $erreurType : Error severity
+     * @param type $errMsg : Error/exception message
+     * @param type $errFile : File where the error/exception is triggered
+     * @param type $errLine : Line where the error/exception is triggered
+     * @param type $backtrace : Error/exception backtrace
+     * 
+     * @return void
+     */
     public static function defaultCliErrorRender(
         $erreurType,
         $errMsg,
@@ -203,9 +328,11 @@ class Errors
         $errLine,
         $backtrace
     ) {
+        //Create the cli message
         $msgError = $erreurType.' Error : '.$errMsg.
             ' in '.$errFile.' at line '.$errLine;
         
+        //Display the message with displayMsg function
         \BFW\Cli\displayMsg(
             $msgError,
             'white',
@@ -213,6 +340,17 @@ class Errors
         );
     }
 
+    /**
+     * The default render in BFW
+     * 
+     * @param type $erreurType : Error severity
+     * @param type $errMsg : Error/exception message
+     * @param type $errFile : File where the error/exception is triggered
+     * @param type $errLine : Line where the error/exception is triggered
+     * @param type $backtrace : Error/exception backtrace
+     * 
+     * @return void
+     */
     public static function defaultErrorRender(
         $erreurType,
         $errMsg,
