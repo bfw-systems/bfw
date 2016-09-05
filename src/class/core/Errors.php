@@ -10,7 +10,7 @@ class Errors
     
     public function __construct(Application $app)
     {
-        self::$app   = $app;
+        self::$app = $app;
         
         $this->defineErrorHandler();
         $this->defineExceptionHandler();
@@ -58,7 +58,7 @@ class Errors
     
     protected static function getApp()
     {
-        if(is_null(self::$app)) {
+        if (is_null(self::$app)) {
             self::$app = Application::getInstance();
         }
         
@@ -85,7 +85,7 @@ class Errors
     
     protected static function defineRenderToUse($renderConfig)
     {
-        if($renderConfig['active'] === false) {
+        if ($renderConfig['active'] === false) {
             return false;
         }
         
@@ -93,7 +93,7 @@ class Errors
             return $renderConfig['cli'];
         }
         
-        if(isset($renderConfig['default'])) {
+        if (isset($renderConfig['default'])) {
             return $renderConfig['default'];
         }
         

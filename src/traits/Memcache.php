@@ -64,7 +64,7 @@ trait Memcache
             );
         }
         
-        if(!$this->ifExists($key)) {
+        if (!$this->ifExists($key)) {
             throw new Exception(
                 'The key '.$key.' not exist on memcache(d) server'
             );

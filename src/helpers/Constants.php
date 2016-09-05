@@ -8,7 +8,7 @@ class Constants
 {
     public static function create($cstName, $cstValue)
     {
-        if(defined($cstName)) {
+        if (defined($cstName)) {
             throw new Exception('Constant '.$cstName.' already defined.');
         }
         

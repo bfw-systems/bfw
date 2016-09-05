@@ -154,7 +154,7 @@ class Module
         $runnerFile = $this->getRunnerFile();
 
         $initFunction = function() use ($runnerFile) {
-            if($runnerFile === null) {
+            if ($runnerFile === null) {
                 return;
             }
             

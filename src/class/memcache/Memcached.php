@@ -17,7 +17,7 @@ class Memcached extends \Memcached
         $this->app    = $app;
         $this->config = $this->app->getConfig('memcached');
         
-        if(!empty($this->config['persistentId'])) {
+        if (!empty($this->config['persistentId'])) {
             parent::__construct($this->config['persistentId']);
         } else {
             parent::__construct();
@@ -43,7 +43,7 @@ class Memcached extends \Memcached
             
             //It should not be to readd the server
             //(for persistent mode particulary)
-            if(in_array($host.':'.$port, $serversList)) {
+            if (in_array($host.':'.$port, $serversList)) {
                 continue;
             }
             
