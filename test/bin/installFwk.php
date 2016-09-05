@@ -79,7 +79,8 @@ for ($installIndex = 0; $installIndex < 2; $installIndex++) {
     
     echo $installOutput;
     
-    echo `cd $installDir && ls -al`;
+    //echo "\n";
+    //echo `cd $installDir && ls -al *`;
     
     echo 'Test output returned by script : ';
     if ($installOutput !== $exceptedOutput[$installIndex]) {
@@ -92,22 +93,22 @@ for ($installIndex = 0; $installIndex < 2; $installIndex++) {
 
     echo 'Test structure :'."\n";
 
-    testDirectoryOrFile('app');
-    testDirectoryOrFile('app/config');
-    testDirectoryOrFile('app/config/bfw');
-    testDirectoryOrFile('app/modules');
+    testDirectoryOrFile($installDir, 'app');
+    testDirectoryOrFile($installDir, 'app/config');
+    testDirectoryOrFile($installDir, 'app/config/bfw');
+    testDirectoryOrFile($installDir, 'app/modules');
 
-    testDirectoryOrFile('src');
-    testDirectoryOrFile('src/cli');
-    testDirectoryOrFile('src/controllers');
-    testDirectoryOrFile('src/modeles');
-    testDirectoryOrFile('src/view');
+    testDirectoryOrFile($installDir, 'src');
+    testDirectoryOrFile($installDir, 'src/cli');
+    testDirectoryOrFile($installDir, 'src/controllers');
+    testDirectoryOrFile($installDir, 'src/modeles');
+    testDirectoryOrFile($installDir, 'src/view');
 
-    testDirectoryOrFile('web');
+    testDirectoryOrFile($installDir, 'web');
 
-    testDirectoryOrFile('app/config/bfw/config.php');
-    testDirectoryOrFile('src/cli/exemple.php');
-    testDirectoryOrFile('web/index.php');
-    testDirectoryOrFile('.htaccess');
-    testDirectoryOrFile('cli.php');
+    testDirectoryOrFile($installDir, 'app/config/bfw/config.php');
+    testDirectoryOrFile($installDir, 'src/cli/exemple.php');
+    testDirectoryOrFile($installDir, 'web/index.php');
+    testDirectoryOrFile($installDir, '.htaccess');
+    testDirectoryOrFile($installDir, 'cli.php');
 }
