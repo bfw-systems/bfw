@@ -1,4 +1,7 @@
 <?php
+/**
+ * Run application in www (apache/nginx/...) mode
+ */
 
 //Define cliMode to false (http(s) mode)
 define('cliMode', false);

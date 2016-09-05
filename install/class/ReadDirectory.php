@@ -2,6 +2,9 @@
 
 namespace BFW\Install;
 
+/**
+ * Class use for read a directory and sub-directories
+ */
 class ReadDirectory
 {
     /**

@@ -4,8 +4,14 @@ namespace BFW\Install;
 
 use \Exception;
 
+/**
+ * Class to get module install informations and run install of the module
+ */
 class ModuleInstall
 {
+    /**
+     * @const INSTALL_SCRIPT_VERSION : Script's version
+     */
     const INSTALL_SCRIPT_VERSION = '3.0.0';
 
     /**
@@ -49,21 +55,22 @@ class ModuleInstall
     protected $configPath = '';
 
     /**
-     * @var array $configFiles : List of config file to copy to config directory
+     * @var array $configFiles : List of config file
+     *                              to copy on the config directory
      */
     protected $configFiles = [];
 
     /**
-     * @var string|bool $installScript : Script to run for specific install from module
-     *                                  Boolean on 2.x
+     * @var string|bool $installScript : Script to run for a specific install
+     *                                  of the module
      */
     protected $installScript = '';
 
     /**
      * Constructor
      * 
-     * @param type $bfwPath
-     * @param type $pathToModule
+     * @param string $bfwPath Path to root bfw project
+     * @param string $pathToModule Path to module which be installed
      */
     public function __construct($bfwPath, $pathToModule)
     {
@@ -92,23 +99,30 @@ class ModuleInstall
      */
     public function loadInfos()
     {
+        //Get the module name
         $pathExplode = explode('/', $this->pathToModule);
         $this->name  = $pathExplode[(count($pathExplode) - 1)];
 
+        //Define path
         $this->bfwConfigPath .= $this->name;
         $this->bfwModulePath .= $this->name;
 
         $infos = $this->getInfosFromModule();
         
+        //check if srcPath is define
         if (!property_exists($infos, 'srcPath')) {
             throw new Exception(
-                'srcPath must be present in install json file for module '.$this->name
+                'srcPath must be present in install json file for module '
+                .$this->name
             );
         }
 
+        //Defines default paths
         $this->srcPath    = $infos->srcPath;
         $this->configPath = $infos->srcPath;
 
+        //Defines properties
+        
         if (property_exists($infos, 'configFiles')) {
             $this->configFiles = (array) $infos->configFiles;
         }
@@ -121,6 +135,7 @@ class ModuleInstall
             $this->installScript = $infos->installScript;
         }
 
+        //Update srcPath to get the complete path
         $this->srcPath = realpath($this->pathToModule.'/'.$this->srcPath);
     }
     
@@ -171,10 +186,12 @@ class ModuleInstall
         $targetPath     = $this->bfwModulePath;
         $alreadyCreated = file_exists($targetPath);
 
+        //If symlink already exist and it's a reinstall mode
         if ($alreadyCreated && $this->forceReinstall === true) {
             echo '[Force Reinstall: Remove symlink] ';
             $alreadyCreated = false;
 
+            //Error with remove symlink
             if (!unlink($targetPath)) {
                 echo "\033[1;31m Symbolic link remove fail.\033[0m\n";
                 throw new Exception('Reinstall fail. Symlink remove error');
@@ -183,7 +200,9 @@ class ModuleInstall
 
         //If module already exist in "modules" directory
         if ($alreadyCreated) {
-            echo "\033[1;33m Not created. Module already exist in 'modules' directory.\033[0m\n";
+            echo "\033[1;33m"
+                .' Not created. Module already exist in \'modules\' directory.'
+                ."\033[0m\n";
             return;
         }
 
@@ -206,22 +225,30 @@ class ModuleInstall
     {
         echo ' > Copy config files : '."\n";
 
+        //No file to copy
         if ($this->configFiles === []) {
-            echo ' >> '."\033[1;33m".'No config file declared. Pass'."\033[0m\n";
+            echo ' >> '
+                ."\033[1;33m"
+                .'No config file declared. Pass'
+                ."\033[0m\n";
+            
             return;
         }
 
+        //Create the module directory in config directory.
         $configDirStatus = $this->createConfigDirectory();
         if ($configDirStatus === false) {
             return;
         }
 
+        //Copy each config file declared
         foreach ($this->configFiles as $configFile) {
             try {
                 $this->copyConfigFile($configFile);
             } catch (Exception $e) {
                 trigger_error(
-                    'Module '.$this->name.' Config file '.$configFile.' copy error: '.$e->getMessage(),
+                    'Module '.$this->name.' Config file '.$configFile
+                    .' copy error: '.$e->getMessage(),
                     E_USER_WARNING
                 );
             }
@@ -242,26 +269,35 @@ class ModuleInstall
         $targetDirectory = $this->bfwConfigPath;
         $alreadyExist    = file_exists($targetDirectory);
         
+        //If the directory already exist and if it's a reinstall
         if ($alreadyExist && $this->forceReinstall === true) {
             echo '[Force Reinstall: Remove symlink] ';
             $alreadyExist = false;
             
             if (!rmdir($targetDirectory)) {
-                echo "\033[1;31m Remove module config directory fail.\033[0m\n";
-                throw new Exception('Reinstall fail. Remove module config directory error.');
+                echo "\033[1;31m "
+                    .'Remove module config directory fail.'
+                    ."\033[0m\n";
+                
+                throw new Exception(
+                    'Reinstall fail. Remove module config directory error.'
+                );
             }
         }
         
+        //If the directory already exist, nothing to do
         if ($alreadyExist) {
             echo "\033[1;33m Already exist.\033[0m\n";
             return true;
         }
-            
+        
+        //Create the directory
         if (mkdir($targetDirectory, 0755)) {
             echo "\033[1;32m Created. \033[0m\n";
             return true;
         }
 
+        //If error during the directory creation
         trigger_error('Module '.$this->name.' Error to create config directory', E_USER_WARNING);
         echo "\033[1;31m Fail. \033[0m\n";
         
@@ -281,6 +317,7 @@ class ModuleInstall
     {
         echo ' >> Copy '.$configFileName.' ... ';
 
+        //Define paths to the config file
         $sourceFile = realpath($this->configPath.'/'.$configFileName);
         $targetFile = realpath($this->bfwConfigPath.'/'.$configFileName);
 
@@ -314,15 +351,23 @@ class ModuleInstall
     {
         echo ' >> Run install specific script : ';
 
+        //If no script to complete the install
         if ($this->installScript === '' || $this->installScript === false) {
-            echo ' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n";
+            echo ' >> '
+                ."\033[1;33m"
+                .'No specific script declared. Pass'
+                ."\033[0m\n";
+            
             return;
         }
 
+        //If the module ask a install script but not declare the name
+        //Use the default name
         if ($this->installScript === true) {
             $this->installScript = 'runInstallModule.php';
         }
 
+        //Include the file for complete the install
         require_once($this->pathToModule.'/'.$this->installScript);
     }
 }

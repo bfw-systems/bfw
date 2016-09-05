@@ -1,4 +1,7 @@
 <?php
+/**
+ * Run application in cli mode
+ */
 
 //Define cli mode to true
 define('cliMode', true);
