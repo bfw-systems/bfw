@@ -79,6 +79,8 @@ for ($installIndex = 0; $installIndex < 2; $installIndex++) {
     
     echo $installOutput;
     
+    echo `cd $installDir && ls -al`;
+    
     echo 'Test output returned by script : ';
     if ($installOutput !== $exceptedOutput[$installIndex]) {
         echo "\033[1;31m[Fail]\033[0m\n";
