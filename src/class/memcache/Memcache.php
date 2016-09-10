@@ -2,6 +2,8 @@
 
 namespace BFW\Memcache;
 
+use \Exception;
+
 class Memcache extends \Memcache
 {
     use \BFW\Traits\Memcache;
