@@ -4,16 +4,19 @@ namespace BFW\Traits;
 
 use \Exception;
 
+/**
+ * Trait to regroup memcache(d) methods
+ */
 trait Memcache
 {
     /**
-     * Permet de savoir si la clé existe
+     * Check if a key exists
      * 
-     * @param string $key la clé disignant les infos concernées
+     * @param string $key The memcache(d) key to check
      * 
-     * @throws Exception Erreur dsans les paramètres donnée à la méthode
+     * @return boolean
      * 
-     * @return bool
+     * @throws Exception If the key is not a string
      */
     public function ifExists($key)
     {
@@ -38,16 +41,14 @@ trait Memcache
     }
 
     /**
-     * On modifie le temps avant expiration des infos sur
-     * le serveur memcached pour une clé choisie.
+     * Update the expire time for a memcache(d) key.
      * 
-     * @param string $key    la clé disignant les infos concerné
-     * @param int    $expire le nouveau temps avant expiration
-     *                          (0: pas d'expiration, max 30jours)
+     * @param string $key The memcache(d) key to update
+     * @param int $expire The new expire time
      * 
-     * @throws Exception Erreur dsans les paramètres donnée à la méthode
+     * @return boolean
      * 
-     * @return boolean|null
+     * @throws Exception
      */
     public function majExpire($key, $expire)
     {
