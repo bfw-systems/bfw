@@ -5,8 +5,15 @@ namespace BFW;
 use \DateTime;
 use \Exception;
 
+/**
+ * Class for use easier DateTime
+ */
 class Dates extends DateTime
 {
+    /**
+     * @var string[] $humainReadableI18n Words used in method to transform
+     *      date difference to humain readable.
+     */
     protected static $humainReadableI18n = [
         'now'       => 'Now',
         'since'     => 'Since',
@@ -15,85 +22,174 @@ class Dates extends DateTime
         'at'        => 'at'
     ];
 
+    /**
+     * @var string[] $humainReadableFormats Date and time format used in
+     *      method to transform date difference to humain readable.
+     */
     protected static $humainReadableFormats = [
         'dateSameYear'      => 'm-d',
         'dateDifferentYear' => 'Y-m-d',
         'time'              => 'H:i'
     ];
 
+    /**
+     * Return attribute humainReadableI18n value
+     * 
+     * @return string[]
+     */
     public static function getHumainReadableI18n()
     {
         return self::$humainReadableI18n;
     }
 
+    /**
+     * Define new value to a key in attribute humainReadableI18n
+     * 
+     * @param string $key The key in humainReadableI18n
+     * @param string $value The new value for key
+     * 
+     * @return void
+     */
     public static function setHumainReadableI18nKey($key, $value)
     {
         self::$humainReadableI18n[$key] = $value;
     }
 
+    /**
+     * Define new value to the attribute humainReadableI18n
+     * 
+     * @param string[] $value The new value for attribute
+     * 
+     * @return void
+     */
     public static function setHumainReadableI18n($value)
     {
         self::$humainReadableI18n = $value;
     }
 
+    /**
+     * Return attribute humainReadableFormats value
+     * 
+     * @return string[]
+     */
     public static function getHumainReadableFormats()
     {
         return self::$humainReadableFormats;
     }
 
+    /**
+     * Define new value to a key in attribute humainReadableFormats
+     * 
+     * @param string $key The key in humainReadableFormats
+     * @param string $value The new value for key
+     * 
+     * @return void
+     */
     public static function setHumainReadableFormatsKey($key, $value)
     {
         self::$humainReadableFormats[$key] = $value;
     }
 
+    /**
+     * Define new value to the attribute humainReadableFormats
+     * 
+     * @param string[] $value The new value for attribute
+     * 
+     * @return void
+     */
     public static function setHumainReadableFormats($value)
     {
         self::$humainReadableFormats = $value;
     }
 
     /**
-     * Accesseur vers l'attribut $date
+     * Return the date. Format is Y-m-d H:i:sO
+     * 
+     * @return string
      */
     public function getDate()
     {
         return parent::format('Y-m-d H:i:sO');
     }
 
+    /**
+     * Return a full numeric representation of a year, 4 digits
+     * 
+     * @return int
+     */
     public function getYear()
     {
-        return parent::format('Y');
+        return (int) parent::format('Y');
     }
 
+    /**
+     * Return the numeric representation of a month, with leading zeros
+     * 
+     * @return int
+     */
     public function getMonth()
     {
-        return parent::format('m');
+        return (int) parent::format('m');
     }
 
+    /**
+     * Return the day of the month, 2 digits with leading zeros
+     * 
+     * @return int
+     */
     public function getDay()
     {
-        return parent::format('d');
+        return (int) parent::format('d');
     }
 
+    /**
+     * Return 24-hour format with leading zeros. 2 digits
+     * 
+     * @return int
+     */
     public function getHour()
     {
-        return parent::format('H');
+        return (int) parent::format('H');
     }
 
+    /**
+     * Return minutes, with leading zeros. 2 digits
+     * 
+     * @return int
+     */
     public function getMinute()
     {
-        return parent::format('i');
+        return (int) parent::format('i');
     }
 
+    /**
+     * Return second, with leading zeros. 2 digits
+     * 
+     * @return int
+     */
     public function getSecond()
     {
-        return parent::format('s');
+        return (int) parent::format('s');
     }
 
+    /**
+     * Return the difference to Greenwich time (GMT)
+     * with colon between hours and minutes
+     * 
+     * @return string
+     */
     public function getZone()
     {
         return parent::format('P');
     }
 
+    /**
+     * Override modify DateTime method to allow personnal keyword
+     * 
+     * @param string $modify A date/time string
+     * 
+     * @return \BFW\Dates
+     */
     public function modify($modify)
     {
         $dateDepart = clone $this;
@@ -108,6 +204,11 @@ class Dates extends DateTime
         return $this;
     }
 
+    /**
+     * Get DateTime equivalent keyword for a personal keyword
+     * 
+     * @return \stdClass
+     */
     protected function getModifyOthersKeywors()
     {
         //Liste des possibilités qu'on permet
@@ -136,6 +237,13 @@ class Dates extends DateTime
         ];
     }
     
+    /**
+     * Use personal keyword on modify method
+     * 
+     * @param string $modify A date/time string
+     * 
+     * @throws Exception If bad pattern or unknown keyword
+     */
     protected function modifyOthersKeywords($modify)
     {
         $keywords = $this->getModifyOthersKeywors();
@@ -164,14 +272,12 @@ class Dates extends DateTime
     }
     
     /**
-     * Renvoi au format pour SQL (postgresql) via un array
+     * Return date's SQL format (postgresql format).
+     * The return Must be an array or a string.
      * 
-     * @param bool $returnArray (default: false) Indique si on veux retourner 
-     * un string ayant tout, ou un array ayant la date et l'heure séparé
+     * @param boolean $returnArray (default false) True to return an array.
      * 
-     * @return string|array Le format pour SQL
-     * Si string : aaaa-mm-jj hh:mm:ss
-     * Si array : [0]=>partie date (aaaa-mm-jj), [1]=>partie heure (hh:mm:ss)
+     * @return string[]|string
      */
     public function getSqlFormat($returnArray = false)
     {
@@ -186,9 +292,9 @@ class Dates extends DateTime
     }
 
     /**
-     * Liste tous les timezone qui existe
+     * List all timezone existing in current php version
      * 
-     * @return array La liste des timezone possible
+     * @return string[]
      */
     public function lstTimeZone()
     {
@@ -196,9 +302,9 @@ class Dates extends DateTime
     }
 
     /**
-     * Liste les continents possible pour les timezones
+     * List all continent define in php DateTimeZone.
      * 
-     * @return string[] La liste des continents
+     * @return string[]
      */
     public function lstTimeZoneContinent()
     {
@@ -223,6 +329,14 @@ class Dates extends DateTime
      * 
      * @return array La liste des pays pour le continent donné
      */
+    
+    /**
+     * List all available country for a continent
+     * 
+     * @param string $continent
+     * 
+     * @return string[]
+     */
     public function lstTimeZonePays($continent)
     {
         $lst_all = $this->lstTimeZone();
@@ -240,6 +354,15 @@ class Dates extends DateTime
         return $return;
     }
 
+    /**
+     * Transform a date to a format humain readable
+     * 
+     * @param boolean $returnDateAndTime (default true) True to return date and
+     *      time concat with a space. False to have only date.
+     * @param boolean $toLower (default false) True to have return a lower text
+     * 
+     * @return string
+     */
     public function humainReadable($returnDateAndTime = true, $toLower = false)
     {
         $actual = new Dates;

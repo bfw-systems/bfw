@@ -6,21 +6,50 @@ use \DateTime;
 use \Exception;
 use \stdClass;
 
+/**
+ * Class to manage html form
+ * Actuely, only manage token for form.
+ */
 class Form
 {
-    protected $formId;
+    /**
+     * @var string $formId The form id 
+     */
+    protected $formId = '';
 
+    /**
+     * Constructor
+     * Define form's id.
+     * 
+     * @param string $formId The form id
+     */
     public function __construct($formId)
     {
-        $this->formId = $formId;
+        $this->formId = (string) $formId;
     }
 
+    /**
+     * Save the form's token
+     * 
+     * @param array $saveInfos Infos about token (id and expire time)
+     * 
+     * @return void
+     */
     protected function saveToken($saveInfos)
     {
         //Default to session
         $this->saveTokenInSession($saveInfos);
     }
 
+    /**
+     * Save a token in php session
+     * 
+     * @global array $_SESSION
+     * 
+     * @param array $saveInfos Infos about token (id and expire time)
+     * 
+     * @return void
+     */
     protected function saveTokenInSession($saveInfos)
     {
         global $_SESSION;
@@ -28,12 +57,26 @@ class Form
         $_SESSION['token'][$this->formId] = $saveInfos;
     }
 
+    /**
+     * Get the token informations
+     * 
+     * @return array
+     */
     protected function getToken()
     {
         //Default from session
         return $this->getTokenFromSession();
     }
 
+    /**
+     * Get a token from the session
+     * 
+     * @global array $_SESSION
+     * 
+     * @return array
+     * 
+     * @throws Exception If there are no token
+     */
     protected function getTokenFromSession()
     {
         global $_SESSION;
@@ -49,6 +92,13 @@ class Form
         return $_SESSION['token'][$this->formId];
     }
 
+    /**
+     * Create a token for the form and return the token
+     * 
+     * @return string
+     * 
+     * @throws Exception If the form id is undefined
+     */
     public function createToken()
     {
         if (empty($this->formId)) {
@@ -66,6 +116,14 @@ class Form
         return $token;
     }
 
+    /**
+     * Check the token receive with the generated token
+     * 
+     * @param string $tokenToCheck The token receive from user
+     * @param int $timeExp (default 15) time on minute which the token is valid
+     * 
+     * @return boolean
+     */
     public function checkToken($tokenToCheck, $timeExp = 15)
     {
         //Throw Exception

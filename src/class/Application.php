@@ -5,30 +5,77 @@ namespace BFW;
 use \Exception;
 use \BFW\Helpers\Constants;
 
+/**
+ * Application class
+ * Manage all BFW application
+ * Load and init components, modules, ...
+ */
 class Application extends Subjects
 {
+    /**
+     * @var \BFW\Application|null $instance Application instance (Singleton)
+     */
     protected static $instance = null;
 
+    /**
+     * @var string $rootDir Path to application project directory
+     */
     protected $rootDir = '';
 
+    /**
+     * @var \BFW\Config $config Config loaded for BFW application
+     */
     protected $config;
 
+    /**
+     * @var \BFW\Core\Options $options Option passed to this instance
+     */
     protected $options;
 
+    /**
+     * @var \Composer\Autoload\ClassLoader $composerLoader loader used by
+     *  composer.
+     */
     protected $composerLoader;
 
+    /**
+     *
+     * @var array[] $runPhases All steps to init Application
+     */
     protected $runPhases = [];
 
+    /**
+     * @var Object $memcached The class used to connect to memcache(d) server.
+     * The class used should be declared on config
+     */
     protected $memcached;
 
+    /**
+     * @var \BFW\Request $request Informations about the http request
+     */
     protected $request;
 
+    /**
+     * @var \BFW\Modules $modules System who manage all modules
+     */
     protected $modules;
     
+    /**
+     * @var \BFW\Core\Errors $errors System who manage personnel errors page
+     */
     protected $errors;
 
+    /**
+     * Constructor
+     * Initialize all components
+     * 
+     * protected for Singleton pattern
+     * 
+     * @param array $options Options passed to application
+     */
     protected function __construct($options)
     {
+        //Start the output buffering
         ob_start();
 
         $this->initOptions($options);
@@ -46,6 +93,13 @@ class Application extends Subjects
         header('Content-Type: text/html; charset=utf-8');
     }
 
+    /**
+     * get the Application instance (Singleton pattern)
+     * 
+     * @param array $options Options passed to application
+     * 
+     * @return \BFW\Application The current instance of this class
+     */
     public static function getInstance($options = [])
     {
         if (self::$instance === null) {
@@ -57,31 +111,68 @@ class Application extends Subjects
         return self::$instance;
     }
 
+    /**
+     * Like getInstance. This is to have a keyword easier for users who want
+     * initialize the application
+     * 
+     * @param array $options Options passed to application
+     * 
+     * @return \BFW\Application The current instance of this class
+     */
     public static function init($options = [])
     {
         return self::getInstance($options);
     }
 
+    /**
+     * Getter to access to composerLoader attribut
+     * 
+     * @return \Composer\Autoload\ClassLoader The composer class loader
+     */
     public function getComposerLoader()
     {
         return $this->composerLoader;
     }
 
+    /**
+     * Getter to access to a BFW config value
+     * 
+     * @param strig $configKey The key in the config file
+     * 
+     * @return mixed
+     */
     public function getConfig($configKey)
     {
         return $this->config->getConfig($configKey);
     }
 
+    /**
+     * Getter to access to a BFW option value
+     * 
+     * @param string $optionKey The key for the option
+     * 
+     * @return mixed
+     */
     public function getOption($optionKey)
     {
         return $this->options->getOption($optionKey);
     }
     
+    /**
+     * Getter to access to Request instance
+     * 
+     * @return \BFW\Request
+     */
     public function getRequest()
     {
         return $this->request;
     }
 
+    /**
+     * Initialize attribute options with the class \BFW\Core\Options
+     * 
+     * @param array $options The option passed when initialize this class
+     */
     protected function initOptions($options)
     {
         $defaultOptions = [
@@ -93,6 +184,12 @@ class Application extends Subjects
         $this->options = new \BFW\Core\Options($defaultOptions, $options);
     }
 
+    /**
+     * Initialize all constants used by framework
+     * Use helper Constants::create to allow override of constants
+     * 
+     * @return void
+     */
     protected function initConstants()
     {
         Constants::create('ROOT_DIR', $this->options->getOption('rootDir'));
@@ -110,23 +207,46 @@ class Application extends Subjects
         Constants::create('VIEW_DIR', SRC_DIR.'view/');
     }
 
+    /**
+     * Initialize composer loader
+     * Get composerLoader instance
+     * Call addComposerNamespaces method to add Application namespace
+     * 
+     * @return void
+     */
     protected function initComposerLoader()
     {
         $this->composerLoader = require($this->options->getOption('vendorDir').'autoload.php');
         $this->addComposerNamespaces();
     }
 
+    /**
+     * Initialize attribute config with \BFW\Config instance
+     * The config class will search all file in "bfw" directory and load files
+     * 
+     * @return void
+     */
     protected function initConfig()
     {
         $this->config = new \BFW\Config('bfw');
         $this->config->loadFiles();
     }
 
+    /**
+     * Initialize request attribute with \BFW\Request class
+     * 
+     * @return void
+     */
     protected function initRequest()
     {
         $this->request = \BFW\Request::getInstance();
     }
 
+    /**
+     * Initiliaze php session if option "runSession" is not (bool) false
+     * 
+     * @return void
+     */
     protected function initSession()
     {
         if ($this->options->getOption('runSession') === false) {
@@ -140,16 +260,31 @@ class Application extends Subjects
         session_start();
     }
 
+    /**
+     * Initialize errors attribute with \BFW\Core\Errors class
+     * 
+     * @return void
+     */
     protected function initErrors()
     {
         $this->errors = new \BFW\Core\Errors($this);
     }
 
+    /**
+     * Initialize modules attribut with \BFW\Modules class
+     * 
+     * @return void
+     */
     protected function initModules()
     {
         $this->modules = new \BFW\Modules;
     }
 
+    /**
+     * Add namespace used by a BFW Application to composer
+     * 
+     * @return void
+     */
     protected function addComposerNamespaces()
     {
         $this->composerLoader->addPsr4('Controller\\', CTRL_DIR);
@@ -157,6 +292,11 @@ class Application extends Subjects
         $this->composerLoader->addPsr4('Modeles\\', MODELES_DIR);
     }
 
+    /**
+     * Declare all step to run application
+     * 
+     * @return void
+     */
     protected function declareRunPhases()
     {
         $this->runPhases = [
@@ -168,6 +308,11 @@ class Application extends Subjects
         ];
     }
 
+    /**
+     * Run the application
+     * 
+     * @return void
+     */
     public function run()
     {
         foreach ($this->runPhases as $action) {
@@ -184,6 +329,14 @@ class Application extends Subjects
         $this->notifyAction('bfw_run_finish');
     }
 
+    /**
+     * Connect to memcache(d) server with the class declared in config file
+     * 
+     * @return Object
+     * 
+     * @throws Exception If memcached is enabled but no class is define. Or if
+     *  The class declared in config is not found.
+     */
     protected function loadMemcached()
     {
         $memcacheConfig = $this->getConfig('memcached');
@@ -204,6 +357,14 @@ class Application extends Subjects
         $this->memcached = new $class($this);
     }
 
+    /**
+     * Read all directory in modules directory and add the module to Modules
+     * class.
+     * Generate the load tree.
+     * Not initialize modules !
+     * 
+     * @return void
+     */
     protected function readAllModules()
     {
         $listModules = array_diff(scandir(MODULES_DIR), ['.', '..']);
@@ -221,6 +382,12 @@ class Application extends Subjects
         $this->modules->generateTree();
     }
 
+    /**
+     * Load modules define in config bfw file.
+     * It's module for controller, routing, database and template only.
+     * 
+     * @return void
+     */
     protected function loadAllCoreModules()
     {
         foreach ($this->getConfig('modules') as $moduleInfos) {
@@ -235,6 +402,12 @@ class Application extends Subjects
         }
     }
 
+    /**
+     * Load all modules (except core).
+     * Get the load tree, read this and load modules in order declared in tree.
+     * 
+     * @return void
+     */
     protected function loadAllAppModules()
     {
         $tree = $this->modules->getLoadTree();
@@ -248,12 +421,26 @@ class Application extends Subjects
         }
     }
 
+    /**
+     * Load a module
+     * 
+     * @param string $moduleName The module's name to load
+     * 
+     * @return void
+     */
     protected function loadModule($moduleName)
     {
         $this->notifyAction('load_module_'.$moduleName);
         $this->modules->getModule($moduleName)->runModule();
     }
 
+    /**
+     * Run the cli file if we're in cli mode
+     * 
+     * @return void
+     * 
+     * @throws Exception If no file is specified or if the file not exist.
+     */
     protected function runCliFile()
     {
         if (PHP_SAPI !== 'cli') {

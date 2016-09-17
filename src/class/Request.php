@@ -2,27 +2,61 @@
 
 namespace BFW;
 
+/**
+ * Class to get informations about http request.
+ * Singleton pattern.
+ */
 class Request
 {
+    /**
+     * @var \BFW\Request $instance Instance for this class (singleton pattern)
+     */
     protected static $instance = null;
 
+    /**
+     * @var string $ip Client IP
+     */
     protected $ip;
 
+    /**
+     * @var string $lang Client primary language
+     */
     protected $lang;
 
+    /**
+     * @var string $referer Page referer
+     */
     protected $referer;
 
+    /**
+     * @var string $method HTTP method (GET/POST/PUT/DELETE/...)
+     */
     protected $method;
 
+    /**
+     * @var boolean $ssl If the request is with ssl (https) or not
+     */
     protected $ssl;
 
+    /**
+     * @var \stdClass The request
+     */
     protected $request;
 
+    /**
+     * Constructor
+     * Call runDetect to detect all informations
+     */
     protected function __construct()
     {
         $this->runDetect();
     }
 
+    /**
+     * Create singleton instance for this class
+     * 
+     * @return \BFW\Request
+     */
     public static function getInstance()
     {
         if (self::$instance === null) {
@@ -32,36 +66,74 @@ class Request
         return self::$instance;
     }
 
+    /**
+     * Get the client IP
+     * 
+     * @return string
+     */
     public function getIp()
     {
         return $this->ip;
     }
 
+    /**
+     * Get the client primary language
+     * 
+     * @return string
+     */
     public function getLang()
     {
         return $this->lang;
     }
 
+    /**
+     * Get the referer url
+     * 
+     * @return string
+     */
     public function getReferer()
     {
         return $this->referer;
     }
 
+    /**
+     * Get the http method
+     * 
+     * @return string
+     */
     public function getMethod()
     {
         return $this->method;
     }
 
+    /**
+     * Get information about if the request is ssl
+     * 
+     * @return boolean
+     */
     public function getSsl()
     {
         return $this->ssl;
     }
 
+    /**
+     * Get the current request
+     * 
+     * @return \stdClass
+     */
     public function getRequest()
     {
         return $this->request;
     }
 
+    /**
+     * Get the information from the $_SERVER if exist.
+     * If not exist, return a empty string.
+     * 
+     * @param string $keyName The key's value in $_SERVER array
+     * 
+     * @return string
+     */
     public static function getServerVar($keyName)
     {
         if (!isset($_SERVER[$keyName])) {
@@ -71,6 +143,11 @@ class Request
         return $_SERVER[$keyName];
     }
     
+    /**
+     * Run all detect method
+     * 
+     * @return void
+     */
     public function runDetect()
     {
         $this->detectIp();
@@ -81,11 +158,21 @@ class Request
         $this->detectRequest();
     }
 
+    /**
+     * Detect the client IP
+     * 
+     * @return void
+     */
     protected function detectIp()
     {
         $this->ip = self::getServerVar('REMOTE_ADDR');
     }
 
+    /**
+     * Detect the primary client's language
+     * 
+     * @return void
+     */
     protected function detectLang()
     {
         /*
@@ -110,16 +197,31 @@ class Request
         $this->lang = $lang;
     }
 
+    /**
+     * Detect the referer page
+     * 
+     * @return void
+     */
     protected function detectReferer()
     {
         $this->referer = self::getServerVar('HTTP_REFERER');
     }
 
+    /**
+     * Detect the http method
+     * 
+     * @return void
+     */
     protected function detectMethod()
     {
         $this->method = self::getServerVar('REQUEST_METHOD');
     }
 
+    /**
+     * Detect if the request is ssl (https)
+     * 
+     * @return void
+     */
     protected function detectSsl()
     {
         $serverHttps = self::getServerVar('HTTPS');
@@ -137,6 +239,11 @@ class Request
         }
     }
 
+    /**
+     * Detect the request informations
+     * 
+     * @return void
+     */
     protected function detectRequest()
     {
         $parseUrl = parse_url(self::getServerVar('REQUEST_URI'));
