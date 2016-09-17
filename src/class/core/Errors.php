@@ -333,7 +333,7 @@ class Errors
             ' in '.$errFile.' at line '.$errLine;
         
         //Display the message with displayMsg function
-        \BFW\Cli\displayMsg(
+        \BFW\Helpers\Cli::displayMsg(
             $msgError,
             'white',
             'red'

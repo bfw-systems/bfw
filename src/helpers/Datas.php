@@ -49,4 +49,16 @@ class Datas
 
         return true;
     }
+
+    /**
+     * Check if an email address is valid
+     * 
+     * @param string $mail The email address to check
+     * 
+     * @return boolean
+     */
+    public static function validMail($mail)
+    {
+        return Secure::securise($mail, 'email');
+    }
 }
