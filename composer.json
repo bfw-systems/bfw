@@ -4,8 +4,7 @@
     "description": "Framework PHP",
     "keywords": [
         "framework",
-        "php",
-        "simple"
+        "php"
     ],
     "homepage": "https://github.com/bulton-fr/bfw",
     "time": "2016-05-29",
@@ -43,16 +42,16 @@
             "BFW\\Helpers\\": "src/helpers",
             "BFW\\Install\\": "install/class/",
             "BFW\\Memcache\\": "src/class/memcache",
-            "BFW\\Traits\\": "src/traits",
+            "BFW\\Traits\\": "src/traits"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "BFW\\test\\unit\\mocks\\": "test/unit/mocks/src",
             "BFW\\test\\helpers\\": "test/unit/helpers",
             "BFW\\Core\\test\\unit\\mocks\\": "test/unit/mocks/src/core",
             "BFW\\Install\\test\\unit\\mocks\\": "test/unit/mocks/install"
-        },
-        "files": [
-            "src/fonctions/global.php",
-            "src/fonctions/cli.php"
-        ]
+        }
     },
     "bin": [
         "bin/bfw_install",
