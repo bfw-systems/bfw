@@ -140,43 +140,43 @@ class Dates extends atoum
     public function testGetYear()
     {
         $this->assert('test getYear')
-            ->string($this->mock->getYear())
-                ->isEqualTo($this->mock->format('Y'));
+            ->integer($this->mock->getYear())
+                ->isEqualTo((int) $this->mock->format('Y'));
     }
     
     public function testGetMonth()
     {
         $this->assert('test getMonth')
-            ->string($this->mock->getMonth())
-                ->isEqualTo($this->mock->format('m'));
+            ->integer($this->mock->getMonth())
+                ->isEqualTo((int) $this->mock->format('m'));
     }
     
     public function testGetDay()
     {
         $this->assert('test getDay')
-            ->string($this->mock->getDay())
-                ->isEqualTo($this->mock->format('d'));
+            ->integer($this->mock->getDay())
+                ->isEqualTo((int) $this->mock->format('d'));
     }
     
     public function testGetHour()
     {
         $this->assert('test getHour')
-            ->string($this->mock->getHour())
-                ->isEqualTo($this->mock->format('H'));
+            ->integer($this->mock->getHour())
+                ->isEqualTo((int) $this->mock->format('H'));
     }
     
     public function testGetMinute()
     {
         $this->assert('test getMinute')
-            ->string($this->mock->getMinute())
-                ->isEqualTo($this->mock->format('i'));
+            ->integer($this->mock->getMinute())
+                ->isEqualTo((int) $this->mock->format('i'));
     }
     
     public function testGetSecond()
     {
         $this->assert('test getSecond')
-            ->string($this->mock->getSecond())
-                ->isEqualTo($this->mock->format('s'));
+            ->integer($this->mock->getSecond())
+                ->isEqualTo((int) $this->mock->format('s'));
     }
     
     public function testGetZone()
