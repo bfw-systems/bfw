@@ -2,6 +2,9 @@
 
 namespace BFW\Helpers;
 
+/**
+ * Helpers to manage datas
+ */
 class Datas
 {
     /**
