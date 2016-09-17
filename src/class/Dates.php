@@ -342,7 +342,6 @@ class Dates extends DateTime
         $lst_all = $this->lstTimeZone();
         $return  = [];
 
-        $pos = false;
         foreach ($lst_all as $val) {
             $pos = strpos($val, $continent);
 
