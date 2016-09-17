@@ -248,7 +248,7 @@ class Request
     {
         $parseUrl = parse_url(self::getServerVar('REQUEST_URI'));
 
-        $this->request = [
+        $request = [
             'scheme'   => '',
             'host'     => self::getServerVar('HTTP_HOST'),
             'port'     => '',
@@ -259,6 +259,6 @@ class Request
             'fragment' => '',
         ];
 
-        $this->request = (object) array_merge($this->request, $parseUrl);
+        $this->request = (object) array_merge($request, $parseUrl);
     }
 }

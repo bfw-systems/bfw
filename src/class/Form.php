@@ -31,7 +31,7 @@ class Form
     /**
      * Save the form's token
      * 
-     * @param array $saveInfos Infos about token (id and expire time)
+     * @param \stdClass $saveInfos Infos about token (id and expire time)
      * 
      * @return void
      */
@@ -46,7 +46,7 @@ class Form
      * 
      * @global array $_SESSION
      * 
-     * @param array $saveInfos Infos about token (id and expire time)
+     * @param \stdClass $saveInfos Infos about token (id and expire time)
      * 
      * @return void
      */
@@ -60,7 +60,7 @@ class Form
     /**
      * Get the token informations
      * 
-     * @return array
+     * @return \stdClass
      */
     protected function getToken()
     {
@@ -73,7 +73,7 @@ class Form
      * 
      * @global array $_SESSION
      * 
-     * @return array
+     * @return \stdClass
      * 
      * @throws Exception If there are no token
      */

@@ -137,7 +137,7 @@ class Application extends Subjects
     /**
      * Getter to access to a BFW config value
      * 
-     * @param strig $configKey The key in the config file
+     * @param string $configKey The key in the config file
      * 
      * @return mixed
      */

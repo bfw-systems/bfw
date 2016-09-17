@@ -85,7 +85,7 @@ class ReadDirectory
      * Recall ReadDirectory to read this directory
      * This is to avoid having the recursion error
      * 
-     * @param type $directory
+     * @param string $directory
      */
     protected function dirAction($directory)
     {
