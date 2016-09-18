@@ -23,7 +23,7 @@ class Cli
      * 
      * @return array
      */
-    public static function getCliParams($options, $longopts = array())
+    public static function getParameters($options, $longopts = array())
     {
         $longopts = array_merge($longopts, array('type_site::'));
         $opt      = getopt('f:'.$options, $longopts);

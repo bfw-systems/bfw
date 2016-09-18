@@ -16,7 +16,7 @@ class Secure
      * 
      * @return string
      */
-    public static function hashage($val)
+    public static function hash($val)
     {
         return substr(hash('sha256', md5($val)), 0, 32);
     }

@@ -16,7 +16,7 @@ class Cookies
      * 
      * @return void
      */
-    public static function createCookie($name, $value, $expire = 1209600)
+    public static function create($name, $value, $expire = 1209600)
     {
         $expireTime = time() + $expire;
         setcookie($name, $value, $expireTime);

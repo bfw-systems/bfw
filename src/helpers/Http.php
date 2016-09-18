@@ -15,7 +15,7 @@ class Http
      * 
      * @return void
      */
-    public static function redirection($page, $permanent = false)
+    public static function redirect($page, $permanent = false)
     {
         $httpStatus = 302;
         if ($permanent === true) {

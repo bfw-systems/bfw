@@ -20,7 +20,7 @@ trait Memcache
      */
     public function ifExists($key)
     {
-        $verifParams = \BFW\Helpers\Datas::checkTypes(
+        $verifParams = \BFW\Helpers\Datas::checkType(
             [
                 [
                     'type' => 'string',
@@ -52,7 +52,7 @@ trait Memcache
      */
     public function majExpire($key, $expire)
     {
-        $verifParams = \BFW\Helpers\Datas::checkTypes(
+        $verifParams = \BFW\Helpers\Datas::checkType(
             [
                 ['type' => 'string', 'data' => $key],
                 ['type' => 'int', 'data' => $expire]

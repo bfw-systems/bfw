@@ -15,7 +15,7 @@ class String
      * 
      * @return string
      */
-    public static function nl2brReplace($str)
+    public static function nl2br($str)
     {
         return str_replace("\n", '<br>', $str);
     }

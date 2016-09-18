@@ -14,7 +14,7 @@ class Sessions
      * 
      * @return boolean
      */
-    public static function sessionIsStarted()
+    public static function isStarted()
     {
         if (PHP_SAPI === 'cli') {
             return false;

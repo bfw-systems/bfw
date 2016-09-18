@@ -15,7 +15,7 @@ class Datas
      * 
      * @return boolean
      */
-    public static function checkTypes($vars)
+    public static function checkType($vars)
     {
         if (!is_array($vars)) {
             return false;
@@ -57,7 +57,7 @@ class Datas
      * 
      * @return boolean
      */
-    public static function validMail($mail)
+    public static function checkMail($mail)
     {
         return Secure::securise($mail, 'email');
     }
