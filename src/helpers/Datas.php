@@ -59,6 +59,12 @@ class Datas
      */
     public static function checkMail($mail)
     {
-        return Secure::securise($mail, 'email');
+        $securisedMail = Secure::securise($mail, 'email', false);
+        
+        if ($securisedMail === false) {
+            return false;
+        }
+        
+        return true;
     }
 }
