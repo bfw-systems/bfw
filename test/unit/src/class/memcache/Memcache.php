@@ -86,7 +86,7 @@ class Memcache extends atoum
     }
     
     /**
-     * @php <= 7.0
+     * @php < 7.0
      */
     public function testConstructorWithoutServer()
     {
@@ -96,7 +96,7 @@ class Memcache extends atoum
     }
     
     /**
-     * @php <= 7.0
+     * @php < 7.0
      */
     public function testConstructorWithServer()
     {
@@ -113,7 +113,7 @@ class Memcache extends atoum
     }
     
     /**
-     * @php <= 7.0
+     * @php < 7.0
      */
     public function testConstructorWithBadServer()
     {
@@ -140,7 +140,7 @@ class Memcache extends atoum
     }
     
     /**
-     * @php <= 7.0
+     * @php < 7.0
      * @TODO I don't know how to test the effect of "timeout".
      */
     public function testConstructorWithTimeout()
@@ -159,7 +159,7 @@ class Memcache extends atoum
     }
     
     /**
-     * @php <= 7.0
+     * @php < 7.0
      * @TODO I don't know how to test the effect of "persistent" in this context.
      */
     public function testConstructorWithPersistant()
@@ -178,7 +178,7 @@ class Memcache extends atoum
     }
     
     /**
-     * @php <= 7.0
+     * @php < 7.0
      */
     public function testGetServerInfos()
     {
@@ -221,7 +221,7 @@ class Memcache extends atoum
     }
     
     /**
-     * @php <= 7.0
+     * @php < 7.0
      */
     public function testIfExists()
     {
@@ -250,7 +250,7 @@ class Memcache extends atoum
     }
     
     /**
-     * @php <= 7.0
+     * @php < 7.0
      */
     public function testMajExpire()
     {
