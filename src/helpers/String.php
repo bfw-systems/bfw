@@ -9,7 +9,7 @@ class String
 {
     /**
      * Override php function nl2br
-     * Native function add a "<br>" after "\n". She's not replace "\n".
+     * Native function add a "<br>" after line break. She's not replace.
      * 
      * @param string $str The input string
      * 
@@ -17,6 +17,14 @@ class String
      */
     public static function nl2br($str)
     {
-        return str_replace("\n", '<br>', $str);
+        return str_replace([
+                "\r\n",
+                "\n\r",
+                "\n",
+                "\r"
+            ],
+            '<br>',
+            $str
+        );
     }
 }
