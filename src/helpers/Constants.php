@@ -15,6 +15,8 @@ class Constants
      * @param string $cstName The constant's name
      * @param mixed $cstValue The constant's value
      * 
+     * @return void
+     * 
      * @throws Exception If the constant is already defined
      */
     public static function create($cstName, $cstValue)
