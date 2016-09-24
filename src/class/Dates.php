@@ -374,44 +374,15 @@ class Dates extends DateTime
 
         if ($actual == $this) {
             //A l'instant
-
-            $returnTxt->date = self::$humainReadableI18n['now'];
+            $this->humainDateNow($returnTxt);
         } elseif ($diff->d === 1 && $diff->m === 0 && $diff->y === 0) {
             //Hier
-
-            $returnTxt->date = self::$humainReadableI18n['yesterday'];
-            $returnTxt->time = self::$humainReadableI18n['at']
-                .' '
-                .parent::format(
-                    self::$humainReadableFormats['time']
-                );
+            $this->humainDateYesterday($returnTxt);
         } elseif ($diff->days === 0) {
             //Aujourd'hui
-
-            $returnTxt->date = self::$humainReadableI18n['since'].' ';
-
-            if ($diff->h === 0 && $diff->i === 0) {
-                $returnTxt->date .= $diff->s.'s';
-            } elseif ($diff->h === 0) {
-                $returnTxt->date .= $diff->i.'min';
-            } else {
-                $returnTxt->date .= $diff->h.'h';
-            }
+            $this->humainDateToday($returnTxt, $diff);
         } else {
-            $dateFormat = self::$humainReadableFormats['dateDifferentYear'];
-            if ($actual->format('Y') === parent::format('Y')) {
-                $dateFormat = self::$humainReadableFormats['dateSameYear'];
-            }
-
-            $returnTxt->date = self::$humainReadableI18n['the']
-                .' '
-                .parent::format($dateFormat);
-
-            $returnTxt->time = self::$humainReadableI18n['at']
-                .' '
-                .parent::format(
-                    self::$humainReadableFormats['time']
-                );
+            $this->humainDateOther($returnTxt, $actual);
         }
 
         $txtReturn = $returnTxt->date;
@@ -424,5 +395,81 @@ class Dates extends DateTime
         }
 
         return $txtReturn;
+    }
+    
+    /**
+     * Format date to humain readable when date is now
+     * 
+     * @param \stdClas $returnTxt Text returned by humainReadable
+     * 
+     * @return void
+     */
+    protected function humainDateNow(&$returnTxt)
+    {
+        $returnTxt->date = self::$humainReadableI18n['now'];
+    }
+    
+    /**
+     * Format date to humain readable when date is today
+     * 
+     * @param \stdClas $returnTxt Text returned by humainReadable
+     * @param \DateInterval $diff Interval between now and date to read
+     * 
+     * @return void
+     */
+    protected function humainDateToday(&$returnTxt, $diff)
+    {
+        $returnTxt->date = self::$humainReadableI18n['since'].' ';
+
+        if ($diff->h === 0 && $diff->i === 0) {
+            $returnTxt->date .= $diff->s.'s';
+        } elseif ($diff->h === 0) {
+            $returnTxt->date .= $diff->i.'min';
+        } else {
+            $returnTxt->date .= $diff->h.'h';
+        }
+    }
+    
+    /**
+     * Format date to humain readable when date is yesterday
+     * 
+     * @param \stdClas $returnTxt Text returned by humainReadable
+     * 
+     * @return void
+     */
+    protected function humainDateYesterday(&$returnTxt)
+    {
+        $returnTxt->date = self::$humainReadableI18n['yesterday'];
+        $returnTxt->time = self::$humainReadableI18n['at']
+            .' '
+            .parent::format(
+                self::$humainReadableFormats['time']
+            );
+    }
+    
+    /**
+     * Format date to humain readable when date is not now, today or yesterday
+     * 
+     * @param \stdClas $returnTxt Text returned by humainReadable
+     * @param \DateTime $actual DateTime object for now
+     * 
+     * @return void
+     */
+    protected function humainDateOther(&$returnTxt, $actual)
+    {
+        $dateFormat = self::$humainReadableFormats['dateDifferentYear'];
+        if ($actual->format('Y') === parent::format('Y')) {
+            $dateFormat = self::$humainReadableFormats['dateSameYear'];
+        }
+
+        $returnTxt->date = self::$humainReadableI18n['the']
+            .' '
+            .parent::format($dateFormat);
+
+        $returnTxt->time = self::$humainReadableI18n['at']
+            .' '
+            .parent::format(
+                self::$humainReadableFormats['time']
+            );
     }
 }
