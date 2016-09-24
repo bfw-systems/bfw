@@ -18,62 +18,15 @@ class Application extends atoum
      */
     protected $mock;
     
-    protected $forcedConfig = [
-        'debug'              => false,
-        'errorRenderFct'     => [
-            'active'  => false,
-            'default' => [
-                'class'  => '',
-                'method' => ''
-            ],
-            'cli'     => [
-                'class'  => '',
-                'method' => ''
-            ]
-        ],
-        'exceptionRenderFct' => [
-            'active'  => false,
-            'default' => [
-                'class'  => '',
-                'method' => ''
-            ],
-            'cli'     => [
-                'class'  => '',
-                'method' => ''
-            ]
-        ],
-        'sqlSecureMethod' => '',
-        'memcached'          => [
-            'enabled'      => false,
-            'class'        => '',
-            'persistentId' => null,
-            'server'       => []
-        ],
-        'modules' => [
-            'db' => [
-                'name'    => '',
-                'enabled' => false
-            ],
-            'controller' => [
-                'name'    => '',
-                'enabled' => false
-            ],
-            'routing' => [
-                'name'    => '',
-                'enabled' => false
-            ],
-            'template' => [
-                'name'   => '',
-                'enabled'=> false
-            ]
-        ]
-    ];
+    protected $forcedConfig;
 
     /**
      * Instanciation de la class avant chaque méthode de test
      */
     public function beforeTestMethod($testMethod)
     {
+        $this->forcedConfig = require(__DIR__.'/../../helpers/applicationConfig.php');
+        
         MockApp::removeInstance();
         
         if ($testMethod === 'testConstructor') {
