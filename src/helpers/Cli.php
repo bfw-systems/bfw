@@ -10,73 +10,58 @@ use \Exception;
 class Cli
 {
     /**
-     * Get parameters passed to script in cli command
-     * Add BFW obligatory parameters
-     * 
-     * @see http://php.net/manual/en/function.getopt.php
-     * 
-     * @param string $options Each character in this string will be used as
-     *      option characters and matched against options passed to the script
-     * @param array $longopts An array of options. Each element in this array
-     *      will be used as option strings and matched against options passed
-     *      to the script
-     * 
-     * @return array
-     */
-    public static function getParameters($options, $longopts = array())
-    {
-        $longopts = array_merge($longopts, array('type_site::'));
-        $opt      = getopt('f:'.$options, $longopts);
-
-        unset($opt['f']);
-
-        return $opt;
-    }
-
-    /**
-     * Display a message in the console
+     * Display a message in the console without a line break
      * 
      * @param string $msg Message to display
-     * @param string|null $colorTxt (default null) Text color
-     * @param string|null $colorBg (default null) Background color
+     * @param string $colorTxt (default "white") Text color
+     * @param string $colorBg (default "black") Background color
      * @param string $style (default "normal") Style for the message (bold etc)
      * 
      * @return void
      */
-    public static function displayMsg($msg, $colorTxt = null, $colorBg = null, $style = 'normal')
-    {
-        if ($colorTxt == null) {
-            echo $msg."\n";
+    public static function displayMsg(
+        $msg,
+        $colorTxt = 'white',
+        $colorBg = 'black',
+        $style = 'normal'
+    ) {
+        if (func_num_args() === 1) {
+            echo $msg;
             return;
         }
-
+        
         //Gestion cas avec couleur
-        $styleNum = self::styleForShell($style);
-        if ($styleNum === false) {
-            $styleNum = self::styleForShell('normal');
+        $styleNum    = self::styleForShell($style);
+        $colorTxtNum = self::colorForShell($colorTxt, 'txt');
+        $colorBgNum  = self::colorForShell($colorBg, 'bg');
+
+        echo "\033[".$styleNum.";".$colorBgNum.";".$colorTxtNum."m"
+            .$msg
+            ."\033[0m";
+    }
+    
+    /**
+     * Display a message in the console with a line break
+     * 
+     * @param string $msg Message to display
+     * @param string $colorTxt (default "white") Text color
+     * @param string $colorBg (default "black") Background color
+     * @param string $style (default "normal") Style for the message (bold etc)
+     * 
+     * @return void
+     */
+    public static function displayMsgNL(
+        $msg,
+        $colorTxt = 'white',
+        $colorBg = 'black',
+        $style = 'normal'
+    ) {
+        if (func_num_args() === 1) {
+            self::displayMsg($msg."\n");
+            return;
         }
-
-        $colorTxtNum = self::colorForShell('white', 'txt');
-        if ($colorTxt !== null) {
-            $colorTxtNumArg = self::colorForShell($colorTxt, 'txt');
-
-            if ($colorTxtNumArg !== false) {
-                $colorTxtNum = $colorTxtNumArg;
-            }
-        }
-
-        $colorBgNum = self::colorForShell('black', 'bg');
-        if ($colorBg !== null) {
-            $colorBgNumArg = self::colorForShell($colorBg, 'bg');
-
-            if ($colorBgNumArg !== false) {
-                $colorBgNum = $colorBgNumArg;
-            }
-        }
-
-        echo "\033[".$styleNum.";".$colorBgNum.";"
-            .$colorTxtNum
-            ."m".$msg."\033[0m\n";
+        
+        self::displayMsg($msg."\n", $colorTxt, $colorBg, $style);
     }
 
     /**
@@ -85,11 +70,11 @@ class Cli
      * @param string $color The humain color text
      * @param string $type ("txt"|"bg") If the color is for text of background
      * 
-     * @return integer|boolean
+     * @return integer
      * 
      * @throws Exception If the color is not available
      */
-    public static function colorForShell($color, $type)
+    protected static function colorForShell($color, $type)
     {
         $colorList = [
             'black'   => 0,
@@ -102,17 +87,17 @@ class Cli
             'white'   => 7
         ];
 
-        if (!in_array($color, $colorList)) {
-            throw new Exception('Color '.$color.' is not available in function.');
+        if (!isset($colorList[$color])) {
+            throw new Exception('Color '.$color.' is not available.');
         }
 
+        //Text color
         if ($type === 'txt') {
             return $colorList[$color] + 30;
-        } elseif ($type === 'bg') {
-            return $colorList[$color] + 40;
         }
-
-        return false;
+        
+        //Background color
+        return $colorList[$color] + 40;
     }
 
     /**
@@ -120,9 +105,11 @@ class Cli
      * 
      * @param string $style The style value
      * 
-     * @return boolean|int
+     * @return integer
+     * 
+     * @throws Exception If the style is not available
      */
-    public static function styleForShell($style)
+    protected static function styleForShell($style)
     {
         $styleList = [
             'normal'        => 0,
@@ -136,8 +123,8 @@ class Cli
             'not-reverse'   => 27
         ];
 
-        if (!in_array($style, $styleList)) {
-            return false;
+        if (!isset($styleList[$style])) {
+            throw new Exception('Style '.$style.' is not available.');
         }
 
         return $styleList[$style];
