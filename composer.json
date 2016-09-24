@@ -47,9 +47,9 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "BFW\\test\\unit\\mocks\\": "test/unit/mocks/src",
+            "BFW\\test\\unit\\mocks\\": "test/unit/mocks/src/class",
             "BFW\\test\\helpers\\": "test/unit/helpers",
-            "BFW\\Core\\test\\unit\\mocks\\": "test/unit/mocks/src/core",
+            "BFW\\Core\\test\\unit\\mocks\\": "test/unit/mocks/src/class/core",
             "BFW\\Install\\test\\unit\\mocks\\": "test/unit/mocks/install"
         }
     },

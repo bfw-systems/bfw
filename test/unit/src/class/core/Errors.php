@@ -6,7 +6,7 @@ use \atoum;
 use \BFW\test\unit\mocks\ApplicationForceConfig as MockApp;
 
 require_once(__DIR__.'/../../../../../vendor/autoload.php');
-require_once(__DIR__.'/../../../mocks/src/core/ErrorsFunctions.php');
+require_once(__DIR__.'/../../../mocks/src/class/core/ErrorsFunctions.php');
 
 /**
  * @engine isolate
