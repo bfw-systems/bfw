@@ -66,12 +66,14 @@ class Secure
      */
     public static function securise($data, $type, $htmlentities)
     {
+        $currentClass = get_called_class();
+        
         if (is_array($data)) {
             foreach ($data as $key => $val) {
                 unset($data[$key]);
 
-                $key = self::securise($key, true);
-                $val = self::securise($val, $htmlentities);
+                $key = $currentClass::securise($key, gettype($key), true);
+                $val = $currentClass::securise($val, $type, $htmlentities);
 
                 $data[$key] = $val;
             }
@@ -80,7 +82,7 @@ class Secure
         }
 
         try {
-            return self::securiseKnownTypes($data, $type);
+            return $currentClass::securiseKnownTypes($data, $type);
         } catch (Exception $ex) {
             if ($ex->getMessage() !== 'Unknown type') {
                 throw new Exception($ex->getCode(), $ex->getMessage());
@@ -88,14 +90,14 @@ class Secure
             //Else : Use securise text type
         }
 
-        $sqlSecureMethod = self::getSqlSecureMethod();
+        $sqlSecureMethod = $currentClass::getSqlSecureMethod();
         if ($sqlSecureMethod !== false) {
             $data = $sqlSecureMethod($data);
         } else {
             $data = addslashes($data);
         }
 
-        if ($htmlentities === false) {
+        if ($htmlentities === true) {
             $data = htmlentities($data, ENT_COMPAT | ENT_HTML401, 'UTF-8');
         }
 
@@ -109,15 +111,20 @@ class Secure
      */
     public static function getSqlSecureMethod()
     {
-        $app = \BFW\Application::getInstance();
-        $fct = $app->getConfig('sqlSecureMethod');
+        $currentClass   = get_called_class();
+        $application    = $currentClass::getApplicationInstance();
+        $secureFunction = $application->getConfig('sqlSecureMethod');
 
-        $callableName = '';
-        if (!is_callable($fct, true, $callableName)) {
+        if (!is_callable($secureFunction, false)) {
             return false;
         }
 
-        return $callableName;
+        return $secureFunction;
+    }
+    
+    protected static function getApplicationInstance()
+    {
+        return \BFW\Application::getInstance();
     }
 
     /**
@@ -139,7 +146,8 @@ class Secure
             throw new Exception('The key '.$key.' not exist');
         }
 
-        return self::securise(trim($array[$key]), $type, $htmlentities);
+        $currentClass = get_called_class();
+        return $currentClass::securise(trim($array[$key]), $type, $htmlentities);
     }
 
     /**
@@ -154,7 +162,8 @@ class Secure
      */
     public static function getSecurisedPostKey($key, $type, $htmlentities = false)
     {
-        return self::getSecurisedKeyInArray($_POST, $key, $type, $htmlentities);
+        $currentClass = get_called_class();
+        return $currentClass::getSecurisedKeyInArray($_POST, $key, $type, $htmlentities);
     }
 
     /**
@@ -169,6 +178,7 @@ class Secure
      */
     public static function getSecurisedGetKey($key, $type, $htmlentities = false)
     {
-        return self::getSecurisedKeyInArray($_GET, $key, $type, $htmlentities);
+        $currentClass = get_called_class();
+        return $currentClass::getSecurisedKeyInArray($_GET, $key, $type, $htmlentities);
     }
 }
