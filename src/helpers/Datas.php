@@ -26,14 +26,15 @@ class Datas
                 return false;
             }
 
-            if (empty($var['type']) || !isset($var['data'])) {
+            if (
+                !isset($var['data'])
+                || empty($var['type'])
+                || (isset($var['type']) && !is_string($var['type']))
+            ) {
                 return false;
             }
 
-            if (!is_string($var['type'])) {
-                return false;
-            }
-
+            //str_replace('int', 'integer'...) : integer => integereger
             if ($var['type'] === 'int') {
                 $var['type'] = 'integer';
             }
