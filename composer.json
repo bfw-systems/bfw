@@ -50,7 +50,8 @@
             "BFW\\test\\unit\\mocks\\": "test/unit/mocks/src/class",
             "BFW\\test\\helpers\\": "test/unit/helpers",
             "BFW\\Core\\test\\unit\\mocks\\": "test/unit/mocks/src/class/core",
-            "BFW\\Install\\test\\unit\\mocks\\": "test/unit/mocks/install"
+            "BFW\\Install\\test\\unit\\mocks\\": "test/unit/mocks/install",
+            "BFW\\Helpers\\test\\unit\\mocks\\": "test/unit/mocks/src/helpers"
         }
     },
     "bin": [
