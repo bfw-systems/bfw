@@ -60,9 +60,11 @@ class Memcached extends \Memcached
         
         //Loop on server declared and config and search server not connected
         foreach ($this->config['server'] as $server) {
-            $host   = isset($server['host']) ? $server['host'] : null;
-            $port   = isset($server['port']) ? $server['port'] : null;
-            $weight = isset($server['weight']) ? $server['weight'] : 0;
+            $this->getServerInfos($server);
+            
+            $host   = $server['host'];
+            $port   = $server['port'];
+            $weight = $server['weight'];
             
             //not check if port = (int) 0; Doc said to define to 0 for socket.
             if (empty($host) || $port === null) {

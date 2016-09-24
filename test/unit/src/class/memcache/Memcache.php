@@ -82,7 +82,7 @@ class Memcache extends atoum
                     'persistent' => true
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
-            ->and($this->class = new \BFW\Memcache\Memcache($this->app));
+            ->and($this->class = new \BFW\Memcache\test\unit\mocks\Memcache($this->app));
     }
     
     /**
@@ -175,6 +175,49 @@ class Memcache extends atoum
             ->object($this->class = new \BFW\Memcache\Memcache($this->app))
                 ->isInstanceOf('\BFW\Memcache\Memcache')
             ->and($this->class->close());
+    }
+    
+    /**
+     * @php <= 7.0
+     */
+    public function testGetServerInfos()
+    {
+        $this->connectToServer(__METHOD__);
+        
+        $this->assert('test getServerInfos without datas')
+            ->given($serverInfos = [])
+            ->if($this->class->callGetServerInfos($serverInfos))
+            ->then
+            ->array($serverInfos)
+                ->isEqualTo([
+                    'host'       => null,
+                    'port'       => null,
+                    'weight'     => 0,
+                    'timeout'    => null,
+                    'persistent' => false,
+                ]);
+        
+        $this->assert('test getServerInfos with datas')
+            ->given($serverInfos = $this->forcedConfig['memcached']['server'][0])
+            ->if($serverInfos['timeout'] = 10)
+            ->and($this->class->callGetServerInfos($serverInfos))
+            ->then
+            ->array($serverInfos)
+                ->isEqualTo([
+                    'host'       => 'localhost',
+                    'port'       => 11211,
+                    'timeout'    => 10,
+                    'persistent' => true,
+                    'weight'     => 0,
+                ]);
+        
+        $this->assert('test getServerInfos exception')
+            ->given($class = $this->class)
+            ->exception(function () use ($class) {
+                $serverInfos = 'test';
+                $class->callGetServerInfos($serverInfos);
+            })
+                ->hasMessage('Memcache(d) server information is not an array.');
     }
     
     /**

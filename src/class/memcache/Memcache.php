@@ -54,10 +54,12 @@ class Memcache extends \Memcache
     {
         //Loop on declared server(s)
         foreach ($this->config['server'] as $server) {
-            $host       = isset($server['host']) ? $server['host'] : null;
-            $port       = isset($server['port']) ? $server['port'] : null;
-            $timeout    = isset($server['timeout']) ? $server['timeout'] : null;
-            $persistent = isset($server['persistent']) ? $server['persistent'] : false;
+            $this->getServerInfos($server);
+            
+            $host       = $server['host'];
+            $port       = $server['port'];
+            $timeout    = $server['timeout'];
+            $persistent = $server['persistent'];
             
             //Not checked if port = (int) 0; Doc said to define to 0 for socket
             if (empty($host) || $port === null) {

@@ -10,6 +10,38 @@ use \Exception;
 trait Memcache
 {
     /**
+     * Define default value for server informations
+     * 
+     * @param array $infos Server informations
+     * 
+     * @return void
+     * 
+     * @throw \Exception If informations datas is not an array
+     */
+    protected function getServerInfos(&$infos)
+    {
+        if (!is_array($infos)) {
+            throw new Exception(
+                'Memcache(d) server information is not an array.'
+            );
+        }
+        
+        $infosKeyDefaultValues = [
+            'host'       => null,
+            'port'       => null,
+            'weight'     => 0,
+            'timeout'    => null,
+            'persistent' => false
+        ];
+        
+        foreach ($infosKeyDefaultValues as $infosKey => $defaultValue) {
+            if (!isset($infos[$infosKey])) {
+                $infos[$infosKey] = $defaultValue;
+            }
+        }
+    }
+    
+    /**
      * Check if a key exists
      * 
      * @param string $key The memcache(d) key to check

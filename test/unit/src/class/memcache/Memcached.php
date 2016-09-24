@@ -77,12 +77,11 @@ class Memcached extends atoum
     {
         $this->assert('Connect to server for test '.$testName)
             ->if($this->forcedConfig['memcached']['server'][0] = [
-                    'host'       => 'localhost',
-                    'port'       => 11211,
-                    'persistent' => true
+                    'host' => 'localhost',
+                    'port' => 11211,
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
-            ->and($this->class = new \BFW\Memcache\Memcached($this->app));
+            ->and($this->class = new \BFW\Memcache\test\unit\mocks\Memcached($this->app));
     }
     
     protected function getMemcachedVersion()
@@ -173,6 +172,46 @@ class Memcached extends atoum
             })
                 ->hasMessage($exceptionMsg)
         ;
+    }
+    
+    public function testGetServerInfos()
+    {
+        $this->connectToServer(__METHOD__);
+        
+        $this->assert('test getServerInfos without datas')
+            ->given($serverInfos = [])
+            ->if($this->class->callGetServerInfos($serverInfos))
+            ->then
+            ->array($serverInfos)
+                ->isEqualTo([
+                    'host'       => null,
+                    'port'       => null,
+                    'weight'     => 0,
+                    'timeout'    => null,
+                    'persistent' => false,
+                ]);
+        
+        $this->assert('test getServerInfos with datas')
+            ->given($serverInfos = $this->forcedConfig['memcached']['server'][0])
+            ->if($serverInfos['weight'] = 10)
+            ->and($this->class->callGetServerInfos($serverInfos))
+            ->then
+            ->array($serverInfos)
+                ->isEqualTo([
+                    'host'       => 'localhost',
+                    'port'       => 11211,
+                    'weight'     => 10,
+                    'timeout'    => null,
+                    'persistent' => false
+                ]);
+        
+        $this->assert('test getServerInfos exception')
+            ->given($class = $this->class)
+            ->exception(function () use ($class) {
+                $serverInfos = 'test';
+                $class->callGetServerInfos($serverInfos);
+            })
+                ->hasMessage('Memcache(d) server information is not an array.');
     }
     
     public function testIfExists()
