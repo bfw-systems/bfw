@@ -15,10 +15,10 @@ class Dates extends DateTime
      *      date difference to humain readable.
      */
     protected static $humainReadableI18n = [
-        'now'       => 'Now',
-        'since'     => 'Since',
-        'yesterday' => 'Yesterday',
-        'the'       => 'The',
+        'now'       => 'now',
+        'since'     => 'since',
+        'yesterday' => 'yesterday',
+        'the'       => 'the',
         'at'        => 'at'
     ];
 
@@ -362,7 +362,7 @@ class Dates extends DateTime
      * 
      * @return string
      */
-    public function humainReadable($returnDateAndTime = true, $toLower = false)
+    public function humainReadable($returnDateAndTime = true)
     {
         $actual = new Dates;
         $diff   = parent::diff($actual);
@@ -390,10 +390,6 @@ class Dates extends DateTime
             $txtReturn .= ' '.$returnTxt->time;
         }
 
-        if ($toLower === true) {
-            $txtReturn = mb_strtolower($txtReturn);
-        }
-
         return $txtReturn;
     }
     
@@ -406,7 +402,8 @@ class Dates extends DateTime
      */
     protected function humainDateNow(&$returnTxt)
     {
-        $returnTxt->date = self::$humainReadableI18n['now'];
+        $currentClass    = get_called_class();
+        $returnTxt->date = $currentClass::$humainReadableI18n['now'];
     }
     
     /**
@@ -419,7 +416,8 @@ class Dates extends DateTime
      */
     protected function humainDateToday(&$returnTxt, $diff)
     {
-        $returnTxt->date = self::$humainReadableI18n['since'].' ';
+        $currentClass    = get_called_class();
+        $returnTxt->date = $currentClass::$humainReadableI18n['since'].' ';
 
         if ($diff->h === 0 && $diff->i === 0) {
             $returnTxt->date .= $diff->s.'s';
@@ -439,11 +437,12 @@ class Dates extends DateTime
      */
     protected function humainDateYesterday(&$returnTxt)
     {
-        $returnTxt->date = self::$humainReadableI18n['yesterday'];
-        $returnTxt->time = self::$humainReadableI18n['at']
+        $currentClass    = get_called_class();
+        $returnTxt->date = $currentClass::$humainReadableI18n['yesterday'];
+        $returnTxt->time = $currentClass::$humainReadableI18n['at']
             .' '
-            .parent::format(
-                self::$humainReadableFormats['time']
+            .$this->format(
+                $currentClass::$humainReadableFormats['time']
             );
     }
     
@@ -457,19 +456,21 @@ class Dates extends DateTime
      */
     protected function humainDateOther(&$returnTxt, $actual)
     {
-        $dateFormat = self::$humainReadableFormats['dateDifferentYear'];
-        if ($actual->format('Y') === parent::format('Y')) {
-            $dateFormat = self::$humainReadableFormats['dateSameYear'];
+        $currentClass = get_called_class();
+        
+        $dateFormat = $currentClass::$humainReadableFormats['dateDifferentYear'];
+        if ($actual->format('Y') === $this->format('Y')) {
+            $dateFormat = $currentClass::$humainReadableFormats['dateSameYear'];
         }
 
-        $returnTxt->date = self::$humainReadableI18n['the']
+        $returnTxt->date = $currentClass::$humainReadableI18n['the']
             .' '
-            .parent::format($dateFormat);
+            .$this->format($dateFormat);
 
-        $returnTxt->time = self::$humainReadableI18n['at']
+        $returnTxt->time = $currentClass::$humainReadableI18n['at']
             .' '
-            .parent::format(
-                self::$humainReadableFormats['time']
+            .$this->format(
+                $currentClass::$humainReadableFormats['time']
             );
     }
 }

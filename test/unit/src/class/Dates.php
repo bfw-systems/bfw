@@ -25,10 +25,10 @@ class Dates extends atoum
         $this->assert('test getHumainReadableI18n')
             ->array(MockDates::getHumainReadableI18n())
                 ->isEqualTo([
-                    'now'       => 'Now',
-                    'since'     => 'Since',
-                    'yesterday' => 'Yesterday',
-                    'the'       => 'The',
+                    'now'       => 'now',
+                    'since'     => 'since',
+                    'yesterday' => 'yesterday',
+                    'the'       => 'the',
                     'at'        => 'at'
                 ]);
     }
@@ -43,9 +43,9 @@ class Dates extends atoum
             ->array(MockDates::getHumainReadableI18n())
                 ->isEqualTo([
                     'now'       => 'maintenant',
-                    'since'     => 'Since',
-                    'yesterday' => 'Yesterday',
-                    'the'       => 'The',
+                    'since'     => 'since',
+                    'yesterday' => 'yesterday',
+                    'the'       => 'the',
                     'at'        => 'at'
                 ]);
         
@@ -57,9 +57,9 @@ class Dates extends atoum
             ->array(MockDates::getHumainReadableI18n())
                 ->isEqualTo([
                     'now'       => 'maintenant',
-                    'since'     => 'Since',
-                    'yesterday' => 'Yesterday',
-                    'the'       => 'The',
+                    'since'     => 'since',
+                    'yesterday' => 'yesterday',
+                    'the'       => 'the',
                     'at'        => 'at',
                     'nox'       => 'maintenant'
                 ]);
@@ -316,23 +316,23 @@ class Dates extends atoum
                 ->isEqualTo('since 10s')*/
             ->given($this->mock->modify('-30 minute'))
             ->string($this->mock->humainReadable())
-                ->isEqualTo('Since 30min')
-            ->string($this->mock->humainReadable(false, true))
+                ->isEqualTo('since 30min')
+            ->string($this->mock->humainReadable(false))
                 ->isEqualTo('since 30min')
             ->given($this->mock->modify('-1 hour'))
             ->string($this->mock->humainReadable())
-                ->isEqualTo('Since 1h')
-            ->string($this->mock->humainReadable(false, true))
+                ->isEqualTo('since 1h')
+            ->string($this->mock->humainReadable(false))
                 ->isEqualTo('since 1h');
         
         $this->assert('test humainReadable : Yesterday')
             ->given($this->mock->modify('-25 hour'))
             ->given($yesterdayFormat = $this->mock->format($hrFormat['time']))
             ->string($this->mock->humainReadable())
-                ->isEqualTo('Yesterday at '.$yesterdayFormat)
+                ->isEqualTo('yesterday at '.$yesterdayFormat)
             ->string($this->mock->humainReadable(false))
-                ->isEqualTo('Yesterday')
-            ->string($this->mock->humainReadable(true, true))
+                ->isEqualTo('yesterday')
+            ->string($this->mock->humainReadable(true))
                 ->isEqualTo('yesterday at '.$yesterdayFormat);
         
         $this->assert('test humainReadable : Before yesterday; Same year')
@@ -340,10 +340,10 @@ class Dates extends atoum
             ->given($dateFormat = $this->mock->format($hrFormat['dateSameYear']))
             ->given($timeFormat = $this->mock->format($hrFormat['time']))
             ->string($this->mock->humainReadable())
-                ->isEqualTo('The '.$dateFormat.' at '.$timeFormat)
+                ->isEqualTo('the '.$dateFormat.' at '.$timeFormat)
             ->string($this->mock->humainReadable(false))
-                ->isEqualTo('The '.$dateFormat)
-            ->string($this->mock->humainReadable(true, true))
+                ->isEqualTo('the '.$dateFormat)
+            ->string($this->mock->humainReadable(true))
                 ->isEqualTo('the '.$dateFormat.' at '.$timeFormat);
         
         $this->assert('test humainReadable : Before yesterday; Different year')
@@ -351,10 +351,10 @@ class Dates extends atoum
             ->given($dateFormat = $this->mock->format($hrFormat['dateDifferentYear']))
             ->given($timeFormat = $this->mock->format($hrFormat['time']))
             ->string($this->mock->humainReadable())
-                ->isEqualTo('The '.$dateFormat.' at '.$timeFormat)
+                ->isEqualTo('the '.$dateFormat.' at '.$timeFormat)
             ->string($this->mock->humainReadable(false))
-                ->isEqualTo('The '.$dateFormat)
-            ->string($this->mock->humainReadable(true, true))
+                ->isEqualTo('the '.$dateFormat)
+            ->string($this->mock->humainReadable(true))
                 ->isEqualTo('the '.$dateFormat.' at '.$timeFormat);
     }
 }
