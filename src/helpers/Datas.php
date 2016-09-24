@@ -26,7 +26,7 @@ class Datas
                 return false;
             }
 
-            if (!(!empty($var['type']) && isset($var['data']))) {
+            if (empty($var['type']) || !isset($var['data'])) {
                 return false;
             }
 
