@@ -5,7 +5,7 @@ namespace BFW\Helpers;
 /**
  * Helpers to manage strings
  */
-class String
+class Text
 {
     /**
      * Override php function nl2br

@@ -6,18 +6,18 @@ use \atoum;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
-class String extends atoum
+class Text extends atoum
 {
     public function testNl2br()
     {
-        $this->assert('test String::nl2br')
-            ->string(\BFW\Helpers\String::nl2br('unit'."\r\n".'test'))
+        $this->assert('test Text::nl2br')
+            ->string(\BFW\Helpers\Text::nl2br('unit'."\r\n".'test'))
                 ->isEqualTo('unit<br>test')
-            ->string(\BFW\Helpers\String::nl2br('unit'."\n\r".'test'))
+            ->string(\BFW\Helpers\Text::nl2br('unit'."\n\r".'test'))
                 ->isEqualTo('unit<br>test')
-            ->string(\BFW\Helpers\String::nl2br('unit'."\r".'test'))
+            ->string(\BFW\Helpers\Text::nl2br('unit'."\r".'test'))
                 ->isEqualTo('unit<br>test')
-            ->string(\BFW\Helpers\String::nl2br('unit'."\n".'test'))
+            ->string(\BFW\Helpers\Text::nl2br('unit'."\n".'test'))
                 ->isEqualTo('unit<br>test');
     }
 }
