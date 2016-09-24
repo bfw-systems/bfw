@@ -358,7 +358,6 @@ class Dates extends DateTime
      * 
      * @param boolean $returnDateAndTime (default true) True to return date and
      *      time concat with a space. False to have only date.
-     * @param boolean $toLower (default false) True to have return a lower text
      * 
      * @return string
      */
