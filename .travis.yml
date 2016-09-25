@@ -27,7 +27,7 @@ before_script:
   - chmod +x ./test/bin/installFwk.php
 
 script:
-  - ./vendor/bin/atoum -c .atoum.php -d test/unit/install test/unit/src +verbose
+  - ./vendor/bin/atoum -c .atoum.php -d test/unit/install test/unit/src -utr
   - php ./test/bin/installFwk.php
 
 after_script:
