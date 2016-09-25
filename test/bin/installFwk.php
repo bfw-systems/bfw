@@ -60,7 +60,7 @@ $outputSecondInstall = "\033[0;33mBFW Installation :\033[0m\n"
     ."\033[0;33mBFW installation status : \033[1;32msuccess\033[0m"
 ;
 
-$exceptedOutput = [
+$expectedOutput = [
     $outputFirstInstall,
     $outputSecondInstall
 ];
@@ -83,7 +83,7 @@ for ($installIndex = 0; $installIndex < 2; $installIndex++) {
     //echo `cd $installDir && ls -al *`;
     
     echo 'Test output returned by script : ';
-    if ($installOutput !== $exceptedOutput[$installIndex]) {
+    if ($installOutput !== $expectedOutput[$installIndex]) {
         echo "\033[1;31m[Fail]\033[0m\n";
         fwrite(STDERR, 'Text returned is not equal to expected text.');
         exit;
