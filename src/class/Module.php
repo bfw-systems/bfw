@@ -72,7 +72,7 @@ class Module
     /**
      * Get installation informations
      * 
-     * @param string $pathName The module name
+     * @param string $sourceFiles Path to module source (in vendor)
      * 
      * @return \stdClass
      */
