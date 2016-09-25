@@ -33,15 +33,7 @@ class Module extends atoum
     {
         $this->assert('test module with load')
             ->if($this->function->file_exists = true)
-            ->and($this->function->file_get_contents = function($path){
-                if ($path === 'modules/unit_test/bfwModuleInstall.json') {
-                    return '{
-                        "srcPath": "src"
-                    }';
-                }
-                
-                return '{}';
-            })
+            ->and($this->function->file_get_contents = '{}')
             ->and($this->function->scandir = ['.', '..', 'test.json'])
             ->then
             ->given($class = new \BFW\Module('unit_test'))
@@ -53,23 +45,13 @@ class Module extends atoum
     {
         $this->assert('test module with load')
             ->if($this->function->file_exists = function($pathFile) {
-                if ($pathFile === 'modules/unit_test/bfwModuleInstall.json') {
-                    return true;
-                } elseif ($pathFile === 'modules/unit_test/src/module.json') {
+                if ($pathFile === 'modules/unit_test/module.json') {
                     return true;
                 }
                 
                 return false;
             })
-            ->and($this->function->file_get_contents = function($path) {
-                if ($path === 'modules/unit_test/bfwModuleInstall.json') {
-                    return '{
-                        "srcPath": "src"
-                    }';
-                }
-                
-                return '{}';
-            })
+            ->and($this->function->file_get_contents = '{}')
             ->then
             ->given($class = new \BFW\Module('unit_test'))
             ->object($class)
@@ -83,24 +65,7 @@ class Module extends atoum
             ->then
             ->exception(function() {
                 new \BFW\Module('unit_test');
-            })->hasMessage('File modules/unit_test/bfwModuleInstall.json not found.');
-        
-        $this->assert('test module loaders exception json_decode')
-            ->if($this->function->file_exists = true)
-            ->and($this->function->file_get_contents = function($path){
-                if ($path === 'modules/unit_test/bfwModuleInstall.json') {
-                    return '{
-                        "srcPath": "src"
-                    }';
-                }
-                
-                return '{,}';
-            })
-            ->and($this->function->scandir = ['.', '..', 'test.json'])
-            ->then
-            ->exception(function() {
-                new \BFW\Module('unit_test');
-            })->hasMessage('Syntax error');
+            })->hasMessage('File modules/unit_test/module.json not found.');
     }
     
     protected function gettersOverloadFunctions($options = [])
@@ -114,11 +79,11 @@ class Module extends atoum
         }
         
         $fileGetContents = function($path) use ($options) {
-            if ($path === 'modules/unit_test/bfwModuleInstall.json') {
+            if ($path === 'vendor/unit/unit_test/bfwModulesInfos.json') {
                 return '{
                     "srcPath": "src"
                 }';
-            } elseif ($path === 'modules/unit_test/src/module.json') {
+            } elseif ($path === 'modules/unit_test/module.json') {
                 $runner = '';
                 if ($options['noRunner'] === false) {
                     $runner = 'run_unit_test_with_atoum.php';
@@ -141,7 +106,7 @@ class Module extends atoum
         
         $fileExists = function($path) use ($options) {
             if(
-                $path === 'modules/unit_test/src/run_unit_test_with_atoum.php' &&
+                $path === 'modules/unit_test/run_unit_test_with_atoum.php' &&
                 $options['noFileExistRunner'] === true
             ) {
                 return false;
@@ -177,17 +142,6 @@ class Module extends atoum
                 ->isTrue()
             ->string($config->getConfig('lib'))
                 ->isEqualTo('atoum');
-    }
-
-    public function testGetInstallInfos()
-    {
-        $this->gettersOverloadFunctions()
-            ->assert('test module getInstallInfos')
-            ->given($class = new \BFW\Module('unit_test'))
-            ->object($installInfos = $class->getInstallInfos())
-                ->isInstanceOf('\stdClass')
-            ->string($installInfos->srcPath)
-                ->isEqualTo('src');
     }
 
     public function testGetLoadInfos()
@@ -240,10 +194,27 @@ class Module extends atoum
     {
         $this->gettersOverloadFunctions()
             ->assert('test module installInfos')
-            ->object($installInfos = \BFW\Module::installInfos('unit_test'))
+            ->object($installInfos = \BFW\Module::installInfos('vendor/unit/unit_test'))
                 ->isInstanceOf('\stdClass')
             ->string($installInfos->srcPath)
                 ->isEqualTo('src');
+    }
+    
+    public function testInstallInfosExceptionFormat()
+    {
+        $this->assert('test module installInfos exception json_decode')
+            ->if($this->function->file_exists = true)
+            ->and($this->function->file_get_contents = function($path){
+                if ($path === 'vendor/unit/unit_test/bfwModulesInfos.json') {
+                    return '{
+                        "srcPath": "src",
+                    }';
+                }
+            })
+            ->then
+            ->exception(function() {
+                \BFW\Module::installInfos('vendor/unit/unit_test');
+            })->hasMessage('Syntax error');
     }
     
     public function testRunWithoutRunnerFile()
@@ -260,16 +231,15 @@ class Module extends atoum
     {
         $this->gettersOverloadFunctions()
             ->assert('test module run with runner file')
-            ->given($class = new MockModuleRunnerFile('unit_test'))
+            ->given($class = new \BFW\test\unit\mocks\MockModuleRunnerFile('unit_test'))
             ->string($class->callGetRunnerFile())
-                ->isEqualTo('modules/unit_test/src/run_unit_test_with_atoum.php');
+                ->isEqualTo('modules/unit_test/run_unit_test_with_atoum.php');
         
         $this->gettersOverloadFunctions(['noFileExistRunner' => true])
             ->assert('test module run with runner file exception file exists')
-            ->given($class = new MockModuleRunnerFile('unit_test'))
+            ->given($class = new \BFW\test\unit\mocks\MockModuleRunnerFile('unit_test'))
             ->exception(function() use ($class) {
                 $class->callGetRunnerFile();
             })->hasMessage('Runner file for module unit_test not found.');
     }
 }
-

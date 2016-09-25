@@ -64,7 +64,6 @@ class Module
         $this->status->run  = false;
 
         $this->loadConfig();
-        $this->loadModuleInstallInfos();
         $this->loadModuleInfos();
 
         $this->status->load = true;
@@ -77,12 +76,10 @@ class Module
      * 
      * @return \stdClass
      */
-    public static function installInfos($pathName)
+    public static function installInfos($sourceFiles)
     {
-        $module = new self($pathName, false);
-        $module->loadModuleInstallInfos();
-        
-        return $module->getInstallInfos();
+        $currentClass = get_called_class(); //Allow extends
+        return $currentClass::loadJsonFile($sourceFiles.'/bfwModulesInfos.json');
     }
 
     /**
@@ -171,27 +168,16 @@ class Module
     }
 
     /**
-     * Get installation information from json file
-     * 
-     * @return void
-     */
-    public function loadModuleInstallInfos()
-    {
-        $this->installInfos = $this->loadJsonFile(
-            MODULES_DIR.$this->pathName.'/bfwModuleInstall.json'
-        );
-    }
-
-    /**
      * Get load information from json file
      * 
      * @return void
      */
     public function loadModuleInfos()
     {
-        $this->loadInfos = $this->loadJsonFile(
+        $currentClass = get_called_class(); //Allow extends
+        
+        $this->loadInfos = $currentClass::loadJsonFile(
             MODULES_DIR.$this->pathName
-            .'/'.$this->installInfos->srcPath
             .'/module.json'
         );
     }
@@ -205,7 +191,7 @@ class Module
      * 
      * @throws Exception If the file is not found or for a json parser error
      */
-    protected function loadJsonFile($jsonFilePath)
+    protected static function loadJsonFile($jsonFilePath)
     {
         if (!file_exists($jsonFilePath)) {
             throw new Exception('File '.$jsonFilePath.' not found.');
@@ -240,7 +226,6 @@ class Module
         }
 
         $runnerFile = MODULES_DIR.$this->pathName
-            .'/'.$this->installInfos->srcPath
             .'/'.$runnerFile
         ;
 
