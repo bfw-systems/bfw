@@ -317,7 +317,7 @@ class ModuleInstall
         
         //Create the directory
         if (mkdir($this->targetConfigPath, 0755)) {
-            echo "\033[1;32mCreated. \033[0m\n";
+            echo "\033[1;32mCreated.\033[0m\n";
             return true;
         }
 

@@ -206,7 +206,7 @@ class ModuleInstall extends atoum
                         .'[Force Reinstall: Remove symlink] '."\033[1;32mDone\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
-                        .'[Force Reinstall: Remove symlink] '."\033[1;32mCreated. \033[0m\n"
+                        .'[Force Reinstall: Remove symlink] '."\033[1;32mCreated.\033[0m\n"
                         .' >> Copy config1.php ... '
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
