@@ -370,9 +370,9 @@ class Application extends Subjects
         $listModules = array_diff(scandir(MODULES_DIR), ['.', '..']);
 
         foreach ($listModules as $moduleName) {
-            $moduleName = realpath($moduleName); //Symlink
+            $modulePath = realpath(MODULES_DIR.$moduleName); //Symlink
 
-            if (!is_dir($moduleName)) {
+            if (!is_dir($modulePath)) {
                 continue;
             }
 
