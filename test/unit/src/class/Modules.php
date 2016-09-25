@@ -122,21 +122,21 @@ class Modules extends atoum
                 }';
             }
             
-            if ($path === 'modules/module1/src/module.json') {
+            if ($path === 'modules/module1/module.json') {
                 return $module1Json;
-            } elseif ($path === 'modules/module2/src/module.json') {
+            } elseif ($path === 'modules/module2/module.json') {
                 return $module2Json;
-            } elseif ($path === 'modules/module3/src/module.json') {
+            } elseif ($path === 'modules/module3/module.json') {
                 return $module3Json;
-            } elseif ($path === 'modules/module4/src/module.json') {
+            } elseif ($path === 'modules/module4/module.json') {
                 return $module4Json;
-            } elseif ($path === 'modules/module5/src/module.json') {
+            } elseif ($path === 'modules/module5/module.json') {
                 return $module5Json;
-            } elseif ($path === 'modules/module6/src/module.json') {
+            } elseif ($path === 'modules/module6/module.json') {
                 return $module6Json;
-            } elseif ($path === 'modules/module7/src/module.json') {
+            } elseif ($path === 'modules/module7/module.json') {
                 return $module7Json;
-            } elseif ($path === 'modules/module8/src/module.json') {
+            } elseif ($path === 'modules/module8/module.json') {
                 return $module8Json;
             }
 
