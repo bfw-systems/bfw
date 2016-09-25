@@ -32,14 +32,14 @@ if (array_key_exists('help', $cliArgs)) {
     exit;
 }
 
-$bfwPath = '';
+$bfwPath = realpath(__DIR__.'/../../../../');
 if (isset($cliArgs['bfw-path'])) {
-    $pathInstall = $cliArgs['path'];
+    $bfwPath = realpath($cliArgs['bfw-path']);
 }
 
-$vendorPath = $bfwPath.'./vendor/';
+$vendorPath = $bfwPath.'/vendor';
 if (isset($cliArgs['vendor-path'])) {
-    $vendorPath = $cliArgs['vendor-path'];
+    $vendorPath = realpath($cliArgs['vendor-path']);
 }
 
 $reinstall = false;
@@ -61,7 +61,7 @@ require_once($vendorPath.'/autoload.php');
 $listModulesFind = [];
 
 //Check if a part of framework structure is find on declared path
-if (!file_exists($bfwPath.'/configs/') || !file_exists($bfwPath.'/modules/'))
+if (!file_exists($bfwPath.'/app/config/') || !file_exists($bfwPath.'/app/modules/'))
 {
     $errorMsg = 'Directory "config" or "modules" is not found in bfw-path. '
                 .'Check your path or reinstall the framework.';
@@ -72,7 +72,7 @@ if (!file_exists($bfwPath.'/configs/') || !file_exists($bfwPath.'/modules/'))
 }
 
 //Run search of modules in vendor directory
-$readDir = new ReadDirLoadModule($listModulesFind);
+$readDir = new \BFW\Install\ReadDirLoadModule($listModulesFind);
 $readDir->run($vendorPath.'/');
 
 //If no module has been found in vendor directory
@@ -81,8 +81,6 @@ if (count($listModulesFind) <= 0)
     echo "\033[0;33m No module found in vendor-path. \033[0m\n";
     exit;
 }
-
-$displayEOL = "\033[0m\n";
 
 //Hack constant for Module class
 define('MODULES_DIR', '');
@@ -103,7 +101,9 @@ foreach ($listModulesFind as $moduleFindPath)
             .$module->getName()
             .' error : '
             .$e->getMessage()
-            .$displayEOL;
+            ."\033[0m\n";
+        
+        continue;
     }
     
     $moduleName = $module->getName();
