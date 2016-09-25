@@ -17,7 +17,9 @@ class ModuleInstall extends atoum
     protected $mock;
     
     protected $bfwPath;
+    protected $sourcePath;
     protected $modulePath;
+    protected $configPath;
 
     /**
      * Instanciation de la class avant chaque méthode de test
@@ -25,12 +27,14 @@ class ModuleInstall extends atoum
     public function beforeTestMethod($testMethod)
     {
         $this->bfwPath = realpath(__DIR__.'/../../../../');
+        $this->sourcePath = $this->bfwPath.'/vendor/unit/test';
         $this->modulePath = $this->bfwPath.'/app/modules/';
+        $this->configPath = $this->bfwPath.'/app/config/';
         
         if ($testMethod !== 'testConstructor') {
             $this->mock = new MockModuleInstall(
                 $this->bfwPath,
-                $this->modulePath.'test'
+                $this->sourcePath
             );
         }
     }
@@ -40,13 +44,13 @@ class ModuleInstall extends atoum
         $this->assert('test constructor')
             ->if($this->mock = new MockModuleInstall(
                 $this->bfwPath,
-                $this->modulePath.'test'
+                $this->sourcePath
             ))
             ->then
-            ->string($this->mock->bfwPath)
+            ->string($this->mock->projectPath)
                 ->isEqualTo($this->bfwPath)
-            ->string($this->mock->pathToModule)
-                ->isEqualTo($this->modulePath.'test')
+            ->string($this->mock->sourcePath)
+                ->isEqualTo($this->sourcePath)
             ->string($this->mock->bfwConfigPath)
                 ->isEqualTo($this->bfwPath.'/app/config/')
             ->string($this->mock->bfwModulePath)
@@ -84,25 +88,33 @@ class ModuleInstall extends atoum
             ->then
             ->string($this->mock->getName())
                 ->isEqualTo('test')
+            ->string($this->mock->projectPath)
+                ->isEqualTo($this->bfwPath)
             ->string($this->mock->bfwConfigPath)
-                ->isEqualTo($this->bfwPath.'/app/config/test')
+                ->isEqualTo($this->bfwPath.'/app/config/')
             ->string($this->mock->bfwModulePath)
-                ->isEqualTo($this->bfwPath.'/app/modules/test')
-            ->string($this->mock->srcPath)
-                ->isEqualTo($this->modulePath.'test/src')
-            ->string($this->mock->configPath)
-                ->isEqualTo('src')
-            ->array($this->mock->configFiles)
+                ->isEqualTo($this->bfwPath.'/app/modules/')
+            ->string($this->mock->sourcePath)
+                ->isEqualTo($this->sourcePath)
+            ->string($this->mock->sourceSrcPath)
+                ->isEqualTo($this->sourcePath.'/src')
+            ->string($this->mock->targetSrcPath)
+                ->isEqualTo($this->modulePath.'test')
+            ->string($this->mock->sourceConfigPath)
+                ->isEqualTo($this->sourcePath.'/src')
+            ->string($this->mock->targetConfigPath)
+                ->isEqualTo($this->configPath.'test')
+            ->array($this->mock->configFilesList)
                 ->isEqualTo([])
-            ->string($this->mock->installScript)
+            ->string($this->mock->sourceInstallScript)
                 ->isEqualTo('');
     }
     
     public function testLoadInfosWithFullConfig()
     {
-        $this->assert('test loadInfos with install config (only srcPath)')
+        $this->assert('test loadInfos with install config')
             ->if($this->mock->forceInfos([
-                'srcPath' => 'src',
+                'srcPath'       => 'src',
                 'configPath'    => 'config',
                 'configFiles'   => [
                     'config1.php',
@@ -115,42 +127,50 @@ class ModuleInstall extends atoum
             ->then
             ->string($this->mock->getName())
                 ->isEqualTo('test')
+            ->string($this->mock->projectPath)
+                ->isEqualTo($this->bfwPath)
             ->string($this->mock->bfwConfigPath)
-                ->isEqualTo($this->bfwPath.'/app/config/test')
+                ->isEqualTo($this->bfwPath.'/app/config/')
             ->string($this->mock->bfwModulePath)
-                ->isEqualTo($this->bfwPath.'/app/modules/test')
-            ->string($this->mock->srcPath)
-                ->isEqualTo($this->modulePath.'test/src')
-            ->string($this->mock->configPath)
-                ->isEqualTo('config')
-            ->array($this->mock->configFiles)
+                ->isEqualTo($this->bfwPath.'/app/modules/')
+            ->string($this->mock->sourcePath)
+                ->isEqualTo($this->sourcePath)
+            ->string($this->mock->sourceSrcPath)
+                ->isEqualTo($this->sourcePath.'/src')
+            ->string($this->mock->targetSrcPath)
+                ->isEqualTo($this->modulePath.'test')
+            ->string($this->mock->sourceConfigPath)
+                ->isEqualTo($this->sourcePath.'/config')
+            ->string($this->mock->targetConfigPath)
+                ->isEqualTo($this->configPath.'test')
+            ->array($this->mock->configFilesList)
                 ->isEqualTo([
                     'config1.php',
                     'config2.json'
                 ])
-            ->string($this->mock->installScript)
+            ->string($this->mock->sourceInstallScript)
                 ->isEqualTo('install.php');
     }
     
     public function testInstallWithConfigFileAndAllGood()
     {
         $expectedOutput = 'test : Run install.'."\n"
-                        .' > Create symbolic link ... '."\n"
-                        ."\033[1;33m Not created. Module already exist in 'modules' directory.\033[0m\n"
+                        .' > Create symbolic link ... '
+                        ."\033[1;33mNot created. Module already exist in 'modules' directory.\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
-                        ."\033[1;33m Already exist.\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config1.php ... '
-                        ."\033[1;33m Existe déjà.\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
-                        ."\033[1;33m Existe déjà.\033[0m\n"
-                        .' >> Run install specific script : '
-                        .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
+                        .' > Run install specific script : '
+                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with config files and all must be good')
             ->if($this->mock->forceInfos([
-                'srcPath' => 'src',
+                'srcPath'       => 'src',
                 'configPath'    => 'config',
                 'configFiles'   => [
                     'config1.php',
@@ -182,22 +202,22 @@ class ModuleInstall extends atoum
     public function testForceInstallWithConfigFileAndAllGood()
     {
         $expectedOutput = 'test : Run install.'."\n"
-                        .' > Create symbolic link ... '."\n"
-                        .'[Force Reinstall: Remove symlink] '."\033[1;32m Done\033[0m\n"
+                        .' > Create symbolic link ... '
+                        .'[Force Reinstall: Remove symlink] '."\033[1;32mDone\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
-                        .'[Force Reinstall: Remove symlink] '."\033[1;32m Created. \033[0m\n"
+                        .'[Force Reinstall: Remove symlink] '."\033[1;32mCreated. \033[0m\n"
                         .' >> Copy config1.php ... '
-                        ."\033[1;33m Existe déjà.\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
-                        ."\033[1;33m Existe déjà.\033[0m\n"
-                        .' >> Run install specific script : '
-                        .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
+                        .' > Run install specific script : '
+                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with config files and the "force" mode. All must be good.')
             ->if($this->mock->forceInfos([
-                'srcPath' => 'src',
+                'srcPath'       => 'src',
                 'configPath'    => 'config',
                 'configFiles'   => [
                     'config1.php',
@@ -231,22 +251,22 @@ class ModuleInstall extends atoum
     public function testInstallWithSymlinkError()
     {
         $expectedOutput = 'test : Run install.'."\n"
-                        .' > Create symbolic link ... '."\n"
-                        ."\033[1;31m Symbolic link creation fail.\033[0m\n"
+                        .' > Create symbolic link ... '
+                        ."\033[1;31mSymbolic link creation fail.\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
-                        ."\033[1;33m Already exist.\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config1.php ... '
-                        ."\033[1;33m Existe déjà.\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
-                        ."\033[1;33m Existe déjà.\033[0m\n"
-                        .' >> Run install specific script : '
-                        .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
+                        .' > Run install specific script : '
+                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with a symlink error.')
             ->if($this->mock->forceInfos([
-                'srcPath' => 'src',
+                'srcPath'       => 'src',
                 'configPath'    => 'config',
                 'configFiles'   => [
                     'config1.php',
@@ -263,14 +283,14 @@ class ModuleInstall extends atoum
             ->and($this->function->mkdir = true)
             ->and($this->function->rmdir = true)
             ->and($this->function->symlink = function($target, $link) {
-                if ($target === $this->modulePath.'test/src') {
+                if ($target === $this->sourcePath.'/src') {
                     return false;
                 }
                 
                 return true;
             })
             ->and($this->function->file_exists = function($path) {
-                if ($path === $this->bfwPath.'/app/modules/test') {
+                if ($path === $this->modulePath.'test') {
                     return false;
                 }
                 
@@ -292,14 +312,14 @@ class ModuleInstall extends atoum
     public function testForceInstallWithUnlinkError()
     {
         $expectedOutput = 'test : Run install.'."\n"
-                        .' > Create symbolic link ... '."\n"
+                        .' > Create symbolic link ... '
                         .'[Force Reinstall: Remove symlink] '
-                        ."\033[1;31m Symbolic link remove fail.\033[0m\n"
+                        ."\033[1;31mSymbolic link remove fail.\033[0m\n"
         ;
         
         $this->assert('test install with config files and the "force" mode. It must be a unlink error.')
             ->if($this->mock->forceInfos([
-                'srcPath' => 'src',
+                'srcPath'       => 'src',
                 'configPath'    => 'config',
                 'configFiles'   => [
                     'config1.php',
@@ -350,17 +370,17 @@ class ModuleInstall extends atoum
     public function testForceInstallWithRmdirError()
     {
         $expectedOutput = 'test : Run install.'."\n"
-                        .' > Create symbolic link ... '."\n"
-                        .'[Force Reinstall: Remove symlink] '."\033[1;32m Done\033[0m\n"
+                        .' > Create symbolic link ... '
+                        .'[Force Reinstall: Remove symlink] '."\033[1;32mDone\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
                         .'[Force Reinstall: Remove symlink] '
-                        ."\033[1;31m Remove module config directory fail.\033[0m\n"
+                        ."\033[1;31mRemove module config directory fail.\033[0m\n"
         ;
         
         $this->assert('test install with config files and the "force" mode. It must be a rmdir error.')
             ->if($this->mock->forceInfos([
-                'srcPath' => 'src',
+                'srcPath'       => 'src',
                 'configPath'    => 'config',
                 'configFiles'   => [
                     'config1.php',
@@ -405,18 +425,18 @@ class ModuleInstall extends atoum
     public function testInstallWithCreateConfigDirectoryError()
     {
         $expectedOutput = 'test : Run install.'."\n"
-                        .' > Create symbolic link ... '."\n"
-                        ."\033[1;32m Done\033[0m\n"
+                        .' > Create symbolic link ... '
+                        ."\033[1;32mDone\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
-                        ."\033[1;31m Fail. \033[0m\n"
-                        .' >> Run install specific script : '
-                        .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        ."\033[1;31mFail. \033[0m\n"
+                        .' > Run install specific script : '
+                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with config files and an error with the creation of the config directory')
             ->if($this->mock->forceInfos([
-                'srcPath' => 'src',
+                'srcPath'       => 'src',
                 'configPath'    => 'config',
                 'configFiles'   => [
                     'config1.php',
@@ -461,22 +481,22 @@ class ModuleInstall extends atoum
     public function testInstallWithNoConfigFileExistsError()
     {
         $expectedOutput = 'test : Run install.'."\n"
-                        .' > Create symbolic link ... '."\n"
-                        ."\033[1;33m Not created. Module already exist in 'modules' directory.\033[0m\n"
+                        .' > Create symbolic link ... '
+                        ."\033[1;33mNot created. Module already exist in 'modules' directory.\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
-                        ."\033[1;33m Already exist.\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config1.php ... '
-                        ."\033[1;33m Existe déjà.\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
-                        ."\033[1;31m Config file not exist in module source.\033[0m\n"
-                        .' >> Run install specific script : '
-                        .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        ."\033[1;31mConfig file not exist in module source.\033[0m\n"
+                        .' > Run install specific script : '
+                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with config files and an error because the config file not exist in source')
             ->if($this->mock->forceInfos([
-                'srcPath' => 'src',
+                'srcPath'       => 'src',
                 'configPath'    => 'config',
                 'configFiles'   => [
                     'config1.php',
@@ -494,11 +514,13 @@ class ModuleInstall extends atoum
             ->and($this->function->symlink = true)
             ->and($this->function->unlink = true)
             ->and($this->function->file_exists = function($path) {
-                //var_dump($path);
-                if($path === $this->bfwPath.'/app/config/test/config2.json') {
+                //Test file already exist in config app directory
+                if($path === $this->configPath.'test/config2.json') {
                     return false;
                 }
-                if($path === 'config/config2.json') {
+                
+                //Test file exist in source
+                if($path === $this->sourcePath.'/config/config2.json') {
                     return false;
                 }
                 
@@ -531,22 +553,22 @@ class ModuleInstall extends atoum
     public function testInstallWithCopyError()
     {
         $expectedOutput = 'test : Run install.'."\n"
-                        .' > Create symbolic link ... '."\n"
-                        ."\033[1;33m Not created. Module already exist in 'modules' directory.\033[0m\n"
+                        .' > Create symbolic link ... '
+                        ."\033[1;33mNot created. Module already exist in 'modules' directory.\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
-                        ."\033[1;33m Already exist.\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config1.php ... '
-                        ."\033[1;33m Existe déjà.\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
-                        ."\033[1;31m Copy fail.\033[0m\n"
-                        .' >> Run install specific script : '
-                        .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        ."\033[1;31mCopy fail.\033[0m\n"
+                        .' > Run install specific script : '
+                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with config files and an error with copy')
             ->if($this->mock->forceInfos([
-                'srcPath' => 'src',
+                'srcPath'       => 'src',
                 'configPath'    => 'config',
                 'configFiles'   => [
                     'config1.php',
@@ -564,8 +586,8 @@ class ModuleInstall extends atoum
             ->and($this->function->symlink = true)
             ->and($this->function->unlink = true)
             ->and($this->function->file_exists = function($path) {
-                //var_dump($path);
-                if($path === $this->bfwPath.'/app/config/test/config2.json') {
+                //Test file already exist in config app directory
+                if($path === $this->configPath.'test/config2.json') {
                     return false;
                 }
                 
@@ -598,22 +620,22 @@ class ModuleInstall extends atoum
     public function testInstallWithCopyConfigFile()
     {
         $expectedOutput = 'test : Run install.'."\n"
-                        .' > Create symbolic link ... '."\n"
-                        ."\033[1;33m Not created. Module already exist in 'modules' directory.\033[0m\n"
+                        .' > Create symbolic link ... '
+                        ."\033[1;33mNot created. Module already exist in 'modules' directory.\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
-                        ."\033[1;33m Already exist.\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config1.php ... '
-                        ."\033[1;33m Existe déjà.\033[0m\n"
+                        ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
-                        ."\033[1;32m Done\033[0m\n"
-                        .' >> Run install specific script : '
-                        .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        ."\033[1;32mDone\033[0m\n"
+                        .' > Run install specific script : '
+                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with config files and copy call without error.')
             ->if($this->mock->forceInfos([
-                'srcPath' => 'src',
+                'srcPath'       => 'src',
                 'configPath'    => 'config',
                 'configFiles'   => [
                     'config1.php',
@@ -631,8 +653,8 @@ class ModuleInstall extends atoum
             ->and($this->function->symlink = true)
             ->and($this->function->unlink = true)
             ->and($this->function->file_exists = function($path) {
-                //var_dump($path);
-                if($path === $this->bfwPath.'/app/config/test/config2.json') {
+                //Test file already exist in config app directory
+                if($path === $this->configPath.'test/config2.json') {
                     return false;
                 }
                 
@@ -654,17 +676,17 @@ class ModuleInstall extends atoum
     public function testInstallWithoutConfigFile()
     {
         $expectedOutput = 'test : Run install.'."\n"
-                        .' > Create symbolic link ... '."\n"
-                        ."\033[1;33m Not created. Module already exist in 'modules' directory.\033[0m\n"
+                        .' > Create symbolic link ... '
+                        ."\033[1;33mNot created. Module already exist in 'modules' directory.\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> '."\033[1;33m".'No config file declared. Pass'."\033[0m\n"
-                        .' >> Run install specific script : '
-                        .' >> '."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        .' > Run install specific script : '
+                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install without config file')
             ->if($this->mock->forceInfos([
-                'srcPath' => 'src',
+                'srcPath'       => 'src',
                 'configPath'    => 'config',
                 'configFiles'   => [],
                 'installScript' => false
