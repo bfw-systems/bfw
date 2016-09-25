@@ -273,10 +273,3 @@ class Module extends atoum
     }
 }
 
-class MockModuleRunnerFile extends \BFW\Module
-{
-    public function callGetRunnerFile()
-    {
-        return parent::getRunnerFile();
-    }
-}
