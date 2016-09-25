@@ -1,6 +1,7 @@
 {
     "require": {
-        "bulton-fr/bfw": "3.0.x-dev"
+        "bulton-fr/bfw": "3.0.x-dev",
+        "bulton-fr/bfw-hello-world": "1.0.x-dev"
     },
     "minimum-stability": "RC"
 }

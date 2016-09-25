@@ -25,10 +25,12 @@ before_script:
   - if [ $(phpenv version-name) = "5.6" ]; then composer show --platform ext-memcache; fi
   - composer show --platform ext-memcached
   - chmod +x ./test/bin/installFwk.php
+  - chmod +x ./test/bin/installModule.php
 
 script:
   - ./vendor/bin/atoum -c .atoum.php -d test/unit/install test/unit/src -utr
   - php ./test/bin/installFwk.php
+  - php ./test/bin/installModule.php
 
 after_script:
  ## Scrutinizer
