@@ -231,13 +231,13 @@ class Module extends atoum
     {
         $this->gettersOverloadFunctions()
             ->assert('test module run with runner file')
-            ->given($class = new \BFW\test\unit\mocks\MockModuleRunnerFile('unit_test'))
+            ->given($class = new \BFW\test\unit\mocks\ModuleRunnerFile('unit_test'))
             ->string($class->callGetRunnerFile())
                 ->isEqualTo('modules/unit_test/run_unit_test_with_atoum.php');
         
         $this->gettersOverloadFunctions(['noFileExistRunner' => true])
             ->assert('test module run with runner file exception file exists')
-            ->given($class = new \BFW\test\unit\mocks\MockModuleRunnerFile('unit_test'))
+            ->given($class = new \BFW\test\unit\mocks\ModuleRunnerFile('unit_test'))
             ->exception(function() use ($class) {
                 $class->callGetRunnerFile();
             })->hasMessage('Runner file for module unit_test not found.');

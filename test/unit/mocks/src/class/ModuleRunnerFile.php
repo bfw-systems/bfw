@@ -2,7 +2,7 @@
 
 namespace BFW\test\unit\mocks;
 
-class MockModuleRunnerFile extends \BFW\Module
+class ModuleRunnerFile extends \BFW\Module
 {
     public function callGetRunnerFile()
     {
