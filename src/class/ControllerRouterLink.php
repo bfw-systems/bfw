@@ -13,9 +13,9 @@ class ControllerRouterLink
     protected static $instance;
 
     /**
-     * @var string $target : The target to call by controller
+     * @var mixed $target : The target to call by controller
      */
-    protected $target = '';
+    protected $target;
     
     /**
      * @var mixed $datas : Some datas send by router module to controller
@@ -51,7 +51,7 @@ class ControllerRouterLink
     /**
      * Getter for property target
      * 
-     * @return string
+     * @return mixed
      */
     public function getTarget()
     {
@@ -61,13 +61,13 @@ class ControllerRouterLink
     /**
      * Setter for property target
      * 
-     * @param type $target
+     * @param mixed $target
      * 
      * @return \BFW\ControllerRouterLink
      */
     public function setTarget($target)
     {
-        $this->target = (string) $target;
+        $this->target = $target;
         return $this;
     }
     

@@ -41,8 +41,8 @@ class ControllerRouterLink extends atoum
     public function testGetTargetAndSetTarget()
     {
         $this->assert('test getTarget with default value')
-            ->string($this->class->getTarget())
-                ->isEmpty();
+            ->variable($this->class->getTarget())
+                ->isNull();
         
         $this->assert('test setTarget')
             ->object($this->class->setTarget('unit_test'))
