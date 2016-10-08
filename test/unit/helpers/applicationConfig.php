@@ -40,7 +40,7 @@ return [
             'name'    => '',
             'enabled' => false
         ],
-        'routing' => [
+        'router' => [
             'name'    => '',
             'enabled' => false
         ],

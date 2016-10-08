@@ -208,9 +208,9 @@ return [
         ],
         
         /**
-         * @var array routing : The module who map url to a controller
+         * @var array router : The module who map url to a controller
          */
-        'routing'    => [
+        'router'     => [
             /**
              * @var string name : Module's name
              */

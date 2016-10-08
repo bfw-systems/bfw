@@ -384,7 +384,7 @@ class Application extends Subjects
 
     /**
      * Load modules define in config bfw file.
-     * It's module for controller, routing, database and template only.
+     * It's module for controller, router, database and template only.
      * 
      * @return void
      */
