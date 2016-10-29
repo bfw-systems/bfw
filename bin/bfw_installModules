@@ -37,10 +37,14 @@ if (isset($cliArgs['bfw-path'])) {
     $bfwPath = realpath($cliArgs['bfw-path']);
 }
 
+define('BFW_PATH', $bfwPath);
+
 $vendorPath = $bfwPath.'/vendor';
 if (isset($cliArgs['vendor-path'])) {
     $vendorPath = realpath($cliArgs['vendor-path']);
 }
+
+define('VENDOR_PATH', $vendorPath);
 
 $reinstall = false;
 if (isset($cliArgs['reinstall'])) {
