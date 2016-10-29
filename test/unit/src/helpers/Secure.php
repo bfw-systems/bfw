@@ -10,19 +10,7 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 class Secure extends atoum
 {
-    protected function initApp($sqlSecureMethod)
-    {
-        $forcedConfig = require(__DIR__.'/../../helpers/applicationConfig.php');
-        $forcedConfig['sqlSecureMethod'] = $sqlSecureMethod;
-        
-        $options = [
-            'forceConfig' => $forcedConfig,
-            'vendorDir'   => __DIR__.'/../../../../vendor'
-        ];
-        
-        $this->function->scandir = ['.', '..'];
-        \BFW\test\unit\mocks\Application::init($options);
-    }
+    use \BFW\test\helpers\Application;
     
     public static function secureMethod($str)
     {
