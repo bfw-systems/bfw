@@ -395,6 +395,6 @@ class ModuleInstall
 
         //Include the file for complete the install
         require_once($this->sourcePath.'/'.$this->sourceInstallScript);
-        echo "n";
+        echo "\n";
     }
 }
