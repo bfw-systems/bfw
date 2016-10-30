@@ -373,14 +373,14 @@ class ModuleInstall
      */
     protected function runInstallScript()
     {
-        echo ' > Run install specific script : ';
+        echo ' > Run install specific script : '."\n";
 
         //If no script to complete the install
         if (
             $this->sourceInstallScript === ''
             || $this->sourceInstallScript === false
         ) {
-            echo "\033[1;33m"
+            echo " >> \033[1;33m"
                 .'No specific script declared. Pass'
                 ."\033[0m\n";
             
@@ -395,5 +395,6 @@ class ModuleInstall
 
         //Include the file for complete the install
         require_once($this->sourcePath.'/'.$this->sourceInstallScript);
+        echo "n";
     }
 }

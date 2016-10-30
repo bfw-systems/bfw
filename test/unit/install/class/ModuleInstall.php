@@ -164,8 +164,8 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;33mAlready exist.\033[0m\n"
-                        .' > Run install specific script : '
-                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        .' > Run install specific script : '."\n"
+                        ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with config files and all must be good')
@@ -211,8 +211,8 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;33mAlready exist.\033[0m\n"
-                        .' > Run install specific script : '
-                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        .' > Run install specific script : '."\n"
+                        ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with config files and the "force" mode. All must be good.')
@@ -260,8 +260,8 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;33mAlready exist.\033[0m\n"
-                        .' > Run install specific script : '
-                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        .' > Run install specific script : '."\n"
+                        ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with a symlink error.')
@@ -430,8 +430,8 @@ class ModuleInstall extends atoum
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
                         ."\033[1;31mFail. \033[0m\n"
-                        .' > Run install specific script : '
-                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        .' > Run install specific script : '."\n"
+                        ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with config files and an error with the creation of the config directory')
@@ -490,8 +490,8 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;31mConfig file not exist in module source.\033[0m\n"
-                        .' > Run install specific script : '
-                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        .' > Run install specific script : '."\n"
+                        ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with config files and an error because the config file not exist in source')
@@ -562,8 +562,8 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;31mCopy fail.\033[0m\n"
-                        .' > Run install specific script : '
-                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        .' > Run install specific script : '."\n"
+                        ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with config files and an error with copy')
@@ -629,8 +629,8 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;32mDone\033[0m\n"
-                        .' > Run install specific script : '
-                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        .' > Run install specific script : '."\n"
+                        ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install with config files and copy call without error.')
@@ -680,8 +680,8 @@ class ModuleInstall extends atoum
                         ."\033[1;33mNot created. Module already exist in 'modules' directory.\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> '."\033[1;33m".'No config file declared. Pass'."\033[0m\n"
-                        .' > Run install specific script : '
-                        ."\033[1;33m".'No specific script declared. Pass'."\033[0m\n"
+                        .' > Run install specific script : '."\n"
+                        ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
         $this->assert('test install without config file')

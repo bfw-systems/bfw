@@ -15,7 +15,8 @@ $expectedModuleOutput = "bfw-hello-world : Run install.\n"
                         ." > Copy config files :\n"
                         ." >> Create config directory for this module ... \033[1;32mCreated.\033[0m\n"
                         ." >> Copy hello-world.json ... \033[1;32mDone\033[0m\n"
-                        ." > Run install specific script : \033[1;33mNo specific script declared. Pass\033[0m";
+                        ." > Run install specific script : \033\n"
+                        .">> [1;33mNo specific script declared. Pass\033[0m";
 
 echo 'Test output returned by script : ';
 if ($moduleInstallOutput !== $expectedModuleOutput) {
