@@ -22,7 +22,7 @@ class Secure extends atoum
         $this->assert('test Secure::hash')
             ->string($hashed = BfwSecure::hash('test'))
                 ->length
-                    ->isEqualTo(32);
+                    ->isEqualTo(64);
     }
     
     public function testSecuriseKnownTypes()
