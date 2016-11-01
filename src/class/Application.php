@@ -145,6 +145,18 @@ class Application extends Subjects
     {
         return $this->config->getConfig($configKey);
     }
+    
+    /**
+     * Getter to access to a module
+     * 
+     * @param string $moduleName The module name to access
+     * 
+     * @return \BFW\Module
+     */
+    public function getModule($moduleName)
+    {
+        return $this->modules->getModule($moduleName);
+    }
 
     /**
      * Getter to access to a BFW option value

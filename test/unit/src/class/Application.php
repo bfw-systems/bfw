@@ -383,6 +383,10 @@ class Application extends atoum
         $this->assert('test loadAllAppModules')
             ->boolean($this->mock->getModules()->getModule('test1')->isRun())
                 ->isTrue();
+        
+        $this->assert('test getModule')
+            ->object($this->mock->getModule('test1'))
+                ->isIdenticalTo($this->mock->getModules()->getModule('test1'));
     }
     
     public function testReadAllModulesWithOneBadModule()
