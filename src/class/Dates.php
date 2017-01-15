@@ -17,6 +17,7 @@ class Dates extends DateTime
     protected static $humainReadableI18n = [
         'now'       => 'now',
         'since'     => 'since',
+        'in'        => 'in',
         'yesterday' => 'yesterday',
         'the'       => 'the',
         'at'        => 'at'
@@ -415,8 +416,13 @@ class Dates extends DateTime
      */
     protected function humainDateToday(&$returnTxt, $diff)
     {
+        $textKey = 'since';
+        if ($diff->invert === 1) {
+            $textKey = 'in';
+        }
+        
         $currentClass    = get_called_class();
-        $returnTxt->date = $currentClass::$humainReadableI18n['since'].' ';
+        $returnTxt->date = $currentClass::$humainReadableI18n[$textKey].' ';
 
         if ($diff->h === 0 && $diff->i === 0) {
             $returnTxt->date .= $diff->s.'s';

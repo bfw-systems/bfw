@@ -27,6 +27,7 @@ class Dates extends atoum
                 ->isEqualTo([
                     'now'       => 'now',
                     'since'     => 'since',
+                    'in'        => 'in',
                     'yesterday' => 'yesterday',
                     'the'       => 'the',
                     'at'        => 'at'
@@ -44,6 +45,7 @@ class Dates extends atoum
                 ->isEqualTo([
                     'now'       => 'maintenant',
                     'since'     => 'since',
+                    'in'        => 'in',
                     'yesterday' => 'yesterday',
                     'the'       => 'the',
                     'at'        => 'at'
@@ -58,6 +60,7 @@ class Dates extends atoum
                 ->isEqualTo([
                     'now'       => 'maintenant',
                     'since'     => 'since',
+                    'in'        => 'in',
                     'yesterday' => 'yesterday',
                     'the'       => 'the',
                     'at'        => 'at',
@@ -323,10 +326,15 @@ class Dates extends atoum
             ->string($this->mock->humainReadable())
                 ->isEqualTo('since 1h')
             ->string($this->mock->humainReadable(false))
-                ->isEqualTo('since 1h');
+                ->isEqualTo('since 1h')
+            ->given($this->mock->modify('+3 hour'))
+            ->string($this->mock->humainReadable())
+                ->isEqualTo('in 1h')
+            ->string($this->mock->humainReadable(false))
+                ->isEqualTo('in 1h');
         
         $this->assert('test humainReadable : Yesterday')
-            ->given($this->mock->modify('-25 hour'))
+            ->given($this->mock->modify('-28 hour'))
             ->given($yesterdayFormat = $this->mock->format($hrFormat['time']))
             ->string($this->mock->humainReadable())
                 ->isEqualTo('yesterday at '.$yesterdayFormat)
