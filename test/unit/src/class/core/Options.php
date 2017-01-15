@@ -59,24 +59,6 @@ class Options extends atoum
         $classPath      = realpath($composerLoader->findFile('BFW\Core\Options'));
         $classDirPath   = str_replace('/Options.php', '', $classPath);
         
-        echo '__FILE__: ';
-        print_r(__FILE__);
-        
-        echo '$classPath: ';
-        print_r($classPath);
-        
-        echo '$classDirPath: ';
-        print_r($classDirPath);
-        
-        echo '$composerLoader->getPrefixes(): ';
-        print_r($composerLoader->getPrefixes());
-        
-        echo '$composerLoader->getPrefixesPsr4(): ';
-        print_r($composerLoader->getPrefixesPsr4());
-        
-        echo '$composerLoader->getClassMap(): ';
-        print_r($composerLoader->getClassMap());
-        
         $explodeClassDirPath = explode('/', $classDirPath);
         $countExplodeClassDirPath = count($explodeClassDirPath);
         
@@ -91,11 +73,6 @@ class Options extends atoum
         
         unset($explodeClassDirPath[$countExplodeClassDirPath-5]);
         $expectedRootDir = implode('/', $explodeClassDirPath).'/';
-
-        echo '$expectedRootDir: ';
-        print_r($expectedRootDir);
-        echo '$expectedVendorDir: ';
-        print_r($expectedVendorDir);
         
         $this->assert('test Core\Options with rootDir and vendorDir declared')
             ->if($this->class = new \BFW\Core\Options($this->defaultOptions, []))
