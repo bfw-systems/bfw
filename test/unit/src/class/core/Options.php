@@ -56,7 +56,7 @@ class Options extends atoum
     public function testOptionsFindDirectories()
     {
         $composerLoader = require(__DIR__.'/../../../../../vendor/autoload.php');
-        $classPath      = realpath($composerLoader->findFile('\BFW\Core\Options'));
+        $classPath      = realpath($composerLoader->findFile('BFW\Core\Options'));
         $classDirPath   = str_replace('/Options.php', '', $classPath);
         
         echo '__FILE__: ';
