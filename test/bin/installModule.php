@@ -22,7 +22,7 @@ echo 'Test output returned by script : ';
 if ($moduleInstallOutput !== $expectedModuleOutput) {
     echo "\033[1;31m[Fail]\033[0m\n";
     fwrite(STDERR, 'Text returned is not equal to expected text.');
-    exit;
+    exit(1);
 }
 
 echo "\033[1;32m[OK]\033[0m\n";

@@ -86,7 +86,7 @@ for ($installIndex = 0; $installIndex < 2; $installIndex++) {
     if ($installOutput !== $expectedOutput[$installIndex]) {
         echo "\033[1;31m[Fail]\033[0m\n";
         fwrite(STDERR, 'Text returned is not equal to expected text.');
-        exit;
+        exit(1);
     }
 
     echo "\033[1;32m[OK]\033[0m\n";
