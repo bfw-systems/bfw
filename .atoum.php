@@ -50,6 +50,8 @@ $script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/class/memcac
 
 if(file_exists('/home/travis'))
 {
+    $script->addDefaultReport();
+    
     // Publish code coverage report on coveralls.io
     $sources = './src';
     $token = 'ycIQWlEx47Xh3QzvlQ4kxh3jOHHo55m1E';
