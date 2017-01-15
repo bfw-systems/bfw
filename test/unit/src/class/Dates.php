@@ -335,16 +335,20 @@ class Dates extends atoum
             ->string($this->mock->humainReadable(true))
                 ->isEqualTo('yesterday at '.$yesterdayFormat);
         
-        $this->assert('test humainReadable : Before yesterday; Same year')
-            ->given($this->mock->modify('-1 month'))
-            ->given($dateFormat = $this->mock->format($hrFormat['dateSameYear']))
-            ->given($timeFormat = $this->mock->format($hrFormat['time']))
-            ->string($this->mock->humainReadable())
-                ->isEqualTo('the '.$dateFormat.' at '.$timeFormat)
-            ->string($this->mock->humainReadable(false))
-                ->isEqualTo('the '.$dateFormat)
-            ->string($this->mock->humainReadable(true))
-                ->isEqualTo('the '.$dateFormat.' at '.$timeFormat);
+        //Not testable current january month because the month before is not
+        //in the same year.
+        if ((int) $this->mock->format('m') !== 1) {
+            $this->assert('test humainReadable : Before yesterday; Same year')
+                ->given($this->mock->modify('-1 month'))
+                ->given($dateFormat = $this->mock->format($hrFormat['dateSameYear']))
+                ->given($timeFormat = $this->mock->format($hrFormat['time']))
+                ->string($this->mock->humainReadable())
+                    ->isEqualTo('the '.$dateFormat.' at '.$timeFormat)
+                ->string($this->mock->humainReadable(false))
+                    ->isEqualTo('the '.$dateFormat)
+                ->string($this->mock->humainReadable(true))
+                    ->isEqualTo('the '.$dateFormat.' at '.$timeFormat);
+        }
         
         $this->assert('test humainReadable : Before yesterday; Different year')
             ->given($this->mock->modify('-1 year'))
