@@ -373,7 +373,7 @@ class ModuleInstall
      */
     protected function runInstallScript()
     {
-        echo ' > Run install specific script : '."\n";
+        echo ' > Run install specific script :'."\n";
 
         //If no script to complete the install
         if (

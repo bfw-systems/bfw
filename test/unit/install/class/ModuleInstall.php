@@ -164,7 +164,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;33mAlready exist.\033[0m\n"
-                        .' > Run install specific script : '."\n"
+                        .' > Run install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -211,7 +211,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;33mAlready exist.\033[0m\n"
-                        .' > Run install specific script : '."\n"
+                        .' > Run install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -260,7 +260,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;33mAlready exist.\033[0m\n"
-                        .' > Run install specific script : '."\n"
+                        .' > Run install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -430,7 +430,7 @@ class ModuleInstall extends atoum
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
                         ."\033[1;31mFail. \033[0m\n"
-                        .' > Run install specific script : '."\n"
+                        .' > Run install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -490,7 +490,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;31mConfig file not exist in module source.\033[0m\n"
-                        .' > Run install specific script : '."\n"
+                        .' > Run install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -562,7 +562,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;31mCopy fail.\033[0m\n"
-                        .' > Run install specific script : '."\n"
+                        .' > Run install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -629,7 +629,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;32mDone\033[0m\n"
-                        .' > Run install specific script : '."\n"
+                        .' > Run install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -680,7 +680,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mNot created. Module already exist in 'modules' directory.\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> '."\033[1;33m".'No config file declared. Pass'."\033[0m\n"
-                        .' > Run install specific script : '."\n"
+                        .' > Run install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
