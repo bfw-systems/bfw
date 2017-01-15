@@ -190,6 +190,21 @@ class Module extends atoum
                 ->isFalse();
     }
     
+    public function testAddDependency()
+    {
+        $this->gettersOverloadFunctions()
+            ->assert('test module addDependency')
+            ->given($class = new \BFW\Module('unit_test'))
+            ->object($class->addDependency('module1'))
+                ->isIdenticalTo($class)
+            ->array($class->getLoadInfos()->require)
+                ->isEqualTo(['module1'])
+            ->and()
+            ->given($class->addDependency('module2'))
+            ->array($class->getLoadInfos()->require)
+                ->isEqualTo(['module1', 'module2']);
+    }
+    
     public function testInstallInfos()
     {
         $this->gettersOverloadFunctions()

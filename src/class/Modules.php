@@ -69,6 +69,39 @@ class Modules
 
         return $this->modules[$moduleName];
     }
+    
+    /**
+     * Read the "needMe" property for each module and add the dependency
+     * 
+     * @throws \Exception If the dependency is not find in application
+     * 
+     * @return void
+     */
+    public function readNeedMeDependencies()
+    {
+        foreach ($this->modules as $readModuleName => $module) {
+            $loadInfos = $module->getLoadInfos();
+            
+            if (!property_exists($loadInfos, 'needMe')) {
+                continue;
+            }
+            
+            $needMe = (array) $loadInfos->needMe;
+            foreach ($needMe as $needModuleName) {
+                if (!isset($this->modules[$needModuleName])) {
+                    throw new Exception(
+                        'Module error: '.$readModuleName
+                        .' need '.$needModuleName
+                        .' but this module is not found.'
+                    );
+                }
+                
+                $this->modules[$needModuleName]->addDependency(
+                    $readModuleName
+                );
+            }
+        }
+    }
 
     /**
      * Generate the dependency tree for all declared module

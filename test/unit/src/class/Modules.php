@@ -86,13 +86,23 @@ class Modules extends atoum
             })->hasMessage('Module bulton not found.');
     }
     
-    protected function writeModuleJson($runner, $priority, $require)
-    {
-        return '{
+    protected function writeModuleJson(
+        $runner,
+        $priority,
+        $require,
+        $needMe = ''
+    ) {
+        $json = '
             "runner": "'.$runner.'",
             "priority": '.$priority.',
             "require": '.$require.'
-        }';
+        ';
+        
+        if ($needMe !== '') {
+            $json .= ',"needMe": '.$needMe."\n";
+        }
+        
+        return '{'.$json.'}';
     }
     
     public function testGenerateAndGetTree()
@@ -160,5 +170,85 @@ class Modules extends atoum
                 ->hasKeys([0,1,3]);
         
         //Test array structure is on the lib's unit test.
+    }
+    
+    public function testReadNeedMeDependencies()
+    {
+        $module1Json = $this->writeModuleJson('', 0, '[]');
+        $module2Json = $this->writeModuleJson('', 1, '[]', '["module1"]');
+        $module3Json = $this->writeModuleJson('', 1, '[]', '"module1"');
+        
+        $fileGetContents = function($path) use(
+            $module1Json,
+            $module2Json,
+            $module3Json
+        ) {
+            if (strpos($path, '/bfwModuleInstall.json') !== false) {
+                return '{
+                    "srcPath": "src"
+                }';
+            }
+            
+            if ($path === 'modules/module1/module.json') {
+                return $module1Json;
+            } elseif ($path === 'modules/module2/module.json') {
+                return $module2Json;
+            } elseif ($path === 'modules/module3/module.json') {
+                return $module3Json;
+            }
+
+            return '{}';
+        };
+        
+        $this->addModule()
+            ->assert('test Module readNeedMeDependencies')
+            ->given($this->function->file_get_contents = $fileGetContents)
+            ->given($this->class->addModule('module1'))
+            ->given($this->class->addModule('module2'))
+            ->given($this->class->addModule('module3'))
+            ->given($this->class->readNeedMeDependencies())
+            ->array($this->class->getModule('module1')->getLoadInfos()->require)
+                ->isEqualTo([
+                    'module2',
+                    'module3'
+                ]);
+    }
+    
+    public function testReadNeedMeDependenciesException()
+    {
+        $module1Json = $this->writeModuleJson('', 0, '[]');
+        $module2Json = $this->writeModuleJson('', 1, '[]', '["module1"]');
+        
+        $fileGetContents = function($path) use(
+            $module1Json,
+            $module2Json
+        ) {
+            if (strpos($path, '/bfwModuleInstall.json') !== false) {
+                return '{
+                    "srcPath": "src"
+                }';
+            }
+            
+            if ($path === 'modules/module1/module.json') {
+                return $module1Json;
+            } elseif ($path === 'modules/module2/module.json') {
+                return $module2Json;
+            }
+
+            return '{}';
+        };
+        
+        $this->addModule()
+            ->assert('test Module readNeedMeDependencies')
+            ->given($this->function->file_get_contents = $fileGetContents)
+            ->given($this->class->addModule('module2'))
+            ->given($class = $this->class)
+            ->exception(function() use ($class) {
+                $class->readNeedMeDependencies();
+            })
+                ->hasMessage(
+                    'Module error: module2 need module1'
+                    .' but this module is not found.'
+                );
     }
 }

@@ -391,6 +391,7 @@ class Application extends Subjects
             $this->modules->addModule($moduleName);
         }
 
+        $this->modules->readNeedMeDependencies();
         $this->modules->generateTree();
     }
 

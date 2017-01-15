@@ -204,6 +204,29 @@ class Module
 
         return $infos;
     }
+    
+    /**
+     * Add a dependency to module
+     * Used by needMe property in module infos
+     * 
+     * @param string $dependencyName The dependency name to add
+     * 
+     * @return $this
+     */
+    public function addDependency($dependencyName)
+    {
+        if (!property_exists($this->loadInfos, 'require')) {
+            $this->loadInfos->require = [];
+        }
+        
+        if (!is_array($this->loadInfos->require)) {
+            $this->loadInfos->require = [$this->loadInfos->require];
+        }
+        
+        $this->loadInfos->require[] = $dependencyName;
+        
+        return $this;
+    }
 
     /**
      * Get path to the runner file
