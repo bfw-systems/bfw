@@ -95,8 +95,11 @@ class Errors extends atoum
             ->if($this->forcedConfig['errorRenderFct']['active'] = true)
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
-            ->string($this->mock->callDefineErrorHandler())
-                ->isEqualTo('cli_error_render');
+            ->array($this->mock->callDefineErrorHandler())
+                ->isEqualTo([
+                    $this->mock,
+                    'errorHandler'
+                ]);
         
         $this->assert('test defineErrorHandler with a class render')
             ->if($this->forcedConfig['errorRenderFct']['active'] = true)
@@ -108,8 +111,8 @@ class Errors extends atoum
             ->then
             ->array($this->mock->callDefineErrorHandler())
                 ->isEqualTo([
-                    '\BFW\Core\test\unit\mocks\Errors',
-                    'mockRender'
+                    $this->mock,
+                    'errorHandler'
                 ]);
     }
     
@@ -123,8 +126,11 @@ class Errors extends atoum
             ->if($this->forcedConfig['exceptionRenderFct']['active'] = true)
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
-            ->string($this->mock->callDefineExceptionHandler())
-                ->isEqualTo('cli_exception_render');
+            ->array($this->mock->callDefineExceptionHandler())
+                ->isEqualTo([
+                    $this->mock,
+                    'exceptionHandler'
+                ]);
         
         $this->assert('test defineExceptionHandler with a class render')
             ->if($this->forcedConfig['exceptionRenderFct']['active'] = true)
@@ -136,8 +142,8 @@ class Errors extends atoum
             ->then
             ->array($this->mock->callDefineExceptionHandler())
                 ->isEqualTo([
-                    '\BFW\Core\test\unit\mocks\Errors',
-                    'mockRender'
+                    $this->mock,
+                    'exceptionHandler'
                 ]);
     }
     

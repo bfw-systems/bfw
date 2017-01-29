@@ -45,19 +45,9 @@ class Errors
         if ($errorRender === false) {
             return;
         }
-        
-        //Define the arg for set_error_render
-        //Only "method" if function, of array this class if method.
-        $errorHandlerArgs = $errorRender['method'];
-        if (!empty($errorRender['class'])) {
-            $errorHandlerArgs = [
-                $errorRender['class'],
-                $errorRender['method']
-            ];
-        }
 
         //add the handler for errors
-        set_error_handler($errorHandlerArgs);
+        set_error_handler([$this, 'errorHandler']);
     }
     
     /**
@@ -76,18 +66,8 @@ class Errors
             return;
         }
         
-        //Define the arg for set_exception_handler
-        //Only "method" if function, of array this class if method.
-        $erxceptionHandlerArgs = $exceptionRender['method'];
-        if (!empty($exceptionRender['class'])) {
-            $erxceptionHandlerArgs = [
-                $exceptionRender['class'],
-                $exceptionRender['method']
-            ];
-        }
-
         //add the handler for exceptions
-        set_exception_handler($erxceptionHandlerArgs);
+        set_exception_handler([$this, 'exceptionHandler']);
     }
     
     /**
