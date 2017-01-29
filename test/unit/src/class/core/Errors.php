@@ -266,7 +266,7 @@ class Errors extends atoum
             ->given($mock::exceptionHandler($exception))
             ->object($rendered = $mock::$lastRenderCallInfos)
             ->string($rendered->erreurType)
-                ->isEqualTo('Fatal')
+                ->isEqualTo('Exception Uncaught')
             ->string($rendered->errMsg)
                 ->isEqualTo('exception Message')
             ->string($rendered->errFile)

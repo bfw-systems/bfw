@@ -183,7 +183,7 @@ class Errors
         //Call the "callRender" method for this class (or child class)
         $calledClass::callRender(
             $errorRender,
-            'Fatal', 
+            'Exception Uncaught', 
             $exception->getMessage(), 
             $exception->getFile(), 
             $exception->getLine(), 
