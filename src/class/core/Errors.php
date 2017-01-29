@@ -244,6 +244,12 @@ class Errors
         $errLine,
         $backtrace
     ) {
+        error_log(
+            'Error detected : '
+            .$erreurType.' '.$errMsg
+            .' at '.$errFile.':'.$errLine
+        );
+        
         $class  = $renderInfos['class'];
         $method = $renderInfos['method'];
         
