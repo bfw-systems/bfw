@@ -109,6 +109,6 @@ for ($installIndex = 0; $installIndex < 2; $installIndex++) {
     testDirectoryOrFile($installDir, 'app/config/bfw/config.php');
     testDirectoryOrFile($installDir, 'src/cli/exemple.php');
     testDirectoryOrFile($installDir, 'web/index.php');
-    testDirectoryOrFile($installDir, '.htaccess');
+    testDirectoryOrFile($installDir, 'web/.htaccess');
     testDirectoryOrFile($installDir, 'cli.php');
 }

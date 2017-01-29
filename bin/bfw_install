@@ -155,7 +155,7 @@ fi
 if [ "$BFWfail" = false ] ;then
     echo -n '  > Copy .htaccess file ...'
 
-    if cp $DIR/install/skeleton/.htaccess ./.htaccess ;then
+    if cp $DIR/install/skeleton/.htaccess web/.htaccess ;then
         echo '\033[1;32m Done\033[0m'
     else
         echo '\033[1;31m Fail\033[0m'
