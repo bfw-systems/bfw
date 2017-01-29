@@ -224,11 +224,8 @@ class Errors
         $errLine,
         $backtrace
     ) {
-        error_log(
-            'Error detected : '
-            .$erreurType.' '.$errMsg
-            .' at '.$errFile.':'.$errLine
-        );
+        $calledClass = get_called_class();
+        $calledClass::saveIntoPhpLog($erreurType, $errMsg, $errFile, $errLine);
         
         $class  = $renderInfos['class'];
         $method = $renderInfos['method'];
@@ -253,6 +250,19 @@ class Errors
             $errFile,
             $errLine,
             $backtrace
+        );
+    }
+    
+    protected static function saveIntoPhpLog(
+        $errType,
+        $errMsg,
+        $errFile,
+        $errLine
+    ) {
+        error_log(
+            'Error detected : '
+            .$errType.' '.$errMsg
+            .' at '.$errFile.':'.$errLine
         );
     }
     

@@ -85,4 +85,13 @@ class Errors extends \BFW\Core\Errors
             'backtrace' => $backtrace
         ];
     }
+    
+    protected static function saveIntoPhpLog(
+        $errType,
+        $errMsg,
+        $errFile,
+        $errLine
+    ) {
+        return;
+    }
 }
