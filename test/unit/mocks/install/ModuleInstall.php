@@ -6,6 +6,8 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
 {
     protected $forcedInfos = [];
     
+    public static $removeDirectoryStatus = true;
+    
     public function forceInfos($newInfos)
     {
         $this->forcedInfos = $newInfos;
@@ -27,5 +29,10 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
         }
         
         return $this->{$varName};
+    }
+    
+    protected static function removeDirectory($dirPath)
+    {
+        return self::$removeDirectoryStatus;
     }
 }

@@ -206,11 +206,11 @@ class ModuleInstall extends atoum
                         .'[Force Reinstall: Remove symlink] '."\033[1;32mDone\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
-                        .'[Force Reinstall: Remove symlink] '."\033[1;32mCreated.\033[0m\n"
+                        .'[Force Reinstall: Remove directory] '."\033[1;32mCreated.\033[0m\n"
                         .' >> Copy config1.php ... '
-                        ."\033[1;33mAlready exist.\033[0m\n"
+                        ."\033[1;32mDone\033[0m\n"
                         .' >> Copy config2.json ... '
-                        ."\033[1;33mAlready exist.\033[0m\n"
+                        ."\033[1;32mDone\033[0m\n"
                         .' > Run install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
@@ -233,8 +233,18 @@ class ModuleInstall extends atoum
             ->and($this->function->symlink = true)
             ->and($this->function->unlink = true)
             ->and($this->function->mkdir = true)
-            ->and($this->function->rmdir = true)
-            ->and($this->function->file_exists = true)
+            ->and(MockModuleInstall::$removeDirectoryStatus = true)
+            ->and($this->function->file_exists = function($path) {
+                //Test file already exist in config app directory
+                if(
+                    $path === $this->configPath.'test/config1.php' ||
+                    $path === $this->configPath.'test/config2.json'
+                ) {
+                    return false;
+                }
+                
+                return true;
+            })
             ->then
             
             //Output() closure not working with function mocking.
@@ -281,7 +291,7 @@ class ModuleInstall extends atoum
             ->if($this->function->copy = true)
             ->and($this->function->unlink = true)
             ->and($this->function->mkdir = true)
-            ->and($this->function->rmdir = true)
+            ->and(MockModuleInstall::$removeDirectoryStatus = true)
             ->and($this->function->symlink = function($target, $link) {
                 if ($target === $this->sourcePath.'/src') {
                     return false;
@@ -334,7 +344,7 @@ class ModuleInstall extends atoum
             ->if($this->function->copy = true)
             ->and($this->function->file_exists = true)
             ->and($this->function->mkdir = true)
-            ->and($this->function->rmdir = true)
+            ->and(MockModuleInstall::$removeDirectoryStatus = true)
             ->and($this->function->symlink = true)
             ->and($this->function->unlink = function($path) {
                 if ($path === $this->modulePath.'test') {
@@ -374,7 +384,7 @@ class ModuleInstall extends atoum
                         .'[Force Reinstall: Remove symlink] '."\033[1;32mDone\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
-                        .'[Force Reinstall: Remove symlink] '
+                        .'[Force Reinstall: Remove directory] '
                         ."\033[1;31mRemove module config directory fail.\033[0m\n"
         ;
         
@@ -395,7 +405,7 @@ class ModuleInstall extends atoum
             ->if($this->function->copy = true)
             ->and($this->function->file_exists = true)
             ->and($this->function->mkdir = true)
-            ->and($this->function->rmdir = false)
+            ->and(MockModuleInstall::$removeDirectoryStatus = false)
             ->and($this->function->symlink = true)
             ->and($this->function->unlink = true)
             ->then
@@ -451,7 +461,7 @@ class ModuleInstall extends atoum
             ->if($this->function->copy = true)
             ->and($this->function->file_exists = false)
             ->and($this->function->mkdir = false)
-            ->and($this->function->rmdir = true)
+            ->and(MockModuleInstall::$removeDirectoryStatus = true)
             ->and($this->function->symlink = true)
             ->and($this->function->unlink = true)
             ->then
@@ -510,7 +520,7 @@ class ModuleInstall extends atoum
             
             ->if($this->function->copy = true)
             ->and($this->function->mkdir = false)
-            ->and($this->function->rmdir = true)
+            ->and(MockModuleInstall::$removeDirectoryStatus = true)
             ->and($this->function->symlink = true)
             ->and($this->function->unlink = true)
             ->and($this->function->file_exists = function($path) {
@@ -582,7 +592,7 @@ class ModuleInstall extends atoum
             
             ->if($this->function->copy = false)
             ->and($this->function->mkdir = false)
-            ->and($this->function->rmdir = true)
+            ->and(MockModuleInstall::$removeDirectoryStatus = true)
             ->and($this->function->symlink = true)
             ->and($this->function->unlink = true)
             ->and($this->function->file_exists = function($path) {
@@ -649,7 +659,7 @@ class ModuleInstall extends atoum
             
             ->if($this->function->copy = true)
             ->and($this->function->mkdir = false)
-            ->and($this->function->rmdir = true)
+            ->and(MockModuleInstall::$removeDirectoryStatus = true)
             ->and($this->function->symlink = true)
             ->and($this->function->unlink = true)
             ->and($this->function->file_exists = function($path) {
@@ -697,7 +707,7 @@ class ModuleInstall extends atoum
             
             ->if($this->function->copy = true)
             ->and($this->function->mkdir = false)
-            ->and($this->function->rmdir = true)
+            ->and(MockModuleInstall::$removeDirectoryStatus = true)
             ->and($this->function->symlink = true)
             ->and($this->function->unlink = true)
             ->and($this->function->file_exists = true)

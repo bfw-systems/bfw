@@ -295,10 +295,12 @@ class ModuleInstall
         
         //If the directory already exist and if it's a reinstall
         if ($alreadyExist && $this->forceReinstall === true) {
-            echo '[Force Reinstall: Remove symlink] ';
+            echo '[Force Reinstall: Remove directory] ';
+            
+            $calledClass  = get_called_class(); //Autorize extends this class
             $alreadyExist = false;
             
-            if (!rmdir($this->targetConfigPath)) {
+            if (!$calledClass::removeDirectory($this->targetConfigPath)) {
                 echo "\033[1;31m"
                     .'Remove module config directory fail.'
                     ."\033[0m\n";
@@ -326,6 +328,45 @@ class ModuleInstall
         echo "\033[1;31mFail. \033[0m\n";
         
         return false;
+    }
+    
+    /**
+     * Supprime les dossiers récursivement
+     * 
+     * @param string $dirPath Le chemin vers le dossier
+     * 
+     * @return boolean
+     */
+    protected static function removeDirectory($dirPath)
+    {
+        $calledClass  = get_called_class(); //Autorize extends this class
+        
+        $dir = opendir($dirPath);
+        if ($dir === false) {
+            return false;
+        }
+        
+        while (($file = readdir($dir)) !== false) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+            
+            $removeStatus = true;
+            $filePath     = $dirPath.'/'.$file;
+            
+            if (is_dir($filePath)) {
+                $removeStatus = $calledClass::removeDirectory($filePath);
+            } elseif (is_file($filePath) || is_link($filePath)) {
+                $removeStatus = unlink($filePath);
+            }
+            
+            if ($removeStatus === false) {
+                return false;
+            }
+        }
+        
+        closedir($dir);
+        return rmdir($dirPath);
     }
     
     /**
