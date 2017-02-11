@@ -186,7 +186,7 @@ class Config
 
         $config = (array) $this->config[$file];
 
-        if (!isset($config[$key])) {
+        if (!array_key_exists($key, $config)) {
             throw new Exception('The config key '.$key.' not exist in config');
         }
 

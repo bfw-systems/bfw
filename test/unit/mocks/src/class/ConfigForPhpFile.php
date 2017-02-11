@@ -19,7 +19,8 @@ class ConfigForPhpFile extends \BFW\Config
             'errorRenderFct' => (object) [
                 'default' => '\BFW\Core\Errors::defaultErrorRender',
                 'cli'     => '\BFW\Core\Errors::defaultCliErrorRender'
-            ]
+            ],
+            'fixNullValue' => null
         ];
     }
 }

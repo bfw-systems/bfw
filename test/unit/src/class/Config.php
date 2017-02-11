@@ -97,7 +97,9 @@ class Config extends atoum
             ->string($errorRenderFct->default)
                 ->isEqualTo('\BFW\Core\Errors::defaultErrorRender')
             ->string($errorRenderFct->cli)
-                ->isEqualTo('\BFW\Core\Errors::defaultCliErrorRender');
+                ->isEqualTo('\BFW\Core\Errors::defaultCliErrorRender')
+            ->variable($config->getConfig('fixNullValue'))
+                ->isNull();
     }
     
     public function testConfigUnsupportedFileExt()
