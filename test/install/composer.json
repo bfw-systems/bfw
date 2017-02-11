@@ -1,7 +1,14 @@
 {
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/bulton-fr/bfw-test-install.git"
+        }
+    ],
     "require": {
         "bulton-fr/bfw": "3.0.x-dev",
-        "bulton-fr/bfw-hello-world": "1.0.x-dev"
+        "bulton-fr/bfw-hello-world": "1.0.x-dev",
+        "bulton-fr/bfw-test-install": "dev-master"
     },
     "minimum-stability": "RC"
 }

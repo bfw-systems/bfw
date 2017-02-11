@@ -66,6 +66,24 @@ class ModuleInstall extends atoum
         //Get name without default value tested on testLoadInfos()
     }
     
+    public function testGetSourcePath()
+    {
+        $this->assert('test getSourcePath with default value')
+            ->string($this->mock->getSourcePath())
+                ->isEqualTo($this->sourcePath);
+        
+        //Get sourcePath without default value tested on testLoadInfos()
+    }
+    
+    public function testGetSourceInstallScript()
+    {
+        $this->assert('test getSourceInstallScript with default value')
+            ->string($this->mock->getSourceInstallScript())
+                ->isEqualTo('');
+        
+        //Get sourceInstallScript without default value tested on testLoadInfos()
+    }
+    
     public function testLoadInfosWithoutConfig()
     {
         $this->assert('test loadInfos without install config (exception)')
@@ -94,7 +112,7 @@ class ModuleInstall extends atoum
                 ->isEqualTo($this->bfwPath.'/app/config/')
             ->string($this->mock->bfwModulePath)
                 ->isEqualTo($this->bfwPath.'/app/modules/')
-            ->string($this->mock->sourcePath)
+            ->string($this->mock->getSourcePath())
                 ->isEqualTo($this->sourcePath)
             ->string($this->mock->sourceSrcPath)
                 ->isEqualTo($this->sourcePath.'/src')
@@ -133,7 +151,7 @@ class ModuleInstall extends atoum
                 ->isEqualTo($this->bfwPath.'/app/config/')
             ->string($this->mock->bfwModulePath)
                 ->isEqualTo($this->bfwPath.'/app/modules/')
-            ->string($this->mock->sourcePath)
+            ->string($this->mock->getSourcePath())
                 ->isEqualTo($this->sourcePath)
             ->string($this->mock->sourceSrcPath)
                 ->isEqualTo($this->sourcePath.'/src')
@@ -148,7 +166,7 @@ class ModuleInstall extends atoum
                     'config1.php',
                     'config2.json'
                 ])
-            ->string($this->mock->sourceInstallScript)
+            ->string($this->mock->getSourceInstallScript())
                 ->isEqualTo('install.php');
     }
     
@@ -164,7 +182,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;33mAlready exist.\033[0m\n"
-                        .' > Run install specific script :'."\n"
+                        .' > Check install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -211,7 +229,7 @@ class ModuleInstall extends atoum
                         ."\033[1;32mDone\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;32mDone\033[0m\n"
-                        .' > Run install specific script :'."\n"
+                        .' > Check install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -270,7 +288,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;33mAlready exist.\033[0m\n"
-                        .' > Run install specific script :'."\n"
+                        .' > Check install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -440,7 +458,7 @@ class ModuleInstall extends atoum
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
                         ."\033[1;31mFail. \033[0m\n"
-                        .' > Run install specific script :'."\n"
+                        .' > Check install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -500,7 +518,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;31mConfig file not exist in module source.\033[0m\n"
-                        .' > Run install specific script :'."\n"
+                        .' > Check install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -572,7 +590,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;31mCopy fail.\033[0m\n"
-                        .' > Run install specific script :'."\n"
+                        .' > Check install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -639,7 +657,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mAlready exist.\033[0m\n"
                         .' >> Copy config2.json ... '
                         ."\033[1;32mDone\033[0m\n"
-                        .' > Run install specific script :'."\n"
+                        .' > Check install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         
@@ -690,7 +708,7 @@ class ModuleInstall extends atoum
                         ."\033[1;33mNot created. Module already exist in 'modules' directory.\033[0m\n"
                         .' > Copy config files : '."\n"
                         .' >> '."\033[1;33m".'No config file declared. Pass'."\033[0m\n"
-                        .' > Run install specific script :'."\n"
+                        .' > Check install specific script :'."\n"
                         ." >> \033[1;33m".'No specific script declared. Pass'."\033[0m\n"
         ;
         

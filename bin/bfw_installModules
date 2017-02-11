@@ -39,16 +39,12 @@ if (isset($cliArgs['bfw-path'])) {
     $bfwPath = realpath($cliArgs['p']);
 }
 
-define('BFW_PATH', $bfwPath);
-
 $vendorPath = $bfwPath.'/vendor';
 if (isset($cliArgs['vendor-path'])) {
     $vendorPath = realpath($cliArgs['vendor-path']);
 } elseif (isset($cliArgs['v'])) {
     $vendorPath = realpath($cliArgs['v']);
 }
-
-define('VENDOR_PATH', $vendorPath);
 
 $reinstall = false;
 if (isset($cliArgs['reinstall']) || isset($cliArgs['r'])) {
@@ -69,8 +65,10 @@ require_once($vendorPath.'/autoload.php');
 $listModulesFind = [];
 
 //Check if a part of framework structure is find on declared path
-if (!file_exists($bfwPath.'/app/config/') || !file_exists($bfwPath.'/app/modules/'))
-{
+if (
+    !file_exists($bfwPath.'/app/config/')
+    || !file_exists($bfwPath.'/app/modules/')
+) {
     $errorMsg = 'Directory "config" or "modules" is not found in bfw-path. '
                 .'Check your path or reinstall the framework.';
     
@@ -79,23 +77,24 @@ if (!file_exists($bfwPath.'/app/config/') || !file_exists($bfwPath.'/app/modules
     exit;
 }
 
+$app = \BFW\Install\Application::getInstance([
+    'rootDir'    => $bfwPath,
+    'vendorDir'  => $vendorPath,
+    'runSession' => false
+]);
+
 //Run search of modules in vendor directory
 $readDir = new \BFW\Install\ReadDirLoadModule($listModulesFind);
 $readDir->run($vendorPath.'/');
 
 //If no module has been found in vendor directory
-if (count($listModulesFind) <= 0)
-{
+if (count($listModulesFind) <= 0) {
     echo "\033[0;33m No module found in vendor-path. \033[0m\n";
     exit;
 }
 
-//Hack constant for Module class
-define('MODULES_DIR', '');
-
 //Pour chaque module trouvé dans le vendor
-foreach ($listModulesFind as $moduleFindPath)
-{
+foreach ($listModulesFind as $moduleFindPath) {
     $module = new \BFW\Install\ModuleInstall(
         $bfwPath,
         realpath($moduleFindPath)
@@ -103,8 +102,7 @@ foreach ($listModulesFind as $moduleFindPath)
     
     try {    
         $module->loadInfos();
-    }
-    catch(\Exception $e) {
+    } catch(\Exception $e) {
         echo "...\033[1;31m Module "
             .$module->getName()
             .' error : '
@@ -118,5 +116,9 @@ foreach ($listModulesFind as $moduleFindPath)
     
     if ($specificModule === '' || $specificModule === $module->getName()) {
         $module->install($reinstall);
+        $app->addModuleInstallInstance($module);
     }
 }
+
+//To run module install scripts
+$app->run();

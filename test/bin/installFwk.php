@@ -79,7 +79,7 @@ for ($installIndex = 0; $installIndex < 2; $installIndex++) {
     
     echo $installOutput;
     
-    //echo "\n";
+    echo "\n";
     //echo `cd $installDir && ls -al *`;
     
     echo 'Test output returned by script : ';

@@ -106,6 +106,26 @@ class ModuleInstall
     }
     
     /**
+     * Get accessor to source module path
+     * 
+     * @return string
+     */
+    public function getSourcePath()
+    {
+        return $this->sourcePath;
+    }
+    
+    /**
+     * Get accessor to the install script file or list
+     * 
+     * @return string|array
+     */
+    public function getSourceInstallScript()
+    {
+        return $this->sourceInstallScript;
+    }
+    
+    /**
      * Find the module name and declare path to target directories install.
      * 
      * @return void
@@ -192,7 +212,7 @@ class ModuleInstall
         try {
             $this->createSymbolicLink();
             $this->copyConfigFiles();
-            $this->runInstallScript();
+            $this->checkInstallScript();
         } catch (Exception $e) {
             trigger_error('Module '.$this->name.' install error : '.$e->getMessage(), E_USER_WARNING);
         }
@@ -412,9 +432,9 @@ class ModuleInstall
      * 
      * @return void
      */
-    protected function runInstallScript()
+    protected function checkInstallScript()
     {
-        echo ' > Run install specific script :'."\n";
+        echo ' > Check install specific script :'."\n";
 
         //If no script to complete the install
         if (
@@ -433,8 +453,15 @@ class ModuleInstall
         if ($this->sourceInstallScript === true) {
             $this->sourceInstallScript = 'runInstallModule.php';
         }
-
-        //Include the file for complete the install
+        
+        echo " >> \033[1;33m"
+            .'Scripts find. Add to list to execute.'
+            ."\033[0m\n";
+    }
+    
+    public function runInstall($scriptName) {
+        echo " >> \033[1;33m".'Execute script '.$scriptName."\033[0m\n";
+        
         require_once($this->sourcePath.'/'.$this->sourceInstallScript);
         echo "\n";
     }
