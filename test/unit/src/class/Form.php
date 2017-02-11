@@ -94,4 +94,22 @@ class Form extends atoum
             ->boolean($this->class->checkToken($formToken))
                 ->isFalse();
     }
+    
+    public function testHasToken()
+    {
+        $class = $this->class;
+        
+        global $_SESSION;
+        unset($_SESSION['token']);
+        
+        $this->assert('Call hasToken with no generated token')
+            ->boolean($class->hasToken())
+                ->isFalse();
+        
+        $this->assert('Call hasToken with an existing token')
+            ->if($this->class->createToken())
+            ->then
+            ->boolean($this->class->hasToken())
+                ->isTrue();
+    }
 }

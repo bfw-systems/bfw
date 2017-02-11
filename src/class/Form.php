@@ -146,4 +146,20 @@ class Form
         unset($_SESSION['token'][$this->formId]);
         return true;
     }
+    
+    /**
+     * Check if the form has a token
+     * 
+     * @return boolean
+     */
+    public function hasToken()
+    {
+        try {
+            $this->getToken();
+        } catch (Exception $e) {
+            return false;
+        }
+        
+        return true;
+    }
 }
