@@ -4,7 +4,7 @@
  */
 
 //Define cliMode to false (http(s) mode)
-define('cliMode', false);
+define('CLI_MODE', false);
 
 //Get path of root and vendor directories
 $rootDir   = realpath(__DIR__.'/../');

@@ -4,7 +4,7 @@
  */
 
 //Define cli mode to true
-define('cliMode', true);
+define('CLI_MODE', true);
 
 //If this file is not call from cli, we display an error
 if (PHP_SAPI !== 'cli') {
