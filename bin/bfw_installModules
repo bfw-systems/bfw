@@ -11,9 +11,9 @@
 
 //Get CLI parameters
 $cliArgs = getopt(
-    '',
+    'hp:v::rm::',
     [
-        'help::',
+        'help',
         'bfw-path:',
         'vendor-path::',
         'reinstall',
@@ -22,12 +22,12 @@ $cliArgs = getopt(
 );
 
 //Help text
-if (array_key_exists('help', $cliArgs)) {
+if (isset($cliArgs['help']) || isset($cliArgs['h'])) {
     echo 'HELP COMMAND'."\n";
-    echo '--bfw-path <directory> : Path to root BFW project'."\n";
-    echo '--vendor-path=<directory> : Path to vendor directory. Default is "./vendor/" from root BFW project'."\n";
-    echo '--reinstall : Force reinstall'."\n";
-    echo '--module=<directory> : Run the action only for this module'."\n";
+    echo '-p --bfw-path <directory> : Path to root BFW project'."\n";
+    echo '-v --vendor-path=<directory> : Path to vendor directory. Default is "./vendor/" from root BFW project'."\n";
+    echo '-r --reinstall : Force reinstall'."\n";
+    echo '-m --module=<directory> : Run the action only for this module'."\n";
     
     exit;
 }
@@ -35,6 +35,8 @@ if (array_key_exists('help', $cliArgs)) {
 $bfwPath = realpath(__DIR__.'/../../../../');
 if (isset($cliArgs['bfw-path'])) {
     $bfwPath = realpath($cliArgs['bfw-path']);
+} elseif (isset($cliArgs['p'])) {
+    $bfwPath = realpath($cliArgs['p']);
 }
 
 define('BFW_PATH', $bfwPath);
@@ -42,18 +44,22 @@ define('BFW_PATH', $bfwPath);
 $vendorPath = $bfwPath.'/vendor';
 if (isset($cliArgs['vendor-path'])) {
     $vendorPath = realpath($cliArgs['vendor-path']);
+} elseif (isset($cliArgs['v'])) {
+    $vendorPath = realpath($cliArgs['v']);
 }
 
 define('VENDOR_PATH', $vendorPath);
 
 $reinstall = false;
-if (array_key_exists('reinstall', $cliArgs)) {
+if (isset($cliArgs['reinstall']) || isset($cliArgs['r'])) {
     $reinstall = true;
 }
 
 $specificModule = '';
 if (isset($cliArgs['module'])) {
     $specificModule = $cliArgs['module'];
+} elseif (isset($cliArgs['m'])) {
+    $specificModule = $cliArgs['m'];
 }
 
 // Load composer autoloader
