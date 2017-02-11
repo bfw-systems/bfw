@@ -16,7 +16,7 @@ $cliArgs = getopt(
         'help::',
         'bfw-path:',
         'vendor-path::',
-        'reinstall::',
+        'reinstall',
         'module::'
     ]
 );
@@ -47,10 +47,8 @@ if (isset($cliArgs['vendor-path'])) {
 define('VENDOR_PATH', $vendorPath);
 
 $reinstall = false;
-if (isset($cliArgs['reinstall'])) {
-    if($cliArgs['reinstall'] === 'true') {
-        $reinstall = true;
-    }
+if (array_key_exists('reinstall', $cliArgs)) {
+    $reinstall = true;
 }
 
 $specificModule = '';
