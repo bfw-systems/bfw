@@ -51,7 +51,7 @@ if (isset($cliArgs['vendor-path'])) {
 define('VENDOR_PATH', $vendorPath);
 
 $reinstall = false;
-if (isset($cliArgs['reinstall']) || isset($cliArgs['r'])) {
+if (isset($cliArgs['reinstall']) || isset($cliArgs['r'])) {
     $reinstall = true;
 }
 
