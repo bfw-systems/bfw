@@ -24,10 +24,10 @@ $cliArgs = getopt(
 //Help text
 if (array_key_exists('help', $cliArgs)) {
     echo 'HELP COMMAND'."\n";
-    echo '--bfw-path : Path to root BFW project'."\n";
-    echo '--vendor-path : Path to vendor directory. Default is "./vendor/" from root BFW project'."\n";
+    echo '--bfw-path <directory> : Path to root BFW project'."\n";
+    echo '--vendor-path=<directory> : Path to vendor directory. Default is "./vendor/" from root BFW project'."\n";
     echo '--reinstall : Force reinstall'."\n";
-    echo '--module : Only action on this module'."\n";
+    echo '--module=<directory> : Run the action only for this module'."\n";
     
     exit;
 }
