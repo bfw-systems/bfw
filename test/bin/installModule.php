@@ -33,6 +33,12 @@ $expectedModuleOutput = "bfw-hello-world : Run install.\n"
 
 echo 'Test output returned by script : ';
 
+echo "\n[TRAVIS DEBUG]:\n--------------------------\n";
+print_r($moduleInstallOutput);
+echo "\n--------------------------\n";
+print_r($expectedModuleOutput);
+echo "\n--------------------------\n";
+
 if ($moduleInstallOutput !== $expectedModuleOutput) {
     echo "\033[1;31m[Fail]\033[0m\n";
     fwrite(STDERR, 'Text returned is not equal to expected text.');
