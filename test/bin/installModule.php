@@ -10,36 +10,69 @@ $moduleInstallOutput = [];
 exec('cd '.$installDir.' && ./vendor/bin/bfw_installModules', $moduleInstallOutput);
 
 $moduleInstallOutput  = implode("\n", $moduleInstallOutput);
-$expectedModuleOutput = "bfw-hello-world : Run install.\n"
+
+$wordsReadAllModules = "Read all modules to run install script :\n";
+
+$expectedInstallBfwHelloWorld = "bfw-hello-world : Run install.\n"
     ." > Create symbolic link ... \033[1;32mDone\033[0m\n"
     ." > Copy config files :\n"
     ." >> Create config directory for this module ... \033[1;32mCreated.\033[0m\n"
     ." >> Copy hello-world.json ... \033[1;32mDone\033[0m\n"
     ." > Check install specific script :\n"
-    ." >> \033[1;33mNo specific script declared. Pass\033[0m\n"
-    ."bfw-test-install : Run install.\n"
+    ." >> \033[1;33mNo specific script declared. Pass\033[0m\n";
+
+$expectedScriptBfwHelloWorld = " > Read for module bfw-hello-world\n"
+    ." >> No script to run.\n";
+
+$expectedInstallBfwTestInstall = "bfw-test-install : Run install.\n"
     ." > Create symbolic link ... \033[1;32mDone\033[0m\n"
     ." > Copy config files :\n"
     ." >> Create config directory for this module ... \033[1;32mCreated.\033[0m\n"
     ." >> Copy test-install.json ... \033[1;32mDone\033[0m\n"
     ." > Check install specific script :\n"
-    ." >> \033[1;33mScripts find. Add to list to execute.\033[0m\n"
-    ."Read all modules to run install script :\n"
-    ." > Read for module bfw-hello-world\n"
-    ." >> No script to run.\n"
-    ." > Read for module bfw-test-install\n"
+    ." >> \033[1;33mScripts find. Add to list to execute.\033[0m\n";
+
+$expectedScriptBfwHelloWorld = " > Read for module bfw-test-install\n"
     ." >> \033[1;33mExecute script install.php\033[0m\n"
     ."  \033[1;33mCreate install_test.php file into web directory\033[0m\n";
 
+$expectedModuleOutput = [
+    $expectedInstallBfwHelloWorld
+    .$expectedInstallBfwTestInstall
+    .$wordsReadAllModules
+    .$expectedScriptBfwHelloWorld
+    .$expectedInstallBfwTestInstall,
+    
+    $expectedInstallBfwTestInstall
+    .$expectedInstallBfwHelloWorld
+    .$wordsReadAllModules
+    .$expectedInstallBfwTestInstall
+    .$expectedScriptBfwHelloWorld,
+    
+    $expectedInstallBfwHelloWorld
+    .$expectedInstallBfwTestInstall
+    .$wordsReadAllModules
+    .$expectedInstallBfwTestInstall
+    .$expectedScriptBfwHelloWorld,
+    
+    $expectedInstallBfwTestInstall
+    .$expectedInstallBfwHelloWorld
+    .$wordsReadAllModules
+    .$expectedScriptBfwHelloWorld
+    .$expectedInstallBfwTestInstall,
+];
+
 echo 'Test output returned by script : ';
 
-echo "\n[TRAVIS DEBUG]:\n--------------------------\n";
+/*
+echo "\n[TRAVIS DEBUG]\n--------------------------\n";
 print_r($moduleInstallOutput);
 echo "\n--------------------------\n";
 print_r($expectedModuleOutput);
 echo "\n--------------------------\n";
+*/
 
-if ($moduleInstallOutput !== $expectedModuleOutput) {
+if (in_array($moduleInstallOutput, $expectedModuleOutput)) {
     echo "\033[1;31m[Fail]\033[0m\n";
     fwrite(STDERR, 'Text returned is not equal to expected text.');
     exit(1);
