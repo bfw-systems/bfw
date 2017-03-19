@@ -4,7 +4,6 @@ namespace BFW\Helpers\test\unit;
 
 use \atoum;
 use \BFW\Helpers\Secure as BfwSecure;
-use \BFW\Helpers\test\unit\mocks\Secure as MockSecure;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
@@ -79,13 +78,13 @@ class Secure extends atoum
         $this->initApp('');
         
         $this->assert('test Secure::securise for direct data')
-            ->integer(MockSecure::securise('10', 'int', false))
+            ->integer(BfwSecure::securise('10', 'int', false))
                 ->isEqualTo(10)
-            ->string(MockSecure::securise('test securise', 'text', false))
+            ->string(BfwSecure::securise('test securise', 'text', false))
                 ->isEqualTo('test securise');
         
         $this->assert('test Secure::securise for array data')
-            ->array(MockSecure::securise([
+            ->array(BfwSecure::securise([
                     'a' => 'test',
                     1 => 'test2'
                 ],
@@ -98,11 +97,11 @@ class Secure extends atoum
                 ]);
         
         $this->assert('test Secure::securise with addslashes text')
-            ->string(MockSecure::securise('it\'s a test !', 'text', false))
+            ->string(BfwSecure::securise('it\'s a test !', 'text', false))
                 ->isEqualTo('it\\\'s a test !');
         
         $this->assert('test Secure::securise with html text')
-            ->string(MockSecure::securise('<p>Test</p>', 'text', true))
+            ->string(BfwSecure::securise('<p>Test</p>', 'text', true))
                 ->isEqualTo('&lt;p&gt;Test&lt;/p&gt;');
     }
     
@@ -111,7 +110,7 @@ class Secure extends atoum
         $this->assert('test Secure::securise with a secure method')
             ->if($this->initApp(['\BFW\Helpers\test\unit\Secure', 'secureMethod']))
             ->then
-            ->string(MockSecure::securise('test', 'text', false))
+            ->string(BfwSecure::securise('test', 'text', false))
                 ->isEqualTo('testSecurised_test');
     }
     
@@ -120,7 +119,7 @@ class Secure extends atoum
         $this->initApp(['\BFW\Helpers\test\unit\Secure', 'secureMethod']);
         
         $this->assert('test Secure::getSqlSecureMethod')
-            ->array(MockSecure::getSqlSecureMethod())
+            ->array(BfwSecure::getSqlSecureMethod())
                 ->isEqualTo([
                     '\BFW\Helpers\test\unit\Secure',
                     'secureMethod'
@@ -136,12 +135,12 @@ class Secure extends atoum
                 'a' => 'test',
                 1 => 'test2'
             ])
-            ->string(MockSecure::getSecurisedKeyInArray($testedArray, 'a', 'text'))
+            ->string(BfwSecure::getSecurisedKeyInArray($testedArray, 'a', 'text'))
                 ->isEqualTo('test');
         
         $this->assert('test Secure::getSecurisedKeyInArray exception')
             ->exception(function() use ($testedArray) {
-                MockSecure::getSecurisedKeyInArray($testedArray, 'b', 'text');
+                BfwSecure::getSecurisedKeyInArray($testedArray, 'b', 'text');
             })
                 ->hasMessage('The key b not exist');
     }
@@ -156,7 +155,7 @@ class Secure extends atoum
         $this->initApp('');
         
         $this->assert('test Secure::getSecurisedPostKey')
-            ->string(MockSecure::getSecurisedPostKey('login', 'text'))
+            ->string(BfwSecure::getSecurisedPostKey('login', 'text'))
                 ->isEqualTo('test login');
     }
     
@@ -170,7 +169,7 @@ class Secure extends atoum
         $this->initApp('');
         
         $this->assert('test Secure::getSecurisedGetKey')
-            ->integer(MockSecure::getSecurisedGetKey('id', 'int'))
+            ->integer(BfwSecure::getSecurisedGetKey('id', 'int'))
                 ->isEqualTo(12350);
     }
 }

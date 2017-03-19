@@ -111,8 +111,7 @@ class Secure
      */
     public static function getSqlSecureMethod()
     {
-        $currentClass   = get_called_class();
-        $application    = $currentClass::getApplicationInstance();
+        $application    = \BFW\Application::getInstance();
         $secureFunction = $application->getConfig('sqlSecureMethod');
 
         if (!is_callable($secureFunction, false)) {
@@ -120,11 +119,6 @@ class Secure
         }
 
         return $secureFunction;
-    }
-    
-    protected static function getApplicationInstance()
-    {
-        return \BFW\Application::getInstance();
     }
 
     /**
