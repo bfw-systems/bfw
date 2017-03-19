@@ -3,7 +3,7 @@
 namespace BFW\Memcache\test\unit;
 
 use \atoum;
-use \BFW\test\unit\mocks\ApplicationForceConfig as MockApp;
+
 use \BFW\Memcache\test\unit\mocks\Memcache as MockMemcache;
 
 require_once(__DIR__.'/../../../../../vendor/autoload.php');
@@ -66,10 +66,12 @@ class Memcache extends atoum
             ]
         ];
         
-        $this->app = MockApp::init([
-            'forceConfig' => $this->forcedConfig,
-            'vendorDir'   => __DIR__.'/../../../../../vendor'
-        ]);
+        $this->app = MockMemcache::initApp(
+            $this->forcedConfig,
+            [
+                'vendorDir' => __DIR__.'/../../../../../vendor'
+            ]
+        );
         
         //$this->class = new \BFW\Memcache\Memcache($this->app);
     }
