@@ -30,12 +30,25 @@ class Application extends atoum
         MockApp::removeInstance();
         
         $options = [
-            'forceConfig' => $this->forcedConfig,
-            'vendorDir'   => __DIR__.'/../../../../vendor',
-            'testOption'  => 'unit test'
+            'forceConfig'     => $this->forcedConfig,
+            'vendorDir'       => __DIR__.'/../../../../vendor',
+            'testOption'      => 'unit test',
+            'overrideMethods' => [
+                'runCliFile'     => null,
+                'initModules'    => function() {
+                    $this->modules = new \BFW\test\unit\mocks\Modules;
+                },
+                'readAllModules' => function() {
+                    $modules = $this->modules;
+                    foreach($this->modulesToAdd as $moduleName => $module) {
+                        $modules::declareModuleConfig($moduleName, $module->config);
+                        $modules::declareModuleLoadInfos($moduleName, $module->loadInfos);
+                    }
+                }
+            ]
         ];
         
-        $this->function->scandir = ['.', '..'];
+        //$this->function->scandir = ['.', '..'];
         $this->mock = MockApp::init($options);
     }
     
