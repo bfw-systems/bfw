@@ -92,9 +92,9 @@ return [
     ],
     
     /**
-     * @var string sqlSecureMethod : SQL Method used for securise datas
+     * @var null|callable sqlSecureMethod : SQL Method used for securise datas
      */
-    'sqlSecureMethod'    => '',
+    'sqlSecureMethod'    => null,
     
     /**
      * @var array memcached : Memcache(d) server(s) config
