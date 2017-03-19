@@ -4,6 +4,7 @@ namespace BFW\Core\test\unit;
 
 use \atoum;
 use \BFW\Core\test\unit\mocks\Errors as MockErrors;
+use \BFW\test\helpers\ApplicationInit as AppInit;
 
 require_once(__DIR__.'/../../../../../vendor/autoload.php');
 require_once(__DIR__.'/../../../mocks/src/class/core/ErrorsFunctions.php');
@@ -66,12 +67,9 @@ class Errors extends atoum
             ]
         ];
         
-        $this->app = MockErrors::initApp(
-            $this->forcedConfig,
-            [
-                'vendorDir' => __DIR__.'/../../../../../vendor'
-            ]
-        );
+        $this->app = AppInit::init([
+            'forceConfig' => $this->forcedConfig
+        ]);
         
         if ($testMethod === 'testConstructor') {
             return;

@@ -2,21 +2,22 @@
 
 namespace BFW\test\helpers;
 
-trait ApplicationInit
+class ApplicationInit extends \BFW\test\unit\mocks\Application
 {
-    public static function initApp($config = [], $options = [])
+    protected function initSystem($options)
     {
         $forcedConfig = require(__DIR__.'/applicationConfig.php');
-        $forcedConfig = array_merge((array) $config, $forcedConfig);
         
-        $vendorPath = __DIR__.'/../../../vendor';
-        if (strpos(__DIR__, 'vendor') !== false) {
-            $vendorPath = __DIR__.'/../../../../..';
+        if (isset($options['forceConfig'])) {
+            $forcedConfig = array_merge(
+                $forcedConfig,
+                (array) $options['forceConfig']
+            );
         }
         
         $forcedOptions = [
             'forceConfig'     => $forcedConfig,
-            'vendorDir'       => __DIR__.'/../../../../vendor',
+            'vendorDir'       => __DIR__.'/../../../vendor',
             'testOption'      => 'unit test',
             'overrideMethods' => [
                 'runCliFile'     => null,
@@ -38,8 +39,8 @@ trait ApplicationInit
             ]
         ];
             
-        $forcedOptions = array_merge((array) $options, $forcedOptions);
+        $forcedOptions = array_merge($forcedOptions, (array) $options);
         
-        return \BFW\test\unit\mocks\Application::init($forcedOptions);
+        parent::initSystem($forcedOptions);
     }
 }

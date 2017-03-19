@@ -4,12 +4,18 @@ namespace BFW\Helpers\test\unit;
 
 use \atoum;
 use \BFW\Helpers\Secure as BfwSecure;
+use \BFW\test\helpers\ApplicationInit as AppInit;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 class Secure extends atoum
 {
-    use \BFW\test\helpers\ApplicationInit;
+    protected $app;
+    
+    public function beforeTestMethod($testMethod)
+    {
+        $this->app = AppInit::init();
+    }
     
     public static function secureMethod($str)
     {
@@ -75,7 +81,7 @@ class Secure extends atoum
     
     public function testSecurise()
     {
-        $this->initApp('');
+        $this->app->updateKey('sqlSecureMethod', '');
         
         $this->assert('test Secure::securise for direct data')
             ->integer(BfwSecure::securise('10', 'int', false))
@@ -108,7 +114,10 @@ class Secure extends atoum
     public function testSecuriseWithSecureMethod()
     {
         $this->assert('test Secure::securise with a secure method')
-            ->if($this->initApp(['\BFW\Helpers\test\unit\Secure', 'secureMethod']))
+            ->if($this->app->updateKey(
+                'sqlSecureMethod',
+                ['\BFW\Helpers\test\unit\Secure', 'secureMethod']
+            ))
             ->then
             ->string(BfwSecure::securise('test', 'text', false))
                 ->isEqualTo('testSecurised_test');
@@ -116,7 +125,10 @@ class Secure extends atoum
     
     public function testGetSqlSecureMethod()
     {
-        $this->initApp(['\BFW\Helpers\test\unit\Secure', 'secureMethod']);
+        $this->app->updateKey(
+            'sqlSecureMethod',
+            ['\BFW\Helpers\test\unit\Secure', 'secureMethod']
+        );
         
         $this->assert('test Secure::getSqlSecureMethod')
             ->array(BfwSecure::getSqlSecureMethod())
@@ -128,7 +140,7 @@ class Secure extends atoum
     
     public function testGetSecurisedKeyInArray()
     {
-        $this->initApp('');
+        $this->app->updateKey('sqlSecureMethod', '');
         
         $this->assert('test Secure::getSecurisedKeyInArray')
             ->given($testedArray = [
@@ -152,7 +164,7 @@ class Secure extends atoum
             'password' => 'test pwd'
         ];
         
-        $this->initApp('');
+        $this->app->updateKey('sqlSecureMethod', '');
         
         $this->assert('test Secure::getSecurisedPostKey')
             ->string(BfwSecure::getSecurisedPostKey('login', 'text'))
@@ -166,7 +178,7 @@ class Secure extends atoum
             'page' => 2
         ];
         
-        $this->initApp('');
+        $this->app->updateKey('sqlSecureMethod', '');
         
         $this->assert('test Secure::getSecurisedGetKey')
             ->integer(BfwSecure::getSecurisedGetKey('id', 'int'))
