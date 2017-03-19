@@ -147,6 +147,16 @@ class Application extends Subjects
     }
     
     /**
+     * Getter to access to memcache instance
+     * 
+     * @return Object|null
+     */
+    public function getMemcached()
+    {
+        return $this->memcached;
+    }
+    
+    /**
      * Getter to access to a module
      * 
      * @param string $moduleName The module name to access
