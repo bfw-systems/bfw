@@ -279,7 +279,7 @@ class Application extends Subjects
      */
     protected function initErrors()
     {
-        $this->errors = new \BFW\Core\Errors($this);
+        $this->errors = new \BFW\Core\Errors();
     }
 
     /**

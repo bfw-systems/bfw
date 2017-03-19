@@ -2,39 +2,16 @@
 
 namespace BFW\Core\test\unit\mocks;
 
-use \BFW\test\unit\mocks\ApplicationForceConfig as MockApp;
-
 class Errors extends \BFW\Core\Errors
 {
     public static $lastRenderCallInfos;
     
-    public function __construct(\BFW\Application $app)
+    public function __construct()
     {
-        parent::__construct($app);
+        parent::__construct();
         
         restore_error_handler();
         restore_exception_handler();
-    }
-    
-    protected static function getApp()
-    {
-        parent::getApp();
-        
-        if(is_null(self::$app)) {
-            self::$app = MockApp::getInstance();
-        }
-        
-        return self::$app;
-    }
-    
-    public function removeAppInstance()
-    {
-        self::$app = null;
-    }
-    
-    public function callGetApp()
-    {
-        return self::getApp();
     }
     
     public function callDefineErrorHandler()

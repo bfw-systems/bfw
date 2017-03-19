@@ -4,6 +4,7 @@ namespace BFW\Core\test\unit;
 
 use \atoum;
 use \BFW\test\unit\mocks\ApplicationForceConfig as MockApp;
+use \BFW\Core\test\unit\mocks\Errors as MockErrors;
 
 require_once(__DIR__.'/../../../../../vendor/autoload.php');
 require_once(__DIR__.'/../../../mocks/src/class/core/ErrorsFunctions.php');
@@ -75,13 +76,13 @@ class Errors extends atoum
             return;
         }
         
-        $this->mock = new \BFW\Core\test\unit\mocks\Errors($this->app);
+        $this->mock = new MockErrors;
     }
     
     public function testConstructor()
     {
         $this->assert('test constructor')
-            ->object($this->mock = new \BFW\Core\test\unit\mocks\Errors($this->app))
+            ->object($this->mock = new MockErrors)
                 ->isInstanceOf('\BFW\Core\Errors');
     }
     
@@ -145,24 +146,6 @@ class Errors extends atoum
                     $this->mock,
                     'exceptionHandler'
                 ]);
-    }
-    
-    public function testGetApp()
-    {
-        $this->assert('test getApp')
-            ->object($app = $this->mock->callGetApp())
-                ->isInstanceOf('\BFW\Application');
-        
-        $this->assert('test getApp : find app instance')
-            ->if($this->mock->removeAppInstance())
-            ->then
-            ->object($this->mock->callGetApp())
-                ->isInstanceOf('\BFW\Application')
-                ->isEqualTo($app)
-            //Recall for static instance check
-            ->object($this->mock->callGetApp())
-                ->isInstanceOf('\BFW\Application')
-                ->isEqualTo($app);
     }
     
     public function testGetErrorRender()

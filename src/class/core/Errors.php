@@ -2,8 +2,6 @@
 
 namespace BFW\Core;
 
-use \BFW\Application;
-
 /**
  * Class used to have a personnal message/page for errors and exceptions
  */
@@ -16,13 +14,9 @@ class Errors
     
     /**
      * Constructeur
-     * 
-     * @param \BFW\Application $app : L'instance d'Application à utiliser
      */
-    public function __construct(Application $app)
+    public function __construct()
     {
-        self::$app = $app;
-        
         //Find and create the handler for errors
         $this->defineErrorHandler();
         
@@ -71,21 +65,6 @@ class Errors
     }
     
     /**
-     * Get the Application instance
-     * It's a method to allow override
-     * 
-     * @return \BFW\Application
-     */
-    protected static function getApp()
-    {
-        if (is_null(self::$app)) {
-            self::$app = Application::getInstance();
-        }
-        
-        return self::$app;
-    }
-    
-    /**
      * get the error render from config for cli or default
      * 
      * @return boolean|array Render infos
@@ -94,9 +73,8 @@ class Errors
      */
     public static function getErrorRender()
     {
-        $calledClass = get_called_class();
-        $app         = $calledClass::getApp();
-        $renderFcts  = $app->getConfig('errorRenderFct');
+        $app        = \BFW\Application::getInstance();
+        $renderFcts = $app->getConfig('errorRenderFct');
         
         return self::defineRenderToUse($renderFcts);
     }
@@ -110,9 +88,8 @@ class Errors
      */
     public static function getExceptionRender()
     {
-        $calledClass = get_called_class();
-        $app         = $calledClass::getApp();
-        $renderFcts  = $app->getConfig('exceptionRenderFct');
+        $app        = \BFW\Application::getInstance();
+        $renderFcts = $app->getConfig('exceptionRenderFct');
         
         return self::defineRenderToUse($renderFcts);
     }
