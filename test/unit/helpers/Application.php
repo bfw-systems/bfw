@@ -2,33 +2,44 @@
 
 namespace BFW\test\helpers;
 
-/**
- * If you want use this trait from a external script, because composer not
- * load class in "autoload-dev" section, you should manual include : 
- * * /vendor/bulton-fr/bfw/test/unit/mocks/src/class/ApplicationForceConfig.php
- * * /vendor/bulton-fr/bfw/test/unit/mocks/src/class/Application.php
- * * /vendor/bulton-fr/bfw/test/unit/mocks/src/class/ConfigForceDatas.php
- * * /vendor/bulton-fr/bfw/test/unit/mocks/src/class/Modules.php
- */
-
 trait Application
 {
-    protected function initApp($sqlSecureMethod)
+    public static function initApp($config = [], $options = [])
     {
         $forcedConfig = require(__DIR__.'/applicationConfig.php');
-        $forcedConfig['sqlSecureMethod'] = $sqlSecureMethod;
+        $forcedConfig = array_merge((array) $config, $forcedConfig);
         
         $vendorPath = __DIR__.'/../../../vendor';
         if (strpos(__DIR__, 'vendor') !== false) {
             $vendorPath = __DIR__.'/../../../../..';
         }
         
-        $options = [
-            'forceConfig' => $forcedConfig,
-            'vendorDir'   => $vendorPath
+        $forcedOptions = [
+            'forceConfig'     => $forcedConfig,
+            'vendorDir'       => __DIR__.'/../../../../vendor',
+            'testOption'      => 'unit test',
+            'overrideMethods' => [
+                'runCliFile'     => null,
+                'initModules'    => function() {
+                    $this->modules = new \BFW\test\unit\mocks\Modules;
+                },
+                'readAllModules' => function() {
+                    $modules = $this->modules;
+                    foreach($this->modulesToAdd as $moduleName => $module) {
+                        $modules::declareModuleConfig($moduleName, $module->config);
+                        $modules::declareModuleLoadInfos($moduleName, $module->loadInfos);
+                        
+                        $this->modules->addModule($moduleName);
+                    }
+                    
+                    $this->modules->readNeedMeDependencies();
+                    $this->modules->generateTree();
+                }
+            ]
         ];
+            
+        $forcedOptions = array_merge((array) $options, $forcedOptions);
         
-        $this->function->scandir = ['.', '..'];
-        \BFW\test\unit\mocks\Application::init($options);
+        return \BFW\test\unit\mocks\Application::init($forcedOptions);
     }
 }
