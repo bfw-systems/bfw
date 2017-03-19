@@ -21,11 +21,6 @@ class Module
     protected $config;
 
     /**
-     * @var \stdClass $installInfos All install informations for this module
-     */
-    protected $installInfos;
-
-    /**
      * @var \stdClass $loadInfos All informations about the module running
      */
     protected $loadInfos;
@@ -100,16 +95,6 @@ class Module
     public function getConfig()
     {
         return $this->config;
-    }
-
-    /**
-     * Get the installation informations
-     * 
-     * @return \stdClass
-     */
-    public function getInstallInfos()
-    {
-        return $this->installInfos;
     }
 
     /**

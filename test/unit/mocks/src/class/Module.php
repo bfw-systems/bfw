@@ -10,7 +10,6 @@ class Module extends \BFW\Module
         
         $this->config       = new \stdClass;
         $this->loadInfos    = new \stdClass;
-        $this->installInfos = new \stdClass;
     }
     
     public function forceConfig($config)
@@ -21,11 +20,6 @@ class Module extends \BFW\Module
     public function forceLoadInfos($loadInfos)
     {
         $this->loadInfos = $loadInfos;
-    }
-    
-    public function forceInstallInfos($installInfos)
-    {
-        $this->installInfos = $installInfos;
     }
     
     public function forceStatus($load, $run)

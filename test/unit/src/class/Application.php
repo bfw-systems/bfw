@@ -366,10 +366,7 @@ class Application extends atoum
         $this->assert('test readAllModules with one module')
             ->if($this->mock->modulesToAdd['test1'] = (object) [
                 'config'       => (object) [],
-                'loadInfos'    => (object) [],
-                'installInfos' => (object) [
-                    'priority' => 1
-                ]
+                'loadInfos'    => (object) []
             ])
             ->and($this->function->scandir = ['.', '..', 'test1'])
             ->and($this->function->realpath = 'test1')
@@ -394,10 +391,7 @@ class Application extends atoum
         $this->assert('test readAllModules with one module')
             ->if($this->mock->modulesToAdd['test1'] = (object) [
                 'config'       => (object) [],
-                'loadInfos'    => (object) [],
-                'installInfos' => (object) [
-                    'priority' => 1
-                ]
+                'loadInfos'    => (object) []
             ])
             ->and($this->function->scandir = ['.', '..', 'test1'])
             ->and($this->function->realpath = 'test1')
@@ -432,10 +426,7 @@ class Application extends atoum
             ->and($this->mock->forceConfig($this->forcedConfig))
             ->and($this->mock->modulesToAdd['test1'] = (object) [
                 'config'       => (object) [],
-                'loadInfos'    => (object) [],
-                'installInfos' => (object) [
-                    'priority' => 1
-                ]
+                'loadInfos'    => (object) []
             ])
             ->and($this->function->scandir = ['.', '..', 'test1'])
             ->and($this->function->realpath = 'test1')
