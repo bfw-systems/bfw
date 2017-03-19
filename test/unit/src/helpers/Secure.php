@@ -9,7 +9,7 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 class Secure extends atoum
 {
-    use \BFW\test\helpers\Application;
+    use \BFW\test\helpers\ApplicationInit;
     
     public static function secureMethod($str)
     {

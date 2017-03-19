@@ -2,7 +2,7 @@
 
 namespace BFW\test\helpers;
 
-trait Application
+trait ApplicationInit
 {
     public static function initApp($config = [], $options = [])
     {

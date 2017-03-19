@@ -4,7 +4,7 @@ namespace BFW\Core\test\unit\mocks;
 
 class Errors extends \BFW\Core\Errors
 {
-    use \BFW\test\helpers\Application;
+    use \BFW\test\helpers\ApplicationInit;
     
     public static $lastRenderCallInfos;
     
