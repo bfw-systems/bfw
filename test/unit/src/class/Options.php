@@ -1,7 +1,9 @@
 <?php
 
 namespace BFW\test\unit;
+
 use \atoum;
+use \BFW\test\unit\mocks\Options as MockOptions;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
@@ -118,19 +120,5 @@ class Options extends atoum
                 $mock->getOption('foo-bar');
             })
             ->hasMessage('Option key foo-bar not exist.');
-    }
-}
-
-/**
- * Mock de la class à tester
- */
-class MockOptions extends \BFW\Options
-{
-    /**
-     * Accesseur get
-     */
-    public function __get($name)
-    {
-        return $this->$name;
     }
 }

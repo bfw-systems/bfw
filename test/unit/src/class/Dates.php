@@ -1,7 +1,9 @@
 <?php
 
 namespace BFW\test\unit;
+
 use \atoum;
+use \BFW\test\unit\mocks\Dates as MockDates;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
@@ -370,18 +372,3 @@ class Dates extends atoum
                 ->isEqualTo('the '.$dateFormat.' at '.$timeFormat);
     }
 }
-
-/**
- * Mock de la class à tester
- */
-class MockDates extends \BFW\Dates
-{
-    /**
-     * Accesseur get
-     */
-    public function __get($name)
-    {
-        return $this->$name;
-    }
-}
-
