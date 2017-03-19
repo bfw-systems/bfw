@@ -11,11 +11,6 @@ class Memcached extends \Memcached
 {
     //Include traits to add some methods
     use \BFW\Traits\Memcache;
-    
-    /**
-     * @var \BFW\Application $app Instance of BFW Application
-     */
-    protected $app;
 
     /**
      * @var array $config Config define on bfw config file for memcache(d)
@@ -26,13 +21,11 @@ class Memcached extends \Memcached
      * Constructor.
      * Call parent constructor with the persistentId if declared in config
      * Connect to servers.
-     * 
-     * @param \BFW\Application $app The BFW Application instance
      */
-    public function __construct(\BFW\Application $app)
+    public function __construct()
     {
-        $this->app    = $app;
-        $this->config = $this->app->getConfig('memcached');
+        $app          = \BFW\Application::getInstance();
+        $this->config = $app->getConfig('memcached');
         
         if (!empty($this->config['persistentId'])) {
             parent::__construct($this->config['persistentId']);

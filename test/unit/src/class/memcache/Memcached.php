@@ -4,6 +4,7 @@ namespace BFW\Memcache\test\unit;
 
 use \atoum;
 use \BFW\test\unit\mocks\ApplicationForceConfig as MockApp;
+use \BFW\Memcache\test\unit\mocks\Memcached as MockMemcached;
 
 require_once(__DIR__.'/../../../../../vendor/autoload.php');
 
@@ -81,7 +82,7 @@ class Memcached extends atoum
                     'port' => 11211,
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
-            ->and($this->class = new \BFW\Memcache\test\unit\mocks\Memcached($this->app));
+            ->and($this->class = new MockMemcached);
     }
     
     protected function getMemcachedVersion()
@@ -108,12 +109,12 @@ class Memcached extends atoum
         $this->assert('test constructor without memcache server');
         
         if($memcachedVersion < '3.0.0') {
-            $this->object($this->class = new \BFW\Memcache\Memcached($this->app))
+            $this->object($this->class = new \BFW\Memcache\Memcached)
                     ->isInstanceOf('\BFW\Memcache\Memcached');
         } else {
             $this->given($app = $this->app)
-                ->exception(function() use ($app) {
-                    new \BFW\Memcache\Memcached($app);
+                ->exception(function() {
+                    new \BFW\Memcache\Memcached;
                 })
                     ->hasMessage('No memcached server connected.');
         }
@@ -128,7 +129,7 @@ class Memcached extends atoum
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
-            ->object($this->class = new \BFW\Memcache\Memcached($this->app))
+            ->object($this->class = new \BFW\Memcache\Memcached)
                 ->isInstanceOf('\BFW\Memcache\Memcached')
             ->and($this->class->quit());
     }
@@ -143,9 +144,9 @@ class Memcached extends atoum
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
-            ->object($this->class = new \BFW\Memcache\Memcached($this->app))
+            ->object($this->class = new \BFW\Memcache\Memcached)
                 ->isInstanceOf('\BFW\Memcache\Memcached')
-            ->object($this->class = new \BFW\Memcache\Memcached($this->app))
+            ->object($this->class = new \BFW\Memcache\Memcached)
                 ->isInstanceOf('\BFW\Memcache\Memcached')
             ->and($this->class->quit());
     }
@@ -167,8 +168,8 @@ class Memcached extends atoum
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
             ->given($app = $this->app)
-            ->exception(function() use ($app) {
-                new \BFW\Memcache\Memcached($app);
+            ->exception(function() {
+                new \BFW\Memcache\Memcached;
             })
                 ->hasMessage($exceptionMsg)
         ;

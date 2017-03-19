@@ -4,6 +4,7 @@ namespace BFW\Memcache\test\unit;
 
 use \atoum;
 use \BFW\test\unit\mocks\ApplicationForceConfig as MockApp;
+use \BFW\Memcache\test\unit\mocks\Memcache as MockMemcache;
 
 require_once(__DIR__.'/../../../../../vendor/autoload.php');
 
@@ -82,7 +83,7 @@ class Memcache extends atoum
                     'persistent' => true
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
-            ->and($this->class = new \BFW\Memcache\test\unit\mocks\Memcache($this->app));
+            ->and($this->class = new MockMemcache);
     }
     
     /**
@@ -91,7 +92,7 @@ class Memcache extends atoum
     public function testConstructorWithoutServer()
     {
         $this->assert('test constructor without memcache server')
-            ->object($this->class = new \BFW\Memcache\Memcache($this->app))
+            ->object($this->class = new \BFW\Memcache\Memcache)
                 ->isInstanceOf('\BFW\Memcache\Memcache');
     }
     
@@ -107,7 +108,7 @@ class Memcache extends atoum
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
-            ->object($this->class = new \BFW\Memcache\Memcache($this->app))
+            ->object($this->class = new \BFW\Memcache\Memcache)
                 ->isInstanceOf('\BFW\Memcache\Memcache')
             ->and($this->class->close());
     }
@@ -124,9 +125,8 @@ class Memcache extends atoum
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
-            ->given($app = $this->app)
-            ->when(function() use ($app) {
-                new \BFW\Memcache\Memcache($app);
+            ->when(function() {
+                new \BFW\Memcache\Memcache;
             })
             ->error()
                 ->exists()
@@ -153,7 +153,7 @@ class Memcache extends atoum
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
-            ->object($this->class = new \BFW\Memcache\Memcache($this->app))
+            ->object($this->class = new \BFW\Memcache\Memcache)
                 ->isInstanceOf('\BFW\Memcache\Memcache')
             ->and($this->class->close());
     }
@@ -172,7 +172,7 @@ class Memcache extends atoum
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
-            ->object($this->class = new \BFW\Memcache\Memcache($this->app))
+            ->object($this->class = new \BFW\Memcache\Memcache)
                 ->isInstanceOf('\BFW\Memcache\Memcache')
             ->and($this->class->close());
     }

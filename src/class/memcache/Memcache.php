@@ -11,11 +11,6 @@ class Memcache extends \Memcache
 {
     //Include traits to add some methods
     use \BFW\Traits\Memcache;
-    
-    /**
-     * @var \BFW\Application $app Instance of BFW Application
-     */
-    protected $app;
 
     /**
      * @var array $config Config define on bfw config file for memcache(d)
@@ -26,11 +21,9 @@ class Memcache extends \Memcache
      * Constructor.
      * Connect to servers
      * 
-     * @param \BFW\Application $app The BFW Application instance
-     * 
      * @throws Exception If PHP Version is >= 7.x (no memcache extension)
      */
-    public function __construct(\BFW\Application $app)
+    public function __construct()
     {
         //Check php version. No memcache lib for >= 7.x
         if (PHP_VERSION_ID > 70000) {
@@ -39,8 +32,8 @@ class Memcache extends \Memcache
             );
         }
         
-        $this->app    = $app;
-        $this->config = $this->app->getConfig('memcached');
+        $app          = \BFW\Application::getInstance();
+        $this->config = $app->getConfig('memcached');
 
         $this->connectToServers();
     }
