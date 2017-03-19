@@ -2,6 +2,10 @@
 
 namespace BFW\test\helpers;
 
+//To have the mock loaded for external module which use this class.
+require_once(__DIR__.'/../mocks/src/class/Application.php');
+require_once(__DIR__.'/../mocks/src/class/Modules.php');
+
 class ApplicationInit extends \BFW\test\unit\mocks\Application
 {
     protected function initSystem($options)

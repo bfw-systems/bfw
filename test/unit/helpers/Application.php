@@ -4,7 +4,6 @@ namespace BFW\test\helpers;
 
 //To have the config mock loaded for external module which use this class.
 require_once(__DIR__.'/../mocks/src/class/ConfigForceDatas.php');
-require_once(__DIR__.'/../mocks/src/class/Modules.php');
 
 trait Application
 {
