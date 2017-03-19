@@ -27,12 +27,12 @@ if(!file_exists('/home/travis'))
     $script->addReport($report->addWriter($stdout));
     /**/
 
-    $coverageField = new atoum\report\fields\runner\coverage\html('BFW', '/home/bfw/www/reports/bfw-v3');
-    $coverageField->setRootUrl('http://bfw.test.bulton.fr/reports/bfw-v3/');
+    $coverageField = new atoum\report\fields\runner\coverage\html('BFW', '/home/bfw/www_reports/bfw-v3/test-unit');
+    $coverageField->setRootUrl('http://bfw.bulton.fr/reports/bfw-v3/test-unit/index.html');
     $report->addField($coverageField);
     
-    $treemapField = new atoum\report\fields\runner\coverage\treemap('BFW', '/home/bfw/www/treemap/bfw-v3');
-    $treemapField->setHtmlReportBaseUrl('http://bfw.test.bulton.fr/treemap/bfw-v3/');
+    $treemapField = new atoum\report\fields\runner\coverage\treemap('BFW', '/home/bfw/www_reports/bfw-v3/treemap');
+    $treemapField->setHtmlReportBaseUrl('http://bfw.bulton.fr/reports/bfw-v3/treemap/index.html');
     $report->addField($treemapField);
 }
 /**/
