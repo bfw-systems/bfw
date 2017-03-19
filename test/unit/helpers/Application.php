@@ -68,6 +68,11 @@ trait Application
         $this->config->forceConfig('bfw', $config);
     }
     
+    public function updateKey($configKey, $newValue)
+    {
+        $this->config->updateKey('bfw', $configKey, $newValue);
+    }
+    
     //**** Override all methods ****\\
     
     public function getComposerLoader()

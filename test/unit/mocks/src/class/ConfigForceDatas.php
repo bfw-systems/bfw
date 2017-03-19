@@ -8,4 +8,9 @@ class ConfigForceDatas extends \BFW\Config
     {
         $this->config[$file] = $newConfig;
     }
+    
+    public function updateKey($file, $configKey, $newValue)
+    {
+        $this->config[$file][$configKey] = $newValue;
+    }
 }
