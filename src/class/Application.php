@@ -121,7 +121,8 @@ class Application extends Subjects
      */
     public static function init($options = [])
     {
-        return self::getInstance($options);
+        $calledClass = get_called_class(); //Autorize extends this class
+        return $calledClass::getInstance($options);
     }
 
     /**
