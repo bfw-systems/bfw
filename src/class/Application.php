@@ -67,25 +67,16 @@ class Application extends Subjects
 
     /**
      * Constructor
-     * Initialize all components
+     * Init output buffering
+     * Declare run steps
+     * Set UTF-8 header
      * 
      * protected for Singleton pattern
-     * 
-     * @param array $options Options passed to application
      */
-    protected function __construct($options)
+    protected function __construct()
     {
         //Start the output buffering
         ob_start();
-
-        $this->initOptions($options);
-        $this->initConstants();
-        $this->initComposerLoader();
-        $this->initConfig();
-        $this->initRequest();
-        $this->initSession();
-        $this->initErrors();
-        $this->initModules();
 
         $this->declareRunPhases();
 
@@ -104,8 +95,8 @@ class Application extends Subjects
     {
         if (self::$instance === null) {
             $calledClass = get_called_class(); //Autorize extends this class
-            
-            self::$instance = new $calledClass($options);
+            self::$instance = new $calledClass;
+            self::$instance->initSystem($options);
         }
 
         return self::$instance;
@@ -189,6 +180,25 @@ class Application extends Subjects
     public function getRequest()
     {
         return $this->request;
+    }
+    
+    /**
+     * Initialize all components
+     * 
+     * @param array $options Options passed to application
+     * 
+     * @return void
+     */
+    protected function initSystem($options)
+    {
+        $this->initOptions($options);
+        $this->initConstants();
+        $this->initComposerLoader();
+        $this->initConfig();
+        $this->initRequest();
+        $this->initSession();
+        $this->initErrors();
+        $this->initModules();
     }
 
     /**
