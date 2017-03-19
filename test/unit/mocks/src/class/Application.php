@@ -2,32 +2,45 @@
 
 namespace BFW\test\unit\mocks;
 
-class Application extends ApplicationForceConfig
+//To have the config mock loaded for external module which use this class.
+require_once(__DIR__.'/src/class/ConfigForceDatas.php');
+require_once(__DIR__.'/src/class/Modules.php');
+
+class Application extends \BFW\Application
 {
+    use \BFW\test\helpers\Override;
+    
     public $modulesToAdd = [];
     
-    protected function runCliFile()
+    protected function initSystem($options)
     {
-        //Do nothing.
-        //Will be test with a installer test
-    }
-
-    protected function initModules()
-    {
-        parent::initModules();
-        $this->modules = new \BFW\test\unit\mocks\Modules;
-    }
-    
-    protected function readAllModules()
-    {
-        $modules = $this->modules;
-        foreach($this->modulesToAdd as $moduleName => $module) {
-            $modules::declareModuleConfig($moduleName, $module->config);
-            $modules::declareModuleLoadInfos($moduleName, $module->loadInfos);
-            $modules::declareModuleInstallInfos($moduleName, $module->installInfos);
+        if (array_key_exists('overrideMethods', $options)) {
+            $this->overrideMethods = $options['overrideMethods'];
+        } elseif (array_key_exists('overrideAllMethods', $options)) {
+            $this->overrideMethods = [
+                'initOptions'        => true,
+                'initConstants'      => true,
+                'initComposerLoader' => true,
+                'initConfig'         => true,
+                'initRequest'        => true,
+                'initSession'        => true,
+                'initErrors'         => true,
+                'initModules'        => true,
+                'declareRunPhases'   => true
+            ];
         }
         
-        parent::readAllModules();
+        if (array_key_exists('forceConfig', $options)) {
+            $this->addOverridedMethod(
+                'initConfig',
+                function() use (&$options) {
+                    $this->config = new \BFW\test\unit\mocks\ConfigForceDatas('bfw');
+                    $this->config->forceConfig('bfw', $options['forceConfig']);
+                }
+            );
+        }
+        
+        return parent::initSystem($options);
     }
     
     public static function removeInstance()
@@ -48,5 +61,127 @@ class Application extends ApplicationForceConfig
     public function getRunPhases()
     {
         return $this->runPhases;
+    }
+    
+    public function forceConfig($config)
+    {
+        $this->config->forceConfig('bfw', $config);
+    }
+    
+    //**** Override all methods ****\\
+    
+    public function getComposerLoader()
+    {
+        return $this->callOverrideOrParent('getComposerLoader', []);
+    }
+    
+    public function getConfig($configKey)
+    {
+        return $this->callOverrideOrParent('getConfig', [$configKey]);
+    }
+    
+    public function getMemcached()
+    {
+        return $this->callOverrideOrParent('getMemcached', []);
+    }
+    
+    public function getModule($moduleName)
+    {
+        return $this->callOverrideOrParent('getModule', [$moduleName]);
+    }
+    
+    public function getOption($optionKey)
+    {
+        return $this->callOverrideOrParent('getOption', [$optionKey]);
+    }
+    
+    public function getRequest()
+    {
+        return $this->callOverrideOrParent('getRequest', []);
+    }
+    
+    protected function initOptions($options)
+    {
+        return $this->callOverrideOrParent('initOptions', [$options]);
+    }
+    
+    protected function initConstants()
+    {
+        return $this->callOverrideOrParent('initConstants', []);
+    }
+    
+    protected function initComposerLoader()
+    {
+        return $this->callOverrideOrParent('initComposerLoader', []);
+    }
+    
+    protected function initConfig()
+    {
+        return $this->callOverrideOrParent('initConfig', []);
+    }
+    
+    protected function initRequest()
+    {
+        return $this->callOverrideOrParent('initRequest', []);
+    }
+    
+    protected function initSession()
+    {
+        return $this->callOverrideOrParent('initSession', []);
+    }
+    
+    protected function initErrors()
+    {
+        return $this->callOverrideOrParent('initErrors', []);
+    }
+    
+    protected function initModules()
+    {
+        return $this->callOverrideOrParent('initModules', []);
+    }
+    
+    protected function addComposerNamespaces()
+    {
+        return $this->callOverrideOrParent('addComposerNamespaces', []);
+    }
+    
+    protected function declareRunPhases()
+    {
+        return $this->callOverrideOrParent('declareRunPhases', []);
+    }
+    
+    public function run()
+    {
+        return $this->callOverrideOrParent('run', []);
+    }
+    
+    protected function loadMemcached()
+    {
+        return $this->callOverrideOrParent('loadMemcached', []);
+    }
+    
+    protected function readAllModules()
+    {
+        return $this->callOverrideOrParent('readAllModules', []);
+    }
+    
+    protected function loadAllCoreModules()
+    {
+        return $this->callOverrideOrParent('loadAllCoreModules', []);
+    }
+    
+    protected function loadAllAppModules()
+    {
+        return $this->callOverrideOrParent('loadAllAppModules', []);
+    }
+    
+    protected function loadModule($moduleName)
+    {
+        return $this->callOverrideOrParent('loadModule', [$moduleName]);
+    }
+    
+    protected function runCliFile()
+    {
+        return $this->callOverrideOrParent('runCliFile', []);
     }
 }

@@ -40,16 +40,31 @@ class Application extends atoum
         }
         
         $options = [
-            'forceConfig' => $this->forcedConfig,
-            'vendorDir'   => __DIR__.'/../../../../vendor',
-            'testOption'  => 'unit test'
+            'forceConfig'     => $this->forcedConfig,
+            'vendorDir'       => __DIR__.'/../../../../vendor',
+            'testOption'      => 'unit test',
+            'overrideMethods' => [
+                'runCliFile'     => null,
+                'initModules'    => function() {
+                    $this->modules = new \BFW\test\unit\mocks\Modules;
+                },
+                'readAllModules' => function() {
+                    $modules = $this->modules;
+                    foreach($this->modulesToAdd as $moduleName => $module) {
+                        $modules::declareModuleConfig($moduleName, $module->config);
+                        $modules::declareModuleLoadInfos($moduleName, $module->loadInfos);
+                    }
+
+                    parent::readAllModules();
+                }
+            ]
         ];
         
         if ($testMethod === 'testInitSessionDisabled') {
             $options['runSession'] = false;
         }
         
-        $this->function->scandir = ['.', '..'];
+        $this->function->scandir = ['.', '..']; //used by test which call run()
         $this->mock = MockApp::init($options);
     }
     
@@ -57,8 +72,9 @@ class Application extends atoum
     {
         $this->assert('test Constructor')
             ->object($app = MockApp::init([
-                'forceConfig' => $this->forcedConfig,
-                'vendorDir'   => __DIR__.'/../../../../vendor'
+                'forceConfig'        => $this->forcedConfig,
+                'vendorDir'          => __DIR__.'/../../../../vendor',
+                'overrideAllMethods' => true
             ]))
                 ->isInstanceOf('\BFW\Application')
             ->object(MockApp::getInstance())
