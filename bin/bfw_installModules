@@ -115,7 +115,7 @@ foreach ($listModulesFound as $moduleFindPath) {
     
     if ($specificModule === '' || $specificModule === $module->getName()) {
         $module->install($reinstall);
-        $app->addModuleInstallInstance($module);
+        $app->addModuleInstall($module);
     }
 }
 
