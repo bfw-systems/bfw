@@ -15,13 +15,13 @@ return [
     
     /**
      * @var array errorRenderFct : Function use to display a personnal
-     *                              page/message for an php error
+     *  page/message for an php error
      */
     'errorRenderFct'     => [
         /**
-         * @var boolean active : To enabled the error render
+         * @var boolean enabled : To enable the error render
          */
-        'active'  => false,
+        'enabled'  => false,
         /**
          * @var array default : For the no cli mode
          */
@@ -54,13 +54,13 @@ return [
     
     /**
      * @var array exceptionRenderFct : Function use to display a personnal
-     *                                  page/message for an exception
+     *  page/message for an exception
      */
     'exceptionRenderFct' => [
         /**
-         * @var boolean active : To enabled the exception render
+         * @var boolean enabled : To enable the exception render
          */
-        'active'  => false,
+        'enabled'  => false,
         /**
          * @var array default : For the no cli mode
          */
@@ -125,9 +125,9 @@ return [
         'persistentId' => null,
         
         /**
-         * @var array server : List of memcache(d) server(s) to connect.
+         * @var array servers : List of memcache(d) server(s) to connect.
          */
-        'server'       => [
+        'servers'      => [
             /**
              * First server to connect.
              * Duplicate this array to connect at others servers.
@@ -145,7 +145,7 @@ return [
                 
                 /**
                  * @var int|null : Value in seconds which will be used for
-                 *                  connecting to the daemon.
+                 *  connecting to the daemon.
                  * 
                  * For memcache only
                  * It's recommended to stay value at null.
@@ -155,7 +155,8 @@ return [
                 'timeout'    => null,
                 
                 /**
-                 * @var boolean persistent : If the connection should be persistent
+                 * @var boolean persistent : If the connection should be
+                 *  persistent
                  * 
                  * For memcache only
                  */
@@ -163,7 +164,7 @@ return [
                 
                 /**
                  * @var int weight : The weight of the server relative to the
-                 *      total weight of all the servers in the pool.
+                 *  total weight of all the servers in the pool.
                  * 
                  * For memcached only
                  * 
@@ -188,7 +189,7 @@ return [
              */
             'name'    => '',
             /**
-             * @var boolean enabled : If the module is enabled or not
+             * @var boolean enabled : If the module is enable or not
              */
             'enabled' => false
         ],
@@ -202,7 +203,7 @@ return [
              */
             'name'    => '',
             /**
-             * @var boolean enabled : If the module is enabled or not
+             * @var boolean enabled : If the module is enable or not
              */
             'enabled' => false
         ],
@@ -216,7 +217,7 @@ return [
              */
             'name'    => '',
             /**
-             * @var boolean enabled : If the module is enabled or not
+             * @var boolean enabled : If the module is enable or not
              */
             'enabled' => false
         ],
@@ -230,7 +231,7 @@ return [
              */
             'name'    => '',
             /**
-             * @var boolean enabled : If the module is enabled or not
+             * @var boolean enabled : If the module is enable or not
              */
             'enabled' => false
         ]

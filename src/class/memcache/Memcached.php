@@ -9,11 +9,11 @@ use \Exception;
  */
 class Memcached extends \Memcached
 {
-    //Include traits to add some methods
+    //Include Memcache trait to add some common methods with Memcache class
     use \BFW\Traits\Memcache;
 
     /**
-     * @var array $config Config define on bfw config file for memcache(d)
+     * @var array $config Config define into bfw config file for memcache(d)
      */
     protected $config;
 
@@ -38,21 +38,21 @@ class Memcached extends \Memcached
 
     /**
      * Get the list of server already connected (persistent)
-     * Loop on server declared in config.
+     * Loop on server declared into the config file.
      * Connect to server if not already connected
      * 
      * @return void
      */
     protected function connectToServers()
     {
-        //Array to have the list of server to connect
+        //Array for the list of server(s) to connect
         $addServers  = [];
         
         //Get all server already connected (persistent)
         $serversList = $this->generateServerList();
         
-        //Loop on server declared and config and search server not connected
-        foreach ($this->config['server'] as $server) {
+        //Loop on server declared into config
+        foreach ($this->config['servers'] as $server) {
             $this->getServerInfos($server);
             
             $host   = $server['host'];
@@ -73,7 +73,7 @@ class Memcached extends \Memcached
             $addServers[] = [$host, $port, $weight];
         }
 
-        //Connect server in the list
+        //Connect to server(s)
         $this->addServers($addServers);
         
         //Check if connect is successfull
@@ -85,6 +85,8 @@ class Memcached extends \Memcached
      * to the memcached servers.
      * 
      * So, we run the connect to all server declared
+     * 
+     * @throws \Exception If a server is not connected
      * 
      * @return void
      */
@@ -106,7 +108,7 @@ class Memcached extends \Memcached
     }
     
     /**
-     * Get the list of servers we already connected
+     * Get the list of servers where we are already connected (persistent)
      * 
      * @return string[]
      */

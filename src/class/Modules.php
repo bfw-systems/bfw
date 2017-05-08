@@ -20,7 +20,7 @@ class Modules
     protected $loadTree = [];
 
     /**
-     * Get attribute modules value
+     * Get the module's list
      * 
      * @return \BFW\Module[]
      */
@@ -64,7 +64,7 @@ class Modules
     public function getModule($moduleName)
     {
         if (!isset($this->modules[$moduleName])) {
-            throw new Exception('Module '.$moduleName.' not found.');
+            throw new Exception('The Module '.$moduleName.' has not been found.');
         }
 
         return $this->modules[$moduleName];
@@ -73,7 +73,7 @@ class Modules
     /**
      * Read the "needMe" property for each module and add the dependency
      * 
-     * @throws \Exception If the dependency is not find in application
+     * @throws \Exception If the dependency is not found
      * 
      * @return void
      */
@@ -92,7 +92,7 @@ class Modules
                     throw new Exception(
                         'Module error: '.$readModuleName
                         .' need '.$needModuleName
-                        .' but this module is not found.'
+                        .' but the module has not been found.'
                     );
                 }
                 

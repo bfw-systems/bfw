@@ -8,7 +8,7 @@ namespace BFW\Helpers;
 class Sessions
 {
     /**
-     * Check if session is started
+     * Check if the session is started
      * 
      * @link http://fr2.php.net/manual/en/function.session-status.php#113468
      * 

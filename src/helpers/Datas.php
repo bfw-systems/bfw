@@ -11,7 +11,7 @@ class Datas
      * Check types of variables
      * 
      * @param array $vars : Variables to check
-     *  array(array('type' => 'monType', 'data' => 'mesData), array(...)...)
+     *  array(array('type' => 'myType', 'data' => 'myData), array(...)...)
      * 
      * @return boolean
      */
@@ -34,12 +34,9 @@ class Datas
                 return false;
             }
 
-            //str_replace('int', 'integer'...) : integer => integereger
             if ($var['type'] === 'int') {
                 $var['type'] = 'integer';
-            }
-
-            if ($var['type'] === 'float') {
+            } elseif ($var['type'] === 'float') {
                 $var['type'] = 'double';
             }
 

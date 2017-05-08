@@ -10,9 +10,9 @@ use \Exception;
 trait Memcache
 {
     /**
-     * Define default value for server informations
+     * Read the server information and add not existing keys
      * 
-     * @param array $infos Server informations
+     * @param array &$infos Server informations
      * 
      * @return void
      * 
@@ -42,7 +42,8 @@ trait Memcache
     }
     
     /**
-     * Check if a key exists
+     * Check if a key exists into memcache(d)
+     * /!\ Not work if the correct value is the boolean false /!\
      * 
      * @param string $key The memcache(d) key to check
      * 
@@ -52,17 +53,19 @@ trait Memcache
      */
     public function ifExists($key)
     {
-        $verifParams = \BFW\Helpers\Datas::checkType(
+        $verifParams = \BFW\Helpers\Datas::checkType([
             [
-                [
-                    'type' => 'string',
-                    'data' => $key
-                ]
+                'type' => 'string',
+                'data' => $key
             ]
-        );
+        ]);
         
         if (!$verifParams) {
-            throw new Exception('The $key parameters must be a string');
+            throw new Exception(
+                'The $key parameters must be a string.'
+                .' Currently the value is a/an '.gettype($key)
+                .' and is equal to '.$key
+            );
         }
 
         if ($this->get($key) === false) {
@@ -82,14 +85,12 @@ trait Memcache
      * 
      * @throws Exception
      */
-    public function majExpire($key, $expire)
+    public function updateExpire($key, $expire)
     {
-        $verifParams = \BFW\Helpers\Datas::checkType(
-            [
-                ['type' => 'string', 'data' => $key],
-                ['type' => 'int', 'data' => $expire]
-            ]
-        );
+        $verifParams = \BFW\Helpers\Datas::checkType([
+            ['type' => 'string', 'data' => $key],
+            ['type' => 'int', 'data' => $expire]
+        ]);
 
         if (!$verifParams) {
             throw new Exception(
@@ -103,11 +104,10 @@ trait Memcache
             );
         }
 
-        $value = $this->get($key); //Récupère la valeur
+        //To change expire time, we need to re-set the value.
+        $value = $this->get($key); //Get the value
         
-        //On la "modifie" en remettant la même valeur mais en changeant
-        //le temps avant expiration
-        
+        //Re-set the value with new expire time.
         if (is_subclass_of($this, '\Memcache')) {
             return $this->replace($key, $value, 0, $expire);
         } elseif (is_subclass_of($this, '\Memcached')) {

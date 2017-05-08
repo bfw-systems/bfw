@@ -8,6 +8,11 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 class Constants extends atoum
 {
+    /**
+     * Test method for create()
+     * 
+     * @return void
+     */
     public function testCreate()
     {
         $this->assert('test Constants::create with not existing constant')
@@ -20,6 +25,6 @@ class Constants extends atoum
             ->exception(function() {
                 \BFW\Helpers\Constants::create('TEST', 'test constant exist');
             })
-                ->hasMessage('Constant TEST already defined.');
+                ->hasMessage('The constant TEST is already defined.');
     }
 }

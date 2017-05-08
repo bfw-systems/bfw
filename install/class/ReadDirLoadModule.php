@@ -19,7 +19,7 @@ class ReadDirLoadModule extends ReadDirectory
             return $parentAction;
         }
 
-        //Detect a module infos json file
+        //Detect the file containing module infos
         if ($fileName === 'bfwModulesInfos.json') {
             $this->list[] = $pathToFile;
 

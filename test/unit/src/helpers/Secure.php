@@ -10,18 +10,41 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 class Secure extends atoum
 {
+    /**
+     * @var \BFW\test\helpers\ApplicationInit $app BFW Application instance
+     */
     protected $app;
     
+    /**
+     * Call before each test method
+     * Instantiate BFW Application class
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
+     */
     public function beforeTestMethod($testMethod)
     {
         $this->app = AppInit::init();
     }
     
+    /**
+     * Mock for sql securised method
+     * 
+     * @param string $str Date to securise
+     * 
+     * @return string
+     */
     public static function secureMethod($str)
     {
         return 'testSecurised_'.$str;
     }
     
+    /**
+     * Test method for hash()
+     * 
+     * @return void
+     */
     public function testHash()
     {
         $this->assert('test Secure::hash')
@@ -30,6 +53,11 @@ class Secure extends atoum
                     ->isEqualTo(64);
     }
     
+    /**
+     * Test method for securiseKnownTypes
+     * 
+     * @return void
+     */
     public function testSecuriseKnownTypes()
     {
         $this->assert('test Secure::securiseKnownTypes for int and integer types')
@@ -63,10 +91,10 @@ class Secure extends atoum
                 ->isFalse();
         
         $this->assert('test Secure::securiseKnownTypes for email type')
-            ->boolean(BfwSecure::securiseKnownTypes('vmATbulton.fr', 'email'))
+            ->boolean(BfwSecure::securiseKnownTypes('bulton.frATgmail.com', 'email'))
                 ->isFalse()
-            ->string(BfwSecure::securiseKnownTypes('vm@bulton.fr', 'email'))
-                ->isEqualTo('vm@bulton.fr');
+            ->string(BfwSecure::securiseKnownTypes('bulton.fr@gmail.com', 'email'))
+                ->isEqualTo('bulton.fr@gmail.com');
         
         $this->assert('test Secure::securiseKnownTypes exception with other type')
             ->exception(function() {
@@ -79,6 +107,11 @@ class Secure extends atoum
                 ->hasMessage('Unknown type');
     }
     
+    /**
+     * Test method for securise() without a declared sql secure method
+     * 
+     * @return void
+     */
     public function testSecurise()
     {
         $this->app->updateKey('sqlSecureMethod', '');
@@ -111,7 +144,12 @@ class Secure extends atoum
                 ->isEqualTo('&lt;p&gt;Test&lt;/p&gt;');
     }
     
-    public function testSecuriseWithSecureMethod()
+    /**
+     * Test method for securise() with a declared sql secure method
+     * 
+     * @return void
+     */
+    public function testSecuriseWithSqlSecureMethod()
     {
         $this->assert('test Secure::securise with a secure method')
             ->if($this->app->updateKey(
@@ -123,6 +161,11 @@ class Secure extends atoum
                 ->isEqualTo('testSecurised_test');
     }
     
+    /**
+     * Test method for getSqlSecureMethod
+     * 
+     * @return void
+     */
     public function testGetSqlSecureMethod()
     {
         $this->app->updateKey(
@@ -138,6 +181,11 @@ class Secure extends atoum
                 ]);
     }
     
+    /**
+     * Test method for getSecurisedKeyInArray
+     * 
+     * @return void
+     */
     public function testGetSecurisedKeyInArray()
     {
         $this->app->updateKey('sqlSecureMethod', '');
@@ -157,6 +205,11 @@ class Secure extends atoum
                 ->hasMessage('The key b not exist');
     }
     
+    /**
+     * Test method for getSecurisedPostKey
+     * 
+     * @return void
+     */
     public function testgetSecurisedPostKey()
     {
         $_POST = [
@@ -171,6 +224,11 @@ class Secure extends atoum
                 ->isEqualTo('test login');
     }
     
+    /**
+     * Test method for getSecurisedGetKey
+     * 
+     * @return void
+     */
     public function testgetSecurisedGetKey()
     {
         $_GET = [

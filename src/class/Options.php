@@ -10,7 +10,7 @@ use \Exception;
 class Options
 {
     /**
-     * @var array $option values
+     * @var array $option option's list
      */
     protected $options = [];
 

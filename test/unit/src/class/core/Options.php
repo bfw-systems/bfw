@@ -8,12 +8,12 @@ require_once(__DIR__.'/../../../../../vendor/autoload.php');
 class Options extends atoum
 {
     /**
-     * @var $class : Instance de la class
+     * @var $class Class instance
      */
     protected $class;
     
     /**
-     * @var $defaultOptions : Les options par défaut pour le constructeur
+     * @var $defaultOptions Default options passed to constructor
      */
     protected $defaultOptions = [
         'rootDir'    => null,
@@ -21,7 +21,12 @@ class Options extends atoum
         'runSession' => true
     ];
     
-    public function testOptionsDeclareDirectoriesWithSlashes()
+    /**
+     * Test method when directories is declared with a final slash
+     * 
+     * @return void
+     */
+    public function testWhenDeclareDirectoriesWithSlashes()
     {
         $options = [
             'rootDir'   => '/tmp/bfw/v3/rootDir/',
@@ -37,7 +42,12 @@ class Options extends atoum
                 ->isEqualTo('/tmp/bfw/v3/vendorDir/');
     }
     
-    public function testOptionsDeclareDirectoriesWithoutSlashes()
+    /**
+     * Test method when directories is declared without a final slash
+     * 
+     * @return void
+     */
+    public function testWhenDeclareDirectoriesWithoutSlashes()
     {
         $options = [
             'rootDir'   => '/tmp/bfw/v3/rootDir',
@@ -53,7 +63,12 @@ class Options extends atoum
                 ->isEqualTo('/tmp/bfw/v3/vendorDir/');
     }
     
-    public function testOptionsFindDirectories()
+    /**
+     * Test method when directories are automatically found
+     * 
+     * @return void
+     */
+    public function testWhenAutomaticallyFoundDirectories()
     {
         $composerLoader = require(__DIR__.'/../../../../../vendor/autoload.php');
         $classPath      = realpath($composerLoader->findFile('BFW\Core\Options'));

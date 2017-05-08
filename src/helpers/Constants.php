@@ -22,7 +22,9 @@ class Constants
     public static function create($cstName, $cstValue)
     {
         if (defined($cstName)) {
-            throw new Exception('Constant '.$cstName.' already defined.');
+            throw new Exception(
+                'The constant '.$cstName.' is already defined.'
+            );
         }
         
         define($cstName, $cstValue);

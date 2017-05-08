@@ -8,6 +8,11 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 class Text extends atoum
 {
+    /**
+     * Test method for nl2br
+     * 
+     * @return void
+     */
     public function testNl2br()
     {
         $this->assert('test Text::nl2br')

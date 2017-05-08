@@ -18,7 +18,7 @@ if ($composerWhereIs === 'composer:'."\n") {
 `cd $installDir && $composerBin install`;
 echo "\n";
 
-$outputFirstInstall = "\033[0;33mBFW Installation :\033[0m\n"
+$outputFirstInstall = "\033[0;33mBFW Install :\033[0m\n"
     ."  > Create app directory ...\033[1;32m Done\033[0m\n"
     ."  > Create app/config directory ...\033[1;32m Done\033[0m\n"
     ."  > Create app/config/bfw directory ...\033[1;32m Done\033[0m\n"
@@ -32,14 +32,14 @@ $outputFirstInstall = "\033[0;33mBFW Installation :\033[0m\n"
     ."  > Search skeleton directory path ...\033[1;32m Done\033[0m\n"
     ."  > Copy .htaccess file ...\033[1;32m Done\033[0m\n"
     ."  > Copy config file ...\033[1;32m Done\033[0m\n"
-    ."  > Copy example index file into web directory ...\033[1;32m Done\033[0m\n"
-    ."  > Copy cli.php file to root project directory ...\033[1;32m Done\033[0m\n"
+    ."  > Copy index.php file into web directory ...\033[1;32m Done\033[0m\n"
+    ."  > Copy cli.php file into root project directory ...\033[1;32m Done\033[0m\n"
     ."  > Copy example cli file into app/cli directory ...\033[1;32m Done\033[0m\n"
     ."\n"
-    ."\033[0;33mBFW installation status : \033[1;32msuccess\033[0m"
+    ."\033[0;33mBFW install status : \033[1;32mSuccess\033[0m"
 ;
 
-$outputSecondInstall = "\033[0;33mBFW Installation :\033[0m\n"
+$outputSecondInstall = "\033[0;33mBFW Install :\033[0m\n"
     ."  > Create app directory ...\033[1;32m Done\033[0m\n"
     ."  > Create app/config directory ...\033[1;32m Done\033[0m\n"
     ."  > Create app/config/bfw directory ...\033[1;32m Done\033[0m\n"
@@ -53,11 +53,11 @@ $outputSecondInstall = "\033[0;33mBFW Installation :\033[0m\n"
     ."  > Search skeleton directory path ...\033[1;32m Done\033[0m\n"
     ."  > Copy .htaccess file ...\033[1;32m Done\033[0m\n"
     ."  > Copy config file ...\033[1;32m Done\033[0m\n"
-    ."  > Copy example index file into web directory ...\033[1;32m Done\033[0m\n"
-    ."  > Copy cli.php file to root project directory ...\033[1;32m Done\033[0m\n"
+    ."  > Copy index.php file into web directory ...\033[1;32m Done\033[0m\n"
+    ."  > Copy cli.php file into root project directory ...\033[1;32m Done\033[0m\n"
     ."  > Copy example cli file into app/cli directory ...\033[1;32m Done\033[0m\n"
     ."\n"
-    ."\033[0;33mBFW installation status : \033[1;32msuccess\033[0m"
+    ."\033[0;33mBFW install status : \033[1;32mSuccess\033[0m"
 ;
 
 $expectedOutput = [

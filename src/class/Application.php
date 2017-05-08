@@ -18,35 +18,34 @@ class Application extends Subjects
     protected static $instance = null;
 
     /**
-     * @var string $rootDir Path to application project directory
+     * @var string $rootDir Path to the application project directory
      */
     protected $rootDir = '';
 
     /**
-     * @var \BFW\Config $config Config loaded for BFW application
+     * @var \BFW\Config $config Config's instance for BFW
      */
     protected $config;
 
     /**
-     * @var \BFW\Core\Options $options Option passed to this instance
+     * @var \BFW\Core\Options $options Option's instance for the core
      */
     protected $options;
 
     /**
-     * @var \Composer\Autoload\ClassLoader $composerLoader loader used by
+     * @var \Composer\Autoload\ClassLoader $composerLoader Loader used by
      *  composer.
      */
     protected $composerLoader;
 
     /**
-     *
-     * @var array[] $runPhases All steps to init Application
+     * @var array[] $runSteps All steps used for run the application
      */
-    protected $runPhases = [];
+    protected $runSteps = [];
 
     /**
      * @var Object $memcached The class used to connect to memcache(d) server.
-     * The class used should be declared on config
+     * The class name should be declared into config file.
      */
     protected $memcached;
 
@@ -61,7 +60,7 @@ class Application extends Subjects
     protected $modules;
     
     /**
-     * @var \BFW\Core\Errors $errors System who manage personnel errors page
+     * @var \BFW\Core\Errors $errors System who manage personal errors page
      */
     protected $errors;
 
@@ -78,14 +77,14 @@ class Application extends Subjects
         //Start the output buffering
         ob_start();
 
-        $this->declareRunPhases();
+        $this->declareRunSteps();
 
         //Defaut http header. Define here add possiblity to override him
         header('Content-Type: text/html; charset=utf-8');
     }
 
     /**
-     * get the Application instance (Singleton pattern)
+     * Get the Application instance (Singleton pattern)
      * 
      * @param array $options Options passed to application
      * 
@@ -117,7 +116,7 @@ class Application extends Subjects
     }
 
     /**
-     * Getter to access to composerLoader attribut
+     * Getter to access to composerLoader property
      * 
      * @return \Composer\Autoload\ClassLoader The composer class loader
      */
@@ -127,7 +126,7 @@ class Application extends Subjects
     }
 
     /**
-     * Getter to access to a BFW config value
+     * Getter to access to a value of the BFW config file
      * 
      * @param string $configKey The key in the config file
      * 
@@ -161,7 +160,7 @@ class Application extends Subjects
     }
 
     /**
-     * Getter to access to a BFW option value
+     * Getter to access to an option's value
      * 
      * @param string $optionKey The key for the option
      * 
@@ -173,7 +172,7 @@ class Application extends Subjects
     }
     
     /**
-     * Getter to access to Request instance
+     * Getter to access to the Request instance
      * 
      * @return \BFW\Request
      */
@@ -202,7 +201,7 @@ class Application extends Subjects
     }
 
     /**
-     * Initialize attribute options with the class \BFW\Core\Options
+     * Initialize options with the class \BFW\Core\Options
      * 
      * @param array $options The option passed when initialize this class
      */
@@ -242,19 +241,21 @@ class Application extends Subjects
 
     /**
      * Initialize composer loader
-     * Get composerLoader instance
-     * Call addComposerNamespaces method to add Application namespace
+     * Obtain the composerLoader instance
+     * Call addComposerNamespaces method to add Application namespaces
      * 
      * @return void
      */
     protected function initComposerLoader()
     {
-        $this->composerLoader = require($this->options->getOption('vendorDir').'autoload.php');
+        $this->composerLoader = require(
+            $this->options->getOption('vendorDir').'autoload.php'
+        );
         $this->addComposerNamespaces();
     }
 
     /**
-     * Initialize attribute config with \BFW\Config instance
+     * Initialize the property config with \BFW\Config instance
      * The config class will search all file in "bfw" directory and load files
      * 
      * @return void
@@ -266,7 +267,7 @@ class Application extends Subjects
     }
 
     /**
-     * Initialize request attribute with \BFW\Request class
+     * Initialize request property with the \BFW\Request class
      * 
      * @return void
      */
@@ -294,7 +295,7 @@ class Application extends Subjects
     }
 
     /**
-     * Initialize errors attribute with \BFW\Core\Errors class
+     * Initialize errors property with the \BFW\Core\Errors class
      * 
      * @return void
      */
@@ -304,7 +305,7 @@ class Application extends Subjects
     }
 
     /**
-     * Initialize modules attribut with \BFW\Modules class
+     * Initialize modules property with the \BFW\Modules class
      * 
      * @return void
      */
@@ -314,7 +315,7 @@ class Application extends Subjects
     }
 
     /**
-     * Add namespace used by a BFW Application to composer
+     * Add namespaces used by a BFW Application to composer
      * 
      * @return void
      */
@@ -326,13 +327,13 @@ class Application extends Subjects
     }
 
     /**
-     * Declare all step to run application
+     * Declare all steps to run the application
      * 
      * @return void
      */
-    protected function declareRunPhases()
+    protected function declareRunSteps()
     {
-        $this->runPhases = [
+        $this->runSteps = [
             [$this, 'loadMemcached'],
             [$this, 'readAllModules'],
             [$this, 'loadAllCoreModules'],
@@ -348,7 +349,7 @@ class Application extends Subjects
      */
     public function run()
     {
-        foreach ($this->runPhases as $action) {
+        foreach ($this->runSteps as $action) {
             $action();
 
             $notifyAction = $action;
@@ -368,17 +369,17 @@ class Application extends Subjects
      * @return Object
      * 
      * @throws Exception If memcached is enabled but no class is define. Or if
-     *  The class declared in config is not found.
+     *  The class declared into the config is not found.
      */
     protected function loadMemcached()
     {
-        $memcacheConfig = $this->getConfig('memcached');
+        $memcachedConfig = $this->getConfig('memcached');
 
-        if ($memcacheConfig['enabled'] === false) {
+        if ($memcachedConfig['enabled'] === false) {
             return;
         }
 
-        $class = $memcacheConfig['class'];
+        $class = $memcachedConfig['class'];
         if (empty($class)) {
             throw new Exception('Memcached is active but no class is define');
         }
@@ -391,7 +392,7 @@ class Application extends Subjects
     }
 
     /**
-     * Read all directory in modules directory and add the module to Modules
+     * Read all directories in modules directory and add each module to Modules
      * class.
      * Generate the load tree.
      * Not initialize modules !
@@ -417,8 +418,8 @@ class Application extends Subjects
     }
 
     /**
-     * Load modules define in config bfw file.
-     * It's module for controller, router, database and template only.
+     * Load core modules defined into config bfw file.
+     * Only module for controller, router, database and template only.
      * 
      * @return void
      */
@@ -438,7 +439,8 @@ class Application extends Subjects
 
     /**
      * Load all modules (except core).
-     * Get the load tree, read this and load modules in order declared in tree.
+     * Get the load tree, read him and load all modules with the order
+     * declared into the tree.
      * 
      * @return void
      */
@@ -481,21 +483,21 @@ class Application extends Subjects
             return;
         }
 
-        $opt = getopt('f:');
-        if (!isset($opt['f'])) {
+        $cliArgs = getopt('f:');
+        if (!isset($cliArgs['f'])) {
             throw new Exception('Error: No file specified.');
         }
 
-        $file = $opt['f'];
+        $file = $cliArgs['f'];
         if (!file_exists(CLI_DIR.$file.'.php')) {
             throw new Exception('File to execute not found.');
         }
 
-        $fctExecuteFile = function() use ($file) {
+        $fctRunCliFile = function() use ($file) {
             require_once(CLI_DIR.$file.'.php');
         };
 
         $this->notifyAction('run_cli_file');
-        $fctExecuteFile();
+        $fctRunCliFile();
     }
 }

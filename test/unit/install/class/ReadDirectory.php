@@ -8,22 +8,27 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class ReadDirectory extends atoum
 {
     /**
-     * @var \BFW\Install\ReadDirectory $class : Instance de la class
+     * @var \BFW\Install\ReadDirectory $class : Tested class instance
      */
     protected $class;
     
     /**
-     * @var array $list : liste des fichiers trouvés
+     * @var array $list : Files found list
      */
     protected $list = [];
     
     /**
-     * @var int $readdirIndex : Index pour le mock de la fonction readdir
+     * @var int $readdirIndex : Index for readdir mock function
      */
     protected $readdirIndex = -1;
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Instantiate the class
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
@@ -34,6 +39,11 @@ class ReadDirectory extends atoum
         $this->class = new \BFW\Install\ReadDirectory($this->list);
     }
     
+    /**
+     * Test method for __construct()
+     * 
+     * @return void
+     */
     public function testConstructor()
     {
         $this->assert('test constructor')
@@ -43,6 +53,11 @@ class ReadDirectory extends atoum
                     ->isEqualTo(0);
     }
     
+    /**
+     * Test method for run() with an opendir error
+     * 
+     * @return void
+     */
     public function testRunWithoutDir()
     {
         $this->assert('test run with opendir error.')
@@ -53,6 +68,11 @@ class ReadDirectory extends atoum
                     ->isEqualTo(0);
     }
     
+    /**
+     * Test method for run()
+     * 
+     * @return void
+     */
     public function testRun()
     {
         $this->assert('test run (call fileAction and dirAction).')

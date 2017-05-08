@@ -10,17 +10,23 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class Config extends atoum
 {
     /**
-     * @var $class : Instance de la class
+     * @var $class Class instance
      */
     protected $class;
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Define CONFIG_DIR constant
+     * Instantiate the class
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
         if (
-            $testMethod === 'testSearchAllConfigsFilesDirFile' || 
+            $testMethod === 'testSearchAllConfigsFilesWithDirectory' || 
             $testMethod === 'testGetConfigExceptions'
         ) {
             return;
@@ -31,7 +37,12 @@ class Config extends atoum
         $this->class = new \BFW\Config('unit_test');
     }
     
-    public function testConfigWithNoFile()
+    /**
+     * test method for the case where there is no declared config file
+     * 
+     * @return void
+     */
+    public function testWhenNoFile()
     {
         $this->assert('test config with no file to found')
             ->if($this->class->loadFiles())
@@ -39,10 +50,15 @@ class Config extends atoum
             ->then
             ->exception(function() use ($config) {
                 $config->getConfig('test');
-            })->hasMessage('The file  not exist for config test');
+            })->hasMessage('The file  has not been found for config test');
     }
     
-    public function testConfigWithJsonFile()
+    /**
+     * test method for the case where there is a json config file
+     * 
+     * @return void
+     */
+    public function testWithJsonFile()
     {
         $configJson = '{
             "debug": false,
@@ -79,7 +95,12 @@ class Config extends atoum
             })->hasMessage('Syntax error');
     }
     
-    public function testConfigWithPhpFile()
+    /**
+     * test method for the case where there is a php config file
+     * 
+     * @return void
+     */
+    public function testWithPhpFile()
     {
         //$this->function->require : Doesn't work.
         
@@ -102,7 +123,12 @@ class Config extends atoum
                 ->isNull();
     }
     
-    public function testConfigUnsupportedFileExt()
+    /**
+     * test method for the case where there is an unsupported config file
+     * 
+     * @return void
+     */
+    public function testForUnsupportedFileExt()
     {
         $this->assert('test config with a unsupported file extension')
             ->if($this->function->file_exists = true)
@@ -114,10 +140,15 @@ class Config extends atoum
             ->then
             ->exception(function() use ($config) {
                 $config->getConfig('test');
-            })->hasMessage('The file  not exist for config test');
+            })->hasMessage('The file  has not been found for config test');
     }
     
-    public function testSearchAllConfigsFilesLinkedFile()
+    /**
+     * test method for searchAllConfigsFiles when the file is a symlink
+     * 
+     * @return void
+     */
+    public function testSearchAllConfigsFilesWithLinkedFile()
     {
         $this->assert('test searchAllConfigsFiles for a linked file')
             ->if($this->function->file_exists = true)
@@ -132,9 +163,14 @@ class Config extends atoum
                 ->isFalse();
     }
     
-    public function testSearchAllConfigsFilesDirFile()
+    /**
+     * test method for searchAllConfigsFiles when it is a directory
+     * 
+     * @return void
+     */
+    public function testSearchAllConfigsFilesWithDirectory()
     {
-        $this->assert('test searchAllConfigsFiles for a dir')
+        $this->assert('test searchAllConfigsFiles for a directory')
             ->given(define('CONFIG_DIR', __DIR__.'/../'))
             ->and($config = new MockConfigForPhpFile('class'))
             ->and($config->loadFiles())
@@ -145,6 +181,11 @@ class Config extends atoum
                 ->isFalse();
     }
     
+    /**
+     * test method for getConfig() exception messages
+     * 
+     * @return void
+     */
     public function testGetConfigExceptions()
     {
         define('CONFIG_DIR', __DIR__.'/../');
@@ -155,7 +196,10 @@ class Config extends atoum
             ->then
             ->exception(function() use ($config) {
                 $config->getConfig('debug');
-            })->hasMessage('Please indicate a file for get config debug');
+            })->hasMessage(
+                'There are many config files. '
+                .'Please indicate the file to obtain the config debug'
+            );
         
         $this->assert('test getConfig exception unknown key')
             ->if($config = new MockConfigForPhpFile('class'))
@@ -163,6 +207,6 @@ class Config extends atoum
             ->then
             ->exception(function() use ($config) {
                 $config->getConfig('bulton', 'core/Options.php');
-            })->hasMessage('The config key bulton not exist in config');
+            })->hasMessage('The config key bulton has not been found');
     }
 }

@@ -9,6 +9,11 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 class Cookies extends atoum
 {
+    /**
+     * Test method for create()
+     * 
+     * @return void
+     */
     public function testCreate()
     {
         $nowDateTime = new DateTime;

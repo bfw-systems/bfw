@@ -10,19 +10,29 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class Options extends atoum
 {
     /**
-     * @var $mock : Instance du mock pour la class
+     * @var $mock Mock instance
      */
     protected $mock;
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Instantiate the mock
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
         $this->mock = new MockOptions([], []);
     }
     
-    public function testOptions()
+    /**
+     * Test method for __construct()
+     * 
+     * @return void
+     */
+    public function testConstructor()
     {
         $this->assert('Test constructor, empty array for parameters')
             ->array($this->mock->options)
@@ -97,6 +107,11 @@ class Options extends atoum
                 ->isEqualTo($parameter);
     }
     
+    /**
+     * Test method for getOption()
+     * 
+     * @return void
+     */
     public function testGetOption()
     {
         $defaultParameter = [

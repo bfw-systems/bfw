@@ -16,7 +16,7 @@ class Subjects implements SplSubject
     protected $observers = [];
     
     /**
-     * @var string $action The last action to send to observers
+     * @var string $action The action to send to observers
      */
     protected $action = '';
     
@@ -36,7 +36,7 @@ class Subjects implements SplSubject
     }
     
     /**
-     * Return the last action
+     * Return the action
      * 
      * @return string
      */
@@ -46,7 +46,7 @@ class Subjects implements SplSubject
     }
     
     /**
-     * Define the last action
+     * Define the action
      * 
      * @param string $action The new action
      * 
@@ -59,7 +59,7 @@ class Subjects implements SplSubject
     }
     
     /**
-     * Return the last context
+     * Return the context
      * 
      * @return mixed
      */
@@ -69,7 +69,7 @@ class Subjects implements SplSubject
     }
     
     /**
-     * Define the last context
+     * Define the context
      * 
      * @param mixed $context The new context
      * 

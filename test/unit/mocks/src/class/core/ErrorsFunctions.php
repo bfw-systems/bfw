@@ -26,7 +26,7 @@ function cli_exception_render()
 
 $fctLastRenderCallInfos = new \stdClass;
 function fctErrorRender(
-    $erreurType,
+    $errType,
     $errMsg,
     $errFile,
     $errLine,
@@ -35,10 +35,10 @@ function fctErrorRender(
     global $fctLastRenderCallInfos;
     
     $fctLastRenderCallInfos = (object) [
-        'erreurType' => $erreurType,
-        'errMsg' => $errMsg,
-        'errFile' => $errFile,
-        'errLine' => $errLine,
+        'errType'   => $errType,
+        'errMsg'    => $errMsg,
+        'errFile'   => $errFile,
+        'errLine'   => $errLine,
         'backtrace' => $backtrace
     ];
 }

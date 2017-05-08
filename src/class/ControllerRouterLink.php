@@ -3,7 +3,7 @@
 namespace BFW;
 
 /**
- * Linker between controller and router module.
+ * Linker between controller and router modules.
  */
 class ControllerRouterLink
 {
@@ -18,17 +18,18 @@ class ControllerRouterLink
     protected $target;
     
     /**
-     * @var mixed $datas : Some datas send by router module to controller
+     * @var mixed $datas : Some datas send by router to controller
      */
     protected $datas;
     
     /**
      * Constructor
      * Singleton pattern
+     * 
+     * Nothing to do. Present for the visibility (protected).
      */
     protected function __construct()
     {
-        //Nothing todo
     }
     
     /**

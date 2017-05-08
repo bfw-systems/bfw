@@ -1,9 +1,12 @@
 <?php
+/**
+ * BFW mocked config file
+ */
 
 return [
     'debug'              => false,
     'errorRenderFct'     => [
-        'active'  => false,
+        'enabled' => false,
         'default' => [
             'class'  => '',
             'method' => ''
@@ -14,7 +17,7 @@ return [
         ]
     ],
     'exceptionRenderFct' => [
-        'active'  => false,
+        'enabled' => false,
         'default' => [
             'class'  => '',
             'method' => ''
@@ -29,7 +32,7 @@ return [
         'enabled'      => false,
         'class'        => '',
         'persistentId' => null,
-        'server'       => []
+        'servers'      => []
     ],
     'modules' => [
         'db' => [

@@ -14,14 +14,24 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class Application extends atoum
 {
     /**
-     * @var $mock : Instance du mock pour la class
+     * @var $mock Mock instance
      */
     protected $mock;
     
+    /**
+     * @var array $forcedConfig Config used for all test into this file
+     */
     protected $forcedConfig;
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Define forced config
+     * Remove existing BFW Application instance
+     * Instantiate the mock
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
@@ -51,8 +61,8 @@ class Application extends atoum
                 'readAllModules' => function() {
                     $modules = $this->modules;
                     foreach($this->modulesToAdd as $moduleName => $module) {
-                        $modules::declareModuleConfig($moduleName, $module->config);
-                        $modules::declareModuleLoadInfos($moduleName, $module->loadInfos);
+                        $modules::setModuleConfig($moduleName, $module->config);
+                        $modules::setModuleLoadInfos($moduleName, $module->loadInfos);
                     }
 
                     parent::readAllModules();
@@ -68,6 +78,11 @@ class Application extends atoum
         $this->mock = MockApp::init($options);
     }
     
+    /**
+     * Test method for __constructor()
+     * 
+     * @return void
+     */
     public function testConstructor()
     {
         $this->assert('test Constructor')
@@ -81,6 +96,11 @@ class Application extends atoum
                 ->isEqualTo($app);
     }
     
+    /**
+     * Test method for getComposerLoader()
+     * 
+     * @return void
+     */
     public function testGetComposerLoader()
     {
         $this->assert('test getComposerLoader')
@@ -88,6 +108,11 @@ class Application extends atoum
                 ->isInstanceOf('Composer\Autoload\ClassLoader');
     }
     
+    /**
+     * Test method for getConfig()
+     * 
+     * @return void
+     */
     public function testGetConfig()
     {
         $this->assert('test getConfig')
@@ -95,7 +120,7 @@ class Application extends atoum
                 ->isFalse()
             ->array($this->mock->getConfig('errorRenderFct'))
                 ->isEqualto([
-                    'active'  => false,
+                    'enabled' => false,
                     'default' => [
                         'class'  => '',
                         'method' => ''
@@ -111,9 +136,14 @@ class Application extends atoum
             ->exception(function() use ($app) {
                 $app->getConfig('unitTest');
             })
-                ->hasMessage('The config key unitTest not exist in config');
+                ->hasMessage('The config key unitTest has not been found');
     }
     
+    /**
+     * Test method for getOption()
+     * 
+     * @return void
+     */
     public function testGetOption()
     {
         $this->assert('test getOption')
@@ -128,6 +158,11 @@ class Application extends atoum
                 ->hasMessage('Option key testNotExist not exist.');
     }
     
+    /**
+     * Test method for getRequest()
+     * 
+     * @return void
+     */
     public function testGetRequest()
     {
         $this->assert('test getRequest')
@@ -135,6 +170,11 @@ class Application extends atoum
                 ->isInstanceOf('\BFW\Request');
     }
     
+    /**
+     * Test method for initOptions()
+     * 
+     * @return void
+     */
     public function testInitOptions()
     {
         //rootdir back 5 directories. He think to be in the vendor.
@@ -149,6 +189,11 @@ class Application extends atoum
                 ->isTrue();
     }
     
+    /**
+     * Test method for initConstants()
+     * 
+     * @return void
+     */
     public function testInitConstants()
     {
         //rootdir back 5 directories. He think to be in the vendor.
@@ -196,8 +241,10 @@ class Application extends atoum
     }
     
     /**
-     * test for initComposerLoader
+     * test method for initComposerLoader
      * Done by test getComposerLoader and addComposerNamespaces
+     * 
+     * @return void
      */
     public function testInitComposerLoader()
     {
@@ -205,9 +252,11 @@ class Application extends atoum
     }
     
     /**
-     * Test for initConfig
+     * Test method for initConfig
      * Done by getConfig
      * Not in coverrage because mocking.
+     * 
+     * @return void
      */
     public function testInitConfig()
     {
@@ -215,14 +264,21 @@ class Application extends atoum
     }
     
     /**
-     * Test for initRequest
+     * Test method for initRequest
      * Done by getRequest
+     * 
+     * @return void
      */
     public function testInitRequest()
     {
         
     }
     
+    /**
+     * Test method for initSessionEnabled()
+     * 
+     * @return void
+     */
     public function testInitSessionEnabled()
     {
         $this->assert('test initSession enabled')
@@ -230,6 +286,11 @@ class Application extends atoum
                 ->isNotEmpty();
     }
     
+    /**
+     * Test method for initSessionDisabled()
+     * 
+     * @return void
+     */
     public function testInitSessionDisabled()
     {
         if (session_status() === PHP_SESSION_ACTIVE) {
@@ -250,6 +311,11 @@ class Application extends atoum
                 ->isEmpty();
     }
     
+    /**
+     * Test method for initErrors()
+     * 
+     * @return void
+     */
     public function testInitErrors()
     {
         $this->assert('test initErrors')
@@ -257,6 +323,11 @@ class Application extends atoum
                 ->isInstanceOf('\BFW\Core\Errors');
     }
     
+    /**
+     * Test method for initModules()
+     * 
+     * @return void
+     */
     public function testInitModules()
     {
         $this->assert('test initModules')
@@ -264,6 +335,11 @@ class Application extends atoum
                 ->isInstanceOf('\BFW\Modules');
     }
     
+    /**
+     * Test method for addComposerNamespaces()
+     * 
+     * @return void
+     */
     public function testAddComposerNamespaces()
     {
         $this->assert('test addComposerNamespaces')
@@ -287,35 +363,45 @@ class Application extends atoum
                 ->isEqualTo(MODELES_DIR);
     }
     
-    public function testDeclareRunPhases()
+    /**
+     * Test method for declareRunSteps()
+     * 
+     * @return void
+     */
+    public function testDeclareRunSteps()
     {
-        $this->assert('test declareRunPhases')
-            ->array($runPhases = $this->mock->getRunPhases())
+        $this->assert('test declareRunSteps')
+            ->array($runSteps = $this->mock->getRunSteps())
                 ->size
                     ->isEqualTo(5)
-            ->object($runPhases[0][0])
+            ->object($runSteps[0][0])
                 ->isInstanceOf('\BFW\Application')
-            ->object($runPhases[1][0])
+            ->object($runSteps[1][0])
                 ->isInstanceOf('\BFW\Application')
-            ->object($runPhases[2][0])
+            ->object($runSteps[2][0])
                 ->isInstanceOf('\BFW\Application')
-            ->object($runPhases[3][0])
+            ->object($runSteps[3][0])
                 ->isInstanceOf('\BFW\Application')
-            ->object($runPhases[4][0])
+            ->object($runSteps[4][0])
                 ->isInstanceOf('\BFW\Application')
-            ->string($runPhases[0][1])
+            ->string($runSteps[0][1])
                 ->isEqualTo('loadMemcached')
-            ->string($runPhases[1][1])
+            ->string($runSteps[1][1])
                 ->isEqualTo('readAllModules')
-            ->string($runPhases[2][1])
+            ->string($runSteps[2][1])
                 ->isEqualTo('loadAllCoreModules')
-            ->string($runPhases[3][1])
+            ->string($runSteps[3][1])
                 ->isEqualTo('loadAllAppModules')
-            ->string($runPhases[4][1])
+            ->string($runSteps[4][1])
                 ->isEqualTo('runCliFile');
     }
     
-    public function testRunNotify()
+    /**
+     * Test method for notify message during the call to method run()
+     * 
+     * @return void
+     */
+    public function testNotifyDuringRun()
     {
         $notifyText = 'apprun_loadMemcached'."\n"
                     .'apprun_readAllModules'."\n"
@@ -334,6 +420,11 @@ class Application extends atoum
                 ->isEqualTo($notifyText);
     }
     
+    /**
+     * Test method for loadMemcached()
+     * 
+     * @return void
+     */
     public function testLoadMemcached()
     {
         $app = $this->mock;
@@ -358,7 +449,7 @@ class Application extends atoum
         
         $this->assert('test loadMemcached enabled without class exist')
             ->if($this->forcedConfig['memcached']['class'] = '\BFW\Memcache\Memcached')
-            ->and($this->forcedConfig['memcached']['server'][0] = [
+            ->and($this->forcedConfig['memcached']['servers'][0] = [
                     'host' => 'localhost',
                     'port' => 11211
             ])
@@ -368,6 +459,11 @@ class Application extends atoum
                 ->isNull();
     }
     
+    /**
+     * Test method for readAllModules() when there is no declared modules.
+     * 
+     * @return void
+     */
     public function testReadAllModulesWithoutModule()
     {
         $this->assert('test readAllModules without modules')
@@ -377,6 +473,11 @@ class Application extends atoum
                     ->isEqualTo(0);
     }
     
+    /**
+     * Test method for readAllModules() when there is one module without fail
+     * 
+     * @return void
+     */
     public function testReadAllModulesWithOneGoodModule()
     {
         $this->assert('test readAllModules with one module')
@@ -402,6 +503,11 @@ class Application extends atoum
                 ->isIdenticalTo($this->mock->getModules()->getModule('test1'));
     }
     
+    /**
+     * Test method for readAllModules() when there is one module with fail
+     * 
+     * @return void
+     */
     public function testReadAllModulesWithOneBadModule()
     {
         $this->assert('test readAllModules with one module')
@@ -419,6 +525,11 @@ class Application extends atoum
                     ->isEqualTo(0);
     }
     
+    /**
+     * Test method for loadAllCoreModules() when there is no declared modules
+     * 
+     * @return void
+     */
     public function testLoadAllCoreModulesWithoutModule()
     {
         $this->assert('test loadAllCoreModules')
@@ -431,6 +542,12 @@ class Application extends atoum
                 ->notContains('load_module_');
     }
     
+    /**
+     * Test method for loadAllCoreModules()
+     * when there is one module without fail
+     * 
+     * @return void
+     */
     public function testLoadAllCoreModulesWithOneModule()
     {
         $this->assert('test loadAllCoreModules')
@@ -457,15 +574,22 @@ class Application extends atoum
     }
     
     /**
+     * Test method for loadAllAppModules()
      * Tested on testReadAllModulesWithOneGoodModule
+     * 
+     * @return void
      */
-    public function testloadAllAppModules()
+    public function testLoadAllAppModules()
     {
         
     }
     
     /**
-     * Tested on testReadAllModulesWithOneGoodModule and testLoadAllCoreModulesWithOneModule
+     * Test method for loadModule()
+     * Tested on testReadAllModulesWithOneGoodModule
+     * and testLoadAllCoreModulesWithOneModule
+     * 
+     * @return void
      */
     public function testLoadModule()
     {
@@ -473,7 +597,10 @@ class Application extends atoum
     }
     
     /**
+     * Test method for runCliFile()
      * Tested on test installer scripts
+     * 
+     * @return void
      */
     public function testRunCliFile()
     {

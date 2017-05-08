@@ -10,22 +10,31 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class Dates extends atoum
 {
     /**
-     * @var $mock : Instance du mock pour la class
+     * @var $mock Mock instance
      */
     protected $mock;
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Instantiate the mock
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
         $this->mock = new MockDates;
     }
     
-    public function testGetHumainReadableI18n()
+    /**
+     * Test method for getHumanReadableI18n()
+     * 
+     * @return void
+     */
+    public function testGetHumanReadableI18n()
     {
-        $this->assert('test getHumainReadableI18n')
-            ->array(MockDates::getHumainReadableI18n())
+        $this->assert('test getHumanReadableI18n')
+            ->array(MockDates::getHumanReadableI18n())
                 ->isEqualTo([
                     'now'       => 'now',
                     'since'     => 'since',
@@ -36,14 +45,19 @@ class Dates extends atoum
                 ]);
     }
     
-    public function testSetHumainReadableI18nKey()
+    /**
+     * Test method for setHumanReadableI18nKey()
+     * 
+     * @return void
+     */
+    public function testSetHumanReadableI18nKey()
     {
         $key   = 'now';
         $value = 'maintenant';
         
-        $this->assert('test setHumainReadableI18nKey')
-            ->given(MockDates::setHumainReadableI18nKey($key, $value))
-            ->array(MockDates::getHumainReadableI18n())
+        $this->assert('test setHumanReadableI18nKey')
+            ->given(MockDates::setHumanReadableI18nKey($key, $value))
+            ->array(MockDates::getHumanReadableI18n())
                 ->isEqualTo([
                     'now'       => 'maintenant',
                     'since'     => 'since',
@@ -56,9 +70,9 @@ class Dates extends atoum
         $key   = 'nox';
         $value = 'maintenant';
         
-        $this->assert('test setHumainReadableI18nKey new key')
-            ->given(MockDates::setHumainReadableI18nKey($key, $value))
-            ->array(MockDates::getHumainReadableI18n())
+        $this->assert('test setHumanReadableI18nKey new key')
+            ->given(MockDates::setHumanReadableI18nKey($key, $value))
+            ->array(MockDates::getHumanReadableI18n())
                 ->isEqualTo([
                     'now'       => 'maintenant',
                     'since'     => 'since',
@@ -70,23 +84,33 @@ class Dates extends atoum
                 ]);
     }
     
-    public function testSetHumainReadableI18n()
+    /**
+     * Test method for setHumanReadableI18n()
+     * 
+     * @return void
+     */
+    public function testSetHumanReadableI18n()
     {
         $newValue = [
             'test' => 'test',
             'test2' => 'test2'
         ];
         
-        $this->assert('test setHumainReadableI18n')
-            ->given(MockDates::setHumainReadableI18n($newValue))
-            ->array(MockDates::getHumainReadableI18n())
+        $this->assert('test setHumanReadableI18n')
+            ->given(MockDates::setHumanReadableI18n($newValue))
+            ->array(MockDates::getHumanReadableI18n())
                 ->isEqualTo($newValue);
     }
     
-    public function testGetHumainReadableFormats()
+    /**
+     * Test method for getHumanReadableFormats()
+     * 
+     * @return void
+     */
+    public function testGetHumanReadableFormats()
     {
-        $this->assert('test getHumainReadableFormats')
-            ->array(MockDates::getHumainReadableFormats())
+        $this->assert('test getHumanReadableFormats')
+            ->array(MockDates::getHumanReadableFormats())
                 ->isEqualTo([
                     'dateSameYear'      => 'm-d',
                     'dateDifferentYear' => 'Y-m-d',
@@ -94,14 +118,19 @@ class Dates extends atoum
                 ]);
     }
     
-    public function testSetHumainReadableFormatsKey()
+    /**
+     * Test method for setHumanReadableFormatsKey()
+     * 
+     * @return void
+     */
+    public function testSetHumanReadableFormatsKey()
     {
         $key   = 'time';
         $value = 'H:i:s';
         
-        $this->assert('test setHumainReadableFormatsKey')
-            ->given(MockDates::setHumainReadableFormatsKey($key, $value))
-            ->array(MockDates::getHumainReadableFormats())
+        $this->assert('test setHumanReadableFormatsKey')
+            ->given(MockDates::setHumanReadableFormatsKey($key, $value))
+            ->array(MockDates::getHumanReadableFormats())
                 ->isEqualTo([
                     'dateSameYear'      => 'm-d',
                     'dateDifferentYear' => 'Y-m-d',
@@ -111,9 +140,9 @@ class Dates extends atoum
         $key   = 'gmt';
         $value = 'O';
         
-        $this->assert('test setHumainReadableFormatsKey new key')
-            ->given(MockDates::setHumainReadableFormatsKey($key, $value))
-            ->array(MockDates::getHumainReadableFormats())
+        $this->assert('test setHumanReadableFormatsKey new key')
+            ->given(MockDates::setHumanReadableFormatsKey($key, $value))
+            ->array(MockDates::getHumanReadableFormats())
                 ->isEqualTo([
                     'dateSameYear'      => 'm-d',
                     'dateDifferentYear' => 'Y-m-d',
@@ -122,19 +151,29 @@ class Dates extends atoum
                 ]);
     }
     
-    public function testSetHumainReadableFormats()
+    /**
+     * Test method for setHumanReadableFormats()
+     * 
+     * @return void
+     */
+    public function testSetHumanReadableFormats()
     {
         $newValue = [
             'test' => 'test',
             'test2' => 'test2'
         ];
         
-        $this->assert('test setHumainReadableFormats')
-            ->given(MockDates::setHumainReadableFormats($newValue))
-            ->array(MockDates::getHumainReadableFormats())
+        $this->assert('test setHumanReadableFormats')
+            ->given(MockDates::setHumanReadableFormats($newValue))
+            ->array(MockDates::getHumanReadableFormats())
                 ->isEqualTo($newValue);
     }
     
+    /**
+     * Test method for getDate()
+     * 
+     * @return void
+     */
     public function testGetDate()
     {
         $this->assert('test getDate')
@@ -142,6 +181,11 @@ class Dates extends atoum
                 ->isEqualTo($this->mock->format('Y-m-d H:i:sO'));
     }
     
+    /**
+     * Test method for getYear()
+     * 
+     * @return void
+     */
     public function testGetYear()
     {
         $this->assert('test getYear')
@@ -149,6 +193,11 @@ class Dates extends atoum
                 ->isEqualTo((int) $this->mock->format('Y'));
     }
     
+    /**
+     * Test method for getMonth()
+     * 
+     * @return void
+     */
     public function testGetMonth()
     {
         $this->assert('test getMonth')
@@ -156,6 +205,11 @@ class Dates extends atoum
                 ->isEqualTo((int) $this->mock->format('m'));
     }
     
+    /**
+     * Test method for getDay()
+     * 
+     * @return void
+     */
     public function testGetDay()
     {
         $this->assert('test getDay')
@@ -163,6 +217,11 @@ class Dates extends atoum
                 ->isEqualTo((int) $this->mock->format('d'));
     }
     
+    /**
+     * Test method for getHour()
+     * 
+     * @return void
+     */
     public function testGetHour()
     {
         $this->assert('test getHour')
@@ -170,6 +229,11 @@ class Dates extends atoum
                 ->isEqualTo((int) $this->mock->format('H'));
     }
     
+    /**
+     * Test method for getMinute()
+     * 
+     * @return void
+     */
     public function testGetMinute()
     {
         $this->assert('test getMinute')
@@ -177,6 +241,11 @@ class Dates extends atoum
                 ->isEqualTo((int) $this->mock->format('i'));
     }
     
+    /**
+     * Test method for getSecond()
+     * 
+     * @return void
+     */
     public function testGetSecond()
     {
         $this->assert('test getSecond')
@@ -184,6 +253,11 @@ class Dates extends atoum
                 ->isEqualTo((int) $this->mock->format('s'));
     }
     
+    /**
+     * Test method for getZone()
+     * 
+     * @return void
+     */
     public function testGetZone()
     {
         $this->assert('test getZone')
@@ -191,6 +265,11 @@ class Dates extends atoum
                 ->isEqualTo($this->mock->format('P'));
     }
     
+    /**
+     * Test method for modify()
+     * 
+     * @return void
+     */
     public function testModify()
     {
         $dt = new \DateTime;
@@ -224,6 +303,11 @@ class Dates extends atoum
             ->hasMessage('Dates::modify Parameter annees is unknown.');
     }
     
+    /**
+     * Test method for getSqlFormat()
+     * 
+     * @return void
+     */
     public function testGetSqlFormat()
     {
         $this->assert('test getSqlFormat string return')
@@ -238,6 +322,11 @@ class Dates extends atoum
                 ]);
     }
     
+    /**
+     * Test method for lstTimeZone()
+     * 
+     * @return void
+     */
     public function testLstTimeZone()
     {
         $dateTimeZone = new \DateTimeZone('Europe/Paris');
@@ -248,6 +337,11 @@ class Dates extends atoum
                 ->isEqualTo($lstTimeZone);
     }
     
+    /**
+     * Test method for lstTimeZoneContinent()
+     * 
+     * @return void
+     */
     public function testLstTimeZoneContinent()
     {
         $this->assert('test lstTimeZoneContinent')
@@ -266,6 +360,11 @@ class Dates extends atoum
                 ]);
     }
     
+    /**
+     * Test method for lstTimeZonePays()
+     * 
+     * @return void
+     */
     public function testLstTimeZonePays()
     {
         //Some time zone has added with new version of php
@@ -302,73 +401,78 @@ class Dates extends atoum
                 ->isEqualTo($lstTimeZoneTest);
     }
     
-    public function testHumainReadable()
+    /**
+     * Test method for humanReadable()
+     * 
+     * @return void
+     */
+    public function testHumanReadable()
     {
-        $hrFormat = MockDates::getHumainReadableFormats();
+        $hrFormat = MockDates::getHumanReadableFormats();
         
         /*
          * Disable because this test fail all, a "lag" return "since 1s"
-        $this->assert('test humaineReadable : now')
-            ->string($this->mock->humainReadable())
+        $this->assert('test humaneReadable : now')
+            ->string($this->mock->humanReadable())
                 ->isEqualTo($hrI18n['now']);
         */
         
-        $this->assert('test humainReadable : Since')
+        $this->assert('test humanReadable : Since')
             /*->given($this->mock->modify('-10 second'))
-            ->string($this->mock->humainReadable())
+            ->string($this->mock->humanReadable())
                 ->isEqualTo('Since 10s')
-            ->string($this->mock->humainReadable(false, true))
+            ->string($this->mock->humanReadable(false, true))
                 ->isEqualTo('since 10s')*/
             ->given($this->mock->modify('-30 minute'))
-            ->string($this->mock->humainReadable())
+            ->string($this->mock->humanReadable())
                 ->isEqualTo('since 30min')
-            ->string($this->mock->humainReadable(false))
+            ->string($this->mock->humanReadable(false))
                 ->isEqualTo('since 30min')
             ->given($this->mock->modify('-1 hour'))
-            ->string($this->mock->humainReadable())
+            ->string($this->mock->humanReadable())
                 ->isEqualTo('since 1h')
-            ->string($this->mock->humainReadable(false))
+            ->string($this->mock->humanReadable(false))
                 ->isEqualTo('since 1h')
             ->given($this->mock->modify('+3 hour'))
-            ->string($this->mock->humainReadable())
+            ->string($this->mock->humanReadable())
                 ->isEqualTo('in 1h')
-            ->string($this->mock->humainReadable(false))
+            ->string($this->mock->humanReadable(false))
                 ->isEqualTo('in 1h');
         
-        $this->assert('test humainReadable : Yesterday')
+        $this->assert('test humanReadable : Yesterday')
             ->given($this->mock->modify('-28 hour'))
             ->given($yesterdayFormat = $this->mock->format($hrFormat['time']))
-            ->string($this->mock->humainReadable())
+            ->string($this->mock->humanReadable())
                 ->isEqualTo('yesterday at '.$yesterdayFormat)
-            ->string($this->mock->humainReadable(false))
+            ->string($this->mock->humanReadable(false))
                 ->isEqualTo('yesterday')
-            ->string($this->mock->humainReadable(true))
+            ->string($this->mock->humanReadable(true))
                 ->isEqualTo('yesterday at '.$yesterdayFormat);
         
         //Not testable current january month because the month before is not
         //in the same year.
         if ((int) $this->mock->format('m') !== 1) {
-            $this->assert('test humainReadable : Before yesterday; Same year')
+            $this->assert('test humanReadable : Before yesterday; Same year')
                 ->given($this->mock->modify('-1 month'))
                 ->given($dateFormat = $this->mock->format($hrFormat['dateSameYear']))
                 ->given($timeFormat = $this->mock->format($hrFormat['time']))
-                ->string($this->mock->humainReadable())
+                ->string($this->mock->humanReadable())
                     ->isEqualTo('the '.$dateFormat.' at '.$timeFormat)
-                ->string($this->mock->humainReadable(false))
+                ->string($this->mock->humanReadable(false))
                     ->isEqualTo('the '.$dateFormat)
-                ->string($this->mock->humainReadable(true))
+                ->string($this->mock->humanReadable(true))
                     ->isEqualTo('the '.$dateFormat.' at '.$timeFormat);
         }
         
-        $this->assert('test humainReadable : Before yesterday; Different year')
+        $this->assert('test humanReadable : Before yesterday; Different year')
             ->given($this->mock->modify('-1 year'))
             ->given($dateFormat = $this->mock->format($hrFormat['dateDifferentYear']))
             ->given($timeFormat = $this->mock->format($hrFormat['time']))
-            ->string($this->mock->humainReadable())
+            ->string($this->mock->humanReadable())
                 ->isEqualTo('the '.$dateFormat.' at '.$timeFormat)
-            ->string($this->mock->humainReadable(false))
+            ->string($this->mock->humanReadable(false))
                 ->isEqualTo('the '.$dateFormat)
-            ->string($this->mock->humainReadable(true))
+            ->string($this->mock->humanReadable(true))
                 ->isEqualTo('the '.$dateFormat.' at '.$timeFormat);
     }
 }

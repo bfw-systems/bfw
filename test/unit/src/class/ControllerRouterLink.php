@@ -8,12 +8,17 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class ControllerRouterLink extends atoum
 {
     /**
-     * @var $class : Instance de la class
+     * @var $class Class instance
      */
     protected $class;
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Instantiate the class
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
@@ -24,6 +29,11 @@ class ControllerRouterLink extends atoum
         $this->class = \BFW\ControllerRouterLink::getInstance();
     }
     
+    /**
+     * Test method for getInstance()
+     * 
+     * @return void
+     */
     public function testGetInstance()
     {
         $this->assert('test getInstance : create new instance')
@@ -38,6 +48,11 @@ class ControllerRouterLink extends atoum
                 ->isIdenticalTo($firstInstance);
     }
     
+    /**
+     * Test method for getTarget() and setTarget()
+     * 
+     * @return void
+     */
     public function testGetTargetAndSetTarget()
     {
         $this->assert('test getTarget with default value')
@@ -53,6 +68,11 @@ class ControllerRouterLink extends atoum
                 ->isEqualTo('unit_test');
     }
     
+    /**
+     * Test method for getDatas() and setDatas()
+     * 
+     * @return void
+     */
     public function testGetDatasAndSetDatas()
     {
         $this->assert('test getDatas with default value')

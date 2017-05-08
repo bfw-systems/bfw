@@ -14,22 +14,35 @@ require_once(__DIR__.'/../../../../../vendor/autoload.php');
 class Memcache extends atoum
 {
     /**
-     * @var $class : Instance de la class
+     * @var $class Class instance
      */
     protected $class;
     
+    /**
+     * @var \BFW\test\helpers\ApplicationInit $app BFW Application instance
+     */
     protected $app;
+    
+    /**
+     * @var array $forcedConfig Config used for all test into this file
+     */
     protected $forcedConfig = [];
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Define forced config
+     * Instantiate BFW Application class
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
         $this->forcedConfig = [
             'debug'              => false,
             'errorRenderFct'     => [
-                'active'  => false,
+                'enabled' => false,
                 'default' => [
                     'class'  => '',
                     'method' => ''
@@ -40,7 +53,7 @@ class Memcache extends atoum
                 ]
             ],
             'exceptionRenderFct' => [
-                'active'  => false,
+                'enabled' => false,
                 'default' => [
                     'class'  => '',
                     'method' => ''
@@ -54,7 +67,7 @@ class Memcache extends atoum
                 'enabled'      => false,
                 'class'        => '\BFW\Memcache\Memcache',
                 'persistentId' => null,
-                'server'       => [
+                'servers'      => [
                     [
                         'host'       => '',
                         'port'       => 0,
@@ -73,10 +86,17 @@ class Memcache extends atoum
         //$this->class = new \BFW\Memcache\Memcache($this->app);
     }
     
+    /**
+     * Connect to localhost memcache server
+     * 
+     * @param string $testName The test method name which have call this method
+     * 
+     * @return void
+     */
     protected function connectToServer($testName)
     {
         $this->assert('Connect to server for test '.$testName)
-            ->if($this->forcedConfig['memcached']['server'][0] = [
+            ->if($this->forcedConfig['memcached']['servers'][0] = [
                     'host'       => 'localhost',
                     'port'       => 11211,
                     'persistent' => true
@@ -87,6 +107,12 @@ class Memcache extends atoum
     
     /**
      * @php < 7.0
+     * 
+     * Test method for __constructor() when no server is declared
+     * This method is only executed when PHP < 7.0 because after, the \Memcache
+     * class not exist.
+     * 
+     * @return void
      */
     public function testConstructorWithoutServer()
     {
@@ -97,11 +123,17 @@ class Memcache extends atoum
     
     /**
      * @php < 7.0
+     * 
+     * Test method for __constructor() with a declared server
+     * This method is only executed when PHP < 7.0 because after, the \Memcache
+     * class not exist.
+     * 
+     * @return void
      */
     public function testConstructorWithServer()
     {
         $this->assert('test constructor with a memcache server')
-            ->if($this->forcedConfig['memcached']['server'][0] = [
+            ->if($this->forcedConfig['memcached']['servers'][0] = [
                     'host' => 'localhost',
                     'port' => 11211
             ])
@@ -114,11 +146,18 @@ class Memcache extends atoum
     
     /**
      * @php < 7.0
+     * 
+     * Test method for __constructor() with a declared server but when the
+     * server not exist.
+     * This method is only executed when PHP < 7.0 because after, the \Memcache
+     * class not exist.
+     * 
+     * @return void
      */
     public function testConstructorWithBadServer()
     {
         $this->assert('test constructor with a bad memcache server infos')
-            ->if($this->forcedConfig['memcached']['server'][0] = [
+            ->if($this->forcedConfig['memcached']['servers'][0] = [
                     'host' => 'localhost',
                     'port' => 11212
             ])
@@ -141,11 +180,17 @@ class Memcache extends atoum
     /**
      * @php < 7.0
      * @TODO I don't know how to test the effect of "timeout".
+     * 
+     * Test method for __constructor() with the "timeout" parameter
+     * This method is only executed when PHP < 7.0 because after, the \Memcache
+     * class not exist.
+     * 
+     * @return void
      */
     public function testConstructorWithTimeout()
     {
         $this->assert('test constructor with a memcache server and edit timeout')
-            ->if($this->forcedConfig['memcached']['server'][0] = [
+            ->if($this->forcedConfig['memcached']['servers'][0] = [
                     'host'    => 'localhost',
                     'port'    => 11211,
                     'timeout' => 5
@@ -160,11 +205,17 @@ class Memcache extends atoum
     /**
      * @php < 7.0
      * @TODO I don't know how to test the effect of "persistent" in this context.
+     * 
+     * Test method for __constructor() with the "persistent" parameter
+     * This method is only executed when PHP < 7.0 because after, the \Memcache
+     * class not exist.
+     * 
+     * @return void
      */
     public function testConstructorWithPersistant()
     {
         $this->assert('test constructor with a memcache server and edit timeout')
-            ->if($this->forcedConfig['memcached']['server'][0] = [
+            ->if($this->forcedConfig['memcached']['servers'][0] = [
                     'host'       => 'localhost',
                     'port'       => 11211,
                     'persistent' => true
@@ -178,6 +229,12 @@ class Memcache extends atoum
     
     /**
      * @php < 7.0
+     * 
+     * Test method for getServerInfos()
+     * This method is only executed when PHP < 7.0 because after, the \Memcache
+     * class not exist.
+     * 
+     * @return void
      */
     public function testGetServerInfos()
     {
@@ -197,7 +254,7 @@ class Memcache extends atoum
                 ]);
         
         $this->assert('test getServerInfos with datas')
-            ->given($serverInfos = $this->forcedConfig['memcached']['server'][0])
+            ->given($serverInfos = $this->forcedConfig['memcached']['servers'][0])
             ->if($serverInfos['timeout'] = 10)
             ->and($this->class->callGetServerInfos($serverInfos))
             ->then
@@ -221,6 +278,12 @@ class Memcache extends atoum
     
     /**
      * @php < 7.0
+     * 
+     * Test method for ifExists()
+     * This method is only executed when PHP < 7.0 because after, the \Memcache
+     * class not exist.
+     * 
+     * @return void
      */
     public function testIfExists()
     {
@@ -243,15 +306,24 @@ class Memcache extends atoum
             ->exception(function() use ($class) {
                 $class->ifExists(10);
             })
-                ->hasMessage('The $key parameters must be a string');
+                ->hasMessage(
+                    'The $key parameters must be a string. '
+                    .'Currently the value is a/an integer and is equal to 10'
+                );
         
         $this->and($this->class->close());
     }
     
     /**
      * @php < 7.0
+     * 
+     * Test method for updateExpire()
+     * This method is only executed when PHP < 7.0 because after, the \Memcache
+     * class not exist.
+     * 
+     * @return void
      */
-    public function testMajExpire()
+    public function testUpdateExpire()
     {
         $this->connectToServer(__METHOD__);
         $this->class->delete('test');
@@ -259,21 +331,21 @@ class Memcache extends atoum
         $this->assert('test majExpire with a key which does not exist')
             ->given($class = $this->class)
             ->exception(function() use ($class) {
-                $class->majExpire('test', 150);
+                $class->updateExpire('test', 150);
             })
                 ->hasMessage('The key test not exist on memcache(d) server');
         
         $this->assert('test majExpire with a key which does exist')
             ->if($this->class->set('test', 'unit test', null, 3600))
             ->then
-            ->boolean($this->class->majExpire('test', 150))
+            ->boolean($this->class->updateExpire('test', 150))
                 ->isTrue()
             ->and($this->class->delete('test')); //Remove tested key
         
         $this->assert('test majExpire exception')
             ->given($class = $this->class)
             ->exception(function() use ($class) {
-                $class->majExpire(10, '150');
+                $class->updateExpire(10, '150');
             })
                 ->hasMessage('Once of parameters $key or $expire not have a correct type.');
         

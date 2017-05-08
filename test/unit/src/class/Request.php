@@ -8,12 +8,18 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class Request extends atoum
 {
     /**
-     * @var $class : Instance de la class
+     * @var $class Class instance
      */
     protected $class;
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Declare all $_SERVER used
+     * Instantiate the class
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
@@ -34,6 +40,11 @@ class Request extends atoum
         $this->class = \BFW\Request::getInstance();
     }
     
+    /**
+     * Test method for getInstance()
+     * 
+     * @return void
+     */
     public function testGetInstance()
     {
         $this->assert('test getInstance : create new instance')
@@ -48,6 +59,11 @@ class Request extends atoum
                 ->isIdenticalTo($firstInstance);
     }
     
+    /**
+     * Test method for getIp()
+     * 
+     * @return void
+     */
     public function testGetIp()
     {
         $this->assert('test getIp : default return')
@@ -62,6 +78,11 @@ class Request extends atoum
                 ->isEqualTo($newValue);
     }
 
+    /**
+     * Test method for getLang()
+     * 
+     * @return void
+     */
     public function testGetLang()
     {
         $this->assert('test getLang : default return')
@@ -99,6 +120,11 @@ class Request extends atoum
         }
     }
 
+    /**
+     * Test method for getReferer()
+     * 
+     * @return void
+     */
     public function testGetReferer()
     {
         $this->assert('test getReferer : default return')
@@ -113,6 +139,11 @@ class Request extends atoum
                 ->isEqualTo($newValue);
     }
 
+    /**
+     * Test method for getMethod()
+     * 
+     * @return void
+     */
     public function testGetMethod()
     {
         $this->assert('test getMethod : default return')
@@ -134,6 +165,11 @@ class Request extends atoum
                 ->isEqualTo($newValue);
     }
 
+    /**
+     * Test method for getSsl()
+     * 
+     * @return void
+     */
     public function testGetSsl()
     {
         $this->assert('test getSsl : default return')
@@ -161,6 +197,11 @@ class Request extends atoum
                 ->isTrue();
     }
 
+    /**
+     * Test method for getRequest()
+     * 
+     * @return void
+     */
     public function testGetRequest()
     {
         $this->assert('test getRequest : default return')
@@ -190,6 +231,11 @@ class Request extends atoum
                 ->string($request->fragment)->isEqualTo('L1');
     }
 
+    /**
+     * Test method for getServerVar()
+     * 
+     * @return void
+     */
     public function testGetServerVar()
     {
         $this->assert('test getServerVar with default value')

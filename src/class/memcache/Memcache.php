@@ -9,11 +9,11 @@ use \Exception;
  */
 class Memcache extends \Memcache
 {
-    //Include traits to add some methods
+    //Include Memcache trait to add some common methods with Memcached class
     use \BFW\Traits\Memcache;
 
     /**
-     * @var array $config Config define on bfw config file for memcache(d)
+     * @var array $config Config define into bfw config file for memcache(d)
      */
     protected $config;
 
@@ -28,7 +28,7 @@ class Memcache extends \Memcache
         //Check php version. No memcache lib for >= 7.x
         if (PHP_VERSION_ID > 70000) {
             throw new Exception(
-                'PHP Memcache Extension not supported for PHP 7'
+                'PHP Memcache Extension is not supported on PHP >= 7.0.0'
             );
         }
         
@@ -39,14 +39,14 @@ class Memcache extends \Memcache
     }
 
     /**
-     * Connect to memcache(d) server defined on config
+     * Connect to memcache(d) server(s) defined on config
      * 
      * @return void
      */
     protected function connectToServers()
     {
         //Loop on declared server(s)
-        foreach ($this->config['server'] as $server) {
+        foreach ($this->config['servers'] as $server) {
             $this->getServerInfos($server);
             
             $host       = $server['host'];
@@ -66,7 +66,7 @@ class Memcache extends \Memcache
             }
             
             //If a timeout is declared
-            //not found the default value for this parameters, so a if...
+            //I not found the default value for this parameters, so an if...
             if ($timeout !== null) {
                 $this->{$methodName}($host, $port, $timeout);
                 return;

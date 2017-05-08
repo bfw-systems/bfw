@@ -15,22 +15,36 @@ require_once(__DIR__.'/../../../mocks/src/class/core/ErrorsFunctions.php');
 class Errors extends atoum
 {
     /**
-     * @var $mock : Instance du mock pour la class
+     * @var $mock Mock instance
      */
     protected $mock;
     
+    /**
+     * @var \BFW\test\helpers\ApplicationInit $app BFW Application instance
+     */
     protected $app;
+    
+    /**
+     * @var array $forcedConfig Config used for all test into this file
+     */
     protected $forcedConfig = [];
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Define forced config
+     * Instantiate BFW Application class
+     * Instantiate the mock
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
         $this->forcedConfig = [
             'debug'              => false,
             'errorRenderFct'     => [
-                'active'  => false,
+                'enabled' => false,
                 'default' => [
                     'class'  => '',
                     'method' => 'default_error_render'
@@ -41,7 +55,7 @@ class Errors extends atoum
                 ]
             ],
             'exceptionRenderFct' => [
-                'active'  => false,
+                'enabled' => false,
                 'default' => [
                     'class'  => '',
                     'method' => 'default_exception_render'
@@ -78,6 +92,11 @@ class Errors extends atoum
         $this->mock = new MockErrors;
     }
     
+    /**
+     * Test method for __constructor()
+     * 
+     * @return void
+     */
     public function testConstructor()
     {
         $this->assert('test constructor')
@@ -85,6 +104,11 @@ class Errors extends atoum
                 ->isInstanceOf('\BFW\Core\Errors');
     }
     
+    /**
+     * Test method for defineErrorHandler()
+     * 
+     * @return void
+     */
     public function testDefineErrorHandler()
     {
         $this->assert('test defineErrorHandler without render')
@@ -92,7 +116,7 @@ class Errors extends atoum
                 ->isNull();
         
         $this->assert('test defineErrorHandler with a function render')
-            ->if($this->forcedConfig['errorRenderFct']['active'] = true)
+            ->if($this->forcedConfig['errorRenderFct']['enabled'] = true)
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
             ->array($this->mock->callDefineErrorHandler())
@@ -102,7 +126,7 @@ class Errors extends atoum
                 ]);
         
         $this->assert('test defineErrorHandler with a class render')
-            ->if($this->forcedConfig['errorRenderFct']['active'] = true)
+            ->if($this->forcedConfig['errorRenderFct']['enabled'] = true)
             ->and($this->forcedConfig['errorRenderFct']['cli'] = [
                 'class'  => '\BFW\Core\test\unit\mocks\Errors',
                 'method' => 'mockRender'
@@ -116,6 +140,11 @@ class Errors extends atoum
                 ]);
     }
     
+    /**
+     * Test method for defineExceptionHandler()
+     * 
+     * @return void
+     */
     public function testDefineExceptionHandler()
     {
         $this->assert('test defineExceptionHandler without render')
@@ -123,7 +152,7 @@ class Errors extends atoum
                 ->isNull();
         
         $this->assert('test defineExceptionHandler with a function render')
-            ->if($this->forcedConfig['exceptionRenderFct']['active'] = true)
+            ->if($this->forcedConfig['exceptionRenderFct']['enabled'] = true)
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
             ->array($this->mock->callDefineExceptionHandler())
@@ -133,7 +162,7 @@ class Errors extends atoum
                 ]);
         
         $this->assert('test defineExceptionHandler with a class render')
-            ->if($this->forcedConfig['exceptionRenderFct']['active'] = true)
+            ->if($this->forcedConfig['exceptionRenderFct']['enabled'] = true)
             ->and($this->forcedConfig['exceptionRenderFct']['cli'] = [
                 'class'  => '\BFW\Core\test\unit\mocks\Errors',
                 'method' => 'mockRender'
@@ -147,6 +176,11 @@ class Errors extends atoum
                 ]);
     }
     
+    /**
+     * Test method for getErrorRender()
+     * 
+     * @return void
+     */
     public function testGetErrorRender()
     {
         $mock = $this->mock;
@@ -156,7 +190,7 @@ class Errors extends atoum
                 ->isFalse();
         
         $this->assert('test getErrorRender cli render enabled')
-            ->if($this->forcedConfig['errorRenderFct']['active'] = true)
+            ->if($this->forcedConfig['errorRenderFct']['enabled'] = true)
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
             ->array($mock::getErrorRender())
@@ -187,6 +221,11 @@ class Errors extends atoum
                 ->isFalse();
     }
     
+    /**
+     * Test method for getExceptionRender()
+     * 
+     * @return void
+     */
     public function testGetExceptionRender()
     {
         $mock = $this->mock;
@@ -196,7 +235,7 @@ class Errors extends atoum
                 ->isFalse();
         
         $this->assert('test getExceptionRender cli render enabled')
-            ->if($this->forcedConfig['exceptionRenderFct']['active'] = true)
+            ->if($this->forcedConfig['exceptionRenderFct']['enabled'] = true)
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
             ->array($mock::getExceptionRender())
@@ -228,13 +267,20 @@ class Errors extends atoum
     }
     
     /**
-     * Tested in testGetErrorRender and testGetExceptionRender
+     * Tested into testGetErrorRender and testGetExceptionRender
+     * 
+     * @return void
      */
     public function testDefineRenderToUse()
     {
         
     }
     
+    /**
+     * Test method for exceptionHandler()
+     * 
+     * @return void
+     */
     public function testExceptionHandler()
     {
         $this->assert('test exceptionHandler')
@@ -244,7 +290,7 @@ class Errors extends atoum
                 'exception Message',
                 100001
             ))
-            ->if($this->forcedConfig['exceptionRenderFct']['active'] = true)
+            ->if($this->forcedConfig['exceptionRenderFct']['enabled'] = true)
             ->and($this->forcedConfig['exceptionRenderFct']['cli'] = [
                 'class'  => '\BFW\Core\test\unit\mocks\Errors',
                 'method' => 'mockRender'
@@ -253,7 +299,7 @@ class Errors extends atoum
             ->then
             ->given($mock::exceptionHandler($exception))
             ->object($rendered = $mock::$lastRenderCallInfos)
-            ->string($rendered->erreurType)
+            ->string($rendered->errType)
                 ->isEqualTo('Exception Uncaught')
             ->string($rendered->errMsg)
                 ->isEqualTo('exception Message')
@@ -267,13 +313,18 @@ class Errors extends atoum
         ;
     }
     
+    /**
+     * Test method for errorHandler()
+     * 
+     * @return void
+     */
     public function testErrorHandler()
     {
         $this->assert('test errorHandler')
             ->given($mock = $this->mock)
             ->given($errorLine = __LINE__)
             ->then
-            ->if($this->forcedConfig['errorRenderFct']['active'] = true)
+            ->if($this->forcedConfig['errorRenderFct']['enabled'] = true)
             ->and($this->forcedConfig['errorRenderFct']['cli'] = [
                 'class'  => '\BFW\Core\test\unit\mocks\Errors',
                 'method' => 'mockRender'
@@ -287,7 +338,7 @@ class Errors extends atoum
                 $errorLine
             ))
             ->object($rendered = $mock::$lastRenderCallInfos)
-            ->string($rendered->erreurType)
+            ->string($rendered->errType)
                 ->isEqualTo('Warning')
             ->string($rendered->errMsg)
                 ->isEqualTo('error message')
@@ -301,6 +352,11 @@ class Errors extends atoum
         ;
     }
     
+    /**
+     * Test method for render()
+     * 
+     * @return void
+     */
     public function testCallRender()
     {
         //Test with object is already tested before.
@@ -311,7 +367,7 @@ class Errors extends atoum
             ->given($mock = $this->mock)
             ->given($errorLine = __LINE__)
             ->then
-            ->if($this->forcedConfig['errorRenderFct']['active'] = true)
+            ->if($this->forcedConfig['errorRenderFct']['enabled'] = true)
             ->and($this->forcedConfig['errorRenderFct']['cli'] = [
                 'class'  => '',
                 'method' => 'fctErrorRender'
@@ -325,7 +381,7 @@ class Errors extends atoum
                 $errorLine
             ))
             ->object($rendered = $fctLastRenderCallInfos)
-            ->string($rendered->erreurType)
+            ->string($rendered->errType)
                 ->isEqualTo('Warning')
             ->string($rendered->errMsg)
                 ->isEqualTo('error message')
@@ -339,6 +395,11 @@ class Errors extends atoum
         ;
     }
     
+    /**
+     * Test method for getErrorType()
+     * 
+     * @return void
+     */
     public function testGetErrorType()
     {
         $this->assert('test getErrorType for E_ERROR')
@@ -408,7 +469,8 @@ class Errors extends atoum
     
     /*
      * Will be tested with test install script
-     * Not easy to test from here
+     * 
+     * @return void
      */
     public function testDefaultCliErrorRender()
     {
@@ -417,7 +479,8 @@ class Errors extends atoum
     
     /*
      * Will be tested with test install script
-     * Not easy to test from here
+     * 
+     * @return void
      */
     public function testDefaultErrorRender()
     {

@@ -8,6 +8,11 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 class Http extends atoum
 {
+    /**
+     * Test method for redirect()
+     * 
+     * @return void
+     */
     public function testRedirect()
     {
         //Not testable because exit !

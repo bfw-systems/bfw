@@ -10,11 +10,6 @@ use \Exception;
 class ModuleInstall
 {
     /**
-     * @const INSTALL_SCRIPT_VERSION : Script's version
-     */
-    const INSTALL_SCRIPT_VERSION = '3.0.0';
-
-    /**
      * @var string $projectPath : Path to root bfw project
      */
     protected $projectPath = '';
@@ -46,19 +41,19 @@ class ModuleInstall
     
     /**
      * @var string $sourceSrcPath : Path to directory contains file to install
-     *  in project module directory
+     *  into project module directory
      */
     protected $sourceSrcPath = '';
     
     /**
      * @var string $sourceConfigPath : Path to directory contains config file
-     *  to install in projet config directory
+     *  to install into projet config directory
      */
     protected $sourceConfigPath = '';
     
     /**
-     * @var array $configFiles : List of config file
-     *                              to copy on the config directory
+     * @var array $configFiles : List of config file(s) to copy into the
+     *  module config directory of project
      */
     protected $configFilesList = [];
     
@@ -84,7 +79,7 @@ class ModuleInstall
      * Constructor
      * 
      * @param string $projectPath Path to root bfw project
-     * @param string $modulePath Path to module which be installed
+     * @param string $modulePath Path to the module which be installed
      */
     public function __construct($projectPath, $modulePath)
     {
@@ -132,16 +127,15 @@ class ModuleInstall
      */
     protected function findModuleName()
     {
-        $pathExplode = explode('/', $this->sourcePath);
-        $this->name  = $pathExplode[(count($pathExplode) - 1)];
+        $pathExploded = explode('/', $this->sourcePath);
+        $this->name   = $pathExploded[(count($pathExploded) - 1)];
         
         $this->targetSrcPath    = $this->bfwModulePath.$this->name;
         $this->targetConfigPath = $this->bfwConfigPath.$this->name;
     }
     
     /**
-     * Get infos for this module from BFW Module class
-     * It's a separate method for easy override.
+     * Get infos for the module from BFW Module class
      * 
      * @return \stdClass
      */
@@ -151,7 +145,7 @@ class ModuleInstall
     }
     
     /**
-     * Load module informations from files
+     * Load module infos from files
      * 
      * @return void
      */
@@ -164,8 +158,8 @@ class ModuleInstall
         //check if srcPath is define
         if (!property_exists($infos, 'srcPath')) {
             throw new Exception(
-                'srcPath must be present in install json file for module '
-                .$this->name
+                'srcPath must be present into bfwModulesInfos.json file'
+                .' for the module '.$this->name
             );
         }
         
@@ -197,9 +191,9 @@ class ModuleInstall
     }
 
     /**
-     * Run module installation
+     * Run module install
      * 
-     * @param boolean $reinstall : If we force reinstall module
+     * @param boolean $reinstall : If we force the reinstall of the module
      * 
      * @return void
      */
@@ -219,11 +213,11 @@ class ModuleInstall
     }
     
     /**
-     * Create symlink in bfw project module directory
+     * Create symlink into project module directory
      * 
      * @return void
      * 
-     * @throws Exception : If remove symlink fail for reinstall option
+     * @throws Exception : If remove symlink fail with the reinstall option
      */
     protected function createSymbolicLink()
     {
@@ -251,7 +245,7 @@ class ModuleInstall
             return;
         }
 
-        //If symbolic link create fail.
+        //If the creation of the symbolic link has failed.
         if (!symlink($this->sourceSrcPath, $this->targetSrcPath)) {
             echo "\033[1;31mSymbolic link creation fail.\033[0m\n";
             return;
@@ -261,8 +255,8 @@ class ModuleInstall
     }
 
     /**
-     * Create a directory in bfw project config directory for this module and
-     * copy all config files declared in this directory
+     * Create a directory into project config directory for the module and
+     * copy all config files declared to him
      * 
      * @return void
      */
@@ -280,19 +274,19 @@ class ModuleInstall
             return;
         }
 
-        //Create the module directory in config directory.
+        //Create the module directory into the config directory.
         $configDirStatus = $this->createConfigDirectory();
         if ($configDirStatus === false) {
             return;
         }
 
         //Copy each config file declared
-        foreach ($this->configFilesList as $configFile) {
+        foreach ($this->configFilesList as $configFileName) {
             try {
-                $this->copyConfigFile($configFile);
+                $this->copyConfigFile($configFileName);
             } catch (Exception $e) {
                 trigger_error(
-                    'Module '.$this->name.' Config file '.$configFile
+                    'Module '.$this->name.' Config file '.$configFileName
                     .' copy error: '.$e->getMessage(),
                     E_USER_WARNING
                 );
@@ -301,11 +295,11 @@ class ModuleInstall
     }
 
     /**
-     * Create a directory in bfw project config directory for this module
+     * Create a directory into project config directory for the module
      * 
      * @return boolean : If directory exist.
      * 
-     * @throws Exception : If remove directory fail for reinstall option
+     * @throws Exception : If remove directory fail with the reinstall option
      */
     protected function createConfigDirectory()
     {
@@ -322,7 +316,7 @@ class ModuleInstall
             
             if (!$calledClass::removeDirectory($this->targetConfigPath)) {
                 echo "\033[1;31m"
-                    .'Remove module config directory fail.'
+                    .'Remove the module config directory have fail.'
                     ."\033[0m\n";
                 
                 throw new Exception(
@@ -344,16 +338,19 @@ class ModuleInstall
         }
 
         //If error during the directory creation
-        trigger_error('Module '.$this->name.' Error to create config directory', E_USER_WARNING);
+        trigger_error(
+            'Module '.$this->name.' : Error to create the config directory',
+            E_USER_WARNING
+        );
         echo "\033[1;31mFail. \033[0m\n";
         
         return false;
     }
     
     /**
-     * Supprime les dossiers récursivement
+     * Remove folders recursively
      * 
-     * @param string $dirPath Le chemin vers le dossier
+     * @param string $dirPath Path to directory to remove
      * 
      * @return boolean
      */
@@ -390,13 +387,13 @@ class ModuleInstall
     }
     
     /**
-     * Copy a config file into config directory for this module
+     * Copy a config file into config directory for the module
      * 
      * @param string $configFileName : The config filename
      * 
      * @return void
      * 
-     * @throws Exception If copy fail or if source file not exist
+     * @throws Exception If copy fail or if the source file not exist
      */
     protected function copyConfigFile($configFileName)
     {
@@ -428,7 +425,8 @@ class ModuleInstall
     }
 
     /**
-     * Run specific module install script if declared
+     * Check if a specific install script is declared for the module and if
+     * the value is true, use the default script name "runInstallModule.php".
      * 
      * @return void
      */
@@ -459,6 +457,13 @@ class ModuleInstall
             ."\033[0m\n";
     }
     
+    /**
+     * Run the module specific install script
+     * 
+     * @param string $scriptName The script name to execute
+     * 
+     * @return void
+     */
     public function runInstall($scriptName) {
         echo " >> \033[1;33m".'Execute script '.$scriptName."\033[0m\n";
         

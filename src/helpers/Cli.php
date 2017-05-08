@@ -11,6 +11,8 @@ class Cli
 {
     /**
      * Display a message in the console without a line break
+     * If only the first parameter is passed, the colors will be those
+     * currently used in the console
      * 
      * @param string $msg Message to display
      * @param string $colorTxt (default "white") Text color
@@ -30,7 +32,7 @@ class Cli
             return;
         }
         
-        //Gestion cas avec couleur
+        //Get colors values
         $styleNum    = self::styleForShell($style);
         $colorTxtNum = self::colorForShell($colorTxt, 'txt');
         $colorBgNum  = self::colorForShell($colorBg, 'bg');
@@ -42,6 +44,8 @@ class Cli
     
     /**
      * Display a message in the console with a line break
+     * If only the first parameter is passed, the colors will be those
+     * currently used in the console
      * 
      * @param string $msg Message to display
      * @param string $colorTxt (default "white") Text color
@@ -67,8 +71,8 @@ class Cli
     /**
      * Convert text color to shell value
      * 
-     * @param string $color The humain color text
-     * @param string $type ("txt"|"bg") If the color is for text of background
+     * @param string $color The human color text
+     * @param string $type ("txt"|"bg") If the color is for text or background
      * 
      * @return integer
      * 
@@ -101,7 +105,7 @@ class Cli
     }
 
     /**
-     * Convert a humain style text to shell value
+     * Convert a human style text to shell value
      * 
      * @param string $style The style value
      * 

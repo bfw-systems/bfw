@@ -21,12 +21,11 @@ class Module
     protected $config;
 
     /**
-     * @var \stdClass $loadInfos All informations about the module running
+     * @var \stdClass $loadInfos All informations about how to run the module
      */
     protected $loadInfos;
 
     /**
-     *
      * @var \stdClass $status Load and run status
      */
     protected $status;
@@ -74,7 +73,9 @@ class Module
     public static function installInfos($sourceFiles)
     {
         $currentClass = get_called_class(); //Allow extends
-        return $currentClass::loadJsonFile($sourceFiles.'/bfwModulesInfos.json');
+        return $currentClass::loadJsonFile(
+            $sourceFiles.'/bfwModulesInfos.json'
+        );
     }
 
     /**
@@ -153,7 +154,7 @@ class Module
     }
 
     /**
-     * Get load information from json file
+     * Save loaded informations from json file into the loadInfos property
      * 
      * @return void
      */
@@ -168,7 +169,7 @@ class Module
     }
 
     /**
-     * Read a json file and return datas in json
+     * Read and parse a json file
      * 
      * @param string $jsonFilePath : The path to the file to read
      * 
@@ -191,8 +192,8 @@ class Module
     }
     
     /**
-     * Add a dependency to module
-     * Used by needMe property in module infos
+     * Add a dependency to the module
+     * Used for needMe property in module infos
      * 
      * @param string $dependencyName The dependency name to add
      * 
@@ -233,10 +234,7 @@ class Module
             return;
         }
 
-        $runnerFile = MODULES_DIR.$this->pathName
-            .'/'.$runnerFile
-        ;
-
+        $runnerFile = MODULES_DIR.$this->pathName.'/'.$runnerFile;
         if (!file_exists($runnerFile)) {
             throw new Exception(
                 'Runner file for module '.$this->pathName.' not found.'

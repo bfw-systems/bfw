@@ -10,18 +10,28 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class Subjects extends atoum
 {
     /**
-     * @var $class : Instance de la class
+     * @var $class Class instance
      */
     protected $class;
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Instantiate the class
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
         $this->class = new \BFW\Subjects();
     }
     
+    /**
+     * Test method for attach() and getObservers()
+     * 
+     * @return void
+     */
     public function testAttachAndGetObservers()
     {
         $this->assert('test Subjects attach and getObservers')
@@ -36,6 +46,11 @@ class Subjects extends atoum
                 ->isEqualTo($observer);
     }
     
+    /**
+     * Test method for detach()
+     * 
+     * @return void
+     */
     public function testDetach()
     {
         $this->assert('test Subjects detach')
@@ -48,6 +63,11 @@ class Subjects extends atoum
                 ->hasSize(0);
     }
     
+    /**
+     * Test method for getAction() and setAction()
+     * 
+     * @return void
+     */
     public function testGetAndSetAction()
     {
         $this->assert('test Subjects getAction and setAction')
@@ -58,6 +78,11 @@ class Subjects extends atoum
                 ->isEqualTo('unit_test');
     }
     
+    /**
+     * Test method for getContext() and setContext()
+     * 
+     * @return void
+     */
     public function testGetAndSetContext()
     {
         $this->assert('test Subjects getContext and setContext')
@@ -74,6 +99,11 @@ class Subjects extends atoum
             ]);
     }
     
+    /**
+     * Test method for notify()
+     * 
+     * @return void
+     */
     public function testNotify()
     {
         $this->assert('test notify')
@@ -90,6 +120,11 @@ class Subjects extends atoum
             })->isEqualTo('unit_test'."\n");
     }
     
+    /**
+     * Test method for notifyAction()
+     * 
+     * @return void
+     */
     public function testNotifyAction()
     {
         $this->assert('test notifyAction')

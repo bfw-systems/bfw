@@ -3,13 +3,13 @@
 namespace BFW\Install;
 
 /**
- * Class use for read a directory and sub-directories
+ * Class use to read a directory and sub-directories
  */
 class ReadDirectory
 {
     /**
      * @var string $calledClass : Name of the current class.
-     * For recall this correct class when she's extended.
+     * For recall the correct class when she's extended.
      */
     protected $calledClass = '';
     
@@ -19,14 +19,14 @@ class ReadDirectory
     protected $list;
 
     /**
-     * @var array $ignore : Item to ignored during the reading of directories
+     * @var array $ignore : Item to ignore during the reading of directories
      */
     private $ignore = ['.', '..'];
 
     /*
      * Constructeur
      * 
-     * @param array &$listFiles : List of file found
+     * @param array &$listFiles : List of file(s) found
      */
     public function __construct(&$listFiles)
     {
@@ -38,6 +38,8 @@ class ReadDirectory
      * Read all the directories
      *
      * @param string $path : Path to read
+     * 
+     * @return void
      */
     public function run($path)
     {
@@ -69,8 +71,8 @@ class ReadDirectory
     /**
      * Action to do when a file is found.
      * 
-     * @param string $fileName Name of the file
-     * @param string $pathToFile Path of the file
+     * @param string $fileName The file's name
+     * @param string $pathToFile The file's path
      * 
      * @return string
      */

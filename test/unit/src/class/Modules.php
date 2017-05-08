@@ -8,12 +8,18 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class Modules extends atoum
 {
     /**
-     * @var $class : Instance de la class
+     * @var $class Class instance
      */
     protected $class;
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Define CONFIG_DIR and MODULES_DIR constants
+     * Instantiate the class
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
@@ -23,13 +29,23 @@ class Modules extends atoum
         $this->class = new \BFW\Modules;
     }
     
-    public function testModules()
+    /**
+     * Test method for __constructor()
+     * 
+     * @return void
+     */
+    public function testConstructor()
     {
         $this->assert('Modules construct')
             ->object($modules = new \BFW\Modules)
                 ->isInstanceOf('\BFW\Modules');
     }
     
+    /**
+     * Override PHP function to add a module
+     * 
+     * @return Object Atoum asserters
+     */
     protected function addModule()
     {
         $fileGetContents = function($path) {
@@ -49,6 +65,11 @@ class Modules extends atoum
             ->then;
     }
     
+    /**
+     * Test method for addModule() and getModules()
+     * 
+     * @return void
+     */
     public function testAddAndGetModule()
     {
         $this->addModule()
@@ -77,16 +98,31 @@ class Modules extends atoum
                 ->isInstanceOf('\BFW\Module');
     }
     
+    /**
+     * Test method for getModule() when it throw an exception
+     * 
+     * @return void
+     */
     public function testGetModuleException()
     {
         $this->assert('test Modules getModule exception')
             ->given($class = $this->class)
             ->exception(function() use ($class) {
                 $class->getModule('bulton');
-            })->hasMessage('Module bulton not found.');
+            })->hasMessage('The Module bulton has not been found.');
     }
     
-    protected function writeModuleJson(
+    /**
+     * Generate the content of the module.json file
+     * 
+     * @param string $runner Value for property "runner"
+     * @param string $priority Value for property "priority"
+     * @param string $require Value for property "require"
+     * @param string $needMe Value for property "needMe"
+     * 
+     * @return string
+     */
+    protected function generateModuleJson(
         $runner,
         $priority,
         $require,
@@ -105,16 +141,21 @@ class Modules extends atoum
         return '{'.$json.'}';
     }
     
+    /**
+     * Test method for generateTree() and getLoadTree()
+     * 
+     * @return void
+     */
     public function testGenerateAndGetTree()
     {
-        $module1Json = $this->writeModuleJson('', 0, '[]');
-        $module2Json = $this->writeModuleJson('', 1, '[]');
-        $module3Json = $this->writeModuleJson('', 1, '["module2"]');
-        $module4Json = $this->writeModuleJson('', 0, '["module2"]');
-        $module5Json = $this->writeModuleJson('', 1, '["module4"]');
-        $module6Json = $this->writeModuleJson('', 1, '["module3", "module5"]');
-        $module7Json = $this->writeModuleJson('', 3, '[]');
-        $module8Json = $this->writeModuleJson('', 3, '[]');
+        $module1Json = $this->generateModuleJson('', 0, '[]');
+        $module2Json = $this->generateModuleJson('', 1, '[]');
+        $module3Json = $this->generateModuleJson('', 1, '["module2"]');
+        $module4Json = $this->generateModuleJson('', 0, '["module2"]');
+        $module5Json = $this->generateModuleJson('', 1, '["module4"]');
+        $module6Json = $this->generateModuleJson('', 1, '["module3", "module5"]');
+        $module7Json = $this->generateModuleJson('', 3, '[]');
+        $module8Json = $this->generateModuleJson('', 3, '[]');
         
         $fileGetContents = function($path) use(
             $module1Json,
@@ -169,14 +210,19 @@ class Modules extends atoum
                 ->hasSize(3)
                 ->hasKeys([0,1,3]);
         
-        //Test array structure is on the lib's unit test.
+        //The test of the array structure is into the lib's unit test.
     }
     
+    /**
+     * Test method for readNeedMeDependencies()
+     * 
+     * @return void
+     */
     public function testReadNeedMeDependencies()
     {
-        $module1Json = $this->writeModuleJson('', 0, '[]');
-        $module2Json = $this->writeModuleJson('', 1, '[]', '["module1"]');
-        $module3Json = $this->writeModuleJson('', 1, '[]', '"module1"');
+        $module1Json = $this->generateModuleJson('', 0, '[]');
+        $module2Json = $this->generateModuleJson('', 1, '[]', '["module1"]');
+        $module3Json = $this->generateModuleJson('', 1, '[]', '"module1"');
         
         $fileGetContents = function($path) use(
             $module1Json,
@@ -214,10 +260,15 @@ class Modules extends atoum
                 ]);
     }
     
+    /**
+     * Test method for readNeedMeDependencies() when it throw an exception
+     * 
+     * @return void
+     */
     public function testReadNeedMeDependenciesException()
     {
-        $module1Json = $this->writeModuleJson('', 0, '[]');
-        $module2Json = $this->writeModuleJson('', 1, '[]', '["module1"]');
+        $module1Json = $this->generateModuleJson('', 0, '[]');
+        $module2Json = $this->generateModuleJson('', 1, '[]', '["module1"]');
         
         $fileGetContents = function($path) use(
             $module1Json,
@@ -247,8 +298,8 @@ class Modules extends atoum
                 $class->readNeedMeDependencies();
             })
                 ->hasMessage(
-                    'Module error: module2 need module1'
-                    .' but this module is not found.'
+                    'Module error: module2 need module1 '
+                    .'but the module has not been found.'
                 );
     }
 }

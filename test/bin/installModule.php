@@ -2,16 +2,16 @@
 
 require_once(__DIR__.'/functions.php');
 
-$installDir  = realpath(__DIR__.'/../install');
+$installDir = realpath(__DIR__.'/../install');
 
 echo "\033[0;33mCheck hello-world module install\033[0m\n";
 
 $moduleInstallOutput = [];
 exec('cd '.$installDir.' && ./vendor/bin/bfw_installModules', $moduleInstallOutput);
 
-$moduleInstallOutput  = implode("\n", $moduleInstallOutput);
+$moduleInstallOutput = implode("\n", $moduleInstallOutput);
 
-$wordsReadAllModules = "Read all modules to run install script :\n";
+$exceptedRunInstallScript = "Read all modules to run install script :\n";
 
 $expectedInstallBfwHelloWorld = "bfw-hello-world : Run install.\n"
     ." > Create symbolic link ... \033[1;32mDone\033[0m\n"
@@ -39,25 +39,25 @@ $expectedScriptBfwHelloWorld = " > Read for module bfw-test-install\n"
 $expectedModuleOutput = [
     $expectedInstallBfwHelloWorld
     .$expectedInstallBfwTestInstall
-    .$wordsReadAllModules
+    .$exceptedRunInstallScript
     .$expectedScriptBfwHelloWorld
     .$expectedInstallBfwTestInstall,
     
     $expectedInstallBfwTestInstall
     .$expectedInstallBfwHelloWorld
-    .$wordsReadAllModules
+    .$exceptedRunInstallScript
     .$expectedInstallBfwTestInstall
     .$expectedScriptBfwHelloWorld,
     
     $expectedInstallBfwHelloWorld
     .$expectedInstallBfwTestInstall
-    .$wordsReadAllModules
+    .$exceptedRunInstallScript
     .$expectedInstallBfwTestInstall
     .$expectedScriptBfwHelloWorld,
     
     $expectedInstallBfwTestInstall
     .$expectedInstallBfwHelloWorld
-    .$wordsReadAllModules
+    .$exceptedRunInstallScript
     .$expectedScriptBfwHelloWorld
     .$expectedInstallBfwTestInstall,
 ];

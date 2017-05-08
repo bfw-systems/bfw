@@ -8,7 +8,7 @@ namespace BFW\Core;
 class Errors
 {
     /**
-     * @var \BFW\Application $app : L'instance d'Application
+     * @var \BFW\Application $app : BFW Application instance
      */
     protected static $app = null;
     
@@ -65,11 +65,11 @@ class Errors
     }
     
     /**
-     * get the error render from config for cli or default
+     * Get the error render from config for cli or default
      * 
      * @return boolean|array Render infos
-     *      Boolean : false if no render to use
-     *      Array   : Infos from config
+     *  Boolean : false if no render to use
+     *  Array   : Infos from config
      */
     public static function getErrorRender()
     {
@@ -80,11 +80,11 @@ class Errors
     }
     
     /**
-     * get the exception render from config for cli or default
+     * Get the exception render from config for cli or default
      * 
      * @return boolean|array Render infos
-     *      Boolean : false if no render to use
-     *      Array   : Infos from config
+     *  Boolean : false if no render to use
+     *  Array   : Infos from config
      */
     public static function getExceptionRender()
     {
@@ -101,13 +101,13 @@ class Errors
      * @param array $renderConfig : Render infos from config
      * 
      * @return boolean|array : Render to use
-     *      Boolean : false is no enable or no render define
-     *      Array : The render used
+     *  Boolean : false if is no enabled or if no render is defined
+     *  Array : The render to use
      */
     protected static function defineRenderToUse($renderConfig)
     {
         //Check enabled
-        if ($renderConfig['active'] === false) {
+        if ($renderConfig['enabled'] === false) {
             return false;
         }
         
@@ -151,10 +151,10 @@ class Errors
     /**
      * The default error handler included in BFW
      * 
-     * @param type $errSeverity : Error severity
-     * @param type $errMsg : Error message
-     * @param type $errFile : File where the error is triggered
-     * @param type $errLine : Line where the error is triggered
+     * @param integer $errSeverity : Error severity
+     * @param string  $errMsg : Error message
+     * @param string  $errFile : File where the error is triggered
+     * @param integer $errLine : Line where the error is triggered
      * 
      * @return void
      */
@@ -166,13 +166,13 @@ class Errors
     ) {
         //Get the current class (childs class if extended)
         $calledClass = get_called_class();
-        $erreurType  = $calledClass::getErrorType($errSeverity);
+        $errType     = $calledClass::getErrorType($errSeverity);
         $errorRender = $calledClass::getErrorRender();
         
         //Call the "callRender" method for this class (or child class)
         $calledClass::callRender(
             $errorRender,
-            $erreurType,
+            $errType,
             $errMsg,
             $errFile,
             $errLine,
@@ -181,28 +181,28 @@ class Errors
     }
     
     /**
-     * Call the personnal class-method or function declared on config where
+     * Call the personnal class-method or function declared on config when
      * an exception or an error is triggered.
      * 
-     * @param array $renderInfos : Infos from config
-     * @param type $erreurType : Error severity
-     * @param type $errMsg : Error/exception message
-     * @param type $errFile : File where the error/exception is triggered
-     * @param type $errLine : Line where the error/exception is triggered
-     * @param type $backtrace : Error/exception backtrace
+     * @param array   $renderInfos : Infos from config
+     * @param string  $errType : Human readable error severity
+     * @param string  $errMsg : Error/exception message
+     * @param string  $errFile : File where the error/exception is triggered
+     * @param integer $errLine : Line where the error/exception is triggered
+     * @param array   $backtrace : Error/exception backtrace
      * 
      * @return void
      */
     protected static function callRender(
         $renderInfos,
-        $erreurType,
+        $errType,
         $errMsg,
         $errFile,
         $errLine,
         $backtrace
     ) {
         $calledClass = get_called_class();
-        $calledClass::saveIntoPhpLog($erreurType, $errMsg, $errFile, $errLine);
+        $calledClass::saveIntoPhpLog($errType, $errMsg, $errFile, $errLine);
         
         $class  = $renderInfos['class'];
         $method = $renderInfos['method'];
@@ -210,7 +210,7 @@ class Errors
         //If is a class, call "$class::$method" (compatibility 5.x)
         if (!empty($class)) {
             $class::$method(
-                $erreurType,
+                $errType,
                 $errMsg,
                 $errFile,
                 $errLine,
@@ -222,7 +222,7 @@ class Errors
         
         //If is not a class, it's a function.
         $method(
-            $erreurType,
+            $errType,
             $errMsg,
             $errFile,
             $errLine,
@@ -230,6 +230,16 @@ class Errors
         );
     }
     
+    /**
+     * Save the error into the PHP log
+     * 
+     * @param string  $errType : Human readable error severity
+     * @param string  $errMsg : Error/exception message
+     * @param string  $errFile : File where the error/exception is triggered
+     * @param integer $errLine : Line where the error/exception is triggered
+     * 
+     * @return void
+     */
     protected static function saveIntoPhpLog(
         $errType,
         $errMsg,
@@ -237,8 +247,7 @@ class Errors
         $errLine
     ) {
         error_log(
-            'Error detected : '
-            .$errType.' '.$errMsg
+            'Error detected : '.$errType.' '.$errMsg
             .' at '.$errFile.':'.$errLine
         );
     }
@@ -254,7 +263,7 @@ class Errors
      */
     protected static function getErrorType($errSeverity)
     {
-        $map = [
+        $errorMap = [
             E_ERROR             => 'Fatal',
             E_CORE_ERROR        => 'Fatal',
             E_USER_ERROR        => 'Fatal',
@@ -273,36 +282,36 @@ class Errors
         ];
 
         //Default value if the error is not found in the map array
-        $erreurType = 'Unknown';
+        $errType = 'Unknown';
         
         //Search in map array
-        if (isset($map[$errSeverity])) {
-            $erreurType = $map[$errSeverity];
+        if (isset($errorMap[$errSeverity])) {
+            $errType = $errorMap[$errSeverity];
         }
         
-        return $erreurType;
+        return $errType;
     }
 
     /**
      * The default cli render in BFW
      * 
-     * @param type $erreurType : Error severity
-     * @param type $errMsg : Error/exception message
-     * @param type $errFile : File where the error/exception is triggered
-     * @param type $errLine : Line where the error/exception is triggered
-     * @param type $backtrace : Error/exception backtrace
+     * @param string  $errType : Human readable error severity
+     * @param string  $errMsg : Error/exception message
+     * @param string  $errFile : File where the error/exception is triggered
+     * @param integer $errLine : Line where the error/exception is triggered
+     * @param array   $backtrace : Error/exception backtrace
      * 
      * @return void
      */
     public static function defaultCliErrorRender(
-        $erreurType,
+        $errType,
         $errMsg,
         $errFile,
         $errLine,
         $backtrace
     ) {
         //Create the cli message
-        $msgError = $erreurType.' Error : '.$errMsg.
+        $msgError = $errType.' Error : '.$errMsg.
             ' in '.$errFile.' at line '.$errLine;
         
         //Display the message with displayMsg function
@@ -314,18 +323,18 @@ class Errors
     }
 
     /**
-     * The default render in BFW
+     * The default error render in BFW
      * 
-     * @param type $erreurType : Error severity
-     * @param type $errMsg : Error/exception message
-     * @param type $errFile : File where the error/exception is triggered
-     * @param type $errLine : Line where the error/exception is triggered
-     * @param type $backtrace : Error/exception backtrace
+     * @param string  $errType : Human readable error severity
+     * @param string  $errMsg : Error/exception message
+     * @param string  $errFile : File where the error/exception is triggered
+     * @param integer $errLine : Line where the error/exception is triggered
+     * @param array   $backtrace : Error/exception backtrace
      * 
      * @return void
      */
     public static function defaultErrorRender(
-        $erreurType,
+        $errType,
         $errMsg,
         $errFile,
         $errLine,
@@ -350,8 +359,8 @@ class Errors
             </head>
             <body>
                 <div>
-                    <p class="title">Niarf, a error is detected !</p>
-                    <p class="info">'.$erreurType.' Error : <strong>'.$errMsg.'</strong> in '.$errFile.' at line '.$errLine.'</p>
+                    <p class="title">Niarf, an error is detected !</p>
+                    <p class="info">'.$errType.' Error : <strong>'.$errMsg.'</strong> in '.$errFile.' at line '.$errLine.'</p>
                     <fieldset><pre>';
                         foreach ($backtrace as $i => $info) {
                             echo '#'.$i.'  '.$info['function'];

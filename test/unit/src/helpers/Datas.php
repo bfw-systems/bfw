@@ -8,6 +8,11 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 class Datas extends atoum
 {
+    /**
+     * Test method for checkType()
+     * 
+     * @return void
+     */
     public function testCheckType()
     {
         $this->assert('test Datas::checkType with bad parameter formats')
@@ -49,14 +54,19 @@ class Datas extends atoum
                 ->isTrue();
     }
     
+    /**
+     * Test method for checkMail()
+     * 
+     * @return void
+     */
     public function testCheckMail()
     {
         $this->assert('test Datas::checkMail with bad mail format')
-            ->boolean(\BFW\Helpers\Datas::checkMail('vmATbulton.fr'))
+            ->boolean(\BFW\Helpers\Datas::checkMail('bulton.frATgmail.com'))
                 ->isFalse();
         
         $this->assert('test Datas::checkMail with good mail format')
-            ->boolean(\BFW\Helpers\Datas::checkMail('vm@bulton.fr'))
+            ->boolean(\BFW\Helpers\Datas::checkMail('bulton.fr@gmail.com'))
                 ->isTrue();
     }
 }

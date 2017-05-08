@@ -8,6 +8,11 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 class Cli extends atoum
 {
+    /**
+     * Test method for displayMsg()
+     * 
+     * @return void
+     */
     public function testDisplayMsg()
     {
         $this->assert('test Cli::displayMsg with default parameters')
@@ -35,6 +40,11 @@ class Cli extends atoum
                 ->isEqualTo("\033[1;47;31mtest displayMsg\033[0m");
     }
     
+    /**
+     * Test method for displayMsgNL()
+     * 
+     * @return void
+     */
     public function testDisplayMsgNL()
     {
         $this->assert('test Cli::displayMsgNL with default parameters')
@@ -62,6 +72,11 @@ class Cli extends atoum
                 ->isEqualTo("\033[1;47;31mtest displayMsg\n\033[0m");
     }
     
+    /**
+     * Test method for displayMsg() when it throw an exception
+     * 
+     * @return void
+     */
     public function testDisplayException()
     {
         $this->assert('test Cli::displayMsg with a color exception')
@@ -77,6 +92,11 @@ class Cli extends atoum
                 ->hasMessage('Style gras is not available.');
     }
     
+    /**
+     * Test method for colorForShell()
+     * 
+     * @return void
+     */
     public function testColorForShell()
     {
         $this->assert('test Cli::colorForShell for text color')
@@ -128,6 +148,11 @@ class Cli extends atoum
                 ->hasMessage('Color noir is not available.');
     }
     
+    /**
+     * Test method for styleForShell()
+     * 
+     * @return void
+     */
     public function testStyleForShell()
     {
         $this->assert('test Cli::styleForShell for text color')

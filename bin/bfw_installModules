@@ -24,10 +24,11 @@ $cliArgs = getopt(
 //Help text
 if (isset($cliArgs['help']) || isset($cliArgs['h'])) {
     echo 'HELP COMMAND'."\n";
-    echo '-p --bfw-path <directory> : Path to root BFW project'."\n";
-    echo '-v --vendor-path=<directory> : Path to vendor directory. Default is "./vendor/" from root BFW project'."\n";
+    echo '-p --bfw-path=<directory> : Path to root BFW project'."\n";
+    echo '-v --vendor-path=<directory> : Path to vendor directory.'
+        .' Default is "./vendor/" from root BFW project'."\n";
     echo '-r --reinstall : Force reinstall'."\n";
-    echo '-m --module=<directory> : Run the action only for this module'."\n";
+    echo '-m --module=<moduleName> : Run the action only for a module'."\n";
     
     exit;
 }
@@ -61,10 +62,10 @@ if (isset($cliArgs['module'])) {
 // Load composer autoloader
 require_once($vendorPath.'/autoload.php');
 
-// Define variable used to save all the modules path detected
-$listModulesFind = [];
+// Define variable used to save all modules path detected
+$listModulesFound = [];
 
-//Check if a part of framework structure is find on declared path
+//Check if a part of the framework structure is found in declared path
 if (
     !file_exists($bfwPath.'/app/config/')
     || !file_exists($bfwPath.'/app/modules/')
@@ -83,18 +84,18 @@ $app = \BFW\Install\Application::getInstance([
     'runSession' => false
 ]);
 
-//Run search of modules in vendor directory
-$readDir = new \BFW\Install\ReadDirLoadModule($listModulesFind);
+//Run the search of modules in vendor directory
+$readDir = new \BFW\Install\ReadDirLoadModule($listModulesFound);
 $readDir->run($vendorPath.'/');
 
-//If no module has been found in vendor directory
-if (count($listModulesFind) <= 0) {
-    echo "\033[0;33m No module found in vendor-path. \033[0m\n";
+//If no module has been found into vendor directory
+if (count($listModulesFound) <= 0) {
+    echo "\033[0;33m No module found into vendor-path.\033[0m\n";
     exit;
 }
 
-//Pour chaque module trouvé dans le vendor
-foreach ($listModulesFind as $moduleFindPath) {
+//For each modules found into the vendor directory
+foreach ($listModulesFound as $moduleFindPath) {
     $module = new \BFW\Install\ModuleInstall(
         $bfwPath,
         realpath($moduleFindPath)
@@ -103,10 +104,8 @@ foreach ($listModulesFind as $moduleFindPath) {
     try {    
         $module->loadInfos();
     } catch(\Exception $e) {
-        echo "...\033[1;31m Module "
-            .$module->getName()
-            .' error : '
-            .$e->getMessage()
+        echo "...\033[1;31m Module ".$module->getName()
+            .' error : '.$e->getMessage()
             ."\033[0m\n";
         
         continue;
@@ -120,5 +119,5 @@ foreach ($listModulesFind as $moduleFindPath) {
     }
 }
 
-//To run module install scripts
+//Run the installation scripts for all modules
 $app->run();

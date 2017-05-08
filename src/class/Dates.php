@@ -6,15 +6,16 @@ use \DateTime;
 use \Exception;
 
 /**
- * Class for use easier DateTime
+ * Class to have shortcuts to DateTime(Zone) methods and to display a date
+ * with words and not only numbers (today, yesterday, since... etc).
  */
 class Dates extends DateTime
 {
     /**
-     * @var string[] $humainReadableI18n Words used in method to transform
-     *      date difference to humain readable.
+     * @var string[] $humanReadableI18n Words used in method to transform
+     *  date difference to human readable.
      */
-    protected static $humainReadableI18n = [
+    protected static $humanReadableI18n = [
         'now'       => 'now',
         'since'     => 'since',
         'in'        => 'in',
@@ -24,83 +25,83 @@ class Dates extends DateTime
     ];
 
     /**
-     * @var string[] $humainReadableFormats Date and time format used in
-     *      method to transform date difference to humain readable.
+     * @var string[] $humanReadableFormats Date and time formats used in
+     *  method to transform date difference to human readable.
      */
-    protected static $humainReadableFormats = [
+    protected static $humanReadableFormats = [
         'dateSameYear'      => 'm-d',
         'dateDifferentYear' => 'Y-m-d',
         'time'              => 'H:i'
     ];
 
     /**
-     * Return attribute humainReadableI18n value
+     * Return the value of the humanReadableI18n property
      * 
      * @return string[]
      */
-    public static function getHumainReadableI18n()
+    public static function getHumanReadableI18n()
     {
-        return self::$humainReadableI18n;
+        return self::$humanReadableI18n;
     }
 
     /**
-     * Define new value to a key in attribute humainReadableI18n
+     * Define a new value for a key of the humanReadableI18n property
      * 
-     * @param string $key The key in humainReadableI18n
-     * @param string $value The new value for key
+     * @param string $key The key in humanReadableI18n
+     * @param string $value The new value for the key
      * 
      * @return void
      */
-    public static function setHumainReadableI18nKey($key, $value)
+    public static function setHumanReadableI18nKey($key, $value)
     {
-        self::$humainReadableI18n[$key] = $value;
+        self::$humanReadableI18n[$key] = $value;
     }
 
     /**
-     * Define new value to the attribute humainReadableI18n
+     * Define a new value to the property humanReadableI18n
      * 
-     * @param string[] $value The new value for attribute
+     * @param string[] $value The new value for the property
      * 
      * @return void
      */
-    public static function setHumainReadableI18n($value)
+    public static function setHumanReadableI18n($value)
     {
-        self::$humainReadableI18n = $value;
+        self::$humanReadableI18n = $value;
     }
 
     /**
-     * Return attribute humainReadableFormats value
+     * Return the value of the humanReadableFormats property
      * 
      * @return string[]
      */
-    public static function getHumainReadableFormats()
+    public static function getHumanReadableFormats()
     {
-        return self::$humainReadableFormats;
+        return self::$humanReadableFormats;
     }
 
     /**
-     * Define new value to a key in attribute humainReadableFormats
+     * Define a new value for a key of the humanReadableFormats property
      * 
-     * @param string $key The key in humainReadableFormats
-     * @param string $value The new value for key
+     * @param string $key The key in humanReadableFormats
+     * @param string $value The new value for the key
      * 
      * @return void
      */
-    public static function setHumainReadableFormatsKey($key, $value)
+    public static function setHumanReadableFormatsKey($key, $value)
     {
-        self::$humainReadableFormats[$key] = $value;
+        self::$humanReadableFormats[$key] = $value;
     }
 
     /**
-     * Define new value to the attribute humainReadableFormats
+     * Define a new value to the property humanReadableFormats
      * 
-     * @param string[] $value The new value for attribute
+     * @param string[] $value The new value for the property
      * 
      * @return void
      */
-    public static function setHumainReadableFormats($value)
+    public static function setHumanReadableFormats($value)
     {
-        self::$humainReadableFormats = $value;
+        self::$humanReadableFormats = $value;
     }
 
     /**
@@ -114,7 +115,7 @@ class Dates extends DateTime
     }
 
     /**
-     * Return a full numeric representation of a year, 4 digits
+     * Return a numeric representation of a year, 4 digits.
      * 
      * @return int
      */
@@ -124,7 +125,8 @@ class Dates extends DateTime
     }
 
     /**
-     * Return the numeric representation of a month, with leading zeros
+     * Return the numeric representation of a month, without leading zeros.
+     * The returned int format can not have leading zeros.
      * 
      * @return int
      */
@@ -134,7 +136,8 @@ class Dates extends DateTime
     }
 
     /**
-     * Return the day of the month, 2 digits with leading zeros
+     * Return the day of the month without leading zeros.
+     * The returned int format can not have leading zeros.
      * 
      * @return int
      */
@@ -144,7 +147,8 @@ class Dates extends DateTime
     }
 
     /**
-     * Return 24-hour format with leading zeros. 2 digits
+     * Return 24-hour format without leading zeros.
+     * The returned int format can not have leading zeros.
      * 
      * @return int
      */
@@ -154,7 +158,8 @@ class Dates extends DateTime
     }
 
     /**
-     * Return minutes, with leading zeros. 2 digits
+     * Return minutes, without leading zeros.
+     * The returned int format can not have leading zeros.
      * 
      * @return int
      */
@@ -164,7 +169,8 @@ class Dates extends DateTime
     }
 
     /**
-     * Return second, with leading zeros. 2 digits
+     * Return second, without leading zeros.
+     * The returned int format can not have leading zeros.
      * 
      * @return int
      */
@@ -185,7 +191,7 @@ class Dates extends DateTime
     }
 
     /**
-     * Override modify DateTime method to allow personnal keyword
+     * Override modify DateTime method to allow personal keywords
      * 
      * @param string $modify A date/time string
      * 
@@ -193,14 +199,15 @@ class Dates extends DateTime
      */
     public function modify($modify)
     {
-        $dateDepart = clone $this;
+        $originalDate = clone $this;
         @parent::modify($modify); //Yeurk, but for personnal pattern, no choice
 
-        if ($dateDepart != $this) {
+        //If the keyword used is ok with DateTime::modify method
+        if ($originalDate != $this) {
             return $this;
         }
 
-        $this->modifyOthersKeywords($modify);
+        $this->modifyWithOthersKeywords($modify);
 
         return $this;
     }
@@ -210,9 +217,9 @@ class Dates extends DateTime
      * 
      * @return \stdClass
      */
-    protected function getModifyOthersKeywors()
+    protected function getNewKeywordsForModify()
     {
-        //Liste des possibilités qu'on permet
+        //Personal keywords list
         $search = [
             'an', 'ans',
             'mois',
@@ -222,7 +229,7 @@ class Dates extends DateTime
             'seconde', 'secondes'
         ];
 
-        //Liste des équivalent pour la fonction modify de DateTime
+        //Keywords equivalent into \DateTime::modify function (same order)
         $replace = [
             'year', 'year',
             'month',
@@ -233,7 +240,7 @@ class Dates extends DateTime
         ];
         
         return (object) [
-            'search' => $search,
+            'search'  => $search,
             'replace' => $replace
         ];
     }
@@ -245,12 +252,12 @@ class Dates extends DateTime
      * 
      * @throws Exception If bad pattern or unknown keyword
      */
-    protected function modifyOthersKeywords($modify)
+    protected function modifyWithOthersKeywords($modify)
     {
-        $keywords = $this->getModifyOthersKeywors();
+        $keywords = $this->getNewKeywordsForModify();
         $match    = [];
         
-        //Regex sur le paramètre pour récupéré le type de modification
+        //Regex on the $modify parameter to get the used keyword
         if (preg_match('#(\+|\-)([0-9]+) ([a-z]+)#i', $modify, $match) !== 1) {
             throw new Exception('Dates::modify pattern not match.');
         }
@@ -261,11 +268,12 @@ class Dates extends DateTime
             strtolower($match[3])
         );
         
-        $dateDepart = clone $this;
+        $originalDate = clone $this;
         //Yeurk, but I preferer sends an Exception, not an error
         @parent::modify($match[1].$match[2].' '.$keyword);
         
-        if ($dateDepart == $this) {
+        //If no change on object, The keyword is unknown
+        if ($originalDate == $this) {
             throw new Exception(
                 'Dates::modify Parameter '.$match[3].' is unknown.'
             );
@@ -274,7 +282,7 @@ class Dates extends DateTime
     
     /**
      * Return date's SQL format (postgresql format).
-     * The return Must be an array or a string.
+     * The return can be an array or a string.
      * 
      * @param boolean $returnArray (default false) True to return an array.
      * 
@@ -282,14 +290,14 @@ class Dates extends DateTime
      */
     public function getSqlFormat($returnArray = false)
     {
-        $date  = $this->format('Y-m-d');
-        $heure = $this->format('H:i:s');
+        $date = $this->format('Y-m-d');
+        $time = $this->format('H:i:s');
 
         if ($returnArray) {
-            return [$date, $heure];
+            return [$date, $time];
         }
 
-        return $date.' '.$heure;
+        return $date.' '.$time;
     }
 
     /**
@@ -324,97 +332,88 @@ class Dates extends DateTime
     }
 
     /**
-     * Liste des pays possible pour un continent donné
-     * 
-     * @param string $continent Le continent dans lequel on veux la liste des pays
-     * 
-     * @return array La liste des pays pour le continent donné
-     */
-    
-    /**
      * List all available country for a continent
      * 
-     * @param string $continent
+     * @param string $continent The continent for which we want
+     *  the countries list
      * 
      * @return string[]
      */
     public function lstTimeZonePays($continent)
     {
-        $lst_all = $this->lstTimeZone();
-        $return  = [];
+        $allCountries = $this->lstTimeZone();
+        $countries    = [];
 
-        foreach ($lst_all as $val) {
-            $pos = strpos($val, $continent);
-
-            if ($pos !== false) {
-                $return[] = $val;
+        foreach ($allCountries as $country) {
+            if (strpos($country, $continent) !== false) {
+                $countries[] = $country;
             }
         }
 
-        return $return;
+        return $countries;
     }
 
     /**
-     * Transform a date to a format humain readable
+     * Transform a date to a human readable format
      * 
      * @param boolean $returnDateAndTime (default true) True to return date and
-     *      time concat with a space. False to have only date.
+     *  time concatenated with a space. False to have only date.
      * 
      * @return string
      */
-    public function humainReadable($returnDateAndTime = true)
+    public function humanReadable($returnDateAndTime = true)
     {
-        $actual = new Dates;
-        $diff   = parent::diff($actual);
+        $current = new Dates;
+        $diff    = parent::diff($current);
 
-        $returnTxt = (object) [
+        $parsedTxt = (object) [
             'date' => '',
             'time' => ''
         ];
 
-        if ($actual == $this) {
-            //A l'instant
-            $this->humainDateNow($returnTxt);
+        if ($current == $this) {
+            //Now
+            $this->humanDateNow($parsedTxt);
         } elseif ($diff->d === 1 && $diff->m === 0 && $diff->y === 0) {
-            //Hier
-            $this->humainDateYesterday($returnTxt);
+            //Yesterday
+            $this->humanDateYesterday($parsedTxt);
         } elseif ($diff->days === 0) {
-            //Aujourd'hui
-            $this->humainDateToday($returnTxt, $diff);
+            //Today
+            $this->humanDateToday($parsedTxt, $diff);
         } else {
-            $this->humainDateOther($returnTxt, $actual);
+            $this->humanDateOther($parsedTxt, $current);
         }
 
-        $txtReturn = $returnTxt->date;
-        if ($returnDateAndTime === true && $returnTxt->time !== '') {
-            $txtReturn .= ' '.$returnTxt->time;
+        $txtReturned = $parsedTxt->date;
+        if ($returnDateAndTime === true && $parsedTxt->time !== '') {
+            $txtReturned .= ' '.$parsedTxt->time;
         }
 
-        return $txtReturn;
+        return $txtReturned;
     }
     
     /**
-     * Format date to humain readable when date is now
+     * Format date to human readable when the date is now
      * 
-     * @param \stdClas $returnTxt Text returned by humainReadable
+     * @param \stdClass &$parsedTxt Texts returned by humanReadable method
      * 
      * @return void
      */
-    protected function humainDateNow(&$returnTxt)
+    protected function humanDateNow(&$parsedTxt)
     {
         $currentClass    = get_called_class();
-        $returnTxt->date = $currentClass::$humainReadableI18n['now'];
+        $parsedTxt->date = $currentClass::$humanReadableI18n['now'];
     }
     
     /**
-     * Format date to humain readable when date is today
+     * Format date to human readable when date is today
      * 
-     * @param \stdClas $returnTxt Text returned by humainReadable
+     * @param \stdClass &$parsedTxt Texts returned by humanReadable method
      * @param \DateInterval $diff Interval between now and date to read
      * 
      * @return void
      */
-    protected function humainDateToday(&$returnTxt, $diff)
+    protected function humanDateToday(&$parsedTxt, $diff)
     {
         $textKey = 'since';
         if ($diff->invert === 1) {
@@ -422,60 +421,60 @@ class Dates extends DateTime
         }
         
         $currentClass    = get_called_class();
-        $returnTxt->date = $currentClass::$humainReadableI18n[$textKey].' ';
+        $parsedTxt->date = $currentClass::$humanReadableI18n[$textKey].' ';
 
         if ($diff->h === 0 && $diff->i === 0) {
-            $returnTxt->date .= $diff->s.'s';
+            $parsedTxt->date .= $diff->s.'s';
         } elseif ($diff->h === 0) {
-            $returnTxt->date .= $diff->i.'min';
+            $parsedTxt->date .= $diff->i.'min';
         } else {
-            $returnTxt->date .= $diff->h.'h';
+            $parsedTxt->date .= $diff->h.'h';
         }
     }
     
     /**
-     * Format date to humain readable when date is yesterday
+     * Format date to human readable when date is yesterday
      * 
-     * @param \stdClas $returnTxt Text returned by humainReadable
+     * @param \stdClass &$parsedTxt Texts returned by humanReadable method
      * 
      * @return void
      */
-    protected function humainDateYesterday(&$returnTxt)
+    protected function humanDateYesterday(&$parsedTxt)
     {
         $currentClass    = get_called_class();
-        $returnTxt->date = $currentClass::$humainReadableI18n['yesterday'];
-        $returnTxt->time = $currentClass::$humainReadableI18n['at']
+        $parsedTxt->date = $currentClass::$humanReadableI18n['yesterday'];
+        $parsedTxt->time = $currentClass::$humanReadableI18n['at']
             .' '
             .$this->format(
-                $currentClass::$humainReadableFormats['time']
+                $currentClass::$humanReadableFormats['time']
             );
     }
     
     /**
-     * Format date to humain readable when date is not now, today or yesterday
+     * Format date to human readable when date is not now, today or yesterday
      * 
-     * @param \stdClas $returnTxt Text returned by humainReadable
-     * @param \DateTime $actual DateTime object for now
+     * @param \stdClass &$parsedTxt Texts returned by humanReadable method
+     * @param \DateTime $current DateTime object for now
      * 
      * @return void
      */
-    protected function humainDateOther(&$returnTxt, $actual)
+    protected function humanDateOther(&$parsedTxt, $current)
     {
         $currentClass = get_called_class();
         
-        $dateFormat = $currentClass::$humainReadableFormats['dateDifferentYear'];
-        if ($actual->format('Y') === $this->format('Y')) {
-            $dateFormat = $currentClass::$humainReadableFormats['dateSameYear'];
+        $dateFormat = $currentClass::$humanReadableFormats['dateDifferentYear'];
+        if ($current->format('Y') === $this->format('Y')) {
+            $dateFormat = $currentClass::$humanReadableFormats['dateSameYear'];
         }
 
-        $returnTxt->date = $currentClass::$humainReadableI18n['the']
+        $parsedTxt->date = $currentClass::$humanReadableI18n['the']
             .' '
             .$this->format($dateFormat);
 
-        $returnTxt->time = $currentClass::$humainReadableI18n['at']
+        $parsedTxt->time = $currentClass::$humanReadableI18n['at']
             .' '
             .$this->format(
-                $currentClass::$humainReadableFormats['time']
+                $currentClass::$humanReadableFormats['time']
             );
     }
 }

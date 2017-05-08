@@ -22,7 +22,7 @@ class Secure
     }
 
     /**
-     * Securize a string for some types with filter_var.
+     * Securize a string for some types with filter_var function.
      * 
      * @param mixed $data String to securize
      * @param string $type Type of filter
@@ -53,16 +53,16 @@ class Secure
     }
 
     /**
-     * Securize a variable
+     * Securise a variable
      * 
-     * @param mixed $data The variable to securize
+     * @param mixed $data The variable to securise
      * @param string $type The type of datas
      * @param boolean $htmlentities If use htmlentities function
-     *  to more securize
+     *  to a better security
      * 
      * @return mixed
      * 
-     * @throws Exception If a error with a type of data
+     * @throws Exception If an error with a type of data
      */
     public static function securise($data, $type, $htmlentities)
     {
@@ -122,57 +122,81 @@ class Secure
     }
 
     /**
-     * Securize an array key's value for a declared type.
+     * Securise the value of an array key for a declared type.
      * 
-     * @param array $array The array where is the key
+     * @param array &$array The array where is the key
      * @param string $key The key where is the value to securize
      * @param string $type The type of data
-     * @param boolean $htmlentities If use htmlentities function
-     *  to more securize
+     * @param boolean $htmlentities (default: false) If use htmlentities
+     *  function to a better security
      * 
      * @return mixed
      * 
      * @throws Exception If the key not exist in array
      */
-    public static function getSecurisedKeyInArray(&$array, $key, $type, $htmlentities = false)
-    {
+    public static function getSecurisedKeyInArray(
+        &$array,
+        $key,
+        $type,
+        $htmlentities = false
+    ) {
         if (!isset($array[$key])) {
             throw new Exception('The key '.$key.' not exist');
         }
 
         $currentClass = get_called_class();
-        return $currentClass::securise(trim($array[$key]), $type, $htmlentities);
+        return $currentClass::securise(
+            trim($array[$key]),
+            $type,
+            $htmlentities
+        );
     }
 
     /**
-     * Get a securized value for a key in $_POST array
+     * Get a securised value for a key in $_POST array
      * 
      * @param string $key The key where is the value to securize
      * @param string $type The type of data
-     * @param boolean $htmlentities If use htmlentities function
-     *  to more securize
+     * @param boolean $htmlentities (default: false) If use htmlentities
+     *  function to a better security
      * 
      * @return mixed
      */
-    public static function getSecurisedPostKey($key, $type, $htmlentities = false)
-    {
+    public static function getSecurisedPostKey(
+        $key,
+        $type,
+        $htmlentities = false
+    ) {
         $currentClass = get_called_class();
-        return $currentClass::getSecurisedKeyInArray($_POST, $key, $type, $htmlentities);
+        return $currentClass::getSecurisedKeyInArray(
+            $_POST,
+            $key,
+            $type,
+            $htmlentities
+        );
     }
 
     /**
-     * Get a securized value for a key in $_GET array
+     * Get a securised value for a key in $_GET array
      * 
      * @param string $key The key where is the value to securize
      * @param string $type The type of data
-     * @param boolean $htmlentities If use htmlentities function
-     *  to more securize
+     * @param boolean $htmlentities (default: false) If use htmlentities
+     *  function to a better security
      * 
      * @return mixed
      */
-    public static function getSecurisedGetKey($key, $type, $htmlentities = false)
-    {
+    public static function getSecurisedGetKey(
+        $key,
+        $type,
+        $htmlentities = false
+    ) {
         $currentClass = get_called_class();
-        return $currentClass::getSecurisedKeyInArray($_GET, $key, $type, $htmlentities);
+        return $currentClass::getSecurisedKeyInArray(
+            $_GET,
+            $key,
+            $type,
+            $htmlentities
+        );
     }
 }

@@ -12,17 +12,37 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class ModuleInstall extends atoum
 {
     /**
-     * @var $mock : Instance du mock pour la class
+     * @var $mock Mock instance
      */
     protected $mock;
     
+    /**
+     * @var string $bfwPath Fake project path
+     */
     protected $bfwPath;
+    
+    /**
+     * @var string $sourcePath Fake module path
+     */
     protected $sourcePath;
+    
+    /**
+     * @var string $modulePath Fake project app/modules path
+     */
     protected $modulePath;
+    
+    /**
+     * @var string $configPath Fake project app/config path
+     */
     protected $configPath;
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Instantiate the mock
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
@@ -39,6 +59,11 @@ class ModuleInstall extends atoum
         }
     }
     
+    /**
+     * Test method for __construct()
+     * 
+     * @return void
+     */
     public function testConstructor()
     {
         $this->assert('test constructor')
@@ -57,6 +82,11 @@ class ModuleInstall extends atoum
                 ->isEqualTo($this->bfwPath.'/app/modules/');
     }
     
+    /**
+     * Test method for getName()
+     * 
+     * @return void
+     */
     public function testGetName()
     {
         $this->assert('test getName with default value')
@@ -66,6 +96,11 @@ class ModuleInstall extends atoum
         //Get name without default value tested on testLoadInfos()
     }
     
+    /**
+     * Test method for getSourcePath()
+     * 
+     * @return void
+     */
     public function testGetSourcePath()
     {
         $this->assert('test getSourcePath with default value')
@@ -75,6 +110,11 @@ class ModuleInstall extends atoum
         //Get sourcePath without default value tested on testLoadInfos()
     }
     
+    /**
+     * Test method for getSourceInstallScript()
+     * 
+     * @return void
+     */
     public function testGetSourceInstallScript()
     {
         $this->assert('test getSourceInstallScript with default value')
@@ -84,6 +124,12 @@ class ModuleInstall extends atoum
         //Get sourceInstallScript without default value tested on testLoadInfos()
     }
     
+    /**
+     * Test method for loadInfos() without install config
+     * Should be throw an Exception
+     * 
+     * @return void
+     */
     public function testLoadInfosWithoutConfig()
     {
         $this->assert('test loadInfos without install config (exception)')
@@ -92,9 +138,15 @@ class ModuleInstall extends atoum
             ->exception(function() use ($mock) {
                 $mock->loadInfos();
             })
-                ->hasMessage('srcPath must be present in install json file for module test');
+                ->hasMessage('srcPath must be present into bfwModulesInfos.json file for the module test');
     }
     
+    /**
+     * Test method for loadInfos() with install config
+     * When config only contains srcPath
+     * 
+     * @return void
+     */
     public function testLoadInfosWithMinConfig()
     {
         $this->assert('test loadInfos with install config (only srcPath)')
@@ -128,6 +180,11 @@ class ModuleInstall extends atoum
                 ->isEqualTo('');
     }
     
+    /**
+     * Test method for loadInfos() with install config
+     * 
+     * @return void
+     */
     public function testLoadInfosWithFullConfig()
     {
         $this->assert('test loadInfos with install config')
@@ -170,6 +227,11 @@ class ModuleInstall extends atoum
                 ->isEqualTo('install.php');
     }
     
+    /**
+     * Test method for install() when all is good
+     * 
+     * @return void
+     */
     public function testInstallWithConfigFileAndAllGood()
     {
         $expectedOutput = 'test : Run install.'."\n"
@@ -217,6 +279,11 @@ class ModuleInstall extends atoum
                 ->isEqualTo($expectedOutput);
     }
     
+    /**
+     * Test method for install() when all is good and with force option
+     * 
+     * @return void
+     */
     public function testForceInstallWithConfigFileAndAllGood()
     {
         $expectedOutput = 'test : Run install.'."\n"
@@ -276,6 +343,11 @@ class ModuleInstall extends atoum
                 ->isEqualTo($expectedOutput);
     }
     
+    /**
+     * Test method for install() when there is a symlink error
+     * 
+     * @return void
+     */
     public function testInstallWithSymlinkError()
     {
         $expectedOutput = 'test : Run install.'."\n"
@@ -337,6 +409,11 @@ class ModuleInstall extends atoum
                 ->isEqualTo($expectedOutput);
     }
     
+    /**
+     * Test method for install() when there is a unlink error
+     * 
+     * @return void
+     */
     public function testForceInstallWithUnlinkError()
     {
         $expectedOutput = 'test : Run install.'."\n"
@@ -395,6 +472,11 @@ class ModuleInstall extends atoum
                 ->withMessage('Reinstall fail. Symlink remove error');
     }
     
+    /**
+     * Test method for install() when there is a rmdir error
+     * 
+     * @return void
+     */
     public function testForceInstallWithRmdirError()
     {
         $expectedOutput = 'test : Run install.'."\n"
@@ -403,7 +485,7 @@ class ModuleInstall extends atoum
                         .' > Copy config files : '."\n"
                         .' >> Create config directory for this module ... '
                         .'[Force Reinstall: Remove directory] '
-                        ."\033[1;31mRemove module config directory fail.\033[0m\n"
+                        ."\033[1;31mRemove the module config directory have fail.\033[0m\n"
         ;
         
         $this->assert('test install with config files and the "force" mode. It must be a rmdir error.')
@@ -450,6 +532,12 @@ class ModuleInstall extends atoum
                 ->withMessage('Reinstall fail. Remove module config directory error.');
     }
     
+    /**
+     * Test method for install() when there is an error during the config
+     * directory creation
+     * 
+     * @return void
+     */
     public function testInstallWithCreateConfigDirectoryError()
     {
         $expectedOutput = 'test : Run install.'."\n"
@@ -506,6 +594,12 @@ class ModuleInstall extends atoum
                 ->withMessage('Module test Error to create config directory');
     }
     
+    /**
+     * Test method for install() when there is an error because a config file
+     *  not exist
+     * 
+     * @return void
+     */
     public function testInstallWithNoConfigFileExistsError()
     {
         $expectedOutput = 'test : Run install.'."\n"
@@ -578,6 +672,12 @@ class ModuleInstall extends atoum
                 ->withMessage('Source file not exist');
     }
     
+    /**
+     * Test method for install() when there is an error during the copy of a
+     *  config file
+     * 
+     * @return void
+     */
     public function testInstallWithCopyError()
     {
         $expectedOutput = 'test : Run install.'."\n"
@@ -645,6 +745,11 @@ class ModuleInstall extends atoum
                 ->withMessage('Copy fail');
     }
     
+    /**
+     * Test method for install() without error during copy of config files.
+     * 
+     * @return void
+     */
     public function testInstallWithCopyConfigFile()
     {
         $expectedOutput = 'test : Run install.'."\n"
@@ -701,6 +806,11 @@ class ModuleInstall extends atoum
                 ->isEqualTo($expectedOutput);
     }
     
+    /**
+     * Test method for install() without config file
+     * 
+     * @return void
+     */
     public function testInstallWithoutConfigFile()
     {
         $expectedOutput = 'test : Run install.'."\n"

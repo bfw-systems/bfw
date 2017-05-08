@@ -14,22 +14,22 @@ class Request
     protected static $instance = null;
 
     /**
-     * @var string $ip Client IP
+     * @var string $ip The client IP
      */
     protected $ip;
 
     /**
-     * @var string $lang Client primary language
+     * @var string $lang The client primary language
      */
     protected $lang;
 
     /**
-     * @var string $referer Page referer
+     * @var string $referer The referer url
      */
     protected $referer;
 
     /**
-     * @var string $method HTTP method (GET/POST/PUT/DELETE/...)
+     * @var string $method The HTTP method (GET/POST/PUT/DELETE/...)
      */
     protected $method;
 
@@ -39,7 +39,7 @@ class Request
     protected $ssl;
 
     /**
-     * @var \stdClass The request
+     * @var \stdClass The current request
      */
     protected $request;
 
@@ -127,7 +127,7 @@ class Request
     }
 
     /**
-     * Get the information from the $_SERVER if exist.
+     * Get the information from the $_SERVER array if the key exist.
      * If not exist, return a empty string.
      * 
      * @param string $keyName The key's value in $_SERVER array
@@ -218,7 +218,7 @@ class Request
     }
 
     /**
-     * Detect if the request is ssl (https)
+     * Detect if the request is with ssl (https)
      * 
      * @return void
      */
@@ -240,7 +240,7 @@ class Request
     }
 
     /**
-     * Detect the request informations
+     * Detect the current request informations
      * 
      * @return void
      */

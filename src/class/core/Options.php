@@ -10,7 +10,7 @@ class Options extends \BFW\Options
     /**
      * Constructor
      * 
-     * @param array $defaultOption : The default options from BFW Core
+     * @param array $defaultOption : The default options from BFW Application
      * @param array $options : The options declared by user
      */
     public function __construct($defaultOption, $options)
@@ -19,19 +19,19 @@ class Options extends \BFW\Options
 
         //Search root directory if is not declared
         if ($this->options['rootDir'] === null) {
-            $this->options['rootDir'] = $this->defineRootDir();
+            $this->options['rootDir'] = $this->searchRootDir();
         }
 
         //Search the vendor directory if is not declared
         if ($this->options['vendorDir'] === null) {
-            $this->options['vendorDir'] = $this->defineVendorDir();
+            $this->options['vendorDir'] = $this->searchVendorDir();
         }
 
-        //Get the length of directory to detect if it's a "/"
+        //Get the length of paths to get the last character position
         $rootDirPosLastLetter   = strlen($this->options['rootDir']) - 1;
         $vendorDirPosLastLetter = strlen($this->options['vendorDir']) - 1;
 
-        //If the last caracter is not a "/", add "/" at the end of path
+        //If the last caracter is not a "/", add "/" at the end of the path
         
         if ($this->options['rootDir'][$rootDirPosLastLetter] !== '/') {
             $this->options['rootDir'] .= '/';
@@ -44,11 +44,11 @@ class Options extends \BFW\Options
 
     /**
      * Find the vendor directory from the path of this file
-     * (In theory where we are in the vendor)
+     * (In theory we are into)
      * 
      * @return string
      */
-    protected function defineVendorDir()
+    protected function searchVendorDir()
     {
         if (PHP_VERSION_ID >= 70000) {
             return dirname(__FILE__, 5).'/';
@@ -69,8 +69,8 @@ class Options extends \BFW\Options
      * 
      * @return string
      */
-    protected function defineRootDir()
+    protected function searchRootDir()
     {
-        return dirname($this->defineVendorDir()).'/';
+        return dirname($this->searchVendorDir()).'/';
     }
 }

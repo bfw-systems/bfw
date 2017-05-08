@@ -8,6 +8,11 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 class Sessions extends atoum
 {
+    /**
+     * Test method for isStarted() when the script is runned by cli
+     * 
+     * @return void
+     */
     public function testIsStartedForCli()
     {
         $this->assert('test Sessions::isStarted for cli')
@@ -17,6 +22,11 @@ class Sessions extends atoum
                 ->isFalse();
     }
     
+    /**
+     * Test method for isStarted() when the script is not runned by cli
+     * 
+     * @return void
+     */
     public function testIsStartedForNotActive()
     {
         $this->assert('test Sessions::isStarted for session not active')
@@ -27,6 +37,11 @@ class Sessions extends atoum
                 ->isFalse();
     }
     
+    /**
+     * Test method for isStarted with an already session started
+     * 
+     * @return void
+     */
     public function testIsStartedForActive()
     {
         $this->assert('test Sessions::isStarted for session active')

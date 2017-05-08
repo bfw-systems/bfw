@@ -8,18 +8,30 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class Form extends atoum
 {
     /**
-     * @var $class : Instance de la class
+     * @var $class Class instance
      */
     protected $class;
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Instantiate the class
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
         $this->class = new \BFW\Form('form_unit_test');
     }
     
+    /**
+     * Test method for createToken()
+     * 
+     * @global array $_SESSION
+     * 
+     * @return void
+     */
     public function testCreateToken()
     {
         global $_SESSION;
@@ -28,7 +40,7 @@ class Form extends atoum
             ->given($token = $this->class->createToken())
             ->string($token)
                 ->isNotEmpty()
-            ->given($tokenInfos = $_SESSION['token']['form_unit_test'])
+            ->given($tokenInfos = $_SESSION['formsTokens']['form_unit_test'])
             ->object($tokenInfos)
             ->boolean(property_exists($tokenInfos, 'token'))
                 ->isTrue()
@@ -48,12 +60,19 @@ class Form extends atoum
                 ->hasMessage('Form id is undefined.');
     }
     
+    /**
+     * Test method for checkToken()
+     * 
+     * @global array $_SESSION
+     * 
+     * @return void
+     */
     public function testCheckToken()
     {
         $class = $this->class;
         
         global $_SESSION;
-        unset($_SESSION['token']);
+        unset($_SESSION['formsTokens']);
         
         $this->assert('Call checkToken with no generated token')
             ->exception(function() use ($class) {
@@ -67,7 +86,7 @@ class Form extends atoum
             ->exception(function() use ($class) {
                 $class->checkToken('');
             })
-                ->hasMessage('no token found for form id form_unit_test');
+                ->hasMessage('no token found for the form id form_unit_test');
         
         $formToken = $this->class->createToken();
         
@@ -83,24 +102,31 @@ class Form extends atoum
             ->exception(function() use ($class, $formToken) {
                 $class->checkToken($formToken);
             })
-                ->hasMessage('no token found for form id form_unit_test');
+                ->hasMessage('no token found for the form id form_unit_test');
         
         $this->assert('Call checkToken with expired token')
             ->given($formToken = $this->class->createToken())
             ->given(
-                $dateTimeExpired = &$_SESSION['token']['form_unit_test']->date
+                $dateTimeExpired = &$_SESSION['formsTokens']['form_unit_test']->date
             )
             ->given($dateTimeExpired->modify('-1 hour'))
             ->boolean($this->class->checkToken($formToken))
                 ->isFalse();
     }
     
+    /**
+     * Test method for hasToken()
+     * 
+     * @global array $_SESSION
+     * 
+     * @return void
+     */
     public function testHasToken()
     {
         $class = $this->class;
         
         global $_SESSION;
-        unset($_SESSION['token']);
+        unset($_SESSION['formsTokens']);
         
         $this->assert('Call hasToken with no generated token')
             ->boolean($class->hasToken())

@@ -7,8 +7,8 @@ use \Exception;
 use \stdClass;
 
 /**
- * Class to manage html form
- * Actuely, only manage token for form.
+ * Class to manage html forms
+ * Only manage form's token.
  */
 class Form
 {
@@ -19,9 +19,9 @@ class Form
 
     /**
      * Constructor
-     * Define form's id.
+     * Define the form's id.
      * 
-     * @param string $formId The form id
+     * @param string $formId The form's id
      */
     public function __construct($formId)
     {
@@ -54,7 +54,7 @@ class Form
     {
         global $_SESSION;
 
-        $_SESSION['token'][$this->formId] = $saveInfos;
+        $_SESSION['formsTokens'][$this->formId] = $saveInfos;
     }
 
     /**
@@ -64,7 +64,6 @@ class Form
      */
     protected function getToken()
     {
-        //Default from session
         return $this->getTokenFromSession();
     }
 
@@ -81,15 +80,17 @@ class Form
     {
         global $_SESSION;
 
-        if (!isset($_SESSION['token'])) {
+        if (!isset($_SESSION['formsTokens'])) {
             throw new Exception('no token found');
         }
 
-        if (!isset($_SESSION['token'][$this->formId])) {
-            throw new Exception('no token found for form id '.$this->formId);
+        if (!isset($_SESSION['formsTokens'][$this->formId])) {
+            throw new Exception(
+                'no token found for the form id '.$this->formId
+            );
         }
 
-        return $_SESSION['token'][$this->formId];
+        return $_SESSION['formsTokens'][$this->formId];
     }
 
     /**
@@ -120,11 +121,14 @@ class Form
      * Check the token receive with the generated token
      * 
      * @param string $tokenToCheck The token receive from user
-     * @param int $timeExp (default 15) time on minute which the token is valid
+     * @param int $timeExpire (default 15) time on minute during which the
+     *  token is valid
+     * 
+     * @throws \Exception If the token not exist
      * 
      * @return boolean
      */
-    public function checkToken($tokenToCheck, $timeExp = 15)
+    public function checkToken($tokenToCheck, $timeExpire = 15)
     {
         //Throw Exception
         $tokenInfos = $this->getToken();
@@ -137,13 +141,13 @@ class Form
         }
 
         $limitDate = new DateTime;
-        $limitDate->modify('-'.(int) $timeExp.' minutes');
+        $limitDate->modify('-'.(int) $timeExpire.' minutes');
 
         if ($dateCreate < $limitDate) {
             return false;
         }
 
-        unset($_SESSION['token'][$this->formId]);
+        unset($_SESSION['formsTokens'][$this->formId]);
         return true;
     }
     

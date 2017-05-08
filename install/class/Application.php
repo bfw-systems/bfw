@@ -2,12 +2,17 @@
 
 namespace BFW\Install;
 
+use \BFW\Install\ModuleInstall;
+
 /**
  * Application class for install module script
  */
 class Application extends \BFW\Application
 {
-    protected static $modulesInstances = [];
+    /**
+     * @var \BFW\Install\ModuleInstall[] $modulesInstall Modules to install
+     */
+    protected static $modulesInstall = [];
     
     /**
      * {@inheritdoc}
@@ -33,20 +38,19 @@ class Application extends \BFW\Application
         return;
     }
     
-    public static function addModuleInstallInstance(
-        \BFW\Install\ModuleInstall $module
-    ) {
+    public static function addModuleInstall(ModuleInstall $module)
+    {
         $moduleName = $module->getName();
         
-        self::$modulesInstances[$moduleName] = $module;
+        self::$modulesInstall[$moduleName] = $module;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function declareRunPhases()
+    protected function declareRunSteps()
     {
-        $this->runPhases = [
+        $this->runSteps = [
             [$this, 'loadMemcached'],
             [$this, 'readAllModules'],
             [$this, 'installModules']
@@ -58,7 +62,7 @@ class Application extends \BFW\Application
      */
     public function run()
     {
-        foreach ($this->runPhases as $action) {
+        foreach ($this->runSteps as $action) {
             $action();
 
             $notifyAction = $action;
@@ -72,6 +76,11 @@ class Application extends \BFW\Application
         $this->notifyAction('bfw_modules_install_finish');
     }
     
+    /**
+     * Install all modules in the order of the dependency tree.
+     * 
+     * @return void
+     */
     protected function installModules()
     {
         echo 'Read all modules to run install script :'."\n";
@@ -81,7 +90,7 @@ class Application extends \BFW\Application
         foreach ($tree as $firstLine) {
             foreach ($firstLine as $secondLine) {
                 foreach ($secondLine as $moduleName) {
-                    if (!isset(self::$modulesInstances[$moduleName])) {
+                    if (!isset(self::$modulesInstall[$moduleName])) {
                         continue;
                     }
                     
@@ -91,15 +100,22 @@ class Application extends \BFW\Application
         }
     }
     
+    /**
+     * Install a module
+     * 
+     * @param string $moduleName The module name
+     * 
+     * @return void
+     */
     protected function installModule($moduleName)
     {
-        if (!isset(self::$modulesInstances[$moduleName])) {
+        if (!isset(self::$modulesInstall[$moduleName])) {
             return;
         }
         
         echo ' > Read for module '.$moduleName."\n";
         
-        $module         = self::$modulesInstances[$moduleName];
+        $module         = self::$modulesInstall[$moduleName];
         $installScripts = $module->getSourceInstallScript();
         
         if ($installScripts === '') {

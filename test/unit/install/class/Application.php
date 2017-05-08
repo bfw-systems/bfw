@@ -14,19 +14,28 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class Application extends atoum
 {
     /**
-     * @var $mock : Instance du mock pour la class
+     * @var $mock Mock instance
      */
     protected $mock;
     
+    /**
+     * @var array BFW config used by unit test
+     */
     protected $forcedConfig;
 
     /**
-     * Instanciation de la class avant chaque méthode de test
+     * Call before each test method
+     * Instantiate the mock
+     * 
+     * @param $testMethod string The name of the test method executed
+     * 
+     * @return void
      */
     public function beforeTestMethod($testMethod)
     {
         $this->forcedConfig = require(__DIR__.'/../../helpers/applicationConfig.php');
         
+        //Remove the instance of the latest test
         MockApp::removeInstance();
         
         $options = [
@@ -48,30 +57,39 @@ class Application extends atoum
             ]
         ];
         
-        //$this->function->scandir = ['.', '..'];
         $this->mock = MockApp::init($options);
     }
     
-    public function testDeclareRunPhases()
+    /**
+     * Test method for declareRunSteps()
+     * 
+     * @return void
+     */
+    public function testDeclareRunSteps()
     {
-        $this->assert('test declareRunPhases')
-            ->array($runPhases = $this->mock->getRunPhases())
+        $this->assert('test declareRunSteps')
+            ->array($runSteps = $this->mock->getRunSteps())
                 ->size
                     ->isEqualTo(3)
-            ->object($runPhases[0][0])
+            ->object($runSteps[0][0])
                 ->isInstanceOf('\BFW\Application')
-            ->object($runPhases[1][0])
+            ->object($runSteps[1][0])
                 ->isInstanceOf('\BFW\Application')
-            ->object($runPhases[2][0])
+            ->object($runSteps[2][0])
                 ->isInstanceOf('\BFW\Application')
-            ->string($runPhases[0][1])
+            ->string($runSteps[0][1])
                 ->isEqualTo('loadMemcached')
-            ->string($runPhases[1][1])
+            ->string($runSteps[1][1])
                 ->isEqualTo('readAllModules')
-            ->string($runPhases[2][1])
+            ->string($runSteps[2][1])
                 ->isEqualTo('installModules');
     }
     
+    /**
+     * Test method for runNotify()
+     * 
+     * @return void
+     */
     public function testRunNotify()
     {
         $notifyText = 'bfw_modules_install_run_loadMemcached'."\n"
@@ -87,12 +105,13 @@ class Application extends atoum
             ->output(function() use ($app) {
                 $app->run();
             })
-                //->hasLength(strlen($notifyText));
                 ->isEqualTo($notifyText);
     }
     
     /**
      * Tested by install test
+     * 
+     * @return void
      */
     public function testInstallModules()
     {
@@ -101,6 +120,8 @@ class Application extends atoum
     
     /**
      * Tested by install test
+     * 
+     * @return void
      */
     public function testInstallModule()
     {
