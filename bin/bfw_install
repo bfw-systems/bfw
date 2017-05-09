@@ -1,213 +1,113 @@
 #!/bin/sh
 # Install BFW script
 #
-# dateCreate : 2014-02-11
 # version : 3.0.0
 # author : bulton-fr <bulton.fr@gmail.com>
 
 taskFail=false
-echo '\033[0;33mBFW Install :\033[0m'
+bfwPath=""
 
-## app Directory ##
-#Create dir "app"
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Create app directory ...'
-
-    if mkdir -p app ;then
+# Function to create a directory
+# 
+# @param string : The directory name
+# 
+# @return integer : 0 if taskFail is true
+createDirectory()
+{
+    if [ "$taskFail" = true ] ;then
+        return 0
+    fi
+    
+    echo -n "> Create $1 directory ..."
+    if mkdir -p $1 ;then
         echo '\033[1;32m Done\033[0m'
     else
         echo '\033[1;31m Fail\033[0m'
         taskFail=true
     fi
-fi
+}
 
-#Create dir "app/config"
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Create app/config directory ...'
+# Function to find the project directory path
+# 
+# @return integer : 0 if taskFail is true or if php is not found
+searchBfwPath()
+{
+    if [ "$taskFail" = true ] ;then
+        return 0
+    fi
+    
+    echo -n '> Search BFW vendor directory path ...'
+    
+    PHP=`which php`
+    if [ "$PHP" = "" ] ;then
+        echo '\033[1;31m Fail\033[0m'
+        taskFail=true
+        return 0
+    fi
+    
+    if bfwPath=`$PHP -r "echo dirname(dirname(realpath('$0')));"` ;then
+        echo '\033[1;32m Found\033[0m'
+        echo "\033[0;33mBFW path : $bfwPath\033[0m"
+    else
+        echo '\033[1;31m Fail\033[0m'
+        taskFail=true
+    fi
+}
 
-    if mkdir -p app/config ;then
+# Function to copy a file
+# 
+# @param string : The source file path into the bfw path
+# @param string : The destination path
+# 
+# @return integer : 0 if taskFail is true
+copyFile()
+{
+    if [ "$taskFail" = true ] ;then
+        return 0
+    fi
+    
+    echo -n "> Copy $1 file to $2 ..."
+
+    if cp "$bfwPath/$1" "$2" ;then
         echo '\033[1;32m Done\033[0m'
     else
         echo '\033[1;31m Fail\033[0m'
         taskFail=true
     fi
-fi
+}
 
-#Create dir "app/config/bfw"
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Create app/config/bfw directory ...'
+echo '\033[0;33mRun BFW Install\033[0m'
+echo ''
 
-    if mkdir -p app/config/bfw ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
+## app Directories
+createDirectory "app"
+createDirectory "app/config"
+createDirectory "app/config/bfw"
+createDirectory "app/modules"
 
-#Create dir "app/modules"
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Create app/modules directory ...'
+## src Directories
+createDirectory "src"
+createDirectory "src/cli"
+createDirectory "src/controllers"
+createDirectory "src/modeles"
+createDirectory "src/view"
 
-    if mkdir -p app/modules ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
-## END app Directory ##
+## web Directory
+createDirectory "web"
 
-## src Directory ##
-#Create dir "src"
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Create src directory ...'
+# Define bfwPath variable to know bfw directory into the vendor
+echo ''
+searchBfwPath
 
-    if mkdir -p src ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
+# Copy skeleton files
+echo ''
+copyFile "install/skeleton/.htaccess" "web/.htaccess"
+copyFile "install/skeleton/config.php" "app/config/bfw/config.php"
+copyFile "install/skeleton/index.php" "web/index.php"
+copyFile "install/skeleton/cli.php" "cli.php"
+copyFile "install/skeleton/cli/exemple.php" "src/cli/exemple.php"
 
-#Create dir src/cli
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Create src/cli directory ...'
-
-    if mkdir -p src/cli ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
-
-#Create dir src/controllers
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Create src/controllers directory ...'
-
-    if mkdir -p src/controllers ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
-
-#Create dir src/modeles
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Create src/modeles directory ...'
-
-    if mkdir -p src/modeles ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
-
-#Create dir src/view
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Create src/view directory ...'
-
-    if mkdir -p src/view ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
-## END src Directory ##
-
-## web Directory ##
-#Create dir web
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Create web directory ...'
-
-    if mkdir -p web ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
-## END web Directory ##
-
-# Define DIR variable to know current directory
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Search skeleton directory path ...'
-
-    if PHP=`which php` ;then
-        if DIR=`$PHP -r "echo dirname(dirname(realpath('$0')));"` ;then
-            echo '\033[1;32m Done\033[0m'
-        else
-            echo '\033[1;31m Fail\033[0m'
-            taskFail=true
-        fi
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
-
-# Copy .htaccess file to root project directory
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Copy .htaccess file ...'
-
-    if cp $DIR/install/skeleton/.htaccess web/.htaccess ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
-
-# Copy bfw config file into app/config directory
-if [ "$taskFail" = false ] ;then
-    echo -n '  > Copy config file ...'
-
-    if cp $DIR/install/skeleton/config.php ./app/config/bfw/config.php ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
-
-if [ "$taskFail" = false ] ;then
-    echo -n "  > Copy index.php file into web directory ..."
-
-    if cp $DIR/install/skeleton/index.php web/index.php ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
-
-if [ "$taskFail" = false ] ;then
-    echo -n "  > Copy cli.php file into root project directory ..."
-
-    if cp $DIR/install/skeleton/cli.php cli.php ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
-
-if [ "$taskFail" = false ] ;then
-    echo -n "  > Copy example cli file into app/cli directory ..."
-
-    if cp $DIR/install/skeleton/cli/exemple.php src/cli/exemple.php ;then
-        echo '\033[1;32m Done\033[0m'
-    else
-        echo '\033[1;31m Fail\033[0m'
-        taskFail=true
-    fi
-fi
-
+# Install status
 echo ''
 echo -n '\033[0;33mBFW install status : '
 if [ "$taskFail" = false ] ;then
