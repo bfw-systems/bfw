@@ -71,9 +71,9 @@ class Memcache extends atoum
                     [
                         'host'       => '',
                         'port'       => 0,
+                        'weight'     => 0,
                         'timeout'    => null,
-                        'persistent' => false,
-                        'weight'     => 0
+                        'persistent' => false
                     ]
                 ]
             ]
@@ -117,8 +117,20 @@ class Memcache extends atoum
     public function testConstructorWithoutServer()
     {
         $this->assert('test constructor without memcache server')
-            ->object($this->class = new \BFW\Memcache\Memcache)
-                ->isInstanceOf('\BFW\Memcache\Memcache');
+            ->given($exceptionMsg = '')
+            ->when(function() use (&$exceptionMsg) {
+                    try {
+                        new \BFW\Memcache\Memcache;
+                    } catch (\Exception $e) {
+                        $exceptionMsg = $e->getMessage();
+                    }
+                })
+            ->error()
+                ->withType(E_WARNING)
+                ->withMessage('MemcachePool::getextendedstats(): No servers added to memcache connection')
+                ->exists()
+            ->string($exceptionMsg)
+                    ->isEqualTo('No memcached server connected.');
     }
     
     /**
@@ -163,17 +175,20 @@ class Memcache extends atoum
             ])
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
-            ->when(function() {
-                new \BFW\Memcache\Memcache;
-            })
+            ->given($exceptionMsg = '')
+            ->when(function() use (&$exceptionMsg) {
+                    try {
+                        new \BFW\Memcache\Memcache;
+                    } catch (\Exception $e) {
+                        $exceptionMsg = $e->getMessage();
+                    }
+                })
             ->error()
                 ->exists()
                 ->withType(E_NOTICE)
-                ->withMessage('Memcache::connect(): Server localhost (tcp 11212, udp 0) failed with: Connection refused (111)')
-            ->error()
-                ->exists()
-                ->withType(E_WARNING)
-                ->withMessage('Memcache::connect(): Can\'t connect to localhost:11212, Connection refused (111)')
+                ->withMessage('MemcachePool::getextendedstats(): Server localhost (tcp 11212, udp 0) failed with: Connection refused (111)')
+            ->string($exceptionMsg)
+                    ->isEqualTo('Memcached server localhost:11212 not connected')
         ;
     }
     

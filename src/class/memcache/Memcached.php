@@ -81,33 +81,6 @@ class Memcached extends \Memcached
     }
     
     /**
-     * addServer not created the connection. It's created at the first call
-     * to the memcached servers.
-     * 
-     * So, we run the connect to all server declared
-     * 
-     * @throws \Exception If a server is not connected
-     * 
-     * @return void
-     */
-    protected function testConnect()
-    {
-        $stats = $this->getStats();
-        
-        if (!is_array($stats)) {
-            throw new Exception('No memcached server connected.');
-        }
-        
-        foreach ($stats as $serverName => $serverStat) {
-            if ($serverStat['uptime'] < 1) {
-                throw new Exception(
-                    'Memcached server '.$serverName.' not connected'
-                );
-            }
-        }
-    }
-    
-    /**
      * Get the list of servers where we are already connected (persistent)
      * 
      * @return string[]

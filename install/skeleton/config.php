@@ -144,6 +144,14 @@ return [
                 'port'       => 0,
                 
                 /**
+                 * @var int weight : The weight of the server relative to the
+                 *  total weight of all the servers in the pool.
+                 * 
+                 * @see http://php.net/manual/en/memcached.addserver.php
+                 */
+                'weight'     => 0,
+                
+                /**
                  * @var int|null : Value in seconds which will be used for
                  *  connecting to the daemon.
                  * 
@@ -160,17 +168,7 @@ return [
                  * 
                  * For memcache only
                  */
-                'persistent' => false,
-                
-                /**
-                 * @var int weight : The weight of the server relative to the
-                 *  total weight of all the servers in the pool.
-                 * 
-                 * For memcached only
-                 * 
-                 * @see http://php.net/manual/en/memcached.addserver.php
-                 */
-                'weight'     => 0
+                'persistent' => false
             ]
         ]
     ],

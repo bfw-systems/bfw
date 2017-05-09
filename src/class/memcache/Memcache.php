@@ -51,6 +51,7 @@ class Memcache extends \Memcache
             
             $host       = $server['host'];
             $port       = $server['port'];
+            $weight     = $server['weight'];
             $timeout    = $server['timeout'];
             $persistent = $server['persistent'];
             
@@ -59,20 +60,22 @@ class Memcache extends \Memcache
                 continue;
             }
             
-            //Change method used to connect if it's a persistent connection
-            $methodName = 'connect';
-            if ($persistent === true) {
-                $methodName = 'pconnect';
+            //Error "Memcache::addserver(): weight must be a positive integer"
+            if ($weight === 0) {
+                $weight = 1;
             }
             
             //If a timeout is declared
             //I not found the default value for this parameters, so an if...
             if ($timeout !== null) {
-                $this->{$methodName}($host, $port, $timeout);
-                return;
+                $this->addServer($host, $port, $persistent, $weight, $timeout);
+                continue;
             }
             
-            $this->{$methodName}($host, $port);
+            $this->addServer($host, $port, $persistent, $weight);
         }
+        
+        //Check if connect is successfull
+        $this->testConnect();
     }
 }
