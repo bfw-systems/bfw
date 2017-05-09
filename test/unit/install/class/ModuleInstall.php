@@ -4,6 +4,7 @@ namespace BFW\Install\test\unit;
 
 use \atoum;
 use \BFW\Install\test\unit\mocks\ModuleInstall as MockModuleInstall;
+use \BFW\Install\test\unit\mocks\Application as MockApp;
 use \BFW\test\helpers\Errors;
 use \BFW\test\helpers\Output;
 
@@ -15,6 +16,16 @@ class ModuleInstall extends atoum
      * @var $mock Mock instance
      */
     protected $mock;
+    
+    /**
+     * @var \BFW\Install\test\unit\mocks\Application $app BFW Application instance
+     */
+    protected $app;
+    
+    /**
+     * @var array BFW config used by unit test
+     */
+    protected $forcedConfig;
     
     /**
      * @var string $bfwPath Fake project path
@@ -46,16 +57,29 @@ class ModuleInstall extends atoum
      */
     public function beforeTestMethod($testMethod)
     {
-        $this->bfwPath = realpath(__DIR__.'/../../../../');
-        $this->sourcePath = $this->bfwPath.'/vendor/unit/test';
-        $this->modulePath = $this->bfwPath.'/app/modules/';
-        $this->configPath = $this->bfwPath.'/app/config/';
+        $this->forcedConfig = require(__DIR__.'/../../helpers/applicationConfig.php');
+        
+        //Remove the instance of the latest test
+        MockApp::removeInstance();
+        
+        $options = [
+            'forceConfig'     => $this->forcedConfig,
+            'vendorDir'       => realpath(__DIR__.'/../../../../').'/vendor',
+            'overrideMethods' => [
+                'runCliFile'     => null,
+                'initModules'    => null,
+                'readAllModules' => null
+            ]
+        ];
+        
+        $this->app = MockApp::init($options);
+        
+        $this->sourcePath = ROOT_DIR.'/vendor/unit/test';
+        $this->modulePath = MODULES_DIR;
+        $this->configPath = CONFIG_DIR;
         
         if ($testMethod !== 'testConstructor') {
-            $this->mock = new MockModuleInstall(
-                $this->bfwPath,
-                $this->sourcePath
-            );
+            $this->mock = new MockModuleInstall($this->sourcePath);
         }
     }
     
@@ -67,19 +91,12 @@ class ModuleInstall extends atoum
     public function testConstructor()
     {
         $this->assert('test constructor')
-            ->if($this->mock = new MockModuleInstall(
-                $this->bfwPath,
-                $this->sourcePath
-            ))
+            ->if($this->mock = new MockModuleInstall($this->sourcePath))
             ->then
             ->string($this->mock->projectPath)
-                ->isEqualTo($this->bfwPath)
+                ->isEqualTo(ROOT_DIR)
             ->string($this->mock->sourcePath)
-                ->isEqualTo($this->sourcePath)
-            ->string($this->mock->bfwConfigPath)
-                ->isEqualTo($this->bfwPath.'/app/config/')
-            ->string($this->mock->bfwModulePath)
-                ->isEqualTo($this->bfwPath.'/app/modules/');
+                ->isEqualTo($this->sourcePath);
     }
     
     /**
@@ -159,11 +176,7 @@ class ModuleInstall extends atoum
             ->string($this->mock->getName())
                 ->isEqualTo('test')
             ->string($this->mock->projectPath)
-                ->isEqualTo($this->bfwPath)
-            ->string($this->mock->bfwConfigPath)
-                ->isEqualTo($this->bfwPath.'/app/config/')
-            ->string($this->mock->bfwModulePath)
-                ->isEqualTo($this->bfwPath.'/app/modules/')
+                ->isEqualTo(ROOT_DIR)
             ->string($this->mock->getSourcePath())
                 ->isEqualTo($this->sourcePath)
             ->string($this->mock->sourceSrcPath)
@@ -203,11 +216,7 @@ class ModuleInstall extends atoum
             ->string($this->mock->getName())
                 ->isEqualTo('test')
             ->string($this->mock->projectPath)
-                ->isEqualTo($this->bfwPath)
-            ->string($this->mock->bfwConfigPath)
-                ->isEqualTo($this->bfwPath.'/app/config/')
-            ->string($this->mock->bfwModulePath)
-                ->isEqualTo($this->bfwPath.'/app/modules/')
+                ->isEqualTo(ROOT_DIR)
             ->string($this->mock->getSourcePath())
                 ->isEqualTo($this->sourcePath)
             ->string($this->mock->sourceSrcPath)

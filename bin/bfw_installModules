@@ -97,7 +97,6 @@ if (count($listModulesFound) <= 0) {
 //For each modules found into the vendor directory
 foreach ($listModulesFound as $moduleFindPath) {
     $module = new \BFW\Install\ModuleInstall(
-        $bfwPath,
         realpath($moduleFindPath)
     );
     

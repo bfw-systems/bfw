@@ -15,16 +15,6 @@ class ModuleInstall
     protected $projectPath = '';
     
     /**
-     * @var string $bfwConfigPath : Path to bfw config directory
-     */
-    protected $bfwConfigPath = '';
-    
-    /**
-     * @var string $bfwModulePath : Path to bfw modules directory
-     */
-    protected $bfwModulePath = '';
-    
-    /**
      * @var boolean $forceReinstall : Force complete reinstall of module
      */
     protected $forceReinstall = false;
@@ -78,16 +68,12 @@ class ModuleInstall
     /**
      * Constructor
      * 
-     * @param string $projectPath Path to root bfw project
      * @param string $modulePath Path to the module which be installed
      */
-    public function __construct($projectPath, $modulePath)
+    public function __construct($modulePath)
     {
-        $this->projectPath = $projectPath;
+        $this->projectPath = ROOT_DIR;
         $this->sourcePath  = $modulePath;
-        
-        $this->bfwConfigPath = $this->projectPath.'/app/config/';
-        $this->bfwModulePath = $this->projectPath.'/app/modules/';
     }
 
     /**
@@ -130,8 +116,8 @@ class ModuleInstall
         $pathExploded = explode('/', $this->sourcePath);
         $this->name   = $pathExploded[(count($pathExploded) - 1)];
         
-        $this->targetSrcPath    = $this->bfwModulePath.$this->name;
-        $this->targetConfigPath = $this->bfwConfigPath.$this->name;
+        $this->targetSrcPath    = MODULES_DIR.$this->name;
+        $this->targetConfigPath = CONFIG_DIR.$this->name;
     }
     
     /**
