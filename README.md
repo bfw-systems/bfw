@@ -44,5 +44,5 @@ php composer.phar install
 ```
 Lancer l'installation afin de créer les répertoires et fichiers nécessaire :
 ```
-sh vendor/bin/bfw_install
+sh vendor/bin/bfwInstall
 ```

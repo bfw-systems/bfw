@@ -84,7 +84,7 @@ for ($installIndex = 0; $installIndex < 2; $installIndex++) {
     }
     
     $installOutput = [];
-    exec('cd '.$installDir.' && ./vendor/bin/bfw_install', $installOutput);
+    exec('cd '.$installDir.' && ./vendor/bin/bfwInstall', $installOutput);
     $installOutput = implode("\n", $installOutput);
     
     echo $installOutput;

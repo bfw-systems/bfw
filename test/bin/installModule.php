@@ -7,7 +7,7 @@ $installDir = realpath(__DIR__.'/../install');
 echo "\033[0;33mCheck hello-world module install\033[0m\n";
 
 $moduleInstallOutput = [];
-exec('cd '.$installDir.' && ./vendor/bin/bfw_installModules', $moduleInstallOutput);
+exec('cd '.$installDir.' && ./vendor/bin/bfwInstallModules', $moduleInstallOutput);
 
 $moduleInstallOutput = implode("\n", $moduleInstallOutput);
 

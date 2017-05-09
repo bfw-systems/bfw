@@ -56,7 +56,7 @@
         }
     },
     "bin": [
-        "bin/bfw_install",
-        "bin/bfw_installModules"
+        "bin/bfwInstall",
+        "bin/bfwInstallModules"
     ]
 }
