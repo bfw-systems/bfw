@@ -8,11 +8,6 @@ namespace BFW\Core;
 class Errors
 {
     /**
-     * @var \BFW\Application $app : BFW Application instance
-     */
-    protected static $app = null;
-    
-    /**
      * Constructeur
      */
     public function __construct()
