@@ -127,7 +127,7 @@ class Memcache extends atoum
                 })
             ->error()
                 ->withType(E_WARNING)
-                ->withMessage('MemcachePool::getextendedstats(): No servers added to memcache connection')
+                ->withPattern('/Memcache(Pool)?::getextendedstats\(\): No servers added to memcache connection/')
                 ->exists()
             ->string($exceptionMsg)
                     ->isEqualTo('No memcached server connected.');
