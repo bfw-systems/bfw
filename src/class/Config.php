@@ -42,6 +42,28 @@ class Config
     }
     
     /**
+     * Getter accessor to $config property
+     * 
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+    
+    /**
+     * Getter accessor to a value into the $config property
+     * 
+     * @param type $file
+     * 
+     * @return type
+     */
+    public function getConfigForFile($file)
+    {
+        return $this->config[$file];
+    }
+    
+    /**
      * Search and load all config files which has been found
      * 
      * @return void
@@ -169,7 +191,7 @@ class Config
      * @throws Exception If file parameter is null and there are many files. Or
      *  if the file not exist. Or if the key not exist.
      */
-    public function getConfig($key, $file = null)
+    public function getValue($key, $file = null)
     {
         $nbConfigFile = count($this->config);
 

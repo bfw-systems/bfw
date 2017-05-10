@@ -134,7 +134,7 @@ class Application extends Subjects
      */
     public function getConfig($configKey)
     {
-        return $this->config->getConfig($configKey);
+        return $this->config->getValue($configKey);
     }
     
     /**

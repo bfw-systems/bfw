@@ -27,7 +27,7 @@ class Config extends atoum
     {
         if (
             $testMethod === 'testSearchAllConfigsFilesWithDirectory' || 
-            $testMethod === 'testGetConfigExceptions'
+            $testMethod === 'testGetValueExceptions'
         ) {
             return;
         }
@@ -74,7 +74,7 @@ class Config extends atoum
             ->given($config = $this->class)
             ->then
             ->exception(function() use ($config) {
-                $config->getConfig('test');
+                $config->getValue('test');
             })->hasMessage('The file  has not been found for config test');
     }
     
@@ -100,9 +100,9 @@ class Config extends atoum
             ->and($this->function->file_get_contents = $configJson)
             ->then
             ->given($this->class->loadFiles())
-            ->boolean($this->class->getConfig('debug'))
+            ->boolean($this->class->getValue('debug'))
                 ->isFalse()
-            ->object($errorRenderFct = $this->class->getConfig('errorRenderFct'))
+            ->object($errorRenderFct = $this->class->getValue('errorRenderFct'))
             ->string($errorRenderFct->default)
                 ->isEqualTo('\BFW\Core\Errors::defaultErrorRender')
             ->string($errorRenderFct->cli)
@@ -138,14 +138,14 @@ class Config extends atoum
             ->and($this->addOverrideLoadPhpConfigFile($config))
             ->and($config->loadFiles())
             ->then
-            ->boolean($config->getConfig('debug'))
+            ->boolean($config->getValue('debug'))
                 ->isFalse()
-            ->object($errorRenderFct = $config->getConfig('errorRenderFct'))
+            ->object($errorRenderFct = $config->getValue('errorRenderFct'))
             ->string($errorRenderFct->default)
                 ->isEqualTo('\BFW\Core\Errors::defaultErrorRender')
             ->string($errorRenderFct->cli)
                 ->isEqualTo('\BFW\Core\Errors::defaultCliErrorRender')
-            ->variable($config->getConfig('fixNullValue'))
+            ->variable($config->getValue('fixNullValue'))
                 ->isNull();
     }
     
@@ -165,7 +165,7 @@ class Config extends atoum
             ->given($config = $this->class)
             ->then
             ->exception(function() use ($config) {
-                $config->getConfig('test');
+                $config->getValue('test');
             })->hasMessage('The file  has not been found for config test');
     }
     
@@ -185,7 +185,7 @@ class Config extends atoum
             ->and($this->function->file_get_contents = '{"debug": false}')
             ->then
             ->given($this->class->loadFiles())
-            ->boolean($this->class->getConfig('debug'))
+            ->boolean($this->class->getValue('debug'))
                 ->isFalse();
     }
     
@@ -202,40 +202,40 @@ class Config extends atoum
             ->and($this->addOverrideLoadPhpConfigFile($config))
             ->and($config->loadFiles())
             ->then
-            ->boolean($config->getConfig('debug', 'core/Options.php'))
+            ->boolean($config->getValue('debug', 'core/Options.php'))
                 ->isTrue()
-            ->boolean($config->getConfig('debug', 'core/Errors.php'))
+            ->boolean($config->getValue('debug', 'core/Errors.php'))
                 ->isFalse();
     }
     
     /**
-     * test method for getConfig() exception messages
+     * test method for getValue() exception messages
      * 
      * @return void
      */
-    public function testGetConfigExceptions()
+    public function testGetValueExceptions()
     {
         define('CONFIG_DIR', __DIR__.'/../');
         
-        $this->assert('test getConfig exception no file specified')
+        $this->assert('test getValue exception no file specified')
             ->if($config = new MockConfig('class'))
             ->and($this->addOverrideLoadPhpConfigFile($config))
             ->and($config->loadFiles())
             ->then
             ->exception(function() use ($config) {
-                $config->getConfig('debug');
+                $config->getValue('debug');
             })->hasMessage(
                 'There are many config files. '
                 .'Please indicate the file to obtain the config debug'
             );
         
-        $this->assert('test getConfig exception unknown key')
+        $this->assert('test getValue exception unknown key')
             ->if($config = new MockConfig('class'))
             ->and($this->addOverrideLoadPhpConfigFile($config))
             ->and($config->loadFiles())
             ->then
             ->exception(function() use ($config) {
-                $config->getConfig('bulton', 'core/Options.php');
+                $config->getValue('bulton', 'core/Options.php');
             })->hasMessage('The config key bulton has not been found');
     }
 }

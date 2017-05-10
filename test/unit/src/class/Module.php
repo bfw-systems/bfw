@@ -180,9 +180,9 @@ class Module extends atoum
             ->given($class = new \BFW\Module('unit_test'))
             ->object($config = $class->getConfig())
                 ->isInstanceOf('\BFW\Config')
-            ->boolean($config->getConfig('unit_test'))
+            ->boolean($config->getValue('unit_test'))
                 ->isTrue()
-            ->string($config->getConfig('lib'))
+            ->string($config->getValue('lib'))
                 ->isEqualTo('atoum');
     }
 

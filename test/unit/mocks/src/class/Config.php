@@ -100,11 +100,29 @@ class Config extends \BFW\Config
     }
     
     /**
+     * @see \Config::getValue
+     * Present because the method can be overrided during the test
+     */
+    public function getValue($key, $file = null)
+    {
+        return $this->callOverrideOrParent('getValue', [$key, $file]);
+    }
+    
+    /**
      * @see \Config::getConfig
      * Present because the method can be overrided during the test
      */
-    public function getConfig($key, $file = null)
+    public function getConfig()
     {
-        return $this->callOverrideOrParent('getConfig', [$key, $file]);
+        return $this->callOverrideOrParent('getConfig', []);
+    }
+    
+    /**
+     * @see \Config::getConfigForFile
+     * Present because the method can be overrided during the test
+     */
+    public function getConfigForFile($file)
+    {
+        return $this->callOverrideOrParent('getConfigForFile', [$file]);
     }
 }
