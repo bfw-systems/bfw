@@ -134,14 +134,29 @@ class Request
      * @param string $keyName The key's value in $_SERVER array
      * 
      * @return string
+     * 
+     * @throws \Exception If the key not exist into $_SERVER
      */
     public static function getServerVar($keyName)
     {
         if (!isset($_SERVER[$keyName])) {
-            return '';
+            throw new \Exception(
+                'The key '.$keyName.' not exist into $_SERVER array'
+            );
         }
 
         return $_SERVER[$keyName];
+    }
+    
+    protected function serverValue($keyName)
+    {
+        $calledClass = get_called_class(); //Autorize extends this class
+        
+        try {
+            return $calledClass::getServerVar($keyName);
+        } catch (\Exception $e) {
+            return '';
+        }
     }
     
     /**
@@ -166,8 +181,7 @@ class Request
      */
     protected function detectIp()
     {
-        $calledClass = get_called_class(); //Autorize extends this class
-        $this->ip    = $calledClass::getServerVar('REMOTE_ADDR');
+        $this->ip = $this->serverValue('REMOTE_ADDR');
     }
 
     /**
@@ -185,12 +199,15 @@ class Request
          * End "en" (preference 0.4/1)
          **/
         
-        $calledClass = get_called_class(); //Autorize extends this class
-        $acceptLang  = $calledClass::getServerVar('HTTP_ACCEPT_LANGUAGE');
-        $acceptLangs = explode(',', $acceptLang);
-
-        $firstLang = explode(';', $acceptLangs[0]);
-        $lang      = strtolower($firstLang[0]);
+        $acceptLanguage  = $this->serverValue('HTTP_ACCEPT_LANGUAGE');
+        if (empty($acceptLanguage)) {
+            $this->lang = '';
+            return;
+        }
+        
+        $acceptedLangs = explode(',', $acceptLanguage);
+        $firstLang     = explode(';', $acceptedLangs[0]);
+        $lang          = strtolower($firstLang[0]);
 
         if (strpos($lang, '-') !== false) {
             $minLang = explode('-', $lang);
@@ -207,8 +224,7 @@ class Request
      */
     protected function detectReferer()
     {
-        $calledClass   = get_called_class(); //Autorize extends this class
-        $this->referer = $calledClass::getServerVar('HTTP_REFERER');
+        $this->referer = $this->serverValue('HTTP_REFERER');
     }
 
     /**
@@ -218,8 +234,7 @@ class Request
      */
     protected function detectMethod()
     {
-        $calledClass  = get_called_class(); //Autorize extends this class
-        $this->method = $calledClass::getServerVar('REQUEST_METHOD');
+        $this->method = $this->serverValue('REQUEST_METHOD');
     }
 
     /**
@@ -229,10 +244,9 @@ class Request
      */
     protected function detectSsl()
     {
-        $calledClass = get_called_class(); //Autorize extends this class
-        $serverHttps = $calledClass::getServerVar('HTTPS');
-        $fwdProto    = $calledClass::getServerVar('HTTP_X_FORWARDED_PROTO');
-        $fwdSsl      = $calledClass::getServerVar('HTTP_X_FORWARDED_SSL');
+        $serverHttps = $this->serverValue('HTTPS');
+        $fwdProto    = $this->serverValue('HTTP_X_FORWARDED_PROTO');
+        $fwdSsl      = $this->serverValue('HTTP_X_FORWARDED_SSL');
 
         $this->ssl = false;
 
@@ -252,12 +266,11 @@ class Request
      */
     protected function detectRequest()
     {
-        $calledClass = get_called_class(); //Autorize extends this class
-        $parseUrl    = parse_url($calledClass::getServerVar('REQUEST_URI'));
+        $parseUrl = parse_url($this->serverValue('REQUEST_URI'));
 
         $request = [
             'scheme'   => '',
-            'host'     => $calledClass::getServerVar('HTTP_HOST'),
+            'host'     => $this->serverValue('HTTP_HOST'),
             'port'     => '',
             'user'     => '',
             'pass'     => '',

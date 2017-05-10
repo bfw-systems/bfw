@@ -239,8 +239,10 @@ class Request extends atoum
     public function testGetServerVar()
     {
         $this->assert('test getServerVar with default value')
-            ->string(\BFW\Request::getServerVar('HOST'))
-                ->isEmpty();
+            ->exception(function() {
+                \BFW\Request::getServerVar('HOST');
+            })
+                ->hasMessage('The key HOST not exist into $_SERVER array');
         
         $this->assert('test getServerVar with a fake value')
             ->given($_SERVER['HOST'] = 'bulton.fr')
@@ -248,7 +250,9 @@ class Request extends atoum
                 ->isEqualTo('bulton.fr');
         
         $this->assert('test getServerVar with an unknown value')
-            ->string(\BFW\Request::getServerVar('BULTON'))
-                ->isEmpty();    
+            ->exception(function() {
+                \BFW\Request::getServerVar('BULTON');
+            })
+                ->hasMessage('The key BULTON not exist into $_SERVER array');
     }
 }
