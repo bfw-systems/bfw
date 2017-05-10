@@ -137,7 +137,7 @@ class Request
      * 
      * @throws \Exception If the key not exist into $_SERVER
      */
-    public static function getServerVar($keyName)
+    public static function getServerValue($keyName)
     {
         if (!isset($_SERVER[$keyName])) {
             throw new \Exception(
@@ -153,7 +153,7 @@ class Request
         $calledClass = get_called_class(); //Autorize extends this class
         
         try {
-            return $calledClass::getServerVar($keyName);
+            return $calledClass::getServerValue($keyName);
         } catch (\Exception $e) {
             return '';
         }

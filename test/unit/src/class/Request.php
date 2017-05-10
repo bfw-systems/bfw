@@ -232,26 +232,26 @@ class Request extends atoum
     }
 
     /**
-     * Test method for getServerVar()
+     * Test method for getServerValue()
      * 
      * @return void
      */
-    public function testGetServerVar()
+    public function testGetServerValue()
     {
-        $this->assert('test getServerVar with default value')
+        $this->assert('test getServerValue with default value')
             ->exception(function() {
-                \BFW\Request::getServerVar('HOST');
+                \BFW\Request::getServerValue('HOST');
             })
                 ->hasMessage('The key HOST not exist into $_SERVER array');
         
-        $this->assert('test getServerVar with a fake value')
+        $this->assert('test getServerValue with a fake value')
             ->given($_SERVER['HOST'] = 'bulton.fr')
-            ->string(\BFW\Request::getServerVar('HOST'))
+            ->string(\BFW\Request::getServerValue('HOST'))
                 ->isEqualTo('bulton.fr');
         
-        $this->assert('test getServerVar with an unknown value')
+        $this->assert('test getServerValue with an unknown value')
             ->exception(function() {
-                \BFW\Request::getServerVar('BULTON');
+                \BFW\Request::getServerValue('BULTON');
             })
                 ->hasMessage('The key BULTON not exist into $_SERVER array');
     }
