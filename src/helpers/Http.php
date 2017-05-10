@@ -12,11 +12,16 @@ class Http
      * 
      * @param string $page The page where is the redirect
      * @param boolean $permanent (default false) If the redirect is permanent
+     * @param boolean $callExit (default false) If at true, the exit function
+     *  will be called.
      * 
      * @return void
      */
-    public static function redirect($page, $permanent = false)
-    {
+    public static function redirect(
+        $page,
+        $permanent = false,
+        $callExit = false
+    ) {
         $httpStatus = 302;
         if ($permanent === true) {
             $httpStatus = 301;
@@ -24,6 +29,9 @@ class Http
 
         http_response_code($httpStatus);
         header('Location: '.$page);
-        exit;
+        
+        if ($callExit === true) {
+            exit;
+        }
     }
 }
