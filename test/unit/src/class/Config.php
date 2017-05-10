@@ -3,7 +3,7 @@
 namespace BFW\test\unit;
 
 use \atoum;
-use \BFW\test\unit\mocks\ConfigForPhpFile as MockConfigForPhpFile;
+use \BFW\test\unit\mocks\Config as MockConfig;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
@@ -35,6 +35,31 @@ class Config extends atoum
         define('CONFIG_DIR', '');
         
         $this->class = new \BFW\Config('unit_test');
+    }
+    
+    protected function addOverrideLoadPhpConfigFile(MockConfig $configMock)
+    {
+        $configMock->addOverridedMethod(
+            'loadPhpConfigFile',
+            function ($fileKey, $filePath) use ($configMock) {
+                $debugValue = false;
+                if (strpos($filePath, '/class/core/Options.php') !== false) {
+                    $debugValue = true;
+                }
+                
+                $configMock->forceConfig(
+                    $fileKey,
+                    (object) [
+                        'debug' => $debugValue,
+                        'errorRenderFct' => (object) [
+                            'default' => '\BFW\Core\Errors::defaultErrorRender',
+                            'cli'     => '\BFW\Core\Errors::defaultCliErrorRender'
+                        ],
+                        'fixNullValue' => null
+                    ]
+                );
+            }
+        );
     }
     
     /**
@@ -109,7 +134,8 @@ class Config extends atoum
             ->and($this->function->scandir = ['.', '..', 'test.php'])
             ->and($this->function->is_file = true)
             ->then
-            ->if($config = new MockConfigForPhpFile('unit_test'))
+            ->if($config = new MockConfig('unit_test'))
+            ->and($this->addOverrideLoadPhpConfigFile($config))
             ->and($config->loadFiles())
             ->then
             ->boolean($config->getConfig('debug'))
@@ -172,7 +198,8 @@ class Config extends atoum
     {
         $this->assert('test searchAllConfigsFiles for a directory')
             ->given(define('CONFIG_DIR', __DIR__.'/../'))
-            ->and($config = new MockConfigForPhpFile('class'))
+            ->and($config = new MockConfig('class'))
+            ->and($this->addOverrideLoadPhpConfigFile($config))
             ->and($config->loadFiles())
             ->then
             ->boolean($config->getConfig('debug', 'core/Options.php'))
@@ -191,7 +218,8 @@ class Config extends atoum
         define('CONFIG_DIR', __DIR__.'/../');
         
         $this->assert('test getConfig exception no file specified')
-            ->if($config = new MockConfigForPhpFile('class'))
+            ->if($config = new MockConfig('class'))
+            ->and($this->addOverrideLoadPhpConfigFile($config))
             ->and($config->loadFiles())
             ->then
             ->exception(function() use ($config) {
@@ -202,7 +230,8 @@ class Config extends atoum
             );
         
         $this->assert('test getConfig exception unknown key')
-            ->if($config = new MockConfigForPhpFile('class'))
+            ->if($config = new MockConfig('class'))
+            ->and($this->addOverrideLoadPhpConfigFile($config))
             ->and($config->loadFiles())
             ->then
             ->exception(function() use ($config) {

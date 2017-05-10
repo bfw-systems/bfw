@@ -3,7 +3,7 @@
 namespace BFW\test\helpers;
 
 //To have the config mock loaded for external module which use this class.
-require_once(__DIR__.'/../mocks/src/class/ConfigForceDatas.php');
+require_once(__DIR__.'/../mocks/src/class/Config.php');
 require_once(__DIR__.'/Override.php');
 
 /**
@@ -43,7 +43,7 @@ trait Application
             $this->addOverridedMethod(
                 'initConfig',
                 function() use (&$options) {
-                    $this->config = new \BFW\test\unit\mocks\ConfigForceDatas('bfw');
+                    $this->config = new \BFW\test\unit\mocks\Config('bfw');
                     $this->config->forceConfig('bfw', $options['forceConfig']);
                 }
             );
