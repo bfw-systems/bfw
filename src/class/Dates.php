@@ -33,6 +33,24 @@ class Dates extends DateTime
         'dateDifferentYear' => 'Y-m-d',
         'time'              => 'H:i'
     ];
+    
+    /**
+     * @var string[] $modifyNewKeywords Add new keywords which can be used
+     *  with the modify method. The key is the new keyword and the value the
+     *  corresponding keyword into DateTime::modify method.
+     */
+    protected static $modifyNewKeywords = [
+        'an'       => 'year',
+        'ans'      => 'year',
+        'mois'     => 'month',
+        'jour'     => 'day',
+        'jours'    => 'day',
+        'heure'    => 'hour',
+        'heures'   => 'hour',
+        'minutes'  => 'minute',
+        'seconde'  => 'second',
+        'secondes' => 'second'
+    ];
 
     /**
      * Return the value of the humanReadableI18n property
@@ -102,6 +120,28 @@ class Dates extends DateTime
     public static function setHumanReadableFormats($value)
     {
         self::$humanReadableFormats = $value;
+    }
+    
+    /**
+     * Return the value of the modifyNewKeywords property
+     * 
+     * @return string[]
+     */
+    public static function getModifyNewKeywords()
+    {
+        return self::$modifyNewKeywords;
+    }
+    
+    /**
+     * Define a new value to the property modifyNewKeywords
+     * 
+     * @param string[] $value The new value for the property
+     * 
+     * @return void
+     */
+    public static function setModifyNewKeywords($value)
+    {
+        self::$modifyNewKeywords = $value;
     }
 
     /**
@@ -213,31 +253,20 @@ class Dates extends DateTime
     }
 
     /**
-     * Get DateTime equivalent keyword for a personal keyword
+     * Get DateTime equivalent keyword for a personal keyword declared into
+     * the property modifyNewKeywords.
      * 
      * @return \stdClass
      */
     protected function getNewKeywordsForModify()
     {
-        //Personal keywords list
-        $search = [
-            'an', 'ans',
-            'mois',
-            'jour', 'jours',
-            'heure', 'heures',
-            'minutes',
-            'seconde', 'secondes'
-        ];
-
-        //Keywords equivalent into \DateTime::modify function (same order)
-        $replace = [
-            'year', 'year',
-            'month',
-            'day', 'day',
-            'hour', 'hour',
-            'minute',
-            'second', 'second'
-        ];
+        $search  = [];
+        $replace = [];
+        
+        foreach (self::$modifyNewKeywords as $searchKey => $replaceKey) {
+            $search[]  = $searchKey;
+            $replace[] = $replaceKey;
+        }
         
         return (object) [
             'search'  => $search,

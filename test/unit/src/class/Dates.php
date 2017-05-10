@@ -159,13 +159,54 @@ class Dates extends atoum
     public function testSetHumanReadableFormats()
     {
         $newValue = [
-            'test' => 'test',
+            'test'  => 'test',
             'test2' => 'test2'
         ];
         
         $this->assert('test setHumanReadableFormats')
             ->given(MockDates::setHumanReadableFormats($newValue))
             ->array(MockDates::getHumanReadableFormats())
+                ->isEqualTo($newValue);
+    }
+    
+    /**
+     * Test method for getModifyNewKeywords()
+     * 
+     * @return void
+     */
+    public function testGetModifyNewKeywords()
+    {
+        $this->assert('test getModifyNewKeywords')
+            ->array(MockDates::getModifyNewKeywords())
+                ->isEqualTo([
+                    'an'       => 'year',
+                    'ans'      => 'year',
+                    'mois'     => 'month',
+                    'jour'     => 'day',
+                    'jours'    => 'day',
+                    'heure'    => 'hour',
+                    'heures'   => 'hour',
+                    'minutes'  => 'minute',
+                    'seconde'  => 'second',
+                    'secondes' => 'second'
+                ]);
+    }
+    
+    /**
+     * Test method for setModifyNewKeywords()
+     * 
+     * @return void
+     */
+    public function testSetModifyNewKeywords()
+    {
+        $newValue = [
+            'test'  => 'test',
+            'test2' => 'test2'
+        ];
+        
+        $this->assert('test setModifyNewKeywords')
+            ->given(MockDates::setModifyNewKeywords($newValue))
+            ->array(MockDates::getModifyNewKeywords())
                 ->isEqualTo($newValue);
     }
     
