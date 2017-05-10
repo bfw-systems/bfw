@@ -69,7 +69,7 @@ class Errors
     public static function getErrorRender()
     {
         $app        = \BFW\Application::getInstance();
-        $renderFcts = $app->getConfig('errorRenderFct');
+        $renderFcts = $app->getConfig()->getValue('errorRenderFct');
         
         return self::defineRenderToUse($renderFcts);
     }
@@ -84,7 +84,7 @@ class Errors
     public static function getExceptionRender()
     {
         $app        = \BFW\Application::getInstance();
-        $renderFcts = $app->getConfig('exceptionRenderFct');
+        $renderFcts = $app->getConfig()->getValue('exceptionRenderFct');
         
         return self::defineRenderToUse($renderFcts);
     }

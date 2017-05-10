@@ -33,7 +33,7 @@ class Memcache extends \Memcache
         }
         
         $app          = \BFW\Application::getInstance();
-        $this->config = $app->getConfig('memcached');
+        $this->config = $app->getConfig()->getValue('memcached');
 
         $this->connectToServers();
     }

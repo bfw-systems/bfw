@@ -126,15 +126,13 @@ class Application extends Subjects
     }
 
     /**
-     * Getter to access to a value of the BFW config file
+     * Getter to access to the config instance
      * 
-     * @param string $configKey The key in the config file
-     * 
-     * @return mixed
+     * @return \BFW\Config
      */
-    public function getConfig($configKey)
+    public function getConfig()
     {
-        return $this->config->getValue($configKey);
+        return $this->config;
     }
     
     /**
@@ -373,7 +371,7 @@ class Application extends Subjects
      */
     protected function loadMemcached()
     {
-        $memcachedConfig = $this->getConfig('memcached');
+        $memcachedConfig = $this->config->getValue('memcached');
 
         if ($memcachedConfig['enabled'] === false) {
             return;
@@ -425,7 +423,7 @@ class Application extends Subjects
      */
     protected function loadAllCoreModules()
     {
-        foreach ($this->getConfig('modules') as $moduleInfos) {
+        foreach ($this->config->getValue('modules') as $moduleInfos) {
             $moduleName    = $moduleInfos['name'];
             $moduleEnabled = $moduleInfos['enabled'];
 

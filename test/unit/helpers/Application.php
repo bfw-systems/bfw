@@ -129,9 +129,9 @@ trait Application
      * @see \Application::getConfig
      * Present because the method can be overrided during the test
      */
-    public function getConfig($configKey)
+    public function getConfig()
     {
-        return $this->callOverrideOrParent('getConfig', [$configKey]);
+        return $this->callOverrideOrParent('getConfig', []);
     }
     
     /**

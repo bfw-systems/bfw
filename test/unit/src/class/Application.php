@@ -116,9 +116,9 @@ class Application extends atoum
     public function testGetConfig()
     {
         $this->assert('test getConfig')
-            ->boolean($this->mock->getConfig('debug'))
+            ->boolean($this->mock->getConfig()->getValue('debug'))
                 ->isFalse()
-            ->array($this->mock->getConfig('errorRenderFct'))
+            ->array($this->mock->getConfig()->getValue('errorRenderFct'))
                 ->isEqualto([
                     'enabled' => false,
                     'default' => [
@@ -134,7 +134,7 @@ class Application extends atoum
         $this->assert('test getConfig exception')
             ->given($app = $this->mock)
             ->exception(function() use ($app) {
-                $app->getConfig('unitTest');
+                $app->getConfig()->getValue('unitTest');
             })
                 ->hasMessage('The config key unitTest has not been found');
     }

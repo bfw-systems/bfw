@@ -25,7 +25,7 @@ class Memcached extends \Memcached
     public function __construct()
     {
         $app          = \BFW\Application::getInstance();
-        $this->config = $app->getConfig('memcached');
+        $this->config = $app->getConfig()->getValue('memcached');
         
         if (!empty($this->config['persistentId'])) {
             parent::__construct($this->config['persistentId']);
