@@ -25,6 +25,16 @@ class Options
     {
         $this->options = array_merge($defaultOptions, $options);
     }
+    
+    /**
+     * Getter accessor to options property
+     * 
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
 
     /**
      * Get the value for an option
@@ -35,7 +45,7 @@ class Options
      * 
      * @throws Exception If the key not exists
      */
-    public function getOption($optionKey)
+    public function getValue($optionKey)
     {
         if (!isset($this->options[$optionKey])) {
             throw new Exception('Option key '.$optionKey.' not exist.');

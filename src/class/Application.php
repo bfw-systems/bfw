@@ -168,7 +168,7 @@ class Application extends Subjects
      */
     public function getOption($optionKey)
     {
-        return $this->options->getOption($optionKey);
+        return $this->options->getValue($optionKey);
     }
     
     /**
@@ -224,7 +224,7 @@ class Application extends Subjects
      */
     protected function initConstants()
     {
-        Constants::create('ROOT_DIR', $this->options->getOption('rootDir'));
+        Constants::create('ROOT_DIR', $this->options->getValue('rootDir'));
 
         Constants::create('APP_DIR', ROOT_DIR.'app/');
         Constants::create('SRC_DIR', ROOT_DIR.'src/');
@@ -249,7 +249,7 @@ class Application extends Subjects
     protected function initComposerLoader()
     {
         $this->composerLoader = require(
-            $this->options->getOption('vendorDir').'autoload.php'
+            $this->options->getValue('vendorDir').'autoload.php'
         );
         $this->addComposerNamespaces();
     }
@@ -283,7 +283,7 @@ class Application extends Subjects
      */
     protected function initSession()
     {
-        if ($this->options->getOption('runSession') === false) {
+        if ($this->options->getValue('runSession') === false) {
             return;
         }
 

@@ -53,7 +53,7 @@ class Options extends atoum
         //********************
         
         $defaultParameter = [
-            'test' => true,
+            'test'  => true,
             'test2' => false
         ];
         $parameter = [];
@@ -66,7 +66,7 @@ class Options extends atoum
         //********************
         
         $defaultParameter = [
-            'test' => true,
+            'test'  => true,
             'test2' => false
         ];
         $parameter = [];
@@ -93,11 +93,11 @@ class Options extends atoum
         //********************
         
         $defaultParameter = [
-            'test' => true,
+            'test'  => true,
             'test2' => false
         ];
         $parameter = [
-            'test' => false,
+            'test'  => false,
             'test2' => true
         ];
         
@@ -108,32 +108,54 @@ class Options extends atoum
     }
     
     /**
-     * Test method for getOption()
+     * Test method for getValue()
      * 
      * @return void
      */
-    public function testGetOption()
+    public function testGetValue()
     {
         $defaultParameter = [
-            'test' => true,
+            'test'  => true,
             'test2' => false
         ];
         $parameter = [
-            'test' => false,
+            'test'  => false,
             'test2' => true
         ];
         
         $this->mock = new MockOptions($defaultParameter, $parameter);
         
-        $this->assert('Test getOption : Key exist')
-            ->boolean($this->mock->getOption('test'))
+        $this->assert('Test getValue : Key exist')
+            ->boolean($this->mock->getValue('test'))
                 ->isFalse();
         
         $mock = $this->mock;
-        $this->assert('Test getOption : Key not exist')
+        $this->assert('Test getValue : Key not exist')
             ->exception(function() use ($mock) {
-                $mock->getOption('foo-bar');
+                $mock->getValue('foo-bar');
             })
             ->hasMessage('Option key foo-bar not exist.');
+    }
+    
+    /**
+     * Test method for getOptions
+     * 
+     * @return void
+     */
+    public function testGetOptions()
+    {
+        $defaultParameter = [
+            'test'  => true,
+            'test2' => false
+        ];
+        
+        $this->mock = new MockOptions($defaultParameter, []);
+        
+        $this->assert('Test getOptions')
+            ->array($this->mock->getOptions())
+                ->isEqualTo([
+                    'test'  => true,
+                    'test2' => false
+                ]);
     }
 }

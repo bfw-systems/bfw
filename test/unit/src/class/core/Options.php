@@ -36,9 +36,9 @@ class Options extends atoum
         $this->assert('test Core\Options with rootDir and vendorDir declared')
             ->if($this->class = new \BFW\Core\Options($this->defaultOptions, $options))
             ->then
-            ->string($this->class->getOption('rootDir'))
+            ->string($this->class->getValue('rootDir'))
                 ->isEqualTo('/tmp/bfw/v3/rootDir/')
-            ->string($this->class->getOption('vendorDir'))
+            ->string($this->class->getValue('vendorDir'))
                 ->isEqualTo('/tmp/bfw/v3/vendorDir/');
     }
     
@@ -57,9 +57,9 @@ class Options extends atoum
         $this->assert('test Core\Options with rootDir and vendorDir declared')
             ->if($this->class = new \BFW\Core\Options($this->defaultOptions, $options))
             ->then
-            ->string($this->class->getOption('rootDir'))
+            ->string($this->class->getValue('rootDir'))
                 ->isEqualTo('/tmp/bfw/v3/rootDir/')
-            ->string($this->class->getOption('vendorDir'))
+            ->string($this->class->getValue('vendorDir'))
                 ->isEqualTo('/tmp/bfw/v3/vendorDir/');
     }
     
@@ -92,9 +92,9 @@ class Options extends atoum
         $this->assert('test Core\Options with rootDir and vendorDir declared')
             ->if($this->class = new \BFW\Core\Options($this->defaultOptions, []))
             ->then
-            ->string($this->class->getOption('rootDir'))
+            ->string($this->class->getValue('rootDir'))
                 ->isEqualTo($expectedRootDir)
-            ->string($this->class->getOption('vendorDir'))
+            ->string($this->class->getValue('vendorDir'))
                 ->isEqualTo($expectedVendorDir);
     }
 }
