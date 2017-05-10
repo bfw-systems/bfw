@@ -61,7 +61,7 @@ class Config
      * 
      * @param string $dirPath The directory path where is run the search
      * @param string $pathIntoFirstDir (default '') Used when this method
-     *  reads a subdirectory. It's the path from the directory read during
+     *  reads a subdirectory. It's the path of the readed directory during
      *  the first call to this method.
      * 
      * @return void
