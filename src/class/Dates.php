@@ -424,11 +424,11 @@ class Dates extends DateTime
     /**
      * Format date to human readable when the date is now
      * 
-     * @param \stdClass &$parsedTxt Texts returned by humanReadable method
+     * @param \stdClass $parsedTxt Texts returned by humanReadable method
      * 
      * @return void
      */
-    protected function humanDateNow(&$parsedTxt)
+    protected function humanDateNow($parsedTxt)
     {
         $currentClass    = get_called_class();
         $parsedTxt->date = $currentClass::$humanReadableI18n['now'];
@@ -437,12 +437,12 @@ class Dates extends DateTime
     /**
      * Format date to human readable when date is today
      * 
-     * @param \stdClass &$parsedTxt Texts returned by humanReadable method
+     * @param \stdClass $parsedTxt Texts returned by humanReadable method
      * @param \DateInterval $diff Interval between now and date to read
      * 
      * @return void
      */
-    protected function humanDateToday(&$parsedTxt, $diff)
+    protected function humanDateToday($parsedTxt, $diff)
     {
         $textKey = 'since';
         if ($diff->invert === 1) {
@@ -464,11 +464,11 @@ class Dates extends DateTime
     /**
      * Format date to human readable when date is yesterday
      * 
-     * @param \stdClass &$parsedTxt Texts returned by humanReadable method
+     * @param \stdClass $parsedTxt Texts returned by humanReadable method
      * 
      * @return void
      */
-    protected function humanDateYesterday(&$parsedTxt)
+    protected function humanDateYesterday($parsedTxt)
     {
         $currentClass    = get_called_class();
         $parsedTxt->date = $currentClass::$humanReadableI18n['yesterday'];
@@ -482,12 +482,12 @@ class Dates extends DateTime
     /**
      * Format date to human readable when date is not now, today or yesterday
      * 
-     * @param \stdClass &$parsedTxt Texts returned by humanReadable method
+     * @param \stdClass $parsedTxt Texts returned by humanReadable method
      * @param \DateTime $current DateTime object for now
      * 
      * @return void
      */
-    protected function humanDateOther(&$parsedTxt, $current)
+    protected function humanDateOther($parsedTxt, $current)
     {
         $currentClass = get_called_class();
         
