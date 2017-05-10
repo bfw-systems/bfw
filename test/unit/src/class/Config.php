@@ -27,7 +27,8 @@ class Config extends atoum
     {
         if (
             $testMethod === 'testSearchAllConfigsFilesWithDirectory' || 
-            $testMethod === 'testGetValueExceptions'
+            $testMethod === 'testGetValueExceptions' ||
+            $testMethod === 'testGetConfigs'
         ) {
             return;
         }
@@ -237,5 +238,46 @@ class Config extends atoum
             ->exception(function() use ($config) {
                 $config->getValue('bulton', 'core/Options.php');
             })->hasMessage('The config key bulton has not been found');
+    }
+    
+    /**
+     * Test method for getConfig() and getConfigForFile()
+     */
+    public function testGetConfigs()
+    {
+        $this->assert('test getConfigs with multiple files')
+            ->given(define('CONFIG_DIR', __DIR__.'/../'))
+            ->and($config = new MockConfig('class/core'))
+            ->and($this->addOverrideLoadPhpConfigFile($config))
+            ->and($config->loadFiles())
+            ->then
+            ->array($config->getConfig())
+                ->isEqualTo([
+                    'Errors.php' => (object) [
+                        'debug'          => false,
+                        'errorRenderFct' => (object) [
+                            'default' => '\BFW\Core\Errors::defaultErrorRender',
+                            'cli'     => '\BFW\Core\Errors::defaultCliErrorRender'
+                        ],
+                        'fixNullValue'   => null
+                    ],
+                    'Options.php' => (object) [
+                        'debug'          => true,
+                        'errorRenderFct' => (object) [
+                            'default' => '\BFW\Core\Errors::defaultErrorRender',
+                            'cli'     => '\BFW\Core\Errors::defaultCliErrorRender'
+                        ],
+                        'fixNullValue'   => null
+                    ]
+                ])
+            ->object($config->getConfigForFile('Options.php'))
+                ->isEqualTo((object) [
+                    'debug'          => true,
+                    'errorRenderFct' => (object) [
+                        'default' => '\BFW\Core\Errors::defaultErrorRender',
+                        'cli'     => '\BFW\Core\Errors::defaultCliErrorRender'
+                    ],
+                    'fixNullValue'   => null
+                ]);
     }
 }
