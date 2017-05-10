@@ -60,7 +60,8 @@ class Request
     public static function getInstance()
     {
         if (self::$instance === null) {
-            self::$instance = new self;
+            $calledClass    = get_called_class(); //Autorize extends this class
+            self::$instance = new $calledClass;
         }
 
         return self::$instance;
@@ -165,7 +166,8 @@ class Request
      */
     protected function detectIp()
     {
-        $this->ip = self::getServerVar('REMOTE_ADDR');
+        $calledClass = get_called_class(); //Autorize extends this class
+        $this->ip    = $calledClass::getServerVar('REMOTE_ADDR');
     }
 
     /**
@@ -182,8 +184,9 @@ class Request
          * Next "en-US" (preference 0.6/1)
          * End "en" (preference 0.4/1)
          **/
-
-        $acceptLang  = self::getServerVar('HTTP_ACCEPT_LANGUAGE');
+        
+        $calledClass = get_called_class(); //Autorize extends this class
+        $acceptLang  = $calledClass::getServerVar('HTTP_ACCEPT_LANGUAGE');
         $acceptLangs = explode(',', $acceptLang);
 
         $firstLang = explode(';', $acceptLangs[0]);
@@ -204,7 +207,8 @@ class Request
      */
     protected function detectReferer()
     {
-        $this->referer = self::getServerVar('HTTP_REFERER');
+        $calledClass   = get_called_class(); //Autorize extends this class
+        $this->referer = $calledClass::getServerVar('HTTP_REFERER');
     }
 
     /**
@@ -214,7 +218,8 @@ class Request
      */
     protected function detectMethod()
     {
-        $this->method = self::getServerVar('REQUEST_METHOD');
+        $calledClass  = get_called_class(); //Autorize extends this class
+        $this->method = $calledClass::getServerVar('REQUEST_METHOD');
     }
 
     /**
@@ -224,9 +229,10 @@ class Request
      */
     protected function detectSsl()
     {
-        $serverHttps = self::getServerVar('HTTPS');
-        $fwdProto    = self::getServerVar('HTTP_X_FORWARDED_PROTO');
-        $fwdSsl      = self::getServerVar('HTTP_X_FORWARDED_SSL');
+        $calledClass = get_called_class(); //Autorize extends this class
+        $serverHttps = $calledClass::getServerVar('HTTPS');
+        $fwdProto    = $calledClass::getServerVar('HTTP_X_FORWARDED_PROTO');
+        $fwdSsl      = $calledClass::getServerVar('HTTP_X_FORWARDED_SSL');
 
         $this->ssl = false;
 
@@ -246,11 +252,12 @@ class Request
      */
     protected function detectRequest()
     {
-        $parseUrl = parse_url(self::getServerVar('REQUEST_URI'));
+        $calledClass = get_called_class(); //Autorize extends this class
+        $parseUrl    = parse_url($calledClass::getServerVar('REQUEST_URI'));
 
         $request = [
             'scheme'   => '',
-            'host'     => self::getServerVar('HTTP_HOST'),
+            'host'     => $calledClass::getServerVar('HTTP_HOST'),
             'port'     => '',
             'user'     => '',
             'pass'     => '',
