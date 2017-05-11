@@ -54,9 +54,9 @@ class Config
     /**
      * Getter accessor to a value into the $config property
      * 
-     * @param type $file
+     * @param string $file
      * 
-     * @return type
+     * @return mixed
      */
     public function getConfigForFile($file)
     {
