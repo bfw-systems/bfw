@@ -2,6 +2,8 @@
 
 namespace BFW\test\unit\mocks;
 
+require_once(__DIR__.'/../../../helpers/Override.php');
+
 /**
  * Mock for Config class
  * To force some configs values
