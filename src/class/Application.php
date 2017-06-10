@@ -13,6 +13,30 @@ use \BFW\Helpers\Constants;
 class Application extends Subjects
 {
     /**
+     * @const ERR_MEMCACHED_NOT_CLASS_DEFINED Exception code if memcache(d) is
+     * enabled but the class to use is not defined.
+     */
+    const ERR_MEMCACHED_NOT_CLASS_DEFINED = 1301001;
+    
+    /**
+     * @const ERR_MEMCACHED_CLASS_NOT_FOUND Exception code if the memcache(d)
+     * class is not found.
+     */
+    const ERR_MEMCACHED_CLASS_NOT_FOUND = 1301002;
+    
+    /**
+     * @const ERR_CLI_NO_FILE_SPECIFIED Exception code if the cli file to run
+     * is not specified
+     */
+    const ERR_CLI_NO_FILE_SPECIFIED = 1301003;
+    
+    /**
+     * @const ERR_CLI_FILE_NOT_FOUND Exception code if the cli file to run is
+     * not found.
+     */
+    const ERR_CLI_FILE_NOT_FOUND = 1301004;
+    
+    /**
      * @var \BFW\Application|null $instance Application instance (Singleton)
      */
     protected static $instance = null;
@@ -379,11 +403,17 @@ class Application extends Subjects
 
         $class = $memcachedConfig['class'];
         if (empty($class)) {
-            throw new Exception('Memcached is active but no class is define');
+            throw new Exception(
+                'Memcached is active but no class is define',
+                $this::ERR_MEMCACHED_NOT_CLASS_DEFINED
+            );
         }
 
         if (class_exists($class) === false) {
-            throw new Exception('Memcache class '.$class.' not found.');
+            throw new Exception(
+                'Memcache class '.$class.' not found.',
+                $this::ERR_MEMCACHED_CLASS_NOT_FOUND
+            );
         }
 
         $this->memcached = new $class;
@@ -483,12 +513,18 @@ class Application extends Subjects
 
         $cliArgs = getopt('f:');
         if (!isset($cliArgs['f'])) {
-            throw new Exception('Error: No file specified.');
+            throw new Exception(
+                'Error: No file specified.',
+                $this::ERR_CLI_NO_FILE_SPECIFIED
+            );
         }
 
         $file = $cliArgs['f'];
         if (!file_exists(CLI_DIR.$file.'.php')) {
-            throw new Exception('File to execute not found.');
+            throw new Exception(
+                'File to execute not found.',
+                $this::ERR_CLI_FILE_NOT_FOUND
+            );
         }
 
         $fctRunCliFile = function() use ($file) {

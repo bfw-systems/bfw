@@ -109,7 +109,9 @@ class Modules extends atoum
             ->given($class = $this->class)
             ->exception(function() use ($class) {
                 $class->getModule('bulton');
-            })->hasMessage('The Module bulton has not been found.');
+            })
+                ->hasCode($class::ERR_NOT_FOUND)
+                ->hasMessage('The Module bulton has not been found.');
     }
     
     /**
@@ -297,6 +299,7 @@ class Modules extends atoum
             ->exception(function() use ($class) {
                 $class->readNeedMeDependencies();
             })
+                ->hasCode($class::ERR_NEEDED_NOT_FOUND)
                 ->hasMessage(
                     'Module error: module2 need module1 '
                     .'but the module has not been found.'

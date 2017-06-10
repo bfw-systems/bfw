@@ -13,6 +13,23 @@ use \stdClass;
 class Form
 {
     /**
+     * @const ERR_NO_TOKEN Exception code if there is no token declared
+     */
+    const ERR_NO_TOKEN = 1307001;
+    
+    /**
+     * @const ERR_NO_TOKEN_FOR_FORM_ID Exception code if there is no token for
+     * the form id.
+     */
+    const ERR_NO_TOKEN_FOR_FORM_ID = 1307002;
+    
+    /**
+     * @const ERR_FORM_ID_UNDEFINED Exception code if the form id is not
+     * declared.
+     */
+    const ERR_FORM_ID_UNDEFINED = 1307003;
+    
+    /**
      * @var string $formId The form id 
      */
     protected $formId = '';
@@ -81,12 +98,13 @@ class Form
         global $_SESSION;
 
         if (!isset($_SESSION['formsTokens'])) {
-            throw new Exception('no token found');
+            throw new Exception('no token found', $this::ERR_NO_TOKEN);
         }
 
         if (!isset($_SESSION['formsTokens'][$this->formId])) {
             throw new Exception(
-                'no token found for the form id '.$this->formId
+                'no token found for the form id '.$this->formId,
+                $this::ERR_NO_TOKEN_FOR_FORM_ID
             );
         }
 
@@ -103,7 +121,10 @@ class Form
     public function createToken()
     {
         if (empty($this->formId)) {
-            throw new Exception('Form id is undefined.');
+            throw new Exception(
+                'Form id is undefined.',
+                $this::ERR_FORM_ID_UNDEFINED
+            );
         }
 
         $token    = uniqid(rand(), true);

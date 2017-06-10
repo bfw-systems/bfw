@@ -335,12 +335,14 @@ class Dates extends atoum
             ->exception(function() use ($mock) {
                 $mock->modify('year -1');
             })
+            ->hasCode($mock::ERR_MODIFY_PATTERN_NOT_MATCH)
             ->hasMessage('Dates::modify pattern not match.');
             
         $this->assert('test modify unknown keyword')
             ->exception(function() use ($mock) {
                 $mock->modify('+1 annees');
             })
+            ->hasCode($mock::ERR_MODIFY_UNKNOWN_MODIFIER)
             ->hasMessage('Dates::modify Parameter annees is unknown.');
     }
     

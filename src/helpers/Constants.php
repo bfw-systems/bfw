@@ -10,6 +10,12 @@ use \Exception;
 class Constants
 {
     /**
+     * @const ERR_ALREADY_DEFINED Exception code if the constant is already
+     * defined.
+     */
+    const ERR_ALREADY_DEFINED = 1202001;
+    
+    /**
      * Create a new constant if not exist
      * 
      * @param string $cstName The constant's name
@@ -23,7 +29,8 @@ class Constants
     {
         if (defined($cstName)) {
             throw new Exception(
-                'The constant '.$cstName.' is already defined.'
+                'The constant '.$cstName.' is already defined.',
+                self::ERR_ALREADY_DEFINED
             );
         }
         

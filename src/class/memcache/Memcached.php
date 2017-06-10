@@ -2,8 +2,6 @@
 
 namespace BFW\Memcache;
 
-use \Exception;
-
 /**
  * Class to manage connection to memcache(d) server with memcached lib
  */
@@ -11,6 +9,41 @@ class Memcached extends \Memcached
 {
     //Include Memcache trait to add some common methods with Memcache class
     use \BFW\Traits\Memcache;
+    
+    /**
+     * @const ERR_SERVER_INFOS_FORMAT Exception code if server informations is
+     * not in a correct format.
+     */
+    const ERR_SERVER_INFOS_FORMAT = 1309001;
+    
+    /**
+     * @const NO_SERVER_CONNECTED Exception code if no server is connected.
+     */
+    const ERR_NO_SERVER_CONNECTED = 1309002;
+    
+    /**
+     * @const A_SERVER_IS_NOT_CONNECTED Exception code if a server is not
+     * connected.
+     */
+    const ERR_A_SERVER_IS_NOT_CONNECTED = 1309003;
+    
+    /**
+     * @const ERR_IFEXISTS_PARAM_TYPE Exception code if a parameter type is not
+     * correct into the method ifExists().
+     */
+    const ERR_IFEXISTS_PARAM_TYPE = 1309004;
+    
+    /**
+     * @const ERR_UPDATEEXPIRE_PARAM_TYPE Exception code if a parameter type
+     * is not correct into the method updateExpire().
+     */
+    const ERR_UPDATEEXPIRE_PARAM_TYPE = 1309005;
+    
+    /**
+     * @const ERR_KEY_NOT_EXIST Exception code if the asked key not exist.
+     * Actually only used into the method updateExpire().
+     */
+    const ERR_KEY_NOT_EXIST = 1309006;
 
     /**
      * @var array $config Config define into bfw config file for memcache(d)

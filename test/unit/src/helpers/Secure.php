@@ -100,10 +100,12 @@ class Secure extends atoum
             ->exception(function() {
                 BfwSecure::securiseKnownTypes('test securise', 'text');
             })
+                ->hasCode(BfwSecure::ERR_SECURE_UNKNOWN_TYPE)
                 ->hasMessage('Unknown type')
             ->exception(function() {
                 BfwSecure::securiseKnownTypes('test securise', 'mixed');
             })
+                ->hasCode(BfwSecure::ERR_SECURE_UNKNOWN_TYPE)
                 ->hasMessage('Unknown type');
     }
     
@@ -202,6 +204,7 @@ class Secure extends atoum
             ->exception(function() use ($testedArray) {
                 BfwSecure::getSecurisedKeyInArray($testedArray, 'b', 'text');
             })
+                ->hasCode(BfwSecure::ERR_SECURE_ARRAY_KEY_NOT_EXIST)
                 ->hasMessage('The key b not exist');
     }
     

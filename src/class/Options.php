@@ -10,6 +10,11 @@ use \Exception;
 class Options
 {
     /**
+     * @const ERR_KEY_NOT_EXIST Exception code if a key not exist.
+     */
+    const ERR_KEY_NOT_EXIST = 1312001;
+    
+    /**
      * @var array $option option's list
      */
     protected $options = [];
@@ -48,7 +53,10 @@ class Options
     public function getValue($optionKey)
     {
         if (!isset($this->options[$optionKey])) {
-            throw new Exception('Option key '.$optionKey.' not exist.');
+            throw new Exception(
+                'Option key '.$optionKey.' not exist.',
+                $this::ERR_KEY_NOT_EXIST
+            );
         }
 
         return $this->options[$optionKey];

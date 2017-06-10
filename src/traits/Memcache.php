@@ -22,7 +22,8 @@ trait Memcache
     {
         if (!is_array($infos)) {
             throw new Exception(
-                'Memcache(d) server information is not an array.'
+                'Memcache(d) server information is not an array.',
+                $this::ERR_SERVER_INFOS_FORMAT
             );
         }
         
@@ -61,13 +62,17 @@ trait Memcache
         }
         
         if (!is_array($stats)) {
-            throw new Exception('No memcached server connected.');
+            throw new Exception(
+                'No memcached server connected.',
+                $this::ERR_NO_SERVER_CONNECTED
+            );
         }
         
         foreach ($stats as $serverName => $serverStat) {
             if ($serverStat['uptime'] < 1) {
                 throw new Exception(
-                    'Memcached server '.$serverName.' not connected'
+                    'Memcached server '.$serverName.' not connected',
+                    $this::ERR_A_SERVER_IS_NOT_CONNECTED
                 );
             }
         }
@@ -96,7 +101,8 @@ trait Memcache
             throw new Exception(
                 'The $key parameters must be a string.'
                 .' Currently the value is a/an '.gettype($key)
-                .' and is equal to '.$key
+                .' and is equal to '.$key,
+                $this::ERR_IFEXISTS_PARAM_TYPE
             );
         }
 
@@ -126,13 +132,15 @@ trait Memcache
 
         if (!$verifParams) {
             throw new Exception(
-                'Once of parameters $key or $expire not have a correct type.'
+                'Once of parameters $key or $expire not have a correct type.',
+                $this::ERR_UPDATEEXPIRE_PARAM_TYPE
             );
         }
         
         if (!$this->ifExists($key)) {
             throw new Exception(
-                'The key '.$key.' not exist on memcache(d) server'
+                'The key '.$key.' not exist on memcache(d) server',
+                $this::ERR_KEY_NOT_EXIST
             );
         }
 

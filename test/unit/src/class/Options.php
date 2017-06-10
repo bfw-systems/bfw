@@ -134,6 +134,7 @@ class Options extends atoum
             ->exception(function() use ($mock) {
                 $mock->getValue('foo-bar');
             })
+            ->hasCode($mock::ERR_KEY_NOT_EXIST)
             ->hasMessage('Option key foo-bar not exist.');
     }
     

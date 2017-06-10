@@ -10,6 +10,36 @@ use \Exception;
 class ModuleInstall
 {
     /**
+     * @const ERR_LOAD_NO_PROPERTY_SRCPATH Exception code if the property
+     * "srcPath" is not present into the bfwModulesInfos.json file.
+     */
+    const ERR_LOAD_NO_PROPERTY_SRCPATH = 1102001;
+    
+    /**
+     * @const ERR_REINSTALL_FAIL_SYMLINK Exception code if the reinstall fail
+     * because the module symlink can not be remove.
+     */
+    const ERR_REINSTALL_FAIL_SYMLINK = 1102002;
+    
+    /**
+     * @const ERR_REINSTALL_FAIL_REMOVE_CONFIG_DIR Exception code if the
+     * reinstall fail because the config directory can not be remove.
+     */
+    const ERR_REINSTALL_FAIL_REMOVE_CONFIG_DIR = 1102003;
+    
+    /**
+     * @const ERR_COPY_CONFIG_SRC_FILE_NOT_EXIST Exception code if the source
+     * config file not exist.
+     */
+    const ERR_COPY_CONFIG_SRC_FILE_NOT_EXIST = 1102004;
+    
+    /**
+     * @const ERR_COPY_CONFIG_FAIL Exception code if the copy of the config
+     * file has failed.
+     */
+    const ERR_COPY_CONFIG_FAIL = 1102005;
+    
+    /**
      * @var string $projectPath : Path to root bfw project
      */
     protected $projectPath = '';
@@ -145,7 +175,8 @@ class ModuleInstall
         if (!property_exists($infos, 'srcPath')) {
             throw new Exception(
                 'srcPath must be present into bfwModulesInfos.json file'
-                .' for the module '.$this->name
+                .' for the module '.$this->name,
+                $this::ERR_LOAD_NO_PROPERTY_SRCPATH
             );
         }
         
@@ -194,7 +225,10 @@ class ModuleInstall
             $this->copyConfigFiles();
             $this->checkInstallScript();
         } catch (Exception $e) {
-            trigger_error('Module '.$this->name.' install error : '.$e->getMessage(), E_USER_WARNING);
+            trigger_error(
+                'Module '.$this->name.' install error : '.$e->getMessage(),
+                E_USER_WARNING
+            );
         }
     }
     
@@ -219,7 +253,10 @@ class ModuleInstall
             //Error with remove symlink
             if (!unlink($this->targetSrcPath)) {
                 echo "\033[1;31mSymbolic link remove fail.\033[0m\n";
-                throw new Exception('Reinstall fail. Symlink remove error');
+                throw new Exception(
+                    'Reinstall fail. Symlink remove error',
+                    $this::ERR_REINSTALL_FAIL_SYMLINK
+                );
             }
         }
 
@@ -306,7 +343,8 @@ class ModuleInstall
                     ."\033[0m\n";
                 
                 throw new Exception(
-                    'Reinstall fail. Remove module config directory error.'
+                    'Reinstall fail. Remove module config directory error.',
+                    $this::ERR_REINSTALL_FAIL_REMOVE_CONFIG_DIR
                 );
             }
         }
@@ -398,13 +436,19 @@ class ModuleInstall
         //If source file not exist
         if (!file_exists($sourceFile)) {
             echo "\033[1;31mConfig file not exist in module source.\033[0m\n";
-            throw new Exception('Source file not exist');
+            throw new Exception(
+                'Source file not exist',
+                $this::ERR_COPY_CONFIG_SRC_FILE_NOT_EXIST
+            );
         }
 
         //Alors on copie le fichier vers le dossier /configs/[monModule]/
         if (!copy($sourceFile, $targetFile)) {
             echo "\033[1;31mCopy fail.\033[0m\n";
-            throw new Exception('Copy fail');
+            throw new Exception(
+                'Copy fail',
+                $this::ERR_COPY_CONFIG_FAIL
+            );
         }
 
         echo "\033[1;32mDone\033[0m\n";

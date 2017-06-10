@@ -12,6 +12,18 @@ use \Exception;
 class Dates extends DateTime
 {
     /**
+     * @const ERR_MODIFY_PATTERN_NOT_MATCH Exception code if the pattern used
+     * into the method modify() not match with the regex.
+     */
+    const ERR_MODIFY_PATTERN_NOT_MATCH = 1306001;
+    
+    /**
+     * @const ERR_MODIFY_UNKNOWN_MODIFIER Exception code if the modifier used
+     * into the method modify() is unknown.
+     */
+    const ERR_MODIFY_UNKNOWN_MODIFIER = 1306002;
+    
+    /**
      * @var string[] $humanReadableI18n Words used in method to transform
      *  date difference to human readable.
      */
@@ -288,7 +300,10 @@ class Dates extends DateTime
         
         //Regex on the $modify parameter to get the used keyword
         if (preg_match('#(\+|\-)([0-9]+) ([a-z]+)#i', $modify, $match) !== 1) {
-            throw new Exception('Dates::modify pattern not match.');
+            throw new Exception(
+                'Dates::modify pattern not match.',
+                $this::ERR_MODIFY_PATTERN_NOT_MATCH
+            );
         }
         
         $keyword = str_replace(
@@ -304,7 +319,8 @@ class Dates extends DateTime
         //If no change on object, The keyword is unknown
         if ($originalDate == $this) {
             throw new Exception(
-                'Dates::modify Parameter '.$match[3].' is unknown.'
+                'Dates::modify Parameter '.$match[3].' is unknown.',
+                $this::ERR_MODIFY_UNKNOWN_MODIFIER
             );
         }
     }

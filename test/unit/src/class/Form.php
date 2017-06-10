@@ -57,6 +57,7 @@ class Form extends atoum
             ->exception(function() use ($class) {
                 $class->createToken();
             })
+                ->hasCode($class::ERR_FORM_ID_UNDEFINED)
                 ->hasMessage('Form id is undefined.');
     }
     
@@ -78,6 +79,7 @@ class Form extends atoum
             ->exception(function() use ($class) {
                 $class->checkToken('');
             })
+                ->hasCode($class::ERR_NO_TOKEN)
                 ->hasMessage('no token found');
         
         $this->assert('Call checkToken with not existing token for form name')
@@ -86,6 +88,7 @@ class Form extends atoum
             ->exception(function() use ($class) {
                 $class->checkToken('');
             })
+                ->hasCode($class::ERR_NO_TOKEN_FOR_FORM_ID)
                 ->hasMessage('no token found for the form id form_unit_test');
         
         $formToken = $this->class->createToken();
@@ -102,6 +105,7 @@ class Form extends atoum
             ->exception(function() use ($class, $formToken) {
                 $class->checkToken($formToken);
             })
+                ->hasCode($class::ERR_NO_TOKEN_FOR_FORM_ID)
                 ->hasMessage('no token found for the form id form_unit_test');
         
         $this->assert('Call checkToken with expired token')

@@ -76,7 +76,9 @@ class Config extends atoum
             ->then
             ->exception(function() use ($config) {
                 $config->getValue('test');
-            })->hasMessage('The file  has not been found for config test');
+            })
+                ->hasCode($config::ERR_FILE_NOT_FOUND)
+                ->hasMessage('The file  has not been found for config test');
     }
     
     /**
@@ -118,7 +120,9 @@ class Config extends atoum
             ->exception(function() {
                 $config = new \BFW\Config('unit_test');
                 $config->loadFiles();
-            })->hasMessage('Syntax error');
+            })
+                ->hasCode(\BFW\Config::ERR_JSON_PARSE)
+                ->hasMessage('Syntax error');
     }
     
     /**
@@ -167,7 +171,9 @@ class Config extends atoum
             ->then
             ->exception(function() use ($config) {
                 $config->getValue('test');
-            })->hasMessage('The file  has not been found for config test');
+            })
+                ->hasCode($config::ERR_FILE_NOT_FOUND)
+                ->hasMessage('The file  has not been found for config test');
     }
     
     /**
@@ -225,10 +231,12 @@ class Config extends atoum
             ->then
             ->exception(function() use ($config) {
                 $config->getValue('debug');
-            })->hasMessage(
-                'There are many config files. '
-                .'Please indicate the file to obtain the config debug'
-            );
+            })
+                ->hasCode($config::ERR_GETVALUE_FILE_NOT_INDICATED)
+                ->hasMessage(
+                    'There are many config files. '
+                    .'Please indicate the file to obtain the config debug'
+                );
         
         $this->assert('test getValue exception unknown key')
             ->if($config = new MockConfig('class'))
@@ -237,7 +245,9 @@ class Config extends atoum
             ->then
             ->exception(function() use ($config) {
                 $config->getValue('bulton', 'core/Options.php');
-            })->hasMessage('The config key bulton has not been found');
+            })
+                ->hasCode($config::ERR_KEY_NOT_FOUND)
+                ->hasMessage('The config key bulton has not been found');
     }
     
     /**

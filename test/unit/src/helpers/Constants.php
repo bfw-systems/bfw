@@ -25,6 +25,7 @@ class Constants extends atoum
             ->exception(function() {
                 \BFW\Helpers\Constants::create('TEST', 'test constant exist');
             })
+                ->hasCode(\BFW\Helpers\Constants::ERR_ALREADY_DEFINED)
                 ->hasMessage('The constant TEST is already defined.');
     }
 }

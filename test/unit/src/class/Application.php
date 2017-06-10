@@ -136,6 +136,7 @@ class Application extends atoum
             ->exception(function() use ($app) {
                 $app->getConfig()->getValue('unitTest');
             })
+                ->hasCode(\BFW\Config::ERR_KEY_NOT_FOUND)
                 ->hasMessage('The config key unitTest has not been found');
     }
     
@@ -155,6 +156,7 @@ class Application extends atoum
             ->exception(function() use ($app) {
                 $app->getOption('testNotExist');
             })
+                ->hasCode(\BFW\Options::ERR_KEY_NOT_EXIST)
                 ->hasMessage('Option key testNotExist not exist.');
     }
     
@@ -436,6 +438,7 @@ class Application extends atoum
             ->exception(function() use ($app) {
                 $app->run();
             })
+                ->hasCode($app::ERR_MEMCACHED_NOT_CLASS_DEFINED)
                 ->hasMessage('Memcached is active but no class is define');
         
         $this->assert('test loadMemcached enabled without class exist')
@@ -445,6 +448,7 @@ class Application extends atoum
             ->exception(function() use ($app) {
                 $app->run();
             })
+                ->hasCode($app::ERR_MEMCACHED_CLASS_NOT_FOUND)
                 ->hasMessage('Memcache class TestMemcached not found.');
         
         $this->assert('test loadMemcached enabled without class exist')

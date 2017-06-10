@@ -83,12 +83,14 @@ class Cli extends atoum
             ->exception(function() {
                 \BFW\Helpers\Cli::displayMsg('test displayMsg', 'rouge');
             })
+                ->hasCode(\BFW\Helpers\Cli::ERR_COLOR_NOT_AVAILABLE)
                 ->hasMessage('Color rouge is not available.');
         
         $this->assert('test Cli::displayMsg with a color exception')
             ->exception(function() {
                 \BFW\Helpers\Cli::displayMsg('test displayMsg', 'red', 'white', 'gras');
             })
+                ->hasCode(\BFW\Helpers\Cli::ERR_STYLE_NOT_AVAILABLE)
                 ->hasMessage('Style gras is not available.');
     }
     
@@ -139,12 +141,14 @@ class Cli extends atoum
             ->exception(function() {
                 \BFW\Helpers\test\unit\mocks\Cli::callColorForShell('noir', 'txt');
             })
+                ->hasCode(\BFW\Helpers\Cli::ERR_COLOR_NOT_AVAILABLE)
                 ->hasMessage('Color noir is not available.');
         
         $this->assert('test Cli::colorForShell with a unknown color for background')
             ->exception(function() {
                 \BFW\Helpers\test\unit\mocks\Cli::callColorForShell('noir', 'bg');
             })
+                ->hasCode(\BFW\Helpers\Cli::ERR_COLOR_NOT_AVAILABLE)
                 ->hasMessage('Color noir is not available.');
     }
     
@@ -179,6 +183,7 @@ class Cli extends atoum
             ->exception(function() {
                 \BFW\Helpers\test\unit\mocks\Cli::callStyleForShell('gras');
             })
+                ->hasCode(\BFW\Helpers\Cli::ERR_STYLE_NOT_AVAILABLE)
                 ->hasMessage('Style gras is not available.');
     }
 }

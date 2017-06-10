@@ -10,6 +10,17 @@ use \Exception;
 class Modules
 {
     /**
+     * @const ERR_NOT_FOUND Exception code if a module is not found
+     */
+    const ERR_NOT_FOUND = 1311001;
+    
+    /**
+     * @const ERR_NEEDED_NOT_FOUND Exception code if a needed dependency is
+     * not found.
+     */
+    const ERR_NEEDED_NOT_FOUND = 1311002;
+    
+    /**
      * @var \BFW\Module[] All module instance
      */
     protected $modules = [];
@@ -64,7 +75,10 @@ class Modules
     public function getModule($moduleName)
     {
         if (!isset($this->modules[$moduleName])) {
-            throw new Exception('The Module '.$moduleName.' has not been found.');
+            throw new Exception(
+                'The Module '.$moduleName.' has not been found.',
+                $this::ERR_NOT_FOUND
+            );
         }
 
         return $this->modules[$moduleName];
@@ -92,7 +106,8 @@ class Modules
                     throw new Exception(
                         'Module error: '.$readModuleName
                         .' need '.$needModuleName
-                        .' but the module has not been found.'
+                        .' but the module has not been found.',
+                        $this::ERR_NEEDED_NOT_FOUND
                     );
                 }
                 

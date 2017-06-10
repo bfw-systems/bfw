@@ -118,11 +118,13 @@ class Memcache extends atoum
     {
         $this->assert('test constructor without memcache server')
             ->given($exceptionMsg = '')
-            ->when(function() use (&$exceptionMsg) {
+            ->given($exceptionCode = 0)
+            ->when(function() use (&$exceptionMsg, &$exceptionCode) {
                     try {
                         new \BFW\Memcache\Memcache;
                     } catch (\Exception $e) {
-                        $exceptionMsg = $e->getMessage();
+                        $exceptionMsg  = $e->getMessage();
+                        $exceptionCode = $e->getCode();
                     }
                 })
             ->error()
@@ -130,7 +132,9 @@ class Memcache extends atoum
                 ->withPattern('/Memcache(Pool)?::getextendedstats\(\): No servers added to memcache connection/')
                 ->exists()
             ->string($exceptionMsg)
-                    ->isEqualTo('No memcached server connected.');
+                ->isEqualTo('No memcached server connected.')
+            ->integer($exceptionCode)
+                ->isEqualTo(\BFW\Memcache\Memcache::ERR_NO_SERVER_CONNECTED);
     }
     
     /**
@@ -176,11 +180,13 @@ class Memcache extends atoum
             ->and($this->app->forceConfig($this->forcedConfig))
             ->then
             ->given($exceptionMsg = '')
-            ->when(function() use (&$exceptionMsg) {
+            ->given($exceptionCode = '')
+            ->when(function() use (&$exceptionMsg, &$exceptionCode) {
                     try {
                         new \BFW\Memcache\Memcache;
                     } catch (\Exception $e) {
-                        $exceptionMsg = $e->getMessage();
+                        $exceptionMsg  = $e->getMessage();
+                        $exceptionCode = $e->getCode();
                     }
                 })
             ->error()
@@ -188,7 +194,9 @@ class Memcache extends atoum
                 ->withType(E_NOTICE)
                 ->withMessage('MemcachePool::getextendedstats(): Server localhost (tcp 11212, udp 0) failed with: Connection refused (111)')
             ->string($exceptionMsg)
-                    ->isEqualTo('Memcached server localhost:11212 not connected')
+                ->isEqualTo('Memcached server localhost:11212 not connected')
+            ->integer($exceptionCode)
+                ->isEqualTo(\BFW\Memcache\Memcache::ERR_A_SERVER_IS_NOT_CONNECTED)
         ;
     }
     
@@ -288,6 +296,7 @@ class Memcache extends atoum
                 $serverInfos = 'test';
                 $class->callGetServerInfos($serverInfos);
             })
+                ->hasCode($class::ERR_SERVER_INFOS_FORMAT)
                 ->hasMessage('Memcache(d) server information is not an array.');
     }
     
@@ -321,6 +330,7 @@ class Memcache extends atoum
             ->exception(function() use ($class) {
                 $class->ifExists(10);
             })
+                ->hasCode($class::ERR_IFEXISTS_PARAM_TYPE)
                 ->hasMessage(
                     'The $key parameters must be a string. '
                     .'Currently the value is a/an integer and is equal to 10'
@@ -348,6 +358,7 @@ class Memcache extends atoum
             ->exception(function() use ($class) {
                 $class->updateExpire('test', 150);
             })
+                ->hasCode($class::ERR_KEY_NOT_EXIST)
                 ->hasMessage('The key test not exist on memcache(d) server');
         
         $this->assert('test majExpire with a key which does exist')
@@ -362,6 +373,7 @@ class Memcache extends atoum
             ->exception(function() use ($class) {
                 $class->updateExpire(10, '150');
             })
+                ->hasCode($class::ERR_UPDATEEXPIRE_PARAM_TYPE)
                 ->hasMessage('Once of parameters $key or $expire not have a correct type.');
         
         $this->and($this->class->close());

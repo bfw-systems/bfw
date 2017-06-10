@@ -10,6 +10,18 @@ use \Exception;
 class Secure
 {
     /**
+     * @const ERR_SECURE_UNKNOWN_TYPE Exception code if the data into the
+     * method secure() is not a predefined type.
+     */
+    const ERR_SECURE_UNKNOWN_TYPE = 1207001;
+    
+    /**
+     * @const ERR_SECURE_ARRAY_KEY_NOT_EXIST If the asked key not exist into
+     * the array to secure.
+     */
+    const ERR_SECURE_ARRAY_KEY_NOT_EXIST = 1207002;
+    
+    /**
      * Hash a string
      * 
      * @param string $val String to hash
@@ -46,7 +58,7 @@ class Secure
         }
 
         if ($filterType === 'text') {
-            throw new Exception('Unknown type');
+            throw new Exception('Unknown type', self::ERR_SECURE_UNKNOWN_TYPE);
         }
 
         return filter_var($data, $filterType);
@@ -84,7 +96,7 @@ class Secure
         try {
             return $currentClass::securiseKnownTypes($data, $type);
         } catch (Exception $ex) {
-            if ($ex->getMessage() !== 'Unknown type') {
+            if ($ex->getCode() !== self::ERR_SECURE_UNKNOWN_TYPE) {
                 throw new Exception($ex->getCode(), $ex->getMessage());
             }
             //Else : Use securise text type
@@ -141,7 +153,10 @@ class Secure
         $htmlentities = false
     ) {
         if (!isset($array[$key])) {
-            throw new Exception('The key '.$key.' not exist');
+            throw new Exception(
+                'The key '.$key.' not exist',
+                self::ERR_SECURE_ARRAY_KEY_NOT_EXIST
+            );
         }
 
         $currentClass = get_called_class();

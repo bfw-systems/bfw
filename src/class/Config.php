@@ -10,6 +10,30 @@ use \Exception;
 class Config
 {
     /**
+     * @const ERR_JSON_PARSE Exception code if the parse of a json file fail.
+     */
+    const ERR_JSON_PARSE = 1302001;
+    
+    /**
+     * @const ERR_GETVALUE_FILE_NOT_INDICATED Exception code if the file to use
+     * is not indicated into the method getValue().
+     * (only if there are many config files)
+     */
+    const ERR_GETVALUE_FILE_NOT_INDICATED = 1302002;
+    
+    /**
+     * @const ERR_GETVALUE_FILE_NOT_FOUND Exception code if the file to use is
+     * not found.
+     */
+    const ERR_FILE_NOT_FOUND = 1302003;
+    
+    /**
+     * @const ERR_GETVALUE_KEY_NOT_FOUND Exception code if the asked config key
+     * not exist.
+     */
+    const ERR_KEY_NOT_FOUND = 1303004;
+    
+    /**
      * @var string $configDirName Directory's name in config dir
      */
     protected $configDirName = '';
@@ -158,7 +182,10 @@ class Config
         $config = json_decode($json);
 
         if ($config === null) {
-            throw new Exception(json_last_error_msg());
+            throw new Exception(
+                json_last_error_msg(),
+                $this::ERR_JSON_PARSE
+            );
         }
 
         $this->config[$fileKey] = $config;
@@ -198,7 +225,8 @@ class Config
         if ($file === null && $nbConfigFile > 1) {
             throw new Exception(
                 'There are many config files. Please indicate the file to'
-                .' obtain the config '.$key
+                .' obtain the config '.$key,
+                $this::ERR_GETVALUE_FILE_NOT_INDICATED
             );
         }
 
@@ -208,13 +236,17 @@ class Config
 
         if (!isset($this->config[$file])) {
             throw new Exception(
-                'The file '.$file.' has not been found for config '.$key
+                'The file '.$file.' has not been found for config '.$key,
+                $this::ERR_FILE_NOT_FOUND
             );
         }
 
         $config = (array) $this->config[$file];
         if (!array_key_exists($key, $config)) {
-            throw new Exception('The config key '.$key.' has not been found');
+            throw new Exception(
+                'The config key '.$key.' has not been found',
+                $this::ERR_KEY_NOT_FOUND
+            );
         }
 
         return $config[$key];

@@ -155,6 +155,7 @@ class ModuleInstall extends atoum
             ->exception(function() use ($mock) {
                 $mock->loadInfos();
             })
+                ->hasCode($mock::ERR_LOAD_NO_PROPERTY_SRCPATH)
                 ->hasMessage('srcPath must be present into bfwModulesInfos.json file for the module test');
     }
     

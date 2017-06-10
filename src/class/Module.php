@@ -11,6 +11,22 @@ use \stdClass;
 class Module
 {
     /**
+     * @const ERR_FILE_NOT_FOUND Exception code if the file is not found.
+     */
+    const ERR_FILE_NOT_FOUND = 1310001;
+    
+    /**
+     * @const ERR_JSON_PARSE Exception code if the parse of a json file fail.
+     */
+    const ERR_JSON_PARSE = 1310002;
+    
+    /**
+     * @const ERR_RUNNER_FILE_NOT_FOUND Exception code if the runner file to
+     * execute is not found.
+     */
+    const ERR_RUNNER_FILE_NOT_FOUND = 1310003;
+
+    /**
      * @var string $pathName Module's name
      */
     protected $pathName = '';
@@ -180,12 +196,18 @@ class Module
     protected static function loadJsonFile($jsonFilePath)
     {
         if (!file_exists($jsonFilePath)) {
-            throw new Exception('File '.$jsonFilePath.' not found.');
+            throw new Exception(
+                'File '.$jsonFilePath.' not found.',
+                self::ERR_FILE_NOT_FOUND
+            );
         }
 
         $infos = json_decode(file_get_contents($jsonFilePath));
         if ($infos === null) {
-            throw new Exception(json_last_error_msg());
+            throw new Exception(
+                json_last_error_msg(),
+                self::ERR_JSON_PARSE
+            );
         }
 
         return $infos;
@@ -237,7 +259,8 @@ class Module
         $runnerFile = MODULES_DIR.$this->pathName.'/'.$runnerFile;
         if (!file_exists($runnerFile)) {
             throw new Exception(
-                'Runner file for module '.$this->pathName.' not found.'
+                'Runner file for module '.$this->pathName.' not found.',
+                $this::ERR_RUNNER_FILE_NOT_FOUND
             );
         }
 

@@ -242,6 +242,7 @@ class Request extends atoum
             ->exception(function() {
                 \BFW\Request::getServerValue('HOST');
             })
+                ->hasCode(\BFW\Request::ERR_KEY_NOT_EXIST)
                 ->hasMessage('The key HOST not exist into $_SERVER array');
         
         $this->assert('test getServerValue with a fake value')
@@ -253,6 +254,7 @@ class Request extends atoum
             ->exception(function() {
                 \BFW\Request::getServerValue('BULTON');
             })
+                ->hasCode(\BFW\Request::ERR_KEY_NOT_EXIST)
                 ->hasMessage('The key BULTON not exist into $_SERVER array');
     }
 }

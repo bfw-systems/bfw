@@ -90,7 +90,9 @@ class Module extends atoum
             ->then
             ->exception(function() {
                 new \BFW\Module('unit_test');
-            })->hasMessage('File modules/unit_test/module.json not found.');
+            })
+                ->hasCode(\BFW\Module::ERR_FILE_NOT_FOUND)
+                ->hasMessage('File modules/unit_test/module.json not found.');
     }
     
     /**
@@ -307,7 +309,9 @@ class Module extends atoum
             ->then
             ->exception(function() {
                 \BFW\Module::installInfos('vendor/unit/unit_test');
-            })->hasMessage('Syntax error');
+            })
+                ->hasCode(\BFW\Module::ERR_JSON_PARSE)
+                ->hasMessage('Syntax error');
     }
     
     /**
@@ -343,6 +347,8 @@ class Module extends atoum
             ->given($class = new \BFW\test\unit\mocks\ModuleRunnerFile('unit_test'))
             ->exception(function() use ($class) {
                 $class->callGetRunnerFile();
-            })->hasMessage('Runner file for module unit_test not found.');
+            })
+                ->hasCode($class::ERR_RUNNER_FILE_NOT_FOUND)
+                ->hasMessage('Runner file for module unit_test not found.');
     }
 }

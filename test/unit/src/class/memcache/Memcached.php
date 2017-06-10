@@ -150,6 +150,7 @@ class Memcached extends atoum
                 ->exception(function() {
                     new \BFW\Memcache\Memcached;
                 })
+                    ->hasCode(\BFW\Memcache\Memcached::NO_SERVER_CONNECTED)
                     ->hasMessage('No memcached server connected.');
         }
     }
@@ -206,10 +207,12 @@ class Memcached extends atoum
     public function testConstructorWithBadServer()
     {
         $exceptionMsg     = 'Memcached server localhost:11212 not connected';
+        $exceptionCode    = \BFW\Memcache\Memcached::ERR_A_SERVER_IS_NOT_CONNECTED;
         $memcachedVersion = $this->getMemcachedVersion();
         
         if($memcachedVersion >= '3.0.0') {
-            $exceptionMsg = 'No memcached server connected.';
+            $exceptionMsg  = 'No memcached server connected.';
+            $exceptionCode = \BFW\Memcache\Memcached::ERR_NO_SERVER_CONNECTED;
         }
         
         $this->assert('test constructor with a bad memcache server infos')
@@ -223,6 +226,7 @@ class Memcached extends atoum
             ->exception(function() {
                 new \BFW\Memcache\Memcached;
             })
+                ->hasCode($exceptionCode)
                 ->hasMessage($exceptionMsg)
         ;
     }
@@ -269,6 +273,7 @@ class Memcached extends atoum
                 $serverInfos = 'test';
                 $class->callGetServerInfos($serverInfos);
             })
+                ->hasCode($class::ERR_SERVER_INFOS_FORMAT)
                 ->hasMessage('Memcache(d) server information is not an array.');
     }
     
@@ -298,6 +303,7 @@ class Memcached extends atoum
             ->exception(function() use ($class) {
                 $class->ifExists(10);
             })
+                ->hasCode($class::ERR_IFEXISTS_PARAM_TYPE)
                 ->hasMessage(
                     'The $key parameters must be a string. '
                     .'Currently the value is a/an integer and is equal to 10'
@@ -321,6 +327,7 @@ class Memcached extends atoum
             ->exception(function() use ($class) {
                 $class->updateExpire('test', 150);
             })
+                ->hasCode($class::ERR_KEY_NOT_EXIST)
                 ->hasMessage('The key test not exist on memcache(d) server');
         
         $this->assert('test majExpire with a key which does exist')
@@ -335,6 +342,7 @@ class Memcached extends atoum
             ->exception(function() use ($class) {
                 $class->updateExpire(10, '150');
             })
+                ->hasCode($class::ERR_UPDATEEXPIRE_PARAM_TYPE)
                 ->hasMessage('Once of parameters $key or $expire not have a correct type.');
         
         $this->and($this->class->quit());
