@@ -1,48 +1,27 @@
-BFW : Framework PHP >= 5.3.x
+BFW : Framework PHP >= 5.6.x
 ===
 
-[![Build Status](https://travis-ci.org/bulton-fr/bfw.svg?branch=master)](https://travis-ci.org/bulton-fr/bfw) [![Coverage Status](https://coveralls.io/repos/bulton-fr/bfw/badge.png?branch=master)](https://coveralls.io/r/bulton-fr/bfw?branch=master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/bulton-fr/bfw/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/bulton-fr/bfw/?branch=master) [![Dependency Status](https://www.versioneye.com/user/projects/5413eee49e1622970f0000f1/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5413eee49e1622970f0000f1)
+[![Build Status](https://travis-ci.org/bulton-fr/bfw.svg?branch=3.0)](https://travis-ci.org/bulton-fr/bfw) [![Coverage Status](https://coveralls.io/repos/bulton-fr/bfw/badge.png?branch=3.0)](https://coveralls.io/r/bulton-fr/bfw?branch=3.0) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/bulton-fr/bfw/badges/quality-score.png?b=3.0)](https://scrutinizer-ci.com/g/bulton-fr/bfw/?branch=3.0) [![Dependency Status](https://www.versioneye.com/user/projects/5413eee49e1622970f0000f1/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5413eee49e1622970f0000f1)
 
 [![Latest Stable Version](https://poser.pugx.org/bulton-fr/bfw/v/stable.svg)](https://packagist.org/packages/bulton-fr/bfw) [![Latest Unstable Version](https://poser.pugx.org/bulton-fr/bfw/v/unstable.svg)](https://packagist.org/packages/bulton-fr/bfw) [![License](https://poser.pugx.org/bulton-fr/bfw/license.svg)](https://packagist.org/packages/bulton-fr/bfw)
 
-__Liens utiles :__
+__Useful links :__
 
-Doc : http://bfw.bulton.fr/doc/
+Wiki : http://bfw.bulton.fr/wiki/
 
-How-To : https://github.com/bulton-fr/bfw/wiki
+Bug Tracker : https://github.com/bulton-fr/bfw/issues
 
-Bug Tracker et avancement : https://github.com/bulton-fr/bfw/issues
-
-Support & Question : support@bulton.fr
+Support : support@bulton.fr
 
 
 ---
 
-__Installation :__
+__Install :__
 
-Il est recommandé d'utiliser composer pour installer le framework :
+Please only use composer to get the framework.
 
-Pour récupérer composer:
-```
-curl -sS https://getcomposer.org/installer | php
-```
+To get composer, see https://getcomposer.org/download/
 
-Pour installer le framework, créez un fichier "composer.json" à la racine de votre projet, et ajoutez-y ceci:
-```
-{
-    "require": {
-        "bulton-fr/bfw": "@stable"
-    }
-}
-```
+To install the framework : `composer require bulton-fr/bfw:3.*`
 
-Enfin, pour lancer l'installation, 2 étapes sont nécessaires :
-
-Récupérer le framework via composer :
-```
-php composer.phar install
-```
-Lancer l'installation afin de créer les répertoires et fichiers nécessaire :
-```
-sh vendor/bin/bfwInstall
-```
+And, to create the directories structure, run `./vendor/bin/bfwInstall`
