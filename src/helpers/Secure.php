@@ -110,7 +110,7 @@ class Secure
         }
 
         if ($htmlentities === true) {
-            $data = htmlentities($data, ENT_COMPAT | ENT_HTML401, 'UTF-8');
+            $data = htmlentities($data, ENT_COMPAT | ENT_HTML401);
         }
 
         return $data;

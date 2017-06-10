@@ -105,6 +105,9 @@ class Application extends Subjects
 
         //Defaut http header. Define here add possiblity to override him
         header('Content-Type: text/html; charset=utf-8');
+        
+        //Default charset to UTF-8. Define here add possiblity to override him
+        ini_set('default_charset', 'UTF-8');
     }
 
     /**

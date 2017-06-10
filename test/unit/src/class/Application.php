@@ -93,7 +93,9 @@ class Application extends atoum
             ]))
                 ->isInstanceOf('\BFW\Application')
             ->object(MockApp::getInstance())
-                ->isEqualTo($app);
+                ->isEqualTo($app)
+            ->string(ini_get('default_charset'))
+                ->isEqualTo('UTF-8');
     }
     
     /**
