@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\Install;
+namespace BFW\Helpers;
 
 /**
  * Class use to read a directory and sub-directories

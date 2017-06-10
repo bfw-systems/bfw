@@ -5,7 +5,7 @@ namespace BFW\Install;
 /**
  * Class use to detect modules in a directory and sub-directories
  */
-class ReadDirLoadModule extends ReadDirectory
+class ReadDirLoadModule extends \BFW\Helpers\ReadDirectory
 {
     /**
      * {@inheritdoc}

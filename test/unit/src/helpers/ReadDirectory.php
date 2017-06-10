@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\Install\test\unit;
+namespace BFW\Helpers\test\unit;
 use \atoum;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
@@ -8,7 +8,7 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 class ReadDirectory extends atoum
 {
     /**
-     * @var \BFW\Install\ReadDirectory $class : Tested class instance
+     * @var \BFW\Helpers\ReadDirectory $class : Tested class instance
      */
     protected $class;
     
@@ -36,7 +36,7 @@ class ReadDirectory extends atoum
             return;
         }
         
-        $this->class = new \BFW\Install\ReadDirectory($this->list);
+        $this->class = new \BFW\Helpers\ReadDirectory($this->list);
     }
     
     /**
@@ -47,7 +47,7 @@ class ReadDirectory extends atoum
     public function testConstructor()
     {
         $this->assert('test constructor')
-            ->if($this->class = new \BFW\Install\ReadDirectory($this->list))
+            ->if($this->class = new \BFW\Helpers\ReadDirectory($this->list))
             ->array($this->list)
                 ->size
                     ->isEqualTo(0);

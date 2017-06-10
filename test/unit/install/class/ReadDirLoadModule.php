@@ -4,11 +4,12 @@ namespace BFW\Install\test\unit;
 use \atoum;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
+require_once(__DIR__.'/../../mocks/src/helpers/ReadDirectoryFcts.php');
 
 class ReadDirLoadModule extends atoum
 {
     /**
-     * @var \BFW\Install\ReadDirectory $class : Tested class instance
+     * @var \BFW\Install\ReadDirLoadModule $class : Tested class instance
      */
     protected $class;
     
@@ -36,6 +37,8 @@ class ReadDirLoadModule extends atoum
             return;
         }
         
+        $this->function->opendir = true;
+        
         $this->class = new \BFW\Install\ReadDirLoadModule($this->list);
     }
     
@@ -61,32 +64,35 @@ class ReadDirLoadModule extends atoum
     public function testRun()
     {
         $this->assert('test run (call fileAction and dirAction).')
-            ->if($this->function->opendir = true)
-            ->and($this->function->readdir = function() {
-                $this->readdirIndex++;
-                
-                if($this->readdirIndex === 0) {
-                    return '.';
-                } elseif ($this->readdirIndex === 1) {
-                    return '..';
-                } elseif ($this->readdirIndex === 2) {
-                    return 'test';
-                } elseif ($this->readdirIndex === 3) {
-                    return 'bfwModulesInfos.json';
-                } elseif ($this->readdirIndex === 4) {
-                    return 'test2';
-                }
-                
-                return false;
-            })
-            ->and($this->function->is_dir = function($path) {
-                if($path === 'dirPath/test2') {
-                    return true;
-                }
-                
-                return false;
-            })
-            ->and($this->function->closedir = true)
+            ->given($mockFcts = \BFW\Helpers\mockReadDirectoryNativeFct::getInstance())
+            ->if($mockFcts->setFctOverrided([
+                'opendir' => true,
+                'readdir' => function() {
+                    $this->readdirIndex++;
+
+                    if($this->readdirIndex === 0) {
+                        return '.';
+                    } elseif ($this->readdirIndex === 1) {
+                        return '..';
+                    } elseif ($this->readdirIndex === 2) {
+                        return 'test';
+                    } elseif ($this->readdirIndex === 3) {
+                        return 'bfwModulesInfos.json';
+                    } elseif ($this->readdirIndex === 4) {
+                        return 'test2';
+                    }
+
+                    return false;
+                },
+                'is_dir' => function($path) {
+                    if($path === 'dirPath/test2') {
+                        return true;
+                    }
+
+                    return false;
+                },
+                'closedir' => true
+            ]))
             ->then
             
             ->if($this->class->run('dirPath'))
