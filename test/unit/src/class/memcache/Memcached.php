@@ -150,7 +150,7 @@ class Memcached extends atoum
                 ->exception(function() {
                     new \BFW\Memcache\Memcached;
                 })
-                    ->hasCode(\BFW\Memcache\Memcached::NO_SERVER_CONNECTED)
+                    ->hasCode(\BFW\Memcache\Memcached::ERR_NO_SERVER_CONNECTED)
                     ->hasMessage('No memcached server connected.');
         }
     }
