@@ -16,12 +16,17 @@ class Subjects implements SplSubject
     protected $observers = [];
     
     /**
-     * @var string $action The action to send to observers
+     * @var \stdClass[] $notifyHeap List of notify to send
+     */
+    protected $notifyHeap = [];
+    
+    /**
+     * @var string $action The current action to send to observers
      */
     protected $action = '';
     
     /**
-     * @var mixed $context The context to send to observers
+     * @var mixed $context The current context to send to observers
      */
     protected $context = null;
     
@@ -46,19 +51,6 @@ class Subjects implements SplSubject
     }
     
     /**
-     * Define the action
-     * 
-     * @param string $action The new action
-     * 
-     * @return \BFW\Subjects The current instance of this class
-     */
-    public function setAction($action)
-    {
-        $this->action = $action;
-        return $this;
-    }
-    
-    /**
      * Return the context
      * 
      * @return mixed
@@ -66,19 +58,6 @@ class Subjects implements SplSubject
     public function getContext()
     {
         return $this->context;
-    }
-    
-    /**
-     * Define the context
-     * 
-     * @param mixed $context The new context
-     * 
-     * @return \BFW\Subjects The current instance of this class
-     */
-    public function setContext($context)
-    {
-        $this->context = $context;
-        return $this;
     }
 
     /**
@@ -123,21 +102,51 @@ class Subjects implements SplSubject
         foreach ($this->observers as $observer) {
             $observer->update($this);
         }
+        
+        return $this;
+    }
+    
+    public function readNotifyHeap()
+    {
+        foreach ($this->notifyHeap as $notifyIndex => $notifyDatas) {
+            $this->action  = $notifyDatas->action;
+            $this->context = $notifyDatas->context;
+            
+            $this->notify();
+            
+            //Remove the current notification from list
+            unset($this->notifyHeap[$notifyIndex]);
+        }
+        
+        //Some new notifications has been added during the loop
+        if (count($this->notifyHeap) > 0) {
+            $this->readNotifyHeap();
+        }
 
         return $this;
     }
     
     /**
-     * Send a notification to all observers with an action
+     * Add a new notification to the list of notification to send.
+     * If there is only one notification into the list, it will be send now.
+     * Else, a notification is currently sent, so we wait it finish and the
+     * current notification will be sent.
      * 
      * @param string $action The action to send
+     * @param notification $context (default null) The context to send
      * 
      * @return \BFW\Subjects The current instance of this class
      */
-    public function notifyAction($action)
+    public function addNotification($action, $context = null)
     {
-        $this->action = $action;
-        $this->notify();
+        $this->notifyHeap[] = (object) [
+            'action'  => $action,
+            'context' => $context
+        ];
+        
+        if (count($this->notifyHeap) === 1) {
+            $this->readNotifyHeap();
+        }
         
         return $this;
     }

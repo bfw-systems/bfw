@@ -24,7 +24,7 @@ class Subjects extends atoum
      */
     public function beforeTestMethod($testMethod)
     {
-        $this->class = new \BFW\Subjects();
+        $this->class = new \BFW\Subjects;
     }
     
     /**
@@ -64,34 +64,41 @@ class Subjects extends atoum
     }
     
     /**
-     * Test method for getAction() and setAction()
+     * Test method for getAction()
      * 
      * @return void
      */
-    public function testGetAndSetAction()
+    public function testGetAction()
     {
-        $this->assert('test Subjects getAction and setAction')
+        $this->assert('test Subjects getAction')
             ->string($this->class->getAction())
                 ->isEmpty()
-            ->given($this->class->setAction('unit_test'))
+            ->if($this->class->addNotification('unit_test'))
+            ->then
             ->string($this->class->getAction())
                 ->isEqualTo('unit_test');
     }
     
     /**
-     * Test method for getContext() and setContext()
+     * Test method for getContext()
      * 
      * @return void
      */
-    public function testGetAndSetContext()
+    public function testGetContext()
     {
         $this->assert('test Subjects getContext and setContext')
             ->variable($this->class->getContext())
                 ->isNull()
-            ->given($this->class->setContext([
-                'test' => 'unit',
-                'lib' => 'atoum'
-            ]))
+            ->if($this->class->addNotification(
+                'unit_test',
+                [
+                    'test' => 'unit',
+                    'lib' => 'atoum'
+                ]
+            ))
+            ->then
+            ->string($this->class->getAction())
+                ->isEqualTo('unit_test')
             ->array($this->class->getContext())
                 ->isEqualTo([
                 'test' => 'unit',
@@ -112,27 +119,66 @@ class Subjects extends atoum
             ->given($class = $this->class)
             ->output(function() use ($class) {
                 $class->notify();
-            })->isEqualTo("\n")
-            ->if($this->class->setAction('unit_test'))
-            ->then
-            ->output(function() use ($class) {
-                $class->notify();
-            })->isEqualTo('unit_test'."\n");
+            })->isEqualTo("\n");
     }
     
     /**
-     * Test method for notifyAction()
+     * Test method for addNotification()
      * 
      * @return void
      */
-    public function testNotifyAction()
+    public function testAddNotification()
     {
-        $this->assert('test notifyAction')
-            ->given($observer = new MockObserver)
-            ->given($this->class->attach($observer))
-            ->given($class = $this->class)
-            ->output(function() use ($class) {
-                $class->notifyAction('unit_test');
+        $observer = [
+            new MockObserver,
+            new \mock\BFW\test\unit\mocks\Observer //Atoum mock
+        ];
+        
+        //Modify the method update to the second observer to test the case
+        //Where update send a new notification.
+        $this->calling($observer[1])->update = function(\SplSubject $subject) {
+            if ($subject->getAction() === 'unit_test') {
+                $subject->addNotification('unit_test2');
+            }
+            
+            echo $subject->getAction()."\n";
+        };
+        
+        $this->assert('test addNotification with one observer')
+            ->given($this->class->attach($observer[0]))
+            ->output(function() {
+                $this->class->addNotification('unit_test');
             })->isEqualTo('unit_test'."\n");
+            
+        $this->assert(
+            'test addNotification with two observer. '
+            .'Re-send notification into the second.'
+        )
+            ->given($this->class->attach($observer[1]))
+            ->output(function() {
+                $this->class->addNotification('unit_test');
+            })->isEqualTo(
+                'unit_test'."\n"
+                .'unit_test'."\n"
+                .'unit_test2'."\n"
+                .'unit_test2'."\n"
+            );
+            
+        $this->assert(
+            'test addNotification with two observer. '
+            .'Re-send notification into the first.'
+        )
+            ->given($this->class->detach($observer[0]))
+            ->given($this->class->detach($observer[1]))
+            ->given($this->class->attach($observer[1]))
+            ->given($this->class->attach($observer[0]))
+            ->output(function() {
+                $this->class->addNotification('unit_test');
+            })->isEqualTo(
+                'unit_test'."\n"
+                .'unit_test'."\n"
+                .'unit_test2'."\n"
+                .'unit_test2'."\n"
+            );
     }
 }

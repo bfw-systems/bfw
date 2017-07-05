@@ -70,10 +70,10 @@ class Application extends \BFW\Application
                 $notifyAction = $action[1];
             }
 
-            $this->notifyAction('bfw_modules_install_run_'.$notifyAction);
+            $this->addNotification('bfw_modules_install_run_'.$notifyAction);
         }
 
-        $this->notifyAction('bfw_modules_install_finish');
+        $this->addNotification('bfw_modules_install_finish');
     }
     
     /**

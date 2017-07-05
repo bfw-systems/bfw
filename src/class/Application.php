@@ -382,10 +382,10 @@ class Application extends Subjects
                 $notifyAction = $action[1];
             }
 
-            $this->notifyAction('apprun_'.$notifyAction);
+            $this->addNotification('apprun_'.$notifyAction);
         }
 
-        $this->notifyAction('bfw_run_finish');
+        $this->addNotification('bfw_run_finish');
     }
 
     /**
@@ -497,7 +497,7 @@ class Application extends Subjects
      */
     protected function loadModule($moduleName)
     {
-        $this->notifyAction('load_module_'.$moduleName);
+        $this->addNotification('load_module_'.$moduleName);
         $this->modules->getModule($moduleName)->runModule();
     }
 
@@ -534,7 +534,7 @@ class Application extends Subjects
             require_once(CLI_DIR.$file.'.php');
         };
 
-        $this->notifyAction('run_cli_file');
+        $this->addNotification('run_cli_file');
         $fctRunCliFile();
     }
 }
