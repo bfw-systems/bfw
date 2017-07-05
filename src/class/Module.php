@@ -274,6 +274,10 @@ class Module
      */
     public function runModule()
     {
+        if ($this->status->run === true) {
+            return;
+        }
+        
         $runnerFile   = $this->getRunnerFile();
         $initFunction = function() use ($runnerFile) {
             if ($runnerFile === null) {
