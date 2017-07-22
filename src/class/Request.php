@@ -274,9 +274,10 @@ class Request
     protected function detectRequest()
     {
         $parseUrl = parse_url($this->serverValue('REQUEST_URI'));
+        $scheme   = ($this->ssl === true) ? 'https://' : 'http://';
 
         $request = [
-            'scheme'   => '',
+            'scheme'   => $scheme,
             'host'     => $this->serverValue('HTTP_HOST'),
             'port'     => '',
             'user'     => '',
