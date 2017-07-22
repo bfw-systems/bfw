@@ -335,6 +335,7 @@ class Errors
         $errLine,
         $backtrace
     ) {
+        http_response_code(500);
         ob_clean();
 
         echo '
