@@ -4,8 +4,56 @@
 # version : 3.0.0
 # author : bulton-fr <bulton.fr@gmail.com>
 
+forceInstall=false
+while getopts ":f" options; do
+    case "${options}" in
+        f)
+            forceInstall=true
+            ;;
+    esac
+done
+
 taskFail=false
 bfwPath=""
+
+# Function to run actions if it is a forced installation
+# Copy config directory
+# Remove bfw directories
+# This script is stopped if actions failed
+#
+# @return integer : 0 if not to execute
+forceInstallActions()
+{
+    if [ "$forceInstall" = false ]; then
+        return 0
+    fi
+
+    echo -n '\033[0;33mForce option : Create directory reinstallBackup\033[0m ... '
+    if mkdir -p reinstallBackup ;then
+        echo '\033[1;32mDone\033[0m'
+    else
+        echo '\033[1;31mFail\033[0m'
+        exit 1
+    fi
+
+    echo -n '\033[0;33mForce option : Copy current config directory to reinstallBackup/config\033[0m ... '
+    if cp -R app/config reinstallBackup/config ;then
+        echo '\033[1;32mDone\033[0m'
+    else
+        echo '\033[1;31mFail\033[0m'
+        exit 1
+    fi
+
+    echo -n '\033[0;33mForce option : Remove bfw directories\033[0m ... '
+    if rm -rf app src web cli.php ;then
+        echo '\033[1;32mDone\033[0m'
+    else
+        echo '\033[1;31mFail\033[0m'
+        exit 1
+    fi
+
+    echo ''
+}
 
 # Function to create a directory
 # 
@@ -19,6 +67,12 @@ createDirectory()
     fi
     
     echo -n "> Create $1 directory ..."
+    
+    if [ -d $1 ] && [ "$forceInstall" = false ]; then
+        echo '\033[1;33m Directory exist\033[0m'
+        return 0
+    fi
+
     if mkdir -p $1 ;then
         echo '\033[1;32m Done\033[0m'
     else
@@ -68,7 +122,7 @@ copyFile()
     
     echo -n "> Copy $1 file to $2 ..."
 
-    if [ -f $2 ]; then
+    if [ -f $2 ] && [ "$forceInstall" = false ]; then
         echo '\033[1;33m File exist\033[0m'
         return 0
     fi
@@ -83,6 +137,9 @@ copyFile()
 
 echo '\033[0;33mRun BFW Install\033[0m'
 echo ''
+
+## Force option
+forceInstallActions
 
 ## app Directories
 createDirectory "app"
