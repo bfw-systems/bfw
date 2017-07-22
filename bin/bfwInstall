@@ -68,6 +68,11 @@ copyFile()
     
     echo -n "> Copy $1 file to $2 ..."
 
+    if [ -f $2 ]; then
+        echo '\033[1;33m File exist\033[0m'
+        return 0
+    fi
+
     if cp "$bfwPath/$1" "$2" ;then
         echo '\033[1;32m Done\033[0m'
     else
