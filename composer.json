@@ -29,8 +29,7 @@
         "atoum/atoum": "~3.1"
     },
     "suggest": {
-        "ext-memcache": "*",
-        "lib-memcache": "*",
+        "ext-memcached": "*",
         "bulton-fr/bfw-controller": "@stable",
         "bulton-fr/bfw-sql": "@stable"
     },
