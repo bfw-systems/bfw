@@ -84,6 +84,8 @@ $app = \BFW\Install\Application::getInstance([
     'runSession' => false
 ]);
 
+echo "\033[0;33mRun BFW Modules Install\033[0m\n";
+
 //Run the search of modules in vendor directory
 $readDir = new \BFW\Install\ReadDirLoadModule($listModulesFound);
 $readDir->run($vendorPath.'/');
