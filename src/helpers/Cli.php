@@ -101,12 +101,14 @@ class Cli
         $colorBg = 'black',
         $style = 'normal'
     ) {
+        $currentClass = get_called_class();
+        
         if (func_num_args() === 1) {
-            self::displayMsg($msg."\n");
+            $currentClass::displayMsg($msg."\n");
             return;
         }
         
-        self::displayMsg($msg."\n", $colorTxt, $colorBg, $style);
+        $currentClass::displayMsg($msg."\n", $colorTxt, $colorBg, $style);
     }
 
     /**
