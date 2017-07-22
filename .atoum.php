@@ -16,17 +16,8 @@ use \mageekguy\atoum;
 // CODE COVERAGE SETUP
 if(!file_exists('/home/travis'))
 {
-    /* Atoum Logo (add slash to start of this line for enable/disable)
     $report = $script->addDefaultReport();
-    $report->addField(new atoum\report\fields\runner\atoum\logo()); //Start
-    $report->addField(new atoum\report\fields\runner\result\logo()); //End status
-    /*/
-    //Nyancat
-    $stdout = new \mageekguy\atoum\writers\std\out;
-    $report = new \mageekguy\atoum\reports\realtime\nyancat;
-    $script->addReport($report->addWriter($stdout));
-    /**/
-
+    
     $coverageField = new atoum\report\fields\runner\coverage\html('BFW', '/home/bfw/www_reports/bfw-v3/test-unit');
     $coverageField->setRootUrl('http://bfw.bulton.fr/reports/bfw-v3/test-unit/index.html');
     $report->addField($coverageField);
