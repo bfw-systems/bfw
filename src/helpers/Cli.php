@@ -22,6 +22,26 @@ class Cli
     const ERR_STYLE_NOT_AVAILABLE = 1201002;
     
     /**
+     * @const FLUSH_AUTO Value to use on $flushMethod property to automaticaly
+     * call the method ob_flush into function displayMsg and displayMsgNoNL
+     */
+    const FLUSH_AUTO = 'auto';
+    
+    /**
+     * @const FLUSH_MANUAL Value to use on $flushMethod property to NOT
+     * automaticaly call the method ob_flush into function displayMsg
+     * and displayMsgNL
+     */
+    const FLUSH_MANUAL = 'manual';
+    
+    /**
+     * @var string $callObFlush (default: self::FLUSH_AUTO) Define if the
+     * method ob_flush is called or not into the method displayMsg
+     * and displayMsgNL
+     */
+    public static $callObFlush = self::FLUSH_AUTO;
+    
+    /**
      * Display a message in the console without a line break
      * If only the first parameter is passed, the colors will be those
      * currently used in the console
@@ -41,6 +61,11 @@ class Cli
     ) {
         if (func_num_args() === 1) {
             echo $msg;
+            
+            if (self::$callObFlush === self::FLUSH_AUTO) {
+                ob_flush();
+            }
+            
             return;
         }
         
@@ -52,6 +77,10 @@ class Cli
         echo "\033[".$styleNum.";".$colorBgNum.";".$colorTxtNum."m"
             .$msg
             ."\033[0m";
+        
+        if (self::$callObFlush === self::FLUSH_AUTO) {
+            ob_flush();
+        }
     }
     
     /**

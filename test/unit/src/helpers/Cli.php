@@ -3,41 +3,112 @@
 namespace BFW\Helpers\test\unit;
 
 use \atoum;
+use \BFW\test\helpers\ApplicationInit as AppInit;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 class Cli extends atoum
 {
     /**
-     * Test method for displayMsg()
+     * @var \BFW\test\helpers\ApplicationInit $app BFW Application instance
+     */
+    protected $app;
+    
+    /**
+     * @var string $lastFlushedMsg The last output sent with ob_flush function
+     */
+    protected $lastFlushedMsg = '';
+    
+    /**
+     * Call before each test method
+     * Instantiate BFW Application class : call ob_start()
+     * 
+     * @param $testMethod string The name of the test method executed
      * 
      * @return void
      */
-    public function testDisplayMsg()
+    public function beforeTestMethod($testMethod)
     {
+        $this->app = AppInit::init();
+        
+        //Mock php function ob_flush.
+        //Because there is conflict with output atoum asserter: it not catch
+        //output sent with ob_flush function into tested class because it not
+        //the same ob_start.
+        $this->function->ob_flush = function() {
+            $this->lastFlushedMsg = ob_get_contents();
+            ob_clean();
+        };
+    }
+    
+    public function testConstants()
+    {
+        $this->assert('test Cli::FLUSH_AUTO value')
+            ->string(\BFW\Helpers\Cli::FLUSH_AUTO)
+                ->isEqualTo('auto');
+        
+        $this->assert('test Cli::FLUSH_MANUAL value')
+            ->string(\BFW\Helpers\Cli::FLUSH_MANUAL)
+                ->isEqualTo('manual');
+    }
+    
+    /**
+     * Test method for displayMsg() with flush to auto
+     * 
+     * @return void
+     */
+    public function testDisplayMsgWithFlush()
+    {
+        $this->assert('test Cli::$callObFlush default value')
+            ->variable(\BFW\Helpers\Cli::$callObFlush)
+                ->isEqualTo(\BFW\Helpers\Cli::FLUSH_AUTO);
+        
         $this->assert('test Cli::displayMsg with default parameters')
-            ->output(function() {
-                \BFW\Helpers\Cli::displayMsg('test displayMsg');
-            })
+            ->if(\BFW\Helpers\Cli::displayMsg('test displayMsg'))
+            ->string($this->lastFlushedMsg)
                 ->isEqualTo('test displayMsg');
         
         $this->assert('test Cli::displayMsg with a text color')
-            ->output(function() {
-                \BFW\Helpers\Cli::displayMsg('test displayMsg', 'red');
-            })
+            ->if(\BFW\Helpers\Cli::displayMsg('test displayMsg', 'red'))
+            ->string($this->lastFlushedMsg)
                 ->isEqualTo("\033[0;40;31mtest displayMsg\033[0m");
         
         $this->assert('test Cli::displayMsg with a text and background color')
-            ->output(function() {
-                \BFW\Helpers\Cli::displayMsg('test displayMsg', 'red', 'white');
-            })
+            ->if(\BFW\Helpers\Cli::displayMsg('test displayMsg', 'red', 'white'))
+            ->string($this->lastFlushedMsg)
                 ->isEqualTo("\033[0;47;31mtest displayMsg\033[0m");
         
         $this->assert('test Cli::displayMsg with a text and background color and with a text style')
-            ->output(function() {
-                \BFW\Helpers\Cli::displayMsg('test displayMsg', 'red', 'white', 'bold');
-            })
+            ->if(\BFW\Helpers\Cli::displayMsg('test displayMsg', 'red', 'white', 'bold'))
+            ->string($this->lastFlushedMsg)
                 ->isEqualTo("\033[1;47;31mtest displayMsg\033[0m");
+    }
+    
+    /**
+     * Test method for displayMsg() with flush to auto
+     * 
+     * @return void
+     */
+    public function testDisplayMsgWithoutFlush()
+    {
+        $this->assert('set Cli::$callObFlush value to manual')
+            ->given(\BFW\Helpers\Cli::$callObFlush = \BFW\Helpers\Cli::FLUSH_MANUAL);
+        
+        $this->assert('test Cli::displayMsg without flush')
+            ->if(\BFW\Helpers\Cli::displayMsg('test displayMsg - '))
+            ->and(\BFW\Helpers\Cli::displayMsg('test displayMsg - ', 'red'))
+            ->and(\BFW\Helpers\Cli::displayMsg('test displayMsg - ', 'red', 'white'))
+            ->and(\BFW\Helpers\Cli::displayMsg('test displayMsg', 'red', 'white', 'bold'))
+            ->then
+            ->given($output = ob_get_contents())
+            ->and(ob_clean())
+            ->string($output)
+                ->isEqualTo(
+                    'test displayMsg - '
+                    ."\033[0;40;31mtest displayMsg - \033[0m"
+                    ."\033[0;47;31mtest displayMsg - \033[0m"
+                    ."\033[1;47;31mtest displayMsg\033[0m"
+                );
     }
     
     /**
@@ -47,28 +118,28 @@ class Cli extends atoum
      */
     public function testDisplayMsgNL()
     {
+        $this->assert('test Cli::$callObFlush default value')
+            ->variable(\BFW\Helpers\Cli::$callObFlush)
+                ->isEqualTo(\BFW\Helpers\Cli::FLUSH_AUTO);
+        
         $this->assert('test Cli::displayMsgNL with default parameters')
-            ->output(function() {
-                \BFW\Helpers\Cli::displayMsgNL('test displayMsg');
-            })
+            ->if(\BFW\Helpers\Cli::displayMsgNL('test displayMsg'))
+            ->string($this->lastFlushedMsg)
                 ->isEqualTo('test displayMsg'."\n");
         
         $this->assert('test Cli::displayMsgNL with a text color')
-            ->output(function() {
-                \BFW\Helpers\Cli::displayMsgNL('test displayMsg', 'red');
-            })
+            ->if(\BFW\Helpers\Cli::displayMsgNL('test displayMsg', 'red'))
+            ->string($this->lastFlushedMsg)
                 ->isEqualTo("\033[0;40;31mtest displayMsg\n\033[0m");
         
         $this->assert('test Cli::displayMsgNL with a text and background color')
-            ->output(function() {
-                \BFW\Helpers\Cli::displayMsgNL('test displayMsg', 'red', 'white');
-            })
+            ->if(\BFW\Helpers\Cli::displayMsgNL('test displayMsg', 'red', 'white'))
+            ->string($this->lastFlushedMsg)
                 ->isEqualTo("\033[0;47;31mtest displayMsg\n\033[0m");
         
         $this->assert('test Cli::displayMsgNL with a text and background color and with a text style')
-            ->output(function() {
-                \BFW\Helpers\Cli::displayMsgNL('test displayMsg', 'red', 'white', 'bold');
-            })
+            ->if(\BFW\Helpers\Cli::displayMsgNL('test displayMsg', 'red', 'white', 'bold'))
+            ->string($this->lastFlushedMsg)
                 ->isEqualTo("\033[1;47;31mtest displayMsg\n\033[0m");
     }
     
