@@ -206,7 +206,7 @@ class Request extends atoum
     {
         $this->assert('test getRequest : default return')
             ->object($request = $this->class->getRequest())
-                ->string($request->scheme)->isEmpty()
+                ->string($request->scheme)->isEqualTo('http')
                 ->string($request->host)->isEmpty()
                 ->string($request->port)->isEmpty()
                 ->string($request->user)->isEmpty()
