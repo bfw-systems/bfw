@@ -8,7 +8,7 @@ use \BFW\Helpers\Cli;
 Cli::displayMsg('CLI Exemple file', 'green');
 
 //Get parameters passed to cli
-$opt = getopt('vhp', array('version::', 'help::', 'parameters::'));
+$opt = Cli::getopt('vhp', array('version::', 'help::', 'parameters::'));
 
 //version parameter
 if (isset($opt['v']) || isset($opt['version'])) {

@@ -151,4 +151,30 @@ class Cli
 
         return $styleList[$style];
     }
+    
+    /**
+     * Override the PHP function getopt to always use the short "f:".
+     * If "f:" is not present, nothing is returned (#79)
+     * 
+     * @link http://php.net/manual/en/function.getopt.php
+     * 
+     * @param string $options Each character in this string will be used as
+     * option characters and matched against options passed to the script
+     * starting with a single hyphen (-). For example, an option string "x"
+     * recognizes an option -x. Only a-z, A-Z and 0-9 are allowed.
+     * @param array $longopts (default []) An array of options.
+     * Each element in this array will be used as option strings and matched
+     * against options passed to the script starting with two hyphens (--).
+     * For example, an longopts element "opt" recognizes an option --opt.
+     * 
+     * @return boolean|array
+     */
+    public static function getopt($options , $longopts = [])
+    {
+        if (strpos($options, 'f:') === false) {
+            $options .= 'f:';
+        }
+        
+        return \getopt($options, $longopts);
+    }
 }
