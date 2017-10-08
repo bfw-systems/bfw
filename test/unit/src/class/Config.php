@@ -28,7 +28,8 @@ class Config extends atoum
         if (
             $testMethod === 'testSearchAllConfigsFilesWithDirectory' || 
             $testMethod === 'testGetValueExceptions' ||
-            $testMethod === 'testGetConfigs'
+            $testMethod === 'testGetConfigs' ||
+            $testMethod === 'testSetConfigs'
         ) {
             return;
         }
@@ -289,5 +290,51 @@ class Config extends atoum
                     ],
                     'fixNullValue'   => null
                 ]);
+    }
+    
+    /**
+     * Test method for setConfigForFile() and setConfigKeyForFile()
+     */
+    public function testSetConfigs()
+    {
+        $this->assert('test setConfigs with multiple files')
+            ->given(define('CONFIG_DIR', __DIR__.'/../'))
+            ->and($config = new MockConfig('class/core'))
+            ->and($this->addOverrideLoadPhpConfigFile($config))
+            ->and($config->loadFiles())
+            ->then
+            ->object($config->getConfigForFile('Options.php'))
+                ->isEqualTo((object) [
+                    'debug'          => true,
+                    'errorRenderFct' => (object) [
+                        'default' => '\BFW\Core\Errors::defaultErrorRender',
+                        'cli'     => '\BFW\Core\Errors::defaultCliErrorRender'
+                    ],
+                    'fixNullValue'   => null
+                ])
+            ->then
+            ->if($config->setConfigKeyForFile(
+                'Options.php',
+                'debug',
+                false
+            ))
+            ->then
+            ->object($config->getConfigForFile('Options.php'))
+                ->isEqualTo((object) [
+                    'debug'          => false,
+                    'errorRenderFct' => (object) [
+                        'default' => '\BFW\Core\Errors::defaultErrorRender',
+                        'cli'     => '\BFW\Core\Errors::defaultCliErrorRender'
+                    ],
+                    'fixNullValue'   => null
+                ])
+            ->then
+            ->if($config->setConfigForFile('Options.php', ['debug' => true]))
+            ->then
+            ->array($config->getConfigForFile('Options.php'))
+                ->isEqualTo([
+                    'debug' => true
+                ])
+        ;
     }
 }

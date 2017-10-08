@@ -34,6 +34,12 @@ class Config
     const ERR_KEY_NOT_FOUND = 1303004;
     
     /**
+     * @const ERR_VALUE_FORMAT Exception code if the value for a filename is
+     * not an array or an object.
+     */
+    const ERR_VALUE_FORMAT = 1303005;
+    
+    /**
      * @var string $configDirName Directory's name in config dir
      */
     protected $configDirName = '';
@@ -250,5 +256,60 @@ class Config
         }
 
         return $config[$key];
+    }
+    
+    /**
+     * Setter to modify the all config value for a specific filename.
+     * 
+     * @param string $filename The filename config to modify
+     * @param array|\stdClass $config The new config value
+     * 
+     * @return $this
+     * 
+     * @throws \Exception If the new value if not an array or an object.
+     */
+    public function setConfigForFile($filename, $config)
+    {
+        if (!is_array($config) && !is_object($config)) {
+            throw new Exception(
+                'The config value shoud be an array or an object.',
+                $this::ERR_VALUE_FORMAT
+            );
+        }
+        
+        $this->config[$filename] = $config;
+        
+        return $this;
+    }
+    
+    /**
+     * Setter to modify a config key into the config of a filename
+     * 
+     * @param string $filename The filename config to modify
+     * @param string $configKey The name of the key to modify
+     * @param mixed $configValue The new value for the config key
+     * 
+     * @return $this
+     * 
+     * @throws \Exception If the key has not been found
+     */
+    public function setConfigKeyForFile($filename, $configKey, $configValue)
+    {
+        if (!isset($this->config[$filename])) {
+            $this->config[$filename] = new \stdClass;
+        }
+        
+        if (is_array($this->config[$filename])) {
+            $this->config[$filename][$configKey] = $configValue;
+        } elseif (is_object($this->config[$filename])) {
+            $this->config[$filename]->{$configKey} = $configValue;
+        } else {
+            throw new Exception(
+                'The config key '.$configKey.' has not been found',
+                $this::ERR_KEY_NOT_FOUND
+            );
+        }
+        
+        return $this;
     }
 }
