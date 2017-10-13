@@ -283,6 +283,9 @@ class Date extends \DateTime implements \BFWInterface\IDate
     public function setZone($NewZone)
     {
         parent::setTimezone(new \DateTimeZone($NewZone));
+        
+        //Maj des attributs.
+        $this->MAJ_Attributes();
     }
     
     /**
@@ -392,6 +395,9 @@ class Date extends \DateTime implements \BFWInterface\IDate
         //La date actuelle
         $time = new Date();
         
+        //Utiliser la même timezone que celle de l'instance actuelle
+        $time->setZone($this->getTimezone()->getName());
+        
         
         /*
         Si c'est à l'instant même
@@ -419,7 +425,7 @@ class Date extends \DateTime implements \BFWInterface\IDate
             $aff_date = 'Maintenant';
             $aff_heure = '';
         }
-        elseif($diffAnnee == 0 && $diffMois == 0 && $diffJour == 0 && $diffHeure <= 2)
+        elseif($diffAnnee == 0 && $diffMois == 0 && ($diffJour == 0 || ($diffJour == 1 && $diffHeure <= 2)))
         {
             $aff_date = 'Il y a '; //On commence par déclaré le début de l'affichage
             
@@ -446,7 +452,7 @@ class Date extends \DateTime implements \BFWInterface\IDate
             
             $aff_heure = ''; #Partie prévu pour l'affichage
         }
-        elseif($diffInvert == 0 && $diffAnnee == 0 && $diffMois == 0 && (($diffJour == 0 && $diffHeure > 2) || ($diffJour == 1 && $diffHeure == 0)))
+        elseif($diffInvert == 0 && $diffAnnee == 0 && $diffMois == 0 && (($diffJour == 1 && $diffHeure > 2) || ($diffJour == 0 && $diffHeure == 0)))
         {
             //C'était hier
             $aff_date = 'Hier'; #On affiche donc en première partie "hier"
