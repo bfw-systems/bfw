@@ -29,7 +29,7 @@ class RunTasks extends Subjects
     /**
      * Getter to access to the run step array
      * 
-     * @return array
+     * @return \stdClass[]
      */
     public function getRunSteps()
     {
@@ -39,7 +39,7 @@ class RunTasks extends Subjects
     /**
      * Setter to re-define the run step array
      * 
-     * @param \stdObject[] $runSteps The new list of run steps
+     * @param \stdClass[] $runSteps The new list of run steps
      * 
      * @return $this
      */
