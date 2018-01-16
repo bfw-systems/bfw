@@ -328,6 +328,18 @@ class Application extends atoum
     }
     
     /**
+     * Test method for initErrors()
+     * 
+     * @return void
+     */
+    public function testInitRunTasks()
+    {
+        $this->assert('test initRunTasks')
+            ->object($this->mock->getErrors())
+                ->isInstanceOf('\BFW\Core\Errors');
+    }
+    
+    /**
      * Test method for initModules()
      * 
      * @return void
@@ -377,7 +389,7 @@ class Application extends atoum
         $this->assert('test declareRunSteps')
             ->array($runSteps = $this->mock->getRunSteps())
                 ->size
-                    ->isEqualTo(5)
+                    ->isEqualTo(6)
             ->object($runSteps[0][0])
                 ->isInstanceOf('\BFW\Application')
             ->object($runSteps[1][0])
@@ -388,6 +400,8 @@ class Application extends atoum
                 ->isInstanceOf('\BFW\Application')
             ->object($runSteps[4][0])
                 ->isInstanceOf('\BFW\Application')
+            ->object($runSteps[5][0])
+                ->isInstanceOf('\BFW\Application')
             ->string($runSteps[0][1])
                 ->isEqualTo('loadMemcached')
             ->string($runSteps[1][1])
@@ -397,7 +411,9 @@ class Application extends atoum
             ->string($runSteps[3][1])
                 ->isEqualTo('loadAllAppModules')
             ->string($runSteps[4][1])
-                ->isEqualTo('runCliFile');
+                ->isEqualTo('runCliFile')
+            ->string($runSteps[5][1])
+                ->isEqualTo('initCtrlRouterLink');
     }
     
     /**
@@ -407,17 +423,28 @@ class Application extends atoum
      */
     public function testNotifyDuringRun()
     {
-        $notifyText = 'apprun_loadMemcached'."\n"
-                    .'apprun_readAllModules'."\n"
-                    .'apprun_loadAllCoreModules'."\n"
-                    .'apprun_loadAllAppModules'."\n"
-                    .'apprun_runCliFile'."\n"
-                    .'bfw_run_finish'."\n";
+        $notifyText = 
+            'BfwApp_start_run_tasks'."\n"
+            .'BfwApp_run_loadMemcached'."\n"
+            .'BfwApp_finish_loadMemcached'."\n"
+            .'BfwApp_run_readAllModules'."\n"
+            .'BfwApp_finish_readAllModules'."\n"
+            .'BfwApp_run_loadAllCoreModules'."\n"
+            .'BfwApp_finish_loadAllCoreModules'."\n"
+            .'BfwApp_run_loadAllAppModules'."\n"
+            .'BfwApp_finish_loadAllAppModules'."\n"
+            .'BfwApp_run_runCliFile'."\n"
+            .'BfwApp_finish_runCliFile'."\n"
+            .'BfwApp_run_initCtrlRouterLink'."\n"
+            .'BfwApp_finish_initCtrlRouterLink'."\n"
+            .'BfwApp_end_run_tasks'."\n"
+            .'bfw_run_finish'."\n"
+        ;
         
         $this->assert('test run')
             ->given($app = $this->mock)
             ->given($observer = new MockObserver)
-            ->if($this->mock->attach($observer))
+            ->if($this->mock->getSubjectForName('ApplicationTasks')->attach($observer))
             ->output(function() use ($app) {
                 $app->run();
             })
@@ -541,7 +568,7 @@ class Application extends atoum
         $this->assert('test loadAllCoreModules')
             ->given($app = $this->mock)
             ->given($observer = new MockObserver)
-            ->if($this->mock->attach($observer))
+            ->if($this->mock->getSubjectForName('ApplicationTasks')->attach($observer))
             ->output(function() use ($app) {
                 $app->run();
             })
@@ -559,7 +586,7 @@ class Application extends atoum
         $this->assert('test loadAllCoreModules')
             ->given($app = $this->mock)
             ->given($observer = new MockObserver)
-            ->if($this->mock->attach($observer))
+            ->if($this->mock->getSubjectForName('ApplicationTasks')->attach($observer))
             ->and($this->forcedConfig['modules']['controller']['name'] = 'test1')
             ->and($this->forcedConfig['modules']['controller']['enabled'] = true)
             ->and($this->mock->forceConfig($this->forcedConfig))
@@ -574,7 +601,7 @@ class Application extends atoum
             ->output(function() use ($app) {
                 $app->run();
             })
-                ->contains('load_module_test1')
+                ->contains('BfwApp_load_module_test1')
             ->boolean($this->mock->getModules()->getModule('test1')->isRun())
                 ->isTrue();
     }

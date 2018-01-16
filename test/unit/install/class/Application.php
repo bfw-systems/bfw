@@ -92,16 +92,23 @@ class Application extends atoum
      */
     public function testRunNotify()
     {
-        $notifyText = 'bfw_modules_install_run_loadMemcached'."\n"
-                    .'bfw_modules_install_run_readAllModules'."\n"
-                    .'Read all modules to run install script :'."\n"
-                    .'bfw_modules_install_run_installModules'."\n"
-                    .'bfw_modules_install_finish'."\n"; //Output
+        $notifyText = 
+            'BfwAppModulesInstall_start_run_tasks'."\n"
+            .'BfwAppModulesInstall_run_loadMemcached'."\n"
+            .'BfwAppModulesInstall_finish_loadMemcached'."\n"
+            .'BfwAppModulesInstall_run_readAllModules'."\n"
+            .'BfwAppModulesInstall_finish_readAllModules'."\n"
+            .'BfwAppModulesInstall_run_installModules'."\n"
+            .'Read all modules to run install script :'."\n"
+            .'BfwAppModulesInstall_finish_installModules'."\n"
+            .'BfwAppModulesInstall_end_run_tasks'."\n"
+            .'bfw_modules_install_finish'."\n"
+        ;
         
         $this->assert('test run')
             ->given($app = $this->mock)
             ->given($observer = new MockObserver)
-            ->if($this->mock->attach($observer))
+            ->if($this->mock->getSubjectForName('ApplicationTasks')->attach($observer))
             ->output(function() use ($app) {
                 $app->run();
             })

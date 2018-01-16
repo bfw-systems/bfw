@@ -62,18 +62,11 @@ class Application extends \BFW\Application
      */
     public function run()
     {
-        foreach ($this->runSteps as $action) {
-            $action();
-
-            $notifyAction = $action;
-            if (is_array($action)) {
-                $notifyAction = $action[1];
-            }
-
-            $this->addNotification('bfw_modules_install_run_'.$notifyAction);
-        }
-
-        $this->addNotification('bfw_modules_install_finish');
+        $runTasks = $this->getSubjectForName('ApplicationTasks');
+        
+        $runTasks->setNotifyPrefix('BfwAppModulesInstall');
+        $runTasks->run();
+        $runTasks->sendNotify('bfw_modules_install_finish');
     }
     
     /**

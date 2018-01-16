@@ -10,7 +10,7 @@ use \BFW\Helpers\Constants;
  * Manage all BFW application
  * Load and init components, modules, ...
  */
-class Application extends Subjects
+class Application
 {
     /**
      * @const ERR_MEMCACHED_NOT_CLASS_DEFINED Exception code if memcache(d) is
@@ -87,6 +87,16 @@ class Application extends Subjects
      * @var \BFW\Core\Errors $errors System who manage personal errors page
      */
     protected $errors;
+    
+    /**
+     * @var \BFW\Subjects[] $subjectsList List of all subjects declared
+     */
+    protected $subjectsList;
+    
+    /**
+     * @var \stdClass $ctrlRouterInfos Infos from router for controller system
+     */
+    protected $ctrlRouterInfos;
 
     /**
      * Constructor
@@ -207,6 +217,16 @@ class Application extends Subjects
     }
     
     /**
+     * Getter to access to the run step array
+     * 
+     * @return array
+     */
+    public function getRunSteps()
+    {
+        return $this->runSteps;
+    }
+    
+    /**
      * Initialize all components
      * 
      * @param array $options Options passed to application
@@ -222,6 +242,7 @@ class Application extends Subjects
         $this->initRequest();
         $this->initSession();
         $this->initErrors();
+        $this->initRunTasks();
         $this->initModules();
     }
 
@@ -328,6 +349,29 @@ class Application extends Subjects
     {
         $this->errors = new \BFW\Core\Errors();
     }
+    
+    /**
+     * Initialize taskers
+     * 
+     * @return void
+     */
+    protected function initRunTasks()
+    {
+        $stepsToRun = [];
+        foreach ($this->runSteps as $step) {
+            $stepName = $step[1];
+            
+            //To keep methods to run protected
+            $stepsToRun[$stepName] = (object) [
+                'callback' => function() use ($step) {
+                    $step();
+                }
+            ];
+        }
+        
+        $runTasks = new \BFW\RunTasks($stepsToRun, 'BfwApp');
+        $this->addSubject($runTasks, 'ApplicationTasks');
+    }
 
     /**
      * Initialize modules property with the \BFW\Modules class
@@ -363,7 +407,8 @@ class Application extends Subjects
             [$this, 'readAllModules'],
             [$this, 'loadAllCoreModules'],
             [$this, 'loadAllAppModules'],
-            [$this, 'runCliFile']
+            [$this, 'runCliFile'],
+            [$this, 'initCtrlRouterLink']
         ];
     }
 
@@ -374,18 +419,10 @@ class Application extends Subjects
      */
     public function run()
     {
-        foreach ($this->runSteps as $action) {
-            $action();
-
-            $notifyAction = $action;
-            if (is_array($action)) {
-                $notifyAction = $action[1];
-            }
-
-            $this->addNotification('apprun_'.$notifyAction);
-        }
-
-        $this->addNotification('bfw_run_finish');
+        $runTasks = $this->getSubjectForName('ApplicationTasks');
+        
+        $runTasks->run();
+        $runTasks->sendNotify('bfw_run_finish');
     }
 
     /**
@@ -497,7 +534,9 @@ class Application extends Subjects
      */
     protected function loadModule($moduleName)
     {
-        $this->addNotification('load_module_'.$moduleName);
+        $this->getSubjectForName('ApplicationTasks')
+            ->sendNotify('BfwApp_load_module_'.$moduleName);
+        
         $this->modules->getModule($moduleName)->runModule();
     }
 
@@ -536,5 +575,77 @@ class Application extends Subjects
 
         $this->addNotification('run_cli_file');
         $fctRunCliFile();
+    }
+    
+    /**
+     * Create a new observer to controller and router module.
+     * 
+     * @return void
+     */
+    protected function initCtrlRouterLink()
+    {
+        if (PHP_SAPI === 'cli') {
+            return;
+        }
+
+        //Others properties will be dynamically added by modules
+        $this->ctrlRouterInfos = (object) [
+            'isFound' => false
+        ];
+        
+        $ctrlRouterTask = new RunTasks(
+            [
+                'searchRoute' => (object) [
+                    'context' => $this->ctrlRouterInfos
+                ]
+            ],
+            'ctrlRouterLink'
+        );
+        
+        $this->addSubject($ctrlRouterTask, 'ctrlRouterLink');
+        $ctrlRouterTask->run();
+        
+        if ($this->ctrlRouterInfos->isFound === false) {
+            http_response_code(404);
+        }
+    }
+    
+    /**
+     * Add a new subject to the list
+     * 
+     * @param \BFW\Subjects $subject The new subject to add
+     * @param string|null $subjectName (default null) The subject name, if null,
+     * the name of the class will be used
+     * 
+     * @return void
+     */
+    public function addSubject(\BFW\Subjects $subject, $subjectName = null)
+    {
+        if ($subjectName === null) {
+            $subjectName = get_class($subject);
+        }
+        
+        $this->subjectsList[$subjectName] = $subject;
+    }
+    
+    /**
+     * Obtain a subject object with this name
+     * 
+     * @param string $subjectName The name of the subject object
+     * 
+     * @return \BFW\Subjects
+     * 
+     * @throws Exception If the subject name not exist
+     */
+    public function getSubjectForName($subjectName)
+    {
+        if (!array_key_exists($subjectName, $this->subjectsList)) {
+            throw new Exception(
+                'The subject '.$subjectName.' is not in the list.',
+                self::ERR_SUBJECT_NAME_NOT_EXIST
+            );
+        }
+        
+        return $this->subjectsList[$subjectName];
     }
 }
