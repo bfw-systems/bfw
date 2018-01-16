@@ -572,8 +572,9 @@ class Application
         $fctRunCliFile = function() use ($file) {
             require_once(CLI_DIR.$file.'.php');
         };
-
-        $this->addNotification('run_cli_file');
+        
+        $this->getSubjectForName('ApplicationTasks')
+            ->sendNotify('run_cli_file');
         $fctRunCliFile();
     }
     
