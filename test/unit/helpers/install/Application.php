@@ -17,7 +17,7 @@ trait Application
     protected function createApp()
     {
         $mockedConfigValues = require(
-            realpath(__DIR__.'/../../../skel/app/config/bfw/config.php')
+            realpath(__DIR__.'/../../../../skel/app/config/bfw/config.php')
         );
         
         $this->app = \BFW\Install\Test\Mock\Application::getInstance();
