@@ -32,6 +32,7 @@ class Dates extends DateTime
         'since'     => 'since',
         'in'        => 'in',
         'yesterday' => 'yesterday',
+        'tomorrow'  => 'tomorrow',
         'the'       => 'the',
         'at'        => 'at'
     ];
@@ -409,8 +410,11 @@ class Dates extends DateTime
             //Now
             $this->humanDateNow($parsedTxt);
         } elseif ($diff->d === 1 && $diff->m === 0 && $diff->y === 0) {
-            //Yesterday
-            $this->humanDateYesterday($parsedTxt);
+            if ($diff->invert === 0) {
+                $this->humanDateYesterday($parsedTxt); //Yesterday
+            } else {
+                $this->humanDateTomorrow($parsedTxt); //Tomorrow
+            }
         } elseif ($diff->days === 0) {
             //Today
             $this->humanDateToday($parsedTxt, $diff);
@@ -477,6 +481,24 @@ class Dates extends DateTime
     {
         $currentClass    = get_called_class();
         $parsedTxt->date = $currentClass::$humanReadableI18n['yesterday'];
+        $parsedTxt->time = $currentClass::$humanReadableI18n['at']
+            .' '
+            .$this->format(
+                $currentClass::$humanReadableFormats['time']
+            );
+    }
+    
+    /**
+     * Format date to human readable when date is tomorrow
+     * 
+     * @param \stdClass $parsedTxt Texts returned by humanReadable method
+     * 
+     * @return void
+     */
+    protected function humanDateTomorrow($parsedTxt)
+    {
+        $currentClass    = get_called_class();
+        $parsedTxt->date = $currentClass::$humanReadableI18n['tomorrow'];
         $parsedTxt->time = $currentClass::$humanReadableI18n['at']
             .' '
             .$this->format(
