@@ -60,18 +60,20 @@ $outputSearchPath = "\n"
     ."\033[0;33mBFW path : ".$bfwVendorPath."\033[0m\n";
 
 $outputCreateFiles = "\n"
-    ."> Copy install/skeleton/.htaccess file to web/.htaccess ...\033[1;32m Done\033[0m\n"
-    ."> Copy install/skeleton/config.php file to app/config/bfw/config.php ...\033[1;32m Done\033[0m\n"
-    ."> Copy install/skeleton/index.php file to web/index.php ...\033[1;32m Done\033[0m\n"
-    ."> Copy install/skeleton/cli.php file to cli.php ...\033[1;32m Done\033[0m\n"
-    ."> Copy install/skeleton/cli/exemple.php file to src/cli/exemple.php ...\033[1;32m Done\033[0m\n";
+    ."> Copy skel/cli.php file to cli.php ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/app/config/bfw/config.php file to app/config/bfw/config.php ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/src/cli/exemple.php file to src/cli/exemple.php ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/web/.htaccess file to web/.htaccess ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/web/index.php file to web/index.php ...\033[1;32m Done\033[0m\n"
+;
 
 $outputExistsFiles = "\n"
-    ."> Copy install/skeleton/.htaccess file to web/.htaccess ...\033[1;33m File exist\033[0m\n"
-    ."> Copy install/skeleton/config.php file to app/config/bfw/config.php ...\033[1;33m File exist\033[0m\n"
-    ."> Copy install/skeleton/index.php file to web/index.php ...\033[1;33m File exist\033[0m\n"
-    ."> Copy install/skeleton/cli.php file to cli.php ...\033[1;33m File exist\033[0m\n"
-    ."> Copy install/skeleton/cli/exemple.php file to src/cli/exemple.php ...\033[1;33m File exist\033[0m\n";
+    ."> Copy skel/cli.php file to cli.php ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/app/config/bfw/config.php file to app/config/bfw/config.php ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/src/cli/exemple.php file to src/cli/exemple.php ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/web/.htaccess file to web/.htaccess ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/web/index.php file to web/index.php ...\033[1;33m File exist\033[0m\n"
+;
     
 $outputInstallStatus = "\n\033[0;33mBFW install status : \033[1;32mSuccess\033[0m";
 
