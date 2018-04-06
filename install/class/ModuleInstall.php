@@ -137,6 +137,76 @@ class ModuleInstall
     }
     
     /**
+     * Get accessor to the property projectPath
+     * 
+     * @return string
+     */
+    public function getProjectPath()
+    {
+        return $this->projectPath;
+    }
+
+    /**
+     * Get accessor to the property forceReinstall
+     * 
+     * @return boolean
+     */
+    public function getForceReinstall()
+    {
+        return $this->forceReinstall;
+    }
+
+    /**
+     * Get accessor to the property sourceSrcPath
+     * 
+     * @return string
+     */
+    public function getSourceSrcPath()
+    {
+        return $this->sourceSrcPath;
+    }
+
+    /**
+     * Get accessor to the property sourceConfigPath
+     * 
+     * @return string
+     */
+    public function getSourceConfigPath()
+    {
+        return $this->sourceConfigPath;
+    }
+
+    /**
+     * Get accessor to the property configFilesList
+     * 
+     * @return string
+     */
+    public function getConfigFilesList()
+    {
+        return $this->configFilesList;
+    }
+
+    /**
+     * Get accessor to the property targetSrcPath
+     * 
+     * @return string
+     */
+    public function getTargetSrcPath()
+    {
+        return $this->targetSrcPath;
+    }
+
+    /**
+     * Get accessor to the property targetConfigPath
+     * 
+     * @return string
+     */
+    public function getTargetConfigPath()
+    {
+        return $this->targetConfigPath;
+    }
+    
+    /**
      * Find the module name and declare path to target directories install.
      * 
      * @return void
