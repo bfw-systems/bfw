@@ -33,7 +33,37 @@ class ReadDirectory
         $this->calledClass = get_called_class();
         $this->list        = &$listFiles;
     }
+    
+    /**
+     * Getter accessor to the property calledClass
+     * 
+     * @return string
+     */
+    public function getCalledClass()
+    {
+        return $this->calledClass;
+    }
 
+    /**
+     * Getter accessor to the property list
+     * 
+     * @return array
+     */
+    public function getList()
+    {
+        return $this->list;
+    }
+
+    /**
+     * Getter accessor to the property ignore
+     * 
+     * @return array
+     */
+    public function getIgnore()
+    {
+        return $this->ignore;
+    }
+    
     /**
      * Read all the directories
      *
