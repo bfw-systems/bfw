@@ -52,6 +52,11 @@ class ModuleInstall
     const ERR_LOAD_PATH_NOT_EXIST = 1102007;
     
     /**
+     * @const ERR_INSTALL_FAIL_SYMLINK Exception code if the symlink fail
+     */
+    const ERR_INSTALL_FAIL_SYMLINK = 1102008;
+    
+    /**
      * @var string $projectPath : Path to root bfw project
      */
     protected $projectPath = '';
@@ -387,7 +392,11 @@ class ModuleInstall
         //If the creation of the symbolic link has failed.
         if (!symlink($this->sourceSrcPath, $this->targetSrcPath)) {
             echo "\033[1;31mSymbolic link creation fail.\033[0m\n";
-            return;
+            
+            throw new Exception(
+                'Symbolic link creation fail.',
+                $this::ERR_INSTALL_FAIL_SYMLINK
+            );
         }
 
         echo "\033[1;32mDone\033[0m\n";
