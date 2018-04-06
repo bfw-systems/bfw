@@ -631,6 +631,9 @@ class Application
         );
         
         $this->addSubject($ctrlRouterTask, 'ctrlRouterLink');
+        
+        $runTasks = $this->getSubjectForName('ApplicationTasks');
+        $runTasks->sendNotify('bfw_ctrlRouterLink_subject_added');
     }
     
     /**
