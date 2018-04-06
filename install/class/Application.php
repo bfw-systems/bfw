@@ -15,6 +15,16 @@ class Application extends \BFW\Application
     protected static $modulesInstall = [];
     
     /**
+     * Getter to static property modulesInstall
+     * 
+     * @return \BFW\Install\ModuleInstall[]
+     */
+    public static function getModulesInstall()
+    {
+        return self::$modulesInstall;
+    }
+    
+    /**
      * {@inheritdoc}
      */
     protected function initRequest()
