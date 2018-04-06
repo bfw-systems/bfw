@@ -153,7 +153,7 @@ class Module
      * 
      * @return void
      */
-    public function loadConfig()
+    protected function loadConfig()
     {
         if (!file_exists(CONFIG_DIR.$this->pathName)) {
             return;
