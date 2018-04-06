@@ -2,6 +2,7 @@
 
 namespace BFW\Install;
 
+use \BFW\Helpers\Cli;
 use \BFW\Install\ModuleInstall;
 
 /**
@@ -101,7 +102,7 @@ class Application extends \BFW\Application
      */
     protected function installAllModules()
     {
-        echo 'Read all modules to run install script :'."\n";
+        Cli::displayMsgNL('Read all modules to run install script...');
         
         $tree = $this->modules->getLoadTree();
 
@@ -116,6 +117,8 @@ class Application extends \BFW\Application
                 }
             }
         }
+        
+        Cli::displayMsgNL('All modules have been read.');
     }
     
     /**
@@ -131,13 +134,13 @@ class Application extends \BFW\Application
             return;
         }
         
-        echo ' > Read for module '.$moduleName."\n";
+        Cli::displayMsgNL(' > Read for module '.$moduleName);
         
         $module         = self::$modulesInstall[$moduleName];
         $installScripts = $module->getSourceInstallScript();
         
         if ($installScripts === '') {
-            echo ' >> No script to run.'."\n";
+            Cli::displayMsgNL(' >> No script to run.');
             return;
         }
         
