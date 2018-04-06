@@ -26,7 +26,7 @@ class Errors
      */
     protected function defineErrorHandler()
     {
-        $errorRender = $this->getErrorRender();
+        $errorRender = $this->obtainErrorRender();
         
         //If not render to use
         if ($errorRender === false) {
@@ -44,7 +44,7 @@ class Errors
      */
     protected function defineExceptionHandler()
     {
-        $exceptionRender = $this->getExceptionRender();
+        $exceptionRender = $this->obtainExceptionRender();
         
         //If not render to use
         if ($exceptionRender === false) {
@@ -62,7 +62,7 @@ class Errors
      *  Boolean : false if no render to use
      *  Array   : Infos from config
      */
-    protected function getErrorRender()
+    protected function obtainErrorRender()
     {
         $app        = \BFW\Application::getInstance();
         $renderFcts = $app->getConfig()->getValue('errorRenderFct');
@@ -77,7 +77,7 @@ class Errors
      *  Boolean : false if no render to use
      *  Array   : Infos from config
      */
-    protected function getExceptionRender()
+    protected function obtainExceptionRender()
     {
         $app        = \BFW\Application::getInstance();
         $renderFcts = $app->getConfig()->getValue('exceptionRenderFct');
@@ -124,7 +124,7 @@ class Errors
      */
     public function exceptionHandler($exception)
     {
-        $errorRender = $this->getExceptionRender();
+        $errorRender = $this->obtainExceptionRender();
         
         $this->callRender(
             $errorRender,
@@ -152,8 +152,8 @@ class Errors
         $errFile,
         $errLine
     ) {
-        $errType     = $this->getErrorType($errSeverity);
-        $errorRender = $this->getErrorRender();
+        $errType     = $this->obtainErrorType($errSeverity);
+        $errorRender = $this->obtainErrorRender();
         
         //Call the "callRender" method for this class (or child class)
         $this->callRender(
@@ -246,7 +246,7 @@ class Errors
      * 
      * @return string
      */
-    protected function getErrorType($errSeverity)
+    protected function obtainErrorType($errSeverity)
     {
         $errorMap = [
             E_ERROR             => 'Fatal',
