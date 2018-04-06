@@ -60,7 +60,7 @@ class Application extends \BFW\Application
     {
         $this->runSteps = [
             [$this, 'loadMemcached'],
-            [$this, 'readAllModules'],
+            [$this, 'loadAllModules'],
             [$this, 'installModules']
         ];
     }

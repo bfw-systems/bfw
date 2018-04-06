@@ -448,7 +448,7 @@ class Application
     {
         $this->runSteps = [
             [$this, 'loadMemcached'],
-            [$this, 'readAllModules'],
+            [$this, 'loadAllModules'],
             [$this, 'loadAllCoreModules'],
             [$this, 'loadAllAppModules'],
             [$this, 'runCliFile'],
@@ -511,7 +511,7 @@ class Application
      * 
      * @return void
      */
-    protected function readAllModules()
+    protected function loadAllModules()
     {
         $listModules = array_diff(scandir(MODULES_DIR), ['.', '..']);
 
