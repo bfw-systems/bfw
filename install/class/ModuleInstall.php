@@ -439,15 +439,7 @@ class ModuleInstall
 
         //Copy each config file declared
         foreach ($this->configFilesList as $configFileName) {
-            try {
-                $this->copyConfigFile($configFileName);
-            } catch (Exception $e) {
-                trigger_error(
-                    'Module '.$this->name.' Config file '.$configFileName
-                    .' copy error: '.$e->getMessage(),
-                    E_USER_WARNING
-                );
-            }
+            $this->copyConfigFile($configFileName);
         }
     }
 
