@@ -452,7 +452,8 @@ class Application
             [$this, 'runAllCoreModules'],
             [$this, 'runAllAppModules'],
             [$this, 'runCliFile'],
-            [$this, 'initCtrlRouterLink']
+            [$this, 'initCtrlRouterLink'],
+            [$this, 'runCtrlRouterLink']
         ];
     }
 
@@ -630,6 +631,22 @@ class Application
         );
         
         $this->addSubject($ctrlRouterTask, 'ctrlRouterLink');
+    }
+    
+    /**
+     * Execute the ctrlRouter task to find the route and the controller.
+     * If nothing is found (context object), return an 404 error.
+     * Not executed in cli.
+     * 
+     * @return void
+     */
+    protected function runCtrlRouterLink()
+    {
+        if (PHP_SAPI === 'cli') {
+            return;
+        }
+        
+        $ctrlRouterTask = $this->getSubjectForName('ctrlRouterLink');
         $ctrlRouterTask->run();
         
         if ($this->ctrlRouterInfos->isFound === false) {
