@@ -2,11 +2,18 @@
 
 namespace BFW\Helpers;
 
+use \Exception;
+
 /**
  * Class use to read a directory and sub-directories
  */
 class ReadDirectory
 {
+    /**
+     * @const ERR_RUN_OPENDIR Exception code if opendir fail
+     */
+    const ERR_RUN_OPENDIR = 1206001;
+    
     /**
      * @var string $calledClass : Name of the current class.
      * For recall the correct class when she's extended.
@@ -75,7 +82,11 @@ class ReadDirectory
     {
         $dir = opendir($path);
         if ($dir === false) {
-            return;
+            throw new Exception(
+                'The directory can not be open. '
+                .'See php error log for more informations.',
+                self::ERR_RUN_OPENDIR
+            );
         }
 
         //Tant qu'il y a des fichiers à lire dans le dossier
