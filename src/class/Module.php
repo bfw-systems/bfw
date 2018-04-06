@@ -237,7 +237,7 @@ class Module
      * 
      * @throws Exception If the file not exists
      */
-    protected function getRunnerFile()
+    protected function obtainRunnerFile()
     {
         $moduleInfos = $this->loadInfos;
         $runnerFile  = '';
@@ -272,7 +272,7 @@ class Module
             return;
         }
         
-        $runnerFile   = $this->getRunnerFile();
+        $runnerFile   = $this->obtainRunnerFile();
         $initFunction = function() use ($runnerFile) {
             if ($runnerFile === null) {
                 return;
