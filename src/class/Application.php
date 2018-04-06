@@ -478,7 +478,7 @@ class Application
         $runTasks = $this->getSubjectForName('ApplicationTasks');
         
         $runTasks->run();
-        $runTasks->sendNotify('bfw_run_finish');
+        $runTasks->sendNotify('bfw_run_done');
     }
 
     /**

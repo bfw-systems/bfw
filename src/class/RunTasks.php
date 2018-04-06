@@ -116,7 +116,7 @@ class RunTasks extends Subjects
                 $callback();
             }
 
-            $this->addNotification($prefix.'_finish_'.$actionName, $context);
+            $this->addNotification($prefix.'_done_'.$actionName, $context);
         }
         
         $this->addNotification($prefix.'_end_run_tasks');

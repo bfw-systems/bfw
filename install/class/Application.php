@@ -74,7 +74,7 @@ class Application extends \BFW\Application
         
         $runTasks->setNotifyPrefix('BfwAppModulesInstall');
         $runTasks->run();
-        $runTasks->sendNotify('bfw_modules_install_finish');
+        $runTasks->sendNotify('bfw_modules_install_done');
     }
     
     /**
