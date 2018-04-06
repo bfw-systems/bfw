@@ -167,11 +167,13 @@ class Config
         foreach ($listFiles as $file) {
             $fileKey  = $pathIntoFirstDir.$file;
             $readPath = $dirPath.'/'.$file;
+            
+            if (is_link($readPath)) {
+                $readPath = realpath($readPath);
+            }
 
             if (is_file($readPath)) {
                 $this->configFiles[$fileKey] = $readPath;
-            } elseif (is_link($readPath)) {
-                $this->configFiles[$fileKey] = realpath($readPath);
             } elseif (is_dir($readPath)) {
                 $this->searchAllConfigFiles(
                     $readPath,
