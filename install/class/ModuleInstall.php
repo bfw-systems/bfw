@@ -225,7 +225,7 @@ class ModuleInstall
      * 
      * @return \stdClass
      */
-    protected function getInfosFromModule()
+    protected function obtainInfosFromModule()
     {
         return \BFW\Module::installInfos($this->sourcePath);
     }
@@ -239,7 +239,7 @@ class ModuleInstall
     {
         $this->findModuleName();
         
-        $infos = $this->getInfosFromModule();
+        $infos = $this->obtainInfosFromModule();
         
         //check if srcPath is define
         if (!property_exists($infos, 'srcPath')) {
