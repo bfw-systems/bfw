@@ -205,9 +205,9 @@ class Application
      * 
      * @return \BFW\Module
      */
-    public function getModule($moduleName)
+    public function getModuleForName($moduleName)
     {
-        return $this->modules->getModule($moduleName);
+        return $this->modules->getModuleForName($moduleName);
     }
 
     /**
@@ -576,7 +576,7 @@ class Application
         $this->getSubjectForName('ApplicationTasks')
             ->sendNotify('BfwApp_load_module_'.$moduleName);
         
-        $this->modules->getModule($moduleName)->runModule();
+        $this->modules->getModuleForName($moduleName)->runModule();
     }
 
     /**
