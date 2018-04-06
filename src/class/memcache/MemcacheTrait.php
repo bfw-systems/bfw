@@ -50,7 +50,7 @@ trait MemcacheTrait
      * 
      * @throws \Exception If a server is not connected
      * 
-     * @return void
+     * @return boolean
      */
     protected function testConnect()
     {
@@ -76,6 +76,8 @@ trait MemcacheTrait
                 );
             }
         }
+        
+        return true;
     }
     
     /**
