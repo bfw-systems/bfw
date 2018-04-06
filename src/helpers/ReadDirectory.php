@@ -130,11 +130,11 @@ class ReadDirectory
      * Recall ReadDirectory to read this directory
      * This is to avoid having the recursion error
      * 
-     * @param string $directory
+     * @param string $dirPath
      */
-    protected function dirAction($directory)
+    protected function dirAction($dirPath)
     {
         $read = new $this->calledClass($this->list);
-        $read->run($directory);
+        $read->run($dirPath);
     }
 }
