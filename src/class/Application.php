@@ -211,15 +211,13 @@ class Application
     }
 
     /**
-     * Getter to access to an option's value
-     * 
-     * @param string $optionKey The key for the option
+     * Getter to access to the options system
      * 
      * @return mixed
      */
-    public function getOption($optionKey)
+    public function getOptions()
     {
-        return $this->options->getValue($optionKey);
+        return $this->options;
     }
     
     /**
