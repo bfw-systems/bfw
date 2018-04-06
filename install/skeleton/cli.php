@@ -20,7 +20,8 @@ $vendorDir = realpath($rootDir.'/vendor');
 require_once($vendorDir.'/autoload.php');
 
 //Initialise BFW application
-$app = \BFW\Application::init([
+$app = \BFW\Application::getInstance();
+$app->initSystem([
     'rootDir'   => $rootDir,
     'vendorDir' => $vendorDir
 ]);

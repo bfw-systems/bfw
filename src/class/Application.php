@@ -123,16 +123,13 @@ class Application
     /**
      * Get the Application instance (Singleton pattern)
      * 
-     * @param array $options Options passed to application
-     * 
      * @return \BFW\Application The current instance of this class
      */
-    public static function getInstance($options = [])
+    public static function getInstance()
     {
         if (self::$instance === null) {
             $calledClass = get_called_class(); //Autorize extends this class
             self::$instance = new $calledClass;
-            self::$instance->initSystem($options);
         }
 
         return self::$instance;
@@ -233,7 +230,7 @@ class Application
      * 
      * @return void
      */
-    protected function initSystem($options)
+    public function initSystem($options)
     {
         $this->initOptions($options);
         $this->initConstants();
@@ -244,6 +241,8 @@ class Application
         $this->initErrors();
         $this->initRunTasks();
         $this->initModules();
+        
+        return $this;
     }
 
     /**
