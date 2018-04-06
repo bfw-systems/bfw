@@ -65,8 +65,6 @@ class Memcached extends \Memcached implements MemcacheInterface
         } else {
             parent::__construct();
         }
-
-        $this->connectToServers();
     }
     
     /**
@@ -86,7 +84,7 @@ class Memcached extends \Memcached implements MemcacheInterface
      * 
      * @return void
      */
-    protected function connectToServers()
+    public function connectToServers()
     {
         //Array for the list of server(s) to connect
         $addServers  = [];

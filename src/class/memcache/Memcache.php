@@ -76,8 +76,6 @@ class Memcache extends \Memcache implements MemcacheInterface
         
         $app          = \BFW\Application::getInstance();
         $this->config = $app->getConfig()->getValue('memcached');
-
-        $this->connectToServers();
     }
     
     /**
@@ -95,7 +93,7 @@ class Memcache extends \Memcache implements MemcacheInterface
      * 
      * @return void
      */
-    protected function connectToServers()
+    public function connectToServers()
     {
         //Loop on declared server(s)
         foreach ($this->config['servers'] as $server) {

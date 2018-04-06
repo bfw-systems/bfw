@@ -515,6 +515,8 @@ class Application
                 $this::ERR_MEMCACHED_NOT_IMPLEMENT_INTERFACE
             );
         }
+        
+        $this->memcached->connectToServers();
     }
 
     /**
