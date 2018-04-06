@@ -16,10 +16,10 @@ class ModuleInstall
     const ERR_LOAD_NO_PROPERTY_SRCPATH = 1102001;
     
     /**
-     * @const ERR_REINSTALL_FAIL_SYMLINK Exception code if the reinstall fail
+     * @const ERR_REINSTALL_FAIL_UNLINK Exception code if the reinstall fail
      * because the module symlink can not be remove.
      */
-    const ERR_REINSTALL_FAIL_SYMLINK = 1102002;
+    const ERR_REINSTALL_FAIL_UNLINK = 1102002;
     
     /**
      * @const ERR_REINSTALL_FAIL_REMOVE_CONFIG_DIR Exception code if the
@@ -371,7 +371,7 @@ class ModuleInstall
                 echo "\033[1;31mSymbolic link remove fail.\033[0m\n";
                 throw new Exception(
                     'Reinstall fail. Symlink remove error',
-                    $this::ERR_REINSTALL_FAIL_SYMLINK
+                    $this::ERR_REINSTALL_FAIL_UNLINK
                 );
             }
         }
