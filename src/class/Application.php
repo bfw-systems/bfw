@@ -449,8 +449,8 @@ class Application
         $this->runSteps = [
             [$this, 'loadMemcached'],
             [$this, 'loadAllModules'],
-            [$this, 'loadAllCoreModules'],
-            [$this, 'loadAllAppModules'],
+            [$this, 'runAllCoreModules'],
+            [$this, 'runAllAppModules'],
             [$this, 'runCliFile'],
             [$this, 'initCtrlRouterLink']
         ];
@@ -535,7 +535,7 @@ class Application
      * 
      * @return void
      */
-    protected function loadAllCoreModules()
+    protected function runAllCoreModules()
     {
         foreach ($this->config->getValue('modules') as $moduleInfos) {
             $moduleName    = $moduleInfos['name'];
@@ -545,7 +545,7 @@ class Application
                 continue;
             }
 
-            $this->loadModule($moduleName);
+            $this->runModule($moduleName);
         }
     }
 
@@ -556,14 +556,14 @@ class Application
      * 
      * @return void
      */
-    protected function loadAllAppModules()
+    protected function runAllAppModules()
     {
         $tree = $this->modules->getLoadTree();
 
         foreach ($tree as $firstLine) {
             foreach ($firstLine as $secondLine) {
                 foreach ($secondLine as $moduleName) {
-                    $this->loadModule($moduleName);
+                    $this->runModule($moduleName);
                 }
             }
         }
@@ -576,7 +576,7 @@ class Application
      * 
      * @return void
      */
-    protected function loadModule($moduleName)
+    protected function runModule($moduleName)
     {
         $this->getSubjectForName('ApplicationTasks')
             ->sendNotify('BfwApp_load_module_'.$moduleName);
