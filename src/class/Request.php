@@ -270,9 +270,9 @@ class Request
         $request = [
             'scheme'   => $scheme,
             'host'     => $this->serverValue('HTTP_HOST'),
-            'port'     => '',
-            'user'     => '',
-            'pass'     => '',
+            'port'     => $this->serverValue('SERVER_PORT'),
+            'user'     => $this->serverValue('PHP_AUTH_USER'),
+            'pass'     => $this->serverValue('PHP_AUTH_PW'),
             'path'     => '',
             'query'    => '',
             'fragment' => '',
