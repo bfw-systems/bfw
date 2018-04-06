@@ -78,7 +78,7 @@ class Application extends \BFW\Application
         $this->runSteps = [
             [$this, 'loadMemcached'],
             [$this, 'loadAllModules'],
-            [$this, 'installModules']
+            [$this, 'installAllModules']
         ];
     }
 
@@ -99,7 +99,7 @@ class Application extends \BFW\Application
      * 
      * @return void
      */
-    protected function installModules()
+    protected function installAllModules()
     {
         echo 'Read all modules to run install script :'."\n";
         
