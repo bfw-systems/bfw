@@ -30,8 +30,8 @@ before_script:
   - chmod +x ./test/bin/installModule.php
 
 script:
-#  - ./vendor/bin/atoum -c .atoum.php -d test/unit/install test/unit/src +verbose
-  - ./vendor/bin/atoum -c .atoum.php -d test/unit/install test/unit/src -utr
+#  - ./vendor/bin/atoum -c .atoum.php -d test/unit/src +verbose
+  - ./vendor/bin/atoum -c .atoum.php -d test/unit/src -utr
   - php ./test/bin/installFwk.php
   - php ./test/bin/installModule.php
 
