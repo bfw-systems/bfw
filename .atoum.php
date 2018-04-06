@@ -41,7 +41,7 @@ $script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/class/memcac
 
 if(file_exists('/home/travis'))
 {
-    //$script->addDefaultReport(); //For travis debug only !
+    $script->addDefaultReport(); //For travis debug only !
     
     // Publish code coverage report on coveralls.io
     $sources = './src';
