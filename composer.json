@@ -40,7 +40,7 @@
             "BFW\\": "src/class",
             "BFW\\Core\\": "src/class/core",
             "BFW\\Helpers\\": "src/helpers",
-            "BFW\\Install\\": "install/class/",
+            "BFW\\Install\\": "src/class/install",
             "BFW\\Memcache\\": "src/class/memcache"
         }
     },
