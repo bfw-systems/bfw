@@ -159,6 +159,26 @@ class Application
     }
     
     /**
+     * Getter to access to the errors instance
+     * 
+     * @return \BFW\Errors
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+    
+    /**
+     * Getter to access to the ctrlRouterInfos property
+     * 
+     * @return null|\stdClass
+     */
+    public function getCtrlRouterInfos()
+    {
+        return $this->ctrlRouterInfos;
+    }
+    
+    /**
      * Getter to access to memcache instance
      * 
      * @return Object|null
@@ -166,6 +186,16 @@ class Application
     public function getMemcached()
     {
         return $this->memcached;
+    }
+    
+    /**
+     * Getter to access to modules system
+     * 
+     * @return \BFW\Modules
+     */
+    public function getModules()
+    {
+        return $this->modules;
     }
     
     /**
@@ -210,6 +240,16 @@ class Application
     public function getRunSteps()
     {
         return $this->runSteps;
+    }
+
+    /**
+     * Getter to access to the subjects list
+     * 
+     * @return \BFW\Subjects[]
+     */
+    public function getSubjectsList()
+    {
+        return $this->subjectsList;
     }
     
     /**
