@@ -41,6 +41,16 @@ class Subjects implements SplSubject
     }
     
     /**
+     * Return list of all notify to send
+     * 
+     * @return \stdClass[]
+     */
+    public function getNotifyHeap()
+    {
+        return $this->notifyHeap;
+    }
+    
+    /**
      * Return the action
      * 
      * @return string
