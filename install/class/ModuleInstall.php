@@ -469,7 +469,7 @@ class ModuleInstall
                 );
                 
                 throw new Exception(
-                    'Reinstall fail. Remove module config directory error.',
+                    'Reinstall fail. Remove module config directory error',
                     $this::ERR_REINSTALL_FAIL_REMOVE_CONFIG_DIR
                 );
             }

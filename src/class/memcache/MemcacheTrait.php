@@ -152,7 +152,7 @@ trait MemcacheTrait
         if (is_subclass_of($this, '\Memcache')) {
             return $this->replace($key, $value, 0, $expire);
         } elseif (is_subclass_of($this, '\Memcached')) {
-            return $this->replace($key, $value, $expire);
+            return $this->replace($key, $value, $expire); //We can use touch()
         }
     }
 }

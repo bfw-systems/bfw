@@ -391,7 +391,7 @@ class Application
      */
     protected function initErrors()
     {
-        $this->errors = new \BFW\Core\Errors();
+        $this->errors = new \BFW\Core\Errors;
     }
 
     /**
@@ -642,7 +642,7 @@ class Application
             return;
         }
 
-        //Others properties will be dynamically added by modules
+        //Others properties can be dynamically added by modules
         $this->ctrlRouterInfos = (object) [
             'isFound' => false
         ];

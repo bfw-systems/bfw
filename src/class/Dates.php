@@ -243,6 +243,7 @@ class Dates extends DateTime
     {
         $originalDate = clone $this;
         @parent::modify($modify); //Yeurk, but for personnal pattern, no choice
+        //Maybe with try/catch for PHP7, but for 5.6, no idea to avoid that.
 
         //If the keyword used is ok with DateTime::modify method
         if ($originalDate != $this) {
@@ -303,7 +304,8 @@ class Dates extends DateTime
         );
         
         $originalDate = clone $this;
-        //Yeurk, but I preferer sends an Exception, not an error
+        //Yeurk, but I preferer sends an Exception, not an error.
+        //Maybe easier PHP7 (try/catch ?), but no idea for 5.6.
         @parent::modify($match[1].$match[2].' '.$keyword);
         
         //If no change on object, The keyword is unknown
