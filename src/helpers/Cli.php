@@ -48,16 +48,16 @@ class Cli
      * 
      * @param string $msg Message to display
      * @param string $colorTxt (default "white") Text color
-     * @param string $colorBg (default "black") Background color
      * @param string $style (default "normal") Style for the message (bold etc)
+     * @param string $colorBg (default "black") Background color
      * 
      * @return void
      */
     public static function displayMsg(
         $msg,
         $colorTxt = 'white',
-        $colorBg = 'black',
-        $style = 'normal'
+        $style = 'normal',
+        $colorBg = 'black'
     ) {
         if (func_num_args() === 1) {
             echo $msg;
@@ -90,25 +90,27 @@ class Cli
      * 
      * @param string $msg Message to display
      * @param string $colorTxt (default "white") Text color
-     * @param string $colorBg (default "black") Background color
      * @param string $style (default "normal") Style for the message (bold etc)
+     * @param string $colorBg (default "black") Background color
      * 
      * @return void
      */
     public static function displayMsgNL(
         $msg,
         $colorTxt = 'white',
-        $colorBg = 'black',
-        $style = 'normal'
+        $style = 'normal',
+        $colorBg = 'black'
     ) {
+        $nbArgs       = func_num_args();
         $currentClass = get_called_class();
         
-        if (func_num_args() === 1) {
+        if ($nbArgs === 1) {
             $currentClass::displayMsg($msg."\n");
-            return;
+        } elseif ($nbArgs > 3) {
+            $currentClass::displayMsg($msg."\n", $colorTxt, $style, $colorBg);
+        } else {
+            $currentClass::displayMsg($msg."\n", $colorTxt, $style);
         }
-        
-        $currentClass::displayMsg($msg."\n", $colorTxt, $colorBg, $style);
     }
 
     /**
