@@ -83,7 +83,7 @@ class Module
     public static function installInfos($sourceFiles)
     {
         $currentClass = get_called_class(); //Allow extends
-        return $currentClass::loadJsonFile(
+        return $currentClass::readJsonFile(
             $sourceFiles.'/bfwModulesInfos.json'
         );
     }
@@ -172,7 +172,7 @@ class Module
     {
         $currentClass = get_called_class(); //Allow extends
         
-        $this->loadInfos = $currentClass::loadJsonFile(
+        $this->loadInfos = $currentClass::readJsonFile(
             MODULES_DIR.$this->pathName
             .'/module.json'
         );
@@ -187,7 +187,7 @@ class Module
      * 
      * @throws Exception If the file is not found or for a json parser error
      */
-    protected static function loadJsonFile($jsonFilePath)
+    protected static function readJsonFile($jsonFilePath)
     {
         if (!file_exists($jsonFilePath)) {
             throw new Exception(
