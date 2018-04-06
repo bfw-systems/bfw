@@ -18,7 +18,7 @@ trait MemcacheTrait
      * 
      * @throw \Exception If informations datas is not an array
      */
-    protected function getServerInfos(&$infos)
+    protected function completeServerInfos(&$infos)
     {
         if (!is_array($infos)) {
             throw new Exception(

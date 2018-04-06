@@ -97,7 +97,7 @@ class Memcache extends \Memcache implements MemcacheInterface
     {
         //Loop on declared server(s)
         foreach ($this->config['servers'] as $server) {
-            $this->getServerInfos($server);
+            $this->completeServerInfos($server);
             
             $host       = $server['host'];
             $port       = $server['port'];
