@@ -78,7 +78,8 @@ if (
     exit;
 }
 
-$app = \BFW\Install\Application::getInstance([
+$app = \BFW\Install\Application::getInstance();
+$app->initSystem([
     'rootDir'    => $bfwPath,
     'vendorDir'  => $vendorPath,
     'runSession' => false

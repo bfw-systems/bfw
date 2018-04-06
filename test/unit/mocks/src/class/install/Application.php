@@ -91,7 +91,7 @@ class Application extends \BFW\Install\Application
         if ($this->mockedConfigValues === null) {
             $this->mockedConfigValues = require(
                 $this->options->getValue('vendorDir')
-                .'/bulton-fr/bfw/install/skeleton/config.php'
+                .'/bulton-fr/bfw/skel/app/config/bfw/config.php'
             );
         }
         
