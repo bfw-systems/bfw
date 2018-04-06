@@ -429,10 +429,7 @@ class ModuleInstall
         }
 
         //Create the module directory into the config directory.
-        $configDirStatus = $this->createConfigDirectory();
-        if ($configDirStatus === false) {
-            return;
-        }
+        $this->createConfigDirectory();
 
         //Copy each config file declared
         foreach ($this->configFilesList as $configFileName) {
@@ -451,7 +448,7 @@ class ModuleInstall
     /**
      * Create a directory into project config directory for the module
      * 
-     * @return boolean : If directory exist.
+     * @return void
      * 
      * @throws Exception : If remove directory fail with the reinstall option
      */
@@ -483,7 +480,7 @@ class ModuleInstall
         //If the directory already exist, nothing to do
         if ($alreadyExist) {
             echo "\033[1;33mAlready exist.\033[0m\n";
-            return true;
+            return;
         }
         
         //Create the directory
@@ -497,7 +494,6 @@ class ModuleInstall
         }
 
         echo "\033[1;32mCreated.\033[0m\n";
-        return true;
     }
     
     /**
