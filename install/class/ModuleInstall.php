@@ -40,6 +40,12 @@ class ModuleInstall
     const ERR_COPY_CONFIG_FAIL = 1102005;
     
     /**
+     * @const ERR_LOAD_EMPTY_PROPERTY_SRCPATH Exception code if the property
+     * srcPath is empty during the load of the module
+     */
+    const ERR_LOAD_EMPTY_PROPERTY_SRCPATH = 1102006;
+    
+    /**
      * @var string $projectPath : Path to root bfw project
      */
     protected $projectPath = '';
@@ -240,15 +246,7 @@ class ModuleInstall
         $this->findModuleName();
         
         $infos = $this->obtainInfosFromModule();
-        
-        //check if srcPath is define
-        if (!property_exists($infos, 'srcPath')) {
-            throw new Exception(
-                'srcPath must be present into bfwModulesInfos.json file'
-                .' for the module '.$this->name,
-                $this::ERR_LOAD_NO_PROPERTY_SRCPATH
-            );
-        }
+        $this->checkPropertySrcPath($infos);
         
         //Defines default paths
         $this->sourceSrcPath    = $infos->srcPath;
@@ -275,6 +273,36 @@ class ModuleInstall
         $this->sourceConfigPath = realpath(
             $this->sourcePath.'/'.$this->sourceConfigPath
         );
+    }
+    
+    /**
+     * Somes check about the property srcPath.
+     * 
+     * @param \stdClass $infos
+     * 
+     * @return boolean
+     * 
+     * @throws Exception If a check fail
+     */
+    protected function checkPropertySrcPath($infos)
+    {
+        if (!property_exists($infos, 'srcPath')) {
+            throw new Exception(
+                'srcPath must be present into bfwModulesInfos.json file'
+                .' for the module '.$this->name,
+                $this::ERR_LOAD_NO_PROPERTY_SRCPATH
+            );
+        }
+        
+        if (empty($infos->srcPath)) {
+            throw new Exception(
+                'srcPath property should not be empty into'
+                .' bfwModulesInfos.json file for the module '.$this->name,
+                $this::ERR_LOAD_EMPTY_PROPERTY_SRCPATH
+            );
+        }
+        
+        return true;
     }
 
     /**
