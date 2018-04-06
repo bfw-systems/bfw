@@ -25,18 +25,6 @@ class Application
     const ERR_MEMCACHED_CLASS_NOT_FOUND = 1301002;
     
     /**
-     * @const ERR_CLI_NO_FILE_SPECIFIED Exception code if the cli file to run
-     * is not specified
-     */
-    const ERR_CLI_NO_FILE_SPECIFIED = 1301003;
-    
-    /**
-     * @const ERR_CLI_FILE_NOT_FOUND Exception code if the cli file to run is
-     * not found.
-     */
-    const ERR_CLI_FILE_NOT_FOUND = 1301004;
-    
-    /**
      * @var \BFW\Application|null $instance Application instance (Singleton)
      */
     protected static $instance = null;
@@ -89,6 +77,11 @@ class Application
     protected $errors;
     
     /**
+     * @var \BFW\Core\Cli $cli Cli system
+     */
+    protected $cli;
+    
+    /**
      * @var \BFW\Subjects[] $subjectsList List of all subjects declared
      */
     protected $subjectsList;
@@ -133,6 +126,16 @@ class Application
         }
 
         return self::$instance;
+    }
+
+    /**
+     * Getter to access to cli property
+     * 
+     * @return \BFW\Core\Cli
+     */
+    public function getCli()
+    {
+        return $this->cli;
     }
 
     /**
@@ -225,6 +228,7 @@ class Application
         $this->initRequest();
         $this->initSession();
         $this->initErrors();
+        $this->initCli();
         $this->initRunTasks();
         $this->initModules();
         
@@ -333,6 +337,16 @@ class Application
     protected function initErrors()
     {
         $this->errors = new \BFW\Core\Errors();
+    }
+
+    /**
+     * Initialize cli property with the \BFW\Core\Cli class
+     * 
+     * @return void
+     */
+    protected function initCli()
+    {
+        $this->cli = new \BFW\Core\Cli;
     }
     
     /**
@@ -538,29 +552,11 @@ class Application
             return;
         }
 
-        $cliArgs = getopt('f:');
-        if (!isset($cliArgs['f'])) {
-            throw new Exception(
-                'Error: No file specified.',
-                $this::ERR_CLI_NO_FILE_SPECIFIED
-            );
-        }
-
-        $file = $cliArgs['f'];
-        if (!file_exists(CLI_DIR.$file.'.php')) {
-            throw new Exception(
-                'File to execute not found.',
-                $this::ERR_CLI_FILE_NOT_FOUND
-            );
-        }
-
-        $fctRunCliFile = function() use ($file) {
-            require_once(CLI_DIR.$file.'.php');
-        };
-        
         $this->getSubjectForName('ApplicationTasks')
             ->sendNotify('run_cli_file');
-        $fctRunCliFile();
+        
+        $fileToExec = $this->cli->obtainFileFromArg();
+        $this->cli->run($fileToExec);
     }
     
     /**

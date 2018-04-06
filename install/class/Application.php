@@ -37,6 +37,14 @@ class Application extends \BFW\Application
     {
         return;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function initCli()
+    {
+        return;
+    }
     
     public static function addModuleInstall(ModuleInstall $module)
     {
