@@ -102,8 +102,7 @@ trait MemcacheTrait
         if (!$verifParams) {
             throw new Exception(
                 'The $key parameters must be a string.'
-                .' Currently the value is a/an '.gettype($key)
-                .' and is equal to '.$key,
+                .' Currently the value is a/an '.gettype($key),
                 $this::ERR_IFEXISTS_PARAM_TYPE
             );
         }
