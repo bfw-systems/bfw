@@ -79,6 +79,16 @@ class Memcache extends \Memcache implements MemcacheInterface
 
         $this->connectToServers();
     }
+    
+    /**
+     * Get accessor to the property config
+     * 
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
 
     /**
      * Connect to memcache(d) server(s) defined on config

@@ -68,6 +68,16 @@ class Memcached extends \Memcached implements MemcacheInterface
 
         $this->connectToServers();
     }
+    
+    /**
+     * Get accessor to the property config
+     * 
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
 
     /**
      * Get the list of server already connected (persistent)
