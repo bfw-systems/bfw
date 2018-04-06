@@ -89,9 +89,9 @@ class Form
      * 
      * @return \stdClass
      */
-    protected function getToken()
+    protected function obtainToken()
     {
-        return $this->getTokenFromSession();
+        return $this->obtainTokenFromSession();
     }
 
     /**
@@ -103,7 +103,7 @@ class Form
      * 
      * @throws Exception If there are no token
      */
-    protected function getTokenFromSession()
+    protected function obtainTokenFromSession()
     {
         global $_SESSION;
 
@@ -162,7 +162,7 @@ class Form
     public function checkToken($tokenToCheck, $timeExpire = 15)
     {
         //Throw Exception
-        $tokenInfos = $this->getToken();
+        $tokenInfos = $this->obtainToken();
 
         $token      = $tokenInfos->token;
         $dateCreate = $tokenInfos->date;
@@ -190,7 +190,7 @@ class Form
     public function hasToken()
     {
         try {
-            $this->getToken();
+            $this->obtainToken();
         } catch (Exception $e) {
             return false;
         }
