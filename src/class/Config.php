@@ -40,6 +40,12 @@ class Config
     const ERR_VALUE_FORMAT = 1303005;
     
     /**
+     * @const ERR_KEY_NOT_ADDED Exception code if the key can not be added to
+     * the config.
+     */
+    const ERR_KEY_NOT_ADDED = 1303006;
+    
+    /**
      * @var string $configDirName Directory's name in config dir
      */
     protected $configDirName = '';
@@ -352,8 +358,8 @@ class Config
             $this->config[$filename]->{$configKey} = $configValue;
         } else {
             throw new Exception(
-                'The config key '.$configKey.' has not been found',
-                $this::ERR_KEY_NOT_FOUND
+                'The config key '.$configKey.' can not be added.',
+                $this::ERR_KEY_NOT_ADDED
             );
         }
         
