@@ -398,11 +398,7 @@ class Dates extends DateTime
     public function humanReadable($returnDateAndTime = true)
     {
         $current = new Dates;
-        
-        $dateZoneName = parent::getTimezone()->getName();
-        $current->setTimezone(new \DateTimeZone($dateZoneName));
-        
-        $diff = parent::diff($current);
+        $diff    = parent::diff($current);
         
         $parsedTxt = (object) [
             'date' => '',
