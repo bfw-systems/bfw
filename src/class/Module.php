@@ -48,18 +48,16 @@ class Module
 
     /**
      * Constructor
-     * Load all informations if $loadModule is true
      * 
      * @param string $pathName Module name
-     * @param boolean $loadModule (default true) If run load information
      */
-    public function __construct($pathName, $loadModule = true)
+    public function __construct($pathName)
     {
         $this->pathName = $pathName;
-        
-        if ($loadModule === true) {
-            $this->loadModule();
-        }
+        $this->status   = (object) [
+            'load' => false,
+            'run'  => false
+        ];
     }
     
     /**
@@ -69,10 +67,6 @@ class Module
      */
     public function loadModule()
     {
-        $this->status       = new stdClass();
-        $this->status->load = false;
-        $this->status->run  = false;
-
         $this->loadConfig();
         $this->loadModuleInfos();
 

@@ -61,6 +61,7 @@ class Modules
     public function addModule($moduleName)
     {
         $this->modules[$moduleName] = new \BFW\Module($moduleName);
+        $this->modules[$moduleName]->loadModule();
     }
 
     /**
