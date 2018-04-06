@@ -1,13 +1,13 @@
 <?php
 
-namespace BFW\Traits;
+namespace BFW\Memcache;
 
 use \Exception;
 
 /**
  * Trait to regroup memcache(d) methods
  */
-trait Memcache
+trait MemcacheTrait
 {
     /**
      * Read the server information and add not existing keys

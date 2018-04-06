@@ -8,7 +8,7 @@ namespace BFW\Memcache;
 class Memcached extends \Memcached
 {
     //Include Memcache trait to add some common methods with Memcache class
-    use \BFW\Traits\Memcache;
+    use \BFW\Memcache\MemcacheTrait;
     
     /**
      * @const ERR_SERVER_INFOS_FORMAT Exception code if server informations is

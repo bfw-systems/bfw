@@ -10,7 +10,7 @@ use \Exception;
 class Memcache extends \Memcache
 {
     //Include Memcache trait to add some common methods with Memcached class
-    use \BFW\Traits\Memcache;
+    use \BFW\Memcache\MemcacheTrait;
     
     /**
      * @const ERR_SERVER_INFOS_FORMAT Exception code if server informations is
