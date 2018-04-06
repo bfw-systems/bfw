@@ -44,6 +44,16 @@ class Form
     {
         $this->formId = (string) $formId;
     }
+    
+    /**
+     * Getter accessor to the property formId
+     * 
+     * @return string
+     */
+    public function getFormId()
+    {
+        return $this->formId;
+    }
 
     /**
      * Save the form's token
