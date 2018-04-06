@@ -56,6 +56,13 @@ class Application extends \BFW\Application
         return;
     }
     
+    /**
+     * Add a new module in the list to install
+     * 
+     * @param \BFW\Install\ModuleInstall $module
+     * 
+     * @return void
+     */
     public static function addModuleInstall(ModuleInstall $module)
     {
         $moduleName = $module->getName();
