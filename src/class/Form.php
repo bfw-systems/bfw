@@ -167,12 +167,13 @@ class Form
 
         $limitDate = new DateTime;
         $limitDate->modify('-'.(int) $timeExpire.' minutes');
-
+        
+        unset($_SESSION['formsTokens'][$this->formId]);
+        
         if ($dateCreate < $limitDate) {
             return false;
         }
 
-        unset($_SESSION['formsTokens'][$this->formId]);
         return true;
     }
     
