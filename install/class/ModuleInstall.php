@@ -57,6 +57,12 @@ class ModuleInstall
     const ERR_INSTALL_FAIL_SYMLINK = 1102008;
     
     /**
+     * @const ERR_FAIL_CREATE_CONFIG_DIR Exception code if the config directory
+     * can not be create.
+     */
+    const ERR_FAIL_CREATE_CONFIG_DIR = 1102009;
+    
+    /**
      * @var string $projectPath : Path to root bfw project
      */
     protected $projectPath = '';
@@ -481,19 +487,17 @@ class ModuleInstall
         }
         
         //Create the directory
-        if (mkdir($this->targetConfigPath, 0755)) {
-            echo "\033[1;32mCreated.\033[0m\n";
-            return true;
+        if (!mkdir($this->targetConfigPath, 0755)) {
+            echo "\033[1;31mFail. \033[0m\n";
+            
+            throw new Exception(
+                'Error to create the config directory.',
+                $this::ERR_FAIL_CREATE_CONFIG_DIR
+            );
         }
 
-        //If error during the directory creation
-        trigger_error(
-            'Module '.$this->name.' : Error to create the config directory',
-            E_USER_WARNING
-        );
-        echo "\033[1;31mFail. \033[0m\n";
-        
-        return false;
+        echo "\033[1;32mCreated.\033[0m\n";
+        return true;
     }
     
     /**
