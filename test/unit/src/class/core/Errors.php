@@ -3,487 +3,509 @@
 namespace BFW\Core\test\unit;
 
 use \atoum;
-use \BFW\Core\test\unit\mocks\Errors as MockErrors;
-use \BFW\test\helpers\ApplicationInit as AppInit;
 
 require_once(__DIR__.'/../../../../../vendor/autoload.php');
-require_once(__DIR__.'/../../../mocks/src/class/core/ErrorsFunctions.php');
+require_once(__DIR__.'/../../../helpers/ErrorsRenderFunction.php');
 
 /**
  * @engine isolate
  */
 class Errors extends atoum
 {
-    /**
-     * @var $mock Mock instance
-     */
+    use \BFW\Test\Helpers\Application;
+    
     protected $mock;
     
-    /**
-     * @var \BFW\test\helpers\ApplicationInit $app BFW Application instance
-     */
-    protected $app;
-    
-    /**
-     * @var array $forcedConfig Config used for all test into this file
-     */
-    protected $forcedConfig = [];
-
-    /**
-     * Call before each test method
-     * Define forced config
-     * Instantiate BFW Application class
-     * Instantiate the mock
-     * 
-     * @param $testMethod string The name of the test method executed
-     * 
-     * @return void
-     */
     public function beforeTestMethod($testMethod)
     {
-        $this->forcedConfig = [
-            'debug'              => false,
-            'errorRenderFct'     => [
-                'enabled' => false,
-                'default' => [
-                    'class'  => '',
-                    'method' => 'default_error_render'
-                ],
-                'cli'     => [
-                    'class'  => '',
-                    'method' => 'cli_error_render'
-                ]
-            ],
-            'exceptionRenderFct' => [
-                'enabled' => false,
-                'default' => [
-                    'class'  => '',
-                    'method' => 'default_exception_render'
-                ],
-                'cli'     => [
-                    'class'  => '',
-                    'method' => 'cli_exception_render'
-                ]
-            ],
-            'memcached'          => [
-                'enabled'      => false,
-                'class'        => '',
-                'persistentId' => null,
-                'server'       => [
-                    [
-                        'host'       => '',
-                        'port'       => 0,
-                        'timeout'    => null,
-                        'persistent' => false,
-                        'weight'     => 0
-                    ]
-                ]
-            ]
-        ];
+        //$this->createApp();
+        //$this->initApp();
         
-        $this->app = AppInit::init([
-            'forceConfig' => $this->forcedConfig
-        ]);
+        $this->mockGenerator
+            ->makeVisible('defineErrorHandler')
+            ->makeVisible('defineExceptionHandler')
+            ->makeVisible('obtainErrorRender')
+            ->makeVisible('obtainExceptionRender')
+            ->makeVisible('defineRenderToUse')
+            ->makeVisible('callRender')
+            ->makeVisible('saveIntoPhpLog')
+            ->makeVisible('obtainErrorType')
+        ;
         
-        if ($testMethod === 'testConstructor') {
+        if ($testMethod === 'testConstruct') {
+            $this->mockGenerator->generate('BFW\Core\Errors');
             return;
         }
         
-        $this->mock = new MockErrors;
+        $this->mockGenerator
+            ->orphanize('__construct')
+            ->generate('BFW\Core\Errors')
+        ;
+        
+        $this->mock = new \mock\BFW\Core\Errors;
     }
     
-    /**
-     * Test method for __constructor()
-     * 
-     * @return void
-     */
-    public function testConstructor()
+    public function testConstruct()
     {
-        $this->assert('test constructor')
-            ->object($this->mock = new MockErrors)
-                ->isInstanceOf('\BFW\Core\Errors');
+        $this->assert('test Core\Errors::__construct')
+            ->given($defineErrorHandlerCalled = false)
+            ->given($defineExceptionHandlerCalled = false)
+            ->given($controller = new \atoum\mock\controller)
+            ->and($controller->defineErrorHandler = function() use (&$defineErrorHandlerCalled) {
+                $defineErrorHandlerCalled = true;
+            })
+            ->and($controller->defineExceptionHandler = function() use (&$defineExceptionHandlerCalled) {
+                $defineExceptionHandlerCalled = true;
+            })
+            ->then
+            ->object($mock = new \mock\BFW\Core\Errors($controller))
+                ->isInstanceOf('\BFW\Core\Errors')
+            ->boolean($defineErrorHandlerCalled)
+                ->isTrue()
+            ->boolean($defineExceptionHandlerCalled)
+                ->isTrue()
+        ;
     }
     
-    /**
-     * Test method for defineErrorHandler()
-     * 
-     * @return void
-     */
     public function testDefineErrorHandler()
     {
-        $this->assert('test defineErrorHandler without render')
-            ->variable($this->mock->callDefineErrorHandler())
-                ->isNull();
-        
-        $this->assert('test defineErrorHandler with a function render')
-            ->if($this->forcedConfig['errorRenderFct']['enabled'] = true)
-            ->and($this->app->forceConfig($this->forcedConfig))
+        $this->assert('test Core\Errors::defineErrorHandler without render')
+            ->if($this->calling($this->mock)->obtainErrorRender = false)
             ->then
-            ->array($this->mock->callDefineErrorHandler())
-                ->isEqualTo([
-                    $this->mock,
-                    'errorHandler'
-                ]);
+            ->variable($this->mock->defineErrorHandler())
+                ->isNull()
+            ->array($errorHandler = set_error_handler(function($errno, $errstr) {}))
+            ->object($errorHandler[0])
+                ->isNotInstanceOf('\BFW\Core\Errors') // Atoum system, not mine
+            ->given(restore_error_handler()) // Cancel set_error_handler
+        ;
         
-        $this->assert('test defineErrorHandler with a class render')
-            ->if($this->forcedConfig['errorRenderFct']['enabled'] = true)
-            ->and($this->forcedConfig['errorRenderFct']['cli'] = [
-                'class'  => '\BFW\Core\test\unit\mocks\Errors',
-                'method' => 'mockRender'
-            ])
-            ->and($this->app->forceConfig($this->forcedConfig))
+        $this->assert('test Core\Errors::defineErrorHandler with render')
+            //Just need obtainErrorRender not return false value.
+            ->if($this->calling($this->mock)->obtainErrorRender = [$this->mock, 'errorHandler'])
             ->then
-            ->array($this->mock->callDefineErrorHandler())
-                ->isEqualTo([
-                    $this->mock,
-                    'errorHandler'
-                ]);
+            ->variable($this->mock->defineErrorHandler())
+                ->isNull()
+            ->variable($errorHandler = set_error_handler(function($errno, $errstr) {}))
+            ->object($errorHandler[0])
+                ->isInstanceOf('\BFW\Core\Errors')
+            ->string($errorHandler[1])
+                ->isEqualTo('errorHandler')
+            ->given(restore_error_handler()) // Cancel set_error_handler
+        ;
     }
     
-    /**
-     * Test method for defineExceptionHandler()
-     * 
-     * @return void
-     */
     public function testDefineExceptionHandler()
     {
-        $this->assert('test defineExceptionHandler without render')
-            ->variable($this->mock->callDefineExceptionHandler())
-                ->isNull();
-        
-        $this->assert('test defineExceptionHandler with a function render')
-            ->if($this->forcedConfig['exceptionRenderFct']['enabled'] = true)
-            ->and($this->app->forceConfig($this->forcedConfig))
+        $this->assert('test Core\Errors::defineExceptionHandler without render')
+            ->if($this->calling($this->mock)->obtainExceptionRender = false)
             ->then
-            ->array($this->mock->callDefineExceptionHandler())
-                ->isEqualTo([
-                    $this->mock,
-                    'exceptionHandler'
-                ]);
+            ->variable($this->mock->defineExceptionHandler())
+                ->isNull()
+            ->array($exceptionHandler = set_error_handler(function($ex) {}))
+            ->object($exceptionHandler[0])
+                ->isNotInstanceOf('\BFW\Core\Errors') // Atoum system, not mine
+            ->given(restore_exception_handler()) // Cancel set_error_handler
+        ;
         
-        $this->assert('test defineExceptionHandler with a class render')
-            ->if($this->forcedConfig['exceptionRenderFct']['enabled'] = true)
-            ->and($this->forcedConfig['exceptionRenderFct']['cli'] = [
-                'class'  => '\BFW\Core\test\unit\mocks\Errors',
-                'method' => 'mockRender'
-            ])
-            ->and($this->app->forceConfig($this->forcedConfig))
+        $this->assert('test Core\Errors::defineExceptionHandler with render')
+            ->if($this->calling($this->mock)->obtainExceptionRender = [$this->mock, 'exceptionHandler'])
             ->then
-            ->array($this->mock->callDefineExceptionHandler())
-                ->isEqualTo([
-                    $this->mock,
-                    'exceptionHandler'
-                ]);
+            ->variable($this->mock->defineExceptionHandler())
+                ->isNull()
+            ->variable($exceptionHandler = set_exception_handler(function($ex) {}))
+            ->object($exceptionHandler[0])
+                ->isInstanceOf('\BFW\Core\Errors')
+            ->string($exceptionHandler[1])
+                ->isEqualTo('exceptionHandler')
+            ->given(restore_exception_handler()) // Cancel set_error_handler
+        ;
     }
     
-    /**
-     * Test method for getErrorRender()
-     * 
-     * @return void
-     */
-    public function testGetErrorRender()
+    public function testObtainErrorRender()
     {
-        $mock = $this->mock;
-        
-        $this->assert('test getErrorRender cli render disabled')
-            ->boolean($mock::getErrorRender())
-                ->isFalse();
-        
-        $this->assert('test getErrorRender cli render enabled')
-            ->if($this->forcedConfig['errorRenderFct']['enabled'] = true)
-            ->and($this->app->forceConfig($this->forcedConfig))
+        $this->assert('test Core\Errors::obtainErrorRender')
+            ->given($renderInfos = null)
+            ->if($this->calling($this->mock)->defineRenderToUse = function($renderConfig) use (&$renderInfos) {
+                $renderInfos = $renderConfig;
+                return true;
+            })
+            ->and($this->createApp())
+            ->and($this->initApp())
             ->then
-            ->array($mock::getErrorRender())
-                ->isEqualTo(
-                    [
-                        'class'  => '',
-                        'method' => 'cli_error_render'
-                    ]
-                );
-        
-        $this->assert('test getErrorRender cli without cli render defined in config');
-        //unset error if on if/and function
-        unset($this->forcedConfig['errorRenderFct']['cli']);
-        $this->if($this->app->forceConfig($this->forcedConfig))
-            ->array($mock::getErrorRender())
-                ->isEqualTo(
-                    [
-                        'class'  => '',
-                        'method' => 'default_error_render'
-                    ]
-                );
-        
-        $this->assert('test getErrorRender cli without render defined in config');
-        //unset error if on if/and function
-        unset($this->forcedConfig['errorRenderFct']['default']);
-        $this->if($this->app->forceConfig($this->forcedConfig))
-            ->boolean($mock::getErrorRender())
-                ->isFalse();
+            ->boolean($this->mock->obtainErrorRender())
+                ->isTrue()
+            ->array($renderInfos)
+                ->isNotEmpty()
+        ;
     }
     
-    /**
-     * Test method for getExceptionRender()
-     * 
-     * @return void
-     */
-    public function testGetExceptionRender()
+    public function testObtainExceptionRender()
     {
-        $mock = $this->mock;
-        
-        $this->assert('test getExceptionRender cli render disabled')
-            ->boolean($mock::getExceptionRender())
-                ->isFalse();
-        
-        $this->assert('test getExceptionRender cli render enabled')
-            ->if($this->forcedConfig['exceptionRenderFct']['enabled'] = true)
-            ->and($this->app->forceConfig($this->forcedConfig))
+        $this->assert('test Core\Errors::obtainExceptionRender')
+            ->given($renderInfos = null)
+            ->if($this->calling($this->mock)->defineRenderToUse = function($renderConfig) use (&$renderInfos) {
+                $renderInfos = $renderConfig;
+                return true;
+            })
+            ->and($this->createApp())
+            ->and($this->initApp())
             ->then
-            ->array($mock::getExceptionRender())
-                ->isEqualTo(
-                    [
-                        'class'  => '',
-                        'method' => 'cli_exception_render'
-                    ]
-                );
-        
-        $this->assert('test getExceptionRender cli without cli render defined in config');
-        //unset error if on if/and function
-        unset($this->forcedConfig['exceptionRenderFct']['cli']);
-        $this->if($this->app->forceConfig($this->forcedConfig))
-            ->array($mock::getExceptionRender())
-                ->isEqualTo(
-                    [
-                        'class'  => '',
-                        'method' => 'default_exception_render'
-                    ]
-                );
-        
-        $this->assert('test getExceptionRender cli without render defined in config');
-        //unset error if on if/and function
-        unset($this->forcedConfig['exceptionRenderFct']['default']);
-        $this->if($this->app->forceConfig($this->forcedConfig))
-            ->boolean($mock::getExceptionRender())
-                ->isFalse();
+            ->boolean($this->mock->obtainExceptionRender())
+                ->isTrue()
+            ->array($renderInfos)
+                ->isNotEmpty()
+        ;
     }
     
-    /**
-     * Tested into testGetErrorRender and testGetExceptionRender
-     * 
-     * @return void
-     */
     public function testDefineRenderToUse()
     {
+        $this->assert('test Core\Errors::defineRenderToUse - prepare')
+            ->given($this->createApp())
+            ->and($this->initApp())
+            ->and($renderFcts = $this->app->getConfig()->getValue('errorRenderFct'))
+        ;
         
+        $this->assert('test Core\Errors::defineRenderToUse if disabled')
+            ->if($renderFcts['enabled'] = false)
+            ->then
+            ->boolean($this->mock->defineRenderToUse($renderFcts))
+                ->isFalse()
+        ;
+        
+        $this->assert('test Core\Errors::defineRenderToUse without config value')
+            ->boolean($this->mock->defineRenderToUse(['enabled' => true]))
+                ->isFalse()
+        ;
     }
     
-    /**
-     * Test method for exceptionHandler()
-     * 
-     * @return void
-     */
+    public function testDefineRenderToUseForCli()
+    {
+        $this->assert('test Core\Errors::defineRenderToUse - in cli - prepare')
+            ->given($this->createApp())
+            ->and($this->initApp())
+            ->and($renderFcts = $this->app->getConfig()->getValue('errorRenderFct'))
+        ;
+        
+        $this->assert('test Core\Errors::defineRenderToUse if render enabled and in cli')
+            ->if($renderFcts['enabled'] = true)
+            ->and($this->constant->PHP_SAPI = 'cli')
+            ->then
+            ->array($render = $this->mock->defineRenderToUse($renderFcts))
+            ->boolean(array_key_exists('class', $render))
+                ->isTrue()
+            ->boolean(array_key_exists('method', $render))
+                ->isTrue()
+            ->string($render['class'])
+                ->isEqualTo('\BFW\Core\ErrorsDisplay')
+            ->string($render['method'])
+                ->isEqualTo('defaultCliErrorRender')
+        ;
+    }
+    
+    public function testDefineRenderToUseNotForCli()
+    {
+        $this->assert('test Core\Errors::defineRenderToUse - not in cli - prepare')
+            ->given($this->createApp())
+            ->and($this->initApp())
+            ->and($renderFcts = $this->app->getConfig()->getValue('errorRenderFct'))
+        ;
+        
+        $this->assert('test Core\Errors::defineRenderToUse if render enabled but not in cli')
+            ->if($renderFcts['enabled'] = true)
+            ->and($this->constant->PHP_SAPI = 'cgi-fcgi')
+            ->then
+            ->array($render = $this->mock->defineRenderToUse($renderFcts))
+            ->boolean(array_key_exists('class', $render))
+                ->isTrue()
+            ->boolean(array_key_exists('method', $render))
+                ->isTrue()
+            ->string($render['class'])
+                ->isEqualTo('\BFW\Core\ErrorsDisplay')
+            ->string($render['method'])
+                ->isEqualTo('defaultErrorRender')
+        ;
+    }
+    
     public function testExceptionHandler()
     {
-        $this->assert('test exceptionHandler')
-            ->given($mock = $this->mock)
-            ->given($exceptionLine = __LINE__+1)
-            ->given($exception = new \Exception(
-                'exception Message',
-                100001
-            ))
-            ->if($this->forcedConfig['exceptionRenderFct']['enabled'] = true)
-            ->and($this->forcedConfig['exceptionRenderFct']['cli'] = [
-                'class'  => '\BFW\Core\test\unit\mocks\Errors',
-                'method' => 'mockRender'
-            ])
-            ->and($this->app->forceConfig($this->forcedConfig))
+        $this->assert('test Core\Errors::exceptionHandler')
+            ->given($callRenderArgs = [])
+            ->given($exception = new \Exception('excep. from unit test', 1304001))
+            ->if($this->calling($this->mock)->obtainExceptionRender = function() {
+                return [$this, 'fakeRender'];
+            })
+            ->and($this->calling($this->mock)->callRender = function(...$args) use (&$callRenderArgs) {
+                $callRenderArgs = $args;
+            })
             ->then
-            ->given($mock::exceptionHandler($exception))
-            ->object($rendered = $mock::$lastRenderCallInfos)
-            ->string($rendered->errType)
+            ->variable($this->mock->exceptionHandler($exception))
+                ->isNull()
+            ->array($callRenderArgs)
+                ->isNotEmpty()
+                ->size->isEqualTo(6)
+            ->array($callRenderArgs[0]) //Render to use
+                ->isEqualTo([$this->mock, 'fakeRender'])
+            ->string($callRenderArgs[1]) //Error type
                 ->isEqualTo('Exception Uncaught')
-            ->string($rendered->errMsg)
-                ->isEqualTo('exception Message')
-            ->string($rendered->errFile)
-                ->isEqualTo(__FILE__)
-            ->integer($rendered->errLine)
-                ->isEqualTo($exceptionLine)
-            ->array($rendered->backtrace)
-                ->size
-                    ->isGreaterThan(0)
+            ->string($callRenderArgs[2]) //Exception message
+                ->isEqualTo('excep. from unit test')
+            ->string($callRenderArgs[3]) //File
+                ->isNotEmpty()
+            ->integer($callRenderArgs[4]) //Line
+                ->isGreaterThan(0)
+            ->array($callRenderArgs[5]) //Trace
+                ->isNotEmpty()
         ;
     }
     
-    /**
-     * Test method for errorHandler()
-     * 
-     * @return void
-     */
     public function testErrorHandler()
     {
-        $this->assert('test errorHandler')
-            ->given($mock = $this->mock)
-            ->given($errorLine = __LINE__)
+        $this->assert('test Core\Errors::errorHandler')
+            ->given($callRenderArgs = [])
+            ->if($this->calling($this->mock)->obtainErrorType = function() {
+                return 'Notice';
+            })
+            ->and($this->calling($this->mock)->obtainErrorRender = function() {
+                return [$this, 'fakeRender'];
+            })
+            ->and($this->calling($this->mock)->callRender = function(...$args) use (&$callRenderArgs) {
+                $callRenderArgs = $args;
+            })
             ->then
-            ->if($this->forcedConfig['errorRenderFct']['enabled'] = true)
-            ->and($this->forcedConfig['errorRenderFct']['cli'] = [
-                'class'  => '\BFW\Core\test\unit\mocks\Errors',
-                'method' => 'mockRender'
-            ])
-            ->and($this->app->forceConfig($this->forcedConfig))
-            ->then
-            ->given($mock::errorHandler(
-                E_WARNING,
-                'error message',
+            ->variable($this->mock->errorHandler(
+                E_NOTICE,
+                'error from unit test',
                 __FILE__,
-                $errorLine
+                __LINE__
             ))
-            ->object($rendered = $mock::$lastRenderCallInfos)
-            ->string($rendered->errType)
-                ->isEqualTo('Warning')
-            ->string($rendered->errMsg)
-                ->isEqualTo('error message')
-            ->string($rendered->errFile)
+                ->isNull()
+            ->array($callRenderArgs)
+                ->isNotEmpty()
+                ->size->isEqualTo(6)
+            ->array($callRenderArgs[0]) //Render to use
+                ->isEqualTo([$this->mock, 'fakeRender'])
+            ->string($callRenderArgs[1]) //Error type
+                ->isEqualTo('Notice')
+            ->string($callRenderArgs[2]) //Error message
+                ->isEqualTo('error from unit test')
+            ->string($callRenderArgs[3]) //File
                 ->isEqualTo(__FILE__)
-            ->integer($rendered->errLine)
-                ->isEqualTo($errorLine)
-            ->array($rendered->backtrace)
-                ->size
-                    ->isGreaterThan(0)
+            ->integer($callRenderArgs[4]) //Line
+                ->isGreaterThan(0)
+            ->array($callRenderArgs[5]) //Trace
+                ->isNotEmpty()
         ;
     }
     
-    /**
-     * Test method for render()
-     * 
-     * @return void
-     */
-    public function testCallRender()
+    public function testCallRenderWithClass()
     {
-        //Test with object is already tested before.
-        
-        global $fctLastRenderCallInfos;
-        
-        $this->assert('test callRender for function')
-            ->given($mock = $this->mock)
-            ->given($errorLine = __LINE__)
+        $this->assert('test \Core\Errors::callRender with a class')
+            ->given($this->createApp())
+            ->and($this->initApp())
+            ->and($renderConfig = $this->app->getConfig()->getValue('errorRenderFct'))
+            ->and($renderInfos = $renderConfig['default'])
+            ->and($renderInfos['class'] = '\BFW\Test\Helpers\ErrorsRenderClass')
+            ->and($renderInfos['method'] = 'render')
             ->then
-            ->if($this->forcedConfig['errorRenderFct']['enabled'] = true)
-            ->and($this->forcedConfig['errorRenderFct']['cli'] = [
-                'class'  => '',
-                'method' => 'fctErrorRender'
-            ])
-            ->and($this->app->forceConfig($this->forcedConfig))
+            
+            ->given($saveIntoPhpLogArgs = [])
+            ->and($this->calling($this->mock)->saveIntoPhpLog = function(...$args) use (&$saveIntoPhpLogArgs) {
+                $saveIntoPhpLogArgs = $args;
+            })
             ->then
-            ->given($mock::errorHandler(
-                E_WARNING,
-                'error message',
-                __FILE__,
-                $errorLine
+            
+            ->given($errType = 'Notice')
+            ->and($errMsg = 'error from unit test')
+            ->and($errFile = __FILE__)
+            ->and($errLine = __LINE__)
+            ->and($backtrace = debug_backtrace())
+            ->then
+            
+            ->variable($this->mock->callRender(
+                $renderInfos,
+                $errType,
+                $errMsg,
+                $errFile,
+                $errLine,
+                $backtrace
             ))
-            ->object($rendered = $fctLastRenderCallInfos)
-            ->string($rendered->errType)
-                ->isEqualTo('Warning')
-            ->string($rendered->errMsg)
-                ->isEqualTo('error message')
-            ->string($rendered->errFile)
-                ->isEqualTo(__FILE__)
-            ->integer($rendered->errLine)
-                ->isEqualTo($errorLine)
-            ->array($rendered->backtrace)
-                ->size
-                    ->isGreaterThan(0)
+                ->isNull()
+            ->array($saveIntoPhpLogArgs)
+                ->isEqualTo([$errType, $errMsg, $errFile, $errLine])
+            ->then
+            
+            ->given($errorRender = \BFW\Test\Helpers\ErrorsRenderClass::getInstance())
+            ->string($errorRender->errType)
+                ->isEqualTo($errType)
+            ->string($errorRender->errMsg)
+                ->isEqualTo($errMsg)
+            ->string($errorRender->errFile)
+                ->isEqualTo($errFile)
+            ->integer($errorRender->errLine)
+                ->isEqualTo($errLine)
+            ->array($errorRender->backtrace)
+                ->isEqualTo($backtrace)
         ;
     }
     
-    /**
-     * Test method for getErrorType()
-     * 
-     * @return void
-     */
-    public function testGetErrorType()
+    public function testCallRenderWithFunction()
     {
-        $this->assert('test getErrorType for E_ERROR')
-            ->string($this->mock->callGetErrorType(E_ERROR))
-                ->isEqualTo('Fatal');
-        
-        $this->assert('test getErrorType for E_CORE_ERROR')
-            ->string($this->mock->callGetErrorType(E_CORE_ERROR))
-                ->isEqualTo('Fatal');
-        
-        $this->assert('test getErrorType for E_USER_ERROR')
-            ->string($this->mock->callGetErrorType(E_USER_ERROR))
-                ->isEqualTo('Fatal');
-        
-        $this->assert('test getErrorType for E_COMPILE_ERROR')
-            ->string($this->mock->callGetErrorType(E_COMPILE_ERROR))
-                ->isEqualTo('Fatal');
-        
-        $this->assert('test getErrorType for E_RECOVERABLE_ERROR')
-            ->string($this->mock->callGetErrorType(E_RECOVERABLE_ERROR))
-                ->isEqualTo('Fatal');
-        
-        $this->assert('test getErrorType for E_WARNING')
-            ->string($this->mock->callGetErrorType(E_WARNING))
-                ->isEqualTo('Warning');
-        
-        $this->assert('test getErrorType for E_CORE_WARNING')
-            ->string($this->mock->callGetErrorType(E_CORE_WARNING))
-                ->isEqualTo('Warning');
-        
-        $this->assert('test getErrorType for E_USER_WARNING')
-            ->string($this->mock->callGetErrorType(E_USER_WARNING))
-                ->isEqualTo('Warning');
-        
-        $this->assert('test getErrorType for E_COMPILE_WARNING')
-            ->string($this->mock->callGetErrorType(E_COMPILE_WARNING))
-                ->isEqualTo('Warning');
-        
-        $this->assert('test getErrorType for E_PARSE')
-            ->string($this->mock->callGetErrorType(E_PARSE))
-                ->isEqualTo('Parse');
-        
-        $this->assert('test getErrorType for E_NOTICE')
-            ->string($this->mock->callGetErrorType(E_NOTICE))
-                ->isEqualTo('Notice');
-        
-        $this->assert('test getErrorType for E_USER_NOTICE')
-            ->string($this->mock->callGetErrorType(E_USER_NOTICE))
-                ->isEqualTo('Notice');
-        
-        $this->assert('test getErrorType for E_STRICT')
-            ->string($this->mock->callGetErrorType(E_STRICT))
-                ->isEqualTo('Strict');
-        
-        $this->assert('test getErrorType for E_DEPRECATED')
-            ->string($this->mock->callGetErrorType(E_DEPRECATED))
-                ->isEqualTo('Deprecated');
-        
-        $this->assert('test getErrorType for E_USER_DEPRECATED')
-            ->string($this->mock->callGetErrorType(E_USER_DEPRECATED))
-                ->isEqualTo('Deprecated');
-        
-        $this->assert('test getErrorType for "test"')
-            ->string($this->mock->callGetErrorType('test'))
-                ->isEqualTo('Unknown');
+        $this->assert('test \Core\Errors::callRender with a function')
+            ->given($this->createApp())
+            ->and($this->initApp())
+            ->and($renderConfig = $this->app->getConfig()->getValue('errorRenderFct'))
+            ->and($renderInfos = $renderConfig['default'])
+            ->and($renderInfos['class'] = '')
+            ->and($renderInfos['method'] = '\BFW\Test\Helpers\errorsRenderFunction')
+            ->then
+            
+            ->given($saveIntoPhpLogArgs = [])
+            ->and($this->calling($this->mock)->saveIntoPhpLog = function(...$args) use (&$saveIntoPhpLogArgs) {
+                $saveIntoPhpLogArgs = $args;
+            })
+            ->then
+            
+            ->given($errType = 'Notice')
+            ->and($errMsg = 'error from unit test')
+            ->and($errFile = __FILE__)
+            ->and($errLine = __LINE__)
+            ->and($backtrace = debug_backtrace())
+            ->then
+            
+            ->variable($this->mock->callRender(
+                $renderInfos,
+                $errType,
+                $errMsg,
+                $errFile,
+                $errLine,
+                $backtrace
+            ))
+                ->isNull()
+            ->array($saveIntoPhpLogArgs)
+                ->isEqualTo([$errType, $errMsg, $errFile, $errLine])
+            ->then
+            
+            ->given($errorRender = \BFW\Test\Helpers\ErrorsRenderClass::getInstance())
+            ->string($errorRender->errType)
+                ->isEqualTo($errType)
+            ->string($errorRender->errMsg)
+                ->isEqualTo($errMsg)
+            ->string($errorRender->errFile)
+                ->isEqualTo($errFile)
+            ->integer($errorRender->errLine)
+                ->isEqualTo($errLine)
+            ->array($errorRender->backtrace)
+                ->isEqualTo($backtrace)
+        ;
     }
     
-    /*
-     * Will be tested with test install script
-     * 
-     * @return void
-     */
-    public function testDefaultCliErrorRender()
+    public function testSaveIntoPhpLog()
     {
-        
+        $this->assert('test \Core\Errors::saveIntoPhpLog')
+            ->given($errorLogMsg = '')
+            ->if($this->function->error_log = function($message) use (&$errorLogMsg) {
+                $errorLogMsg = $message;
+            })
+            ->then
+            
+            ->given($errType = 'Notice')
+            ->and($errMsg = 'error from unit test')
+            ->and($errFile = __FILE__)
+            ->and($errLine = __LINE__)
+            ->then
+            
+            ->variable($this->mock->saveIntoPhpLog(
+                $errType,
+                $errMsg,
+                $errFile,
+                $errLine
+            ))
+                ->isNull()
+            ->string($message = 'Error detected : '.$errType.' '.$errMsg.' at '.$errFile.':'.$errLine)
+        ;
     }
     
-    /*
-     * Will be tested with test install script
-     * 
-     * @return void
-     */
-    public function testDefaultErrorRender()
+    public function testObtainErrorType()
     {
+        $this->assert('test \Core\Errors::obtainErrorType with E_ERROR')
+            ->string($this->mock->obtainErrorType(E_ERROR))
+                ->isEqualTo('Fatal')
+        ;
         
+        $this->assert('test \Core\Errors::obtainErrorType with E_CORE_ERROR')
+            ->string($this->mock->obtainErrorType(E_CORE_ERROR))
+                ->isEqualTo('Fatal')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_USER_ERROR')
+            ->string($this->mock->obtainErrorType(E_USER_ERROR))
+                ->isEqualTo('Fatal')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_COMPILE_ERROR')
+            ->string($this->mock->obtainErrorType(E_COMPILE_ERROR))
+                ->isEqualTo('Fatal')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_RECOVERABLE_ERROR')
+            ->string($this->mock->obtainErrorType(E_RECOVERABLE_ERROR))
+                ->isEqualTo('Fatal')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_WARNING')
+            ->string($this->mock->obtainErrorType(E_WARNING))
+                ->isEqualTo('Warning')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_CORE_WARNING')
+            ->string($this->mock->obtainErrorType(E_CORE_WARNING))
+                ->isEqualTo('Warning')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_USER_WARNING')
+            ->string($this->mock->obtainErrorType(E_USER_WARNING))
+                ->isEqualTo('Warning')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_COMPILE_WARNING')
+            ->string($this->mock->obtainErrorType(E_COMPILE_WARNING))
+                ->isEqualTo('Warning')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_PARSE')
+            ->string($this->mock->obtainErrorType(E_PARSE))
+                ->isEqualTo('Parse')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_NOTICE')
+            ->string($this->mock->obtainErrorType(E_NOTICE))
+                ->isEqualTo('Notice')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_USER_NOTICE')
+            ->string($this->mock->obtainErrorType(E_USER_NOTICE))
+                ->isEqualTo('Notice')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_STRICT')
+            ->string($this->mock->obtainErrorType(E_STRICT))
+                ->isEqualTo('Strict')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_DEPRECATED')
+            ->string($this->mock->obtainErrorType(E_DEPRECATED))
+                ->isEqualTo('Deprecated')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with E_USER_DEPRECATED')
+            ->string($this->mock->obtainErrorType(E_USER_DEPRECATED))
+                ->isEqualTo('Deprecated')
+        ;
+        
+        $this->assert('test \Core\Errors::obtainErrorType with Unknown type')
+            ->string($this->mock->obtainErrorType('unitTest'))
+                ->isEqualTo('Unknown')
+        ;
     }
 }

@@ -1,110 +1,152 @@
 <?php
 
 namespace BFW\Helpers\test\unit;
+
 use \atoum;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
+/**
+ * @engine isolate
+ */
 class ReadDirectory extends atoum
 {
-    /**
-     * @var \BFW\Helpers\ReadDirectory $class : Tested class instance
-     */
-    protected $class;
+    //use \BFW\Test\Helpers\Application;
     
-    /**
-     * @var array $list : Files found list
-     */
-    protected $list = [];
+    protected $mock;
+    protected $listFiles = [];
     
-    /**
-     * @var int $readdirIndex : Index for readdir mock function
-     */
-    protected $readdirIndex = -1;
-
-    /**
-     * Call before each test method
-     * Instantiate the class
-     * 
-     * @param $testMethod string The name of the test method executed
-     * 
-     * @return void
-     */
     public function beforeTestMethod($testMethod)
     {
-        if ($testMethod === 'testConstructor') {
-            return;
-        }
+        //$this->createApp();
+        //$this->initApp();
         
-        $this->class = new \BFW\Helpers\ReadDirectory($this->list);
+        $this->mockGenerator
+            ->makeVisible('fileAction')
+            ->makeVisible('dirAction')
+            ->generate('BFW\Helpers\ReadDirectory')
+        ;
+        
+        if ($testMethod !== 'testConstructAndGetters') {
+            $this->mock = new \mock\BFW\Helpers\ReadDirectory($this->listFiles);
+        }
     }
     
-    /**
-     * Test method for __construct()
-     * 
-     * @return void
-     */
-    public function testConstructor()
+    public function testConstructAndGetters()
     {
-        $this->assert('test constructor')
-            ->if($this->class = new \BFW\Helpers\ReadDirectory($this->list))
-            ->array($this->list)
-                ->size
-                    ->isEqualTo(0);
+        $this->assert('test Helpers\ReadDirectory::__construct')
+            ->object($this->mock = new \mock\BFW\Helpers\ReadDirectory($this->listFiles))
+                ->isInstanceOf('\BFW\Helpers\ReadDirectory')
+            ->string($this->mock->getCalledClass())
+                ->isEqualTo('mock\BFW\Helpers\ReadDirectory')
+            ->array($this->mock->getList())
+                ->isIdenticalTo($this->listFiles)
+            ->array($this->mock->getIgnore())
+                ->isEqualTo(['.', '..'])
+        ;
     }
     
-    /**
-     * Test method for run() with an opendir error
-     * 
-     * @return void
-     */
-    public function testRunWithoutDir()
-    {
-        $this->assert('test run with opendir error.')
-            ->if($this->function->opendir = false)
-            ->and($this->class->run(''))
-            ->array($this->list)
-                ->size
-                    ->isEqualTo(0);
-    }
-    
-    /**
-     * Test method for run()
-     * 
-     * @return void
-     */
     public function testRun()
     {
-        $this->assert('test run (call fileAction and dirAction).')
-            ->if($this->function->opendir = 'dirPath')
-            ->and($this->function->readdir = function() {
-                $this->readdirIndex++;
+        $this->assert('test Helpers\ReadDirectory::run with opendir fail')
+            ->if($this->function->opendir = false)
+            ->then
+            ->exception(function() {
+                $this->mock->run(__DIR__);
+            })
+                ->hasCode(\BFW\Helpers\ReadDirectory::ERR_RUN_OPENDIR)
+        ;
+        
+        $this->assert('test Helpers\ReadDirectory::run')
+            ->given($fileActionListFiles = [])
+            ->given($isDirListCheck = [])
+            ->given($dirActionListPath = [])
+            ->if($this->function->opendir = true)
+            ->and($this->function->closedir = true)
+            ->and($this->function->readdir[0] = false) //Default
+            ->and($this->function->readdir[1] = '.')
+            ->and($this->function->readdir[2] = '..')
+            ->and($this->function->readdir[3] = 'core')
+            ->and($this->function->readdir[4] = 'memcache')
+            ->and($this->function->readdir[5] = 'Application.php')
+            ->and($this->function->readdir[6] = 'Config.php')
+            ->and($this->calling($this->mock)->fileAction = function(
+                $fileName,
+                $pathToFile
+            ) use (&$fileActionListFiles) {
+                $fileActionListFiles[] = $fileName;
                 
-                if($this->readdirIndex === 0) {
-                    return '.';
-                } elseif ($this->readdirIndex === 1) {
-                    return '..';
-                } elseif ($this->readdirIndex === 2) {
-                    return 'test';
-                } elseif ($this->readdirIndex === 3) {
-                    return 'test2';
+                if ($fileName === 'Application.php') {
+                    return 'break'; //So "Config.php" will not be read
                 }
                 
-                return false;
+                //This if is extracted from original class
+                if (in_array($fileName, ['.', '..'])) {
+                    return 'continue';
+                }
+                
+                return '';
             })
-            ->and($this->function->is_dir = function($path) {
-                if($path === 'dirPath/test') {
+            ->and($this->function->is_dir = function($filename) use (&$isDirListCheck) {
+                $isDirListCheck[] = $filename;
+                
+                //"." and ".." is ignored before
+                if ($filename === __DIR__.'/core') {
+                    return true;
+                } elseif ($filename === __DIR__.'/memcache') {
                     return true;
                 }
                 
                 return false;
             })
-            ->and($this->function->closedir = true)
+            ->and($this->calling($this->mock)->dirAction = function($dirPath) use (&$dirActionListPath) {
+                $dirActionListPath[] = $dirPath;
+                
+                return true;
+            })
             ->then
             
-            ->if($this->class->run(''))
-            ->array($this->list)
-                ->size
-                    ->isEqualTo(0);
+            ->variable($this->mock->run(__DIR__))
+                ->isNull()
+            ->array($fileActionListFiles)
+                ->isEqualTo([
+                    '.',
+                    '..',
+                    'core',
+                    'memcache',
+                    'Application.php'
+                ])
+                //Config.php not here because Application.php return "break"
+            ->array($isDirListCheck)
+                ->isEqualTo([
+                    __DIR__.'/core',
+                    __DIR__.'/memcache'
+                ])
+            ->array($dirActionListPath)
+                ->isEqualTo([
+                    __DIR__.'/core',
+                    __DIR__.'/memcache'
+                ])
+        ;
+    }
+    
+    public function testFileAction()
+    {
+        $this->assert('test Helpers\ReadDirectory::fileAction for ignored path')
+            ->string($this->invoke($this->mock)->fileAction('.', __DIR__))
+                ->isEqualTo('continue')
+            ->string($this->invoke($this->mock)->fileAction('..', __DIR__))
+                ->isEqualTo('continue')
+        ;
+        
+        $this->assert('test Helpers\ReadDirectory::fileAction for not ignored path')
+            ->string($this->invoke($this->mock)->fileAction('Application.php', __DIR__))
+                ->isEmpty()
+        ;
+    }
+    
+    public function testDirAction()
+    {
+        //Not tested because we can't mock the content.
     }
 }

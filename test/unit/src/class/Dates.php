@@ -3,181 +3,174 @@
 namespace BFW\test\unit;
 
 use \atoum;
-use \BFW\test\unit\mocks\Dates as MockDates;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
+/**
+ * @engine isolate
+ */
 class Dates extends atoum
 {
-    /**
-     * @var $mock Mock instance
-     */
+    use \BFW\Test\Helpers\Application;
+    
     protected $mock;
-
-    /**
-     * Instantiate the mock
-     * 
-     * @param $testMethod string The name of the test method executed
-     * 
-     * @return void
-     */
+    
     public function beforeTestMethod($testMethod)
     {
-        $this->mock = new MockDates;
+        $this->createApp();
+        $this->initApp();
+        
+        $this->mockGenerator
+            ->makeVisible('obtainNewKeywordsForModify')
+            ->makeVisible('modifyWithOthersKeywords')
+            ->makeVisible('humanDateNow')
+            ->makeVisible('humanDateToday')
+            ->makeVisible('humanDateYesterday')
+            ->makeVisible('humanDateTomorrow')
+            ->makeVisible('humanDateOther')
+            ->generate('BFW\Dates')
+        ;
+        
+        $methodsWithFixedDate = [
+            'testGetDate',
+            'testGetYear',
+            'testGetMonth',
+            'testGetDay',
+            'testGetHour',
+            'testGetMinute',
+            'testGetSecond',
+            'testGetZone',
+            'testGetSqlFormat'
+        ];
+        
+        if (in_array($testMethod, $methodsWithFixedDate)) {
+            $this->mock = new \mock\BFW\Dates('2018-02-01 13:10:23+0200');
+        } else {
+            $this->mock = new \mock\BFW\Dates;
+        }
     }
     
-    /**
-     * Test method for getHumanReadableI18n()
-     * 
-     * @return void
-     */
-    public function testGetHumanReadableI18n()
+    public function testGetAndSetHumanReadableI18n()
     {
-        $this->assert('test getHumanReadableI18n')
-            ->array(MockDates::getHumanReadableI18n())
+        $this->assert('test Dates::getHumanReadableI18n for default Values')
+            ->array(\BFW\Dates::getHumanReadableI18n())
                 ->isEqualTo([
                     'now'       => 'now',
                     'since'     => 'since',
                     'in'        => 'in',
                     'yesterday' => 'yesterday',
+                    'tomorrow'  => 'tomorrow',
                     'the'       => 'the',
                     'at'        => 'at'
-                ]);
+                ])
+        ;
+        
+        $this->assert('test Dates::setHumanReadableI18n')
+            ->variable(\BFW\Dates::setHumanReadableI18n([
+                'now'       => 'maintenant',
+                'since'     => 'depuis',
+                'in'        => 'dans',
+                'yesterday' => 'hier',
+                'tomorrow'  => 'demain',
+                'the'       => 'le',
+                'at'        => 'à'
+            ]))
+                ->isNull()
+            ->array(\BFW\Dates::getHumanReadableI18n())
+                ->isEqualTo([
+                    'now'       => 'maintenant',
+                    'since'     => 'depuis',
+                    'in'        => 'dans',
+                    'yesterday' => 'hier',
+                    'tomorrow'  => 'demain',
+                    'the'       => 'le',
+                    'at'        => 'à'
+                ])
+        ;
     }
     
-    /**
-     * Test method for setHumanReadableI18nKey()
-     * 
-     * @return void
-     */
     public function testSetHumanReadableI18nKey()
     {
-        $key   = 'now';
-        $value = 'maintenant';
-        
-        $this->assert('test setHumanReadableI18nKey')
-            ->given(MockDates::setHumanReadableI18nKey($key, $value))
-            ->array(MockDates::getHumanReadableI18n())
+        $this->assert('test Dates::setHumanReadableI18nKey')
+            ->variable(\BFW\Dates::setHumanReadableI18nKey('since', 'depuis'))
+                ->isNull()
+            ->array(\BFW\Dates::getHumanReadableI18n())
                 ->isEqualTo([
-                    'now'       => 'maintenant',
-                    'since'     => 'since',
+                    'now'       => 'now',
+                    'since'     => 'depuis',
                     'in'        => 'in',
                     'yesterday' => 'yesterday',
+                    'tomorrow'  => 'tomorrow',
                     'the'       => 'the',
                     'at'        => 'at'
-                ]);
-        
-        $key   = 'nox';
-        $value = 'maintenant';
-        
-        $this->assert('test setHumanReadableI18nKey new key')
-            ->given(MockDates::setHumanReadableI18nKey($key, $value))
-            ->array(MockDates::getHumanReadableI18n())
-                ->isEqualTo([
-                    'now'       => 'maintenant',
-                    'since'     => 'since',
-                    'in'        => 'in',
-                    'yesterday' => 'yesterday',
-                    'the'       => 'the',
-                    'at'        => 'at',
-                    'nox'       => 'maintenant'
-                ]);
+                ])
+        ;
     }
     
-    /**
-     * Test method for setHumanReadableI18n()
-     * 
-     * @return void
-     */
-    public function testSetHumanReadableI18n()
+    public function testGetAndSetHumanReadableFormats()
     {
-        $newValue = [
-            'test' => 'test',
-            'test2' => 'test2'
-        ];
-        
-        $this->assert('test setHumanReadableI18n')
-            ->given(MockDates::setHumanReadableI18n($newValue))
-            ->array(MockDates::getHumanReadableI18n())
-                ->isEqualTo($newValue);
-    }
-    
-    /**
-     * Test method for getHumanReadableFormats()
-     * 
-     * @return void
-     */
-    public function testGetHumanReadableFormats()
-    {
-        $this->assert('test getHumanReadableFormats')
-            ->array(MockDates::getHumanReadableFormats())
+        $this->assert('test Dates::getHumanReadableFormats for default Values')
+            ->array(\BFW\Dates::getHumanReadableFormats())
                 ->isEqualTo([
                     'dateSameYear'      => 'm-d',
                     'dateDifferentYear' => 'Y-m-d',
                     'time'              => 'H:i'
-                ]);
+                ])
+        ;
+        
+        $this->assert('test Dates::setHumanReadableFormats')
+            ->variable(\BFW\Dates::setHumanReadableFormats([
+                'dateSameYear'      => 'd/m',
+                'dateDifferentYear' => 'd/m/Y',
+                'time'              => 'H:i'
+            ]))
+                ->isNull()
+            ->array(\BFW\Dates::getHumanReadableFormats())
+                ->isEqualTo([
+                    'dateSameYear'      => 'd/m',
+                    'dateDifferentYear' => 'd/m/Y',
+                    'time'              => 'H:i'
+                ])
+        ;
     }
     
-    /**
-     * Test method for setHumanReadableFormatsKey()
-     * 
-     * @return void
-     */
     public function testSetHumanReadableFormatsKey()
     {
-        $key   = 'time';
-        $value = 'H:i:s';
-        
-        $this->assert('test setHumanReadableFormatsKey')
-            ->given(MockDates::setHumanReadableFormatsKey($key, $value))
-            ->array(MockDates::getHumanReadableFormats())
+        $this->assert('test Dates::setHumanReadableFormatsKey')
+            ->variable(\BFW\Dates::setHumanReadableFormatsKey('dateDifferentYear', 'd/m/Y'))
+                ->isNull()
+            ->array(\BFW\Dates::getHumanReadableFormats())
                 ->isEqualTo([
                     'dateSameYear'      => 'm-d',
-                    'dateDifferentYear' => 'Y-m-d',
-                    'time'              => 'H:i:s'
-                ]);
-        
-        $key   = 'gmt';
-        $value = 'O';
-        
-        $this->assert('test setHumanReadableFormatsKey new key')
-            ->given(MockDates::setHumanReadableFormatsKey($key, $value))
-            ->array(MockDates::getHumanReadableFormats())
-                ->isEqualTo([
-                    'dateSameYear'      => 'm-d',
-                    'dateDifferentYear' => 'Y-m-d',
-                    'time'              => 'H:i:s',
-                    'gmt'               => 'O'
-                ]);
+                    'dateDifferentYear' => 'd/m/Y',
+                    'time'              => 'H:i'
+                ])
+        ;
     }
     
-    /**
-     * Test method for setHumanReadableFormats()
-     * 
-     * @return void
-     */
-    public function testSetHumanReadableFormats()
+    public function testGetAndSetModifyNewKeywords()
     {
-        $newValue = [
-            'test'  => 'test',
-            'test2' => 'test2'
-        ];
+        $this->assert('test Dates::getModifyNewKeywords for default Values')
+            ->array(\BFW\Dates::getModifyNewKeywords())
+                ->isEmpty()
+        ;
         
-        $this->assert('test setHumanReadableFormats')
-            ->given(MockDates::setHumanReadableFormats($newValue))
-            ->array(MockDates::getHumanReadableFormats())
-                ->isEqualTo($newValue);
-    }
-    
-    /**
-     * Test method for getModifyNewKeywords()
-     * 
-     * @return void
-     */
-    public function testGetModifyNewKeywords()
-    {
-        $this->assert('test getModifyNewKeywords')
-            ->array(MockDates::getModifyNewKeywords())
+        $this->assert('test Dates::setModifyNewKeywords')
+            ->variable(\BFW\Dates::setModifyNewKeywords([
+                'an'       => 'year',
+                'ans'      => 'year',
+                'mois'     => 'month',
+                'jour'     => 'day',
+                'jours'    => 'day',
+                'heure'    => 'hour',
+                'heures'   => 'hour',
+                'minutes'  => 'minute',
+                'seconde'  => 'second',
+                'secondes' => 'second'
+
+            ]))
+                ->isNull()
+            ->array(\BFW\Dates::getModifyNewKeywords())
                 ->isEqualTo([
                     'an'       => 'year',
                     'ans'      => 'year',
@@ -189,333 +182,616 @@ class Dates extends atoum
                     'minutes'  => 'minute',
                     'seconde'  => 'second',
                     'secondes' => 'second'
-                ]);
+                ])
+        ;
     }
     
-    /**
-     * Test method for setModifyNewKeywords()
-     * 
-     * @return void
-     */
-    public function testSetModifyNewKeywords()
-    {
-        $newValue = [
-            'test'  => 'test',
-            'test2' => 'test2'
-        ];
-        
-        $this->assert('test setModifyNewKeywords')
-            ->given(MockDates::setModifyNewKeywords($newValue))
-            ->array(MockDates::getModifyNewKeywords())
-                ->isEqualTo($newValue);
-    }
-    
-    /**
-     * Test method for getDate()
-     * 
-     * @return void
-     */
     public function testGetDate()
     {
-        $this->assert('test getDate')
+        $this->assert('test Dates::getDate')
             ->string($this->mock->getDate())
-                ->isEqualTo($this->mock->format('Y-m-d H:i:sO'));
+                ->isEqualTo('2018-02-01 13:10:23+0200')
+        ;
     }
     
-    /**
-     * Test method for getYear()
-     * 
-     * @return void
-     */
     public function testGetYear()
     {
-        $this->assert('test getYear')
+        $this->assert('test Dates::getYear')
             ->integer($this->mock->getYear())
-                ->isEqualTo((int) $this->mock->format('Y'));
+                ->isEqualTo(2018)
+        ;
     }
     
-    /**
-     * Test method for getMonth()
-     * 
-     * @return void
-     */
     public function testGetMonth()
     {
-        $this->assert('test getMonth')
+        $this->assert('test Dates::getMonth')
             ->integer($this->mock->getMonth())
-                ->isEqualTo((int) $this->mock->format('m'));
+                ->isEqualTo(02)
+        ;
     }
     
-    /**
-     * Test method for getDay()
-     * 
-     * @return void
-     */
     public function testGetDay()
     {
-        $this->assert('test getDay')
+        $this->assert('test Dates::getDay')
             ->integer($this->mock->getDay())
-                ->isEqualTo((int) $this->mock->format('d'));
+                ->isEqualTo(01)
+        ;
     }
     
-    /**
-     * Test method for getHour()
-     * 
-     * @return void
-     */
     public function testGetHour()
     {
-        $this->assert('test getHour')
+        $this->assert('test Dates::getHour')
             ->integer($this->mock->getHour())
-                ->isEqualTo((int) $this->mock->format('H'));
+                ->isEqualTo(13)
+        ;
     }
     
-    /**
-     * Test method for getMinute()
-     * 
-     * @return void
-     */
     public function testGetMinute()
     {
-        $this->assert('test getMinute')
+        $this->assert('test Dates::getMinute')
             ->integer($this->mock->getMinute())
-                ->isEqualTo((int) $this->mock->format('i'));
+                ->isEqualTo(10)
+        ;
     }
     
-    /**
-     * Test method for getSecond()
-     * 
-     * @return void
-     */
     public function testGetSecond()
     {
-        $this->assert('test getSecond')
+        $this->assert('test Dates::getSecond')
             ->integer($this->mock->getSecond())
-                ->isEqualTo((int) $this->mock->format('s'));
+                ->isEqualTo(23)
+        ;
     }
     
-    /**
-     * Test method for getZone()
-     * 
-     * @return void
-     */
     public function testGetZone()
     {
-        $this->assert('test getZone')
+        $this->assert('test Dates::getZone')
             ->string($this->mock->getZone())
-                ->isEqualTo($this->mock->format('P'));
+                ->isEqualTo('+02:00')
+        ;
     }
     
-    /**
-     * Test method for modify()
-     * 
-     * @return void
-     */
     public function testModify()
     {
-        $dt = new \DateTime;
-        $dt->modify('+1 year');
-        $dtFormat = $dt->format('Y-m-d');
-        
-        $this->assert('test modify original DateTime')
-            ->given($this->mock->modify('+1 year'))
-            ->string($this->mock->format('Y-m-d'))
-                ->isEqualTo($dtFormat);
-        
-        $dt->modify('+1 year');
-        $dtFormat = $dt->format('Y-m-d');
-        
-        $this->assert('test modify Dates keywords')
-            ->given($this->mock->modify('+1 an'))
-            ->string($this->mock->format('Y-m-d'))
-                ->isEqualTo($dtFormat);
-        
-        $mock = $this->mock;
-        $this->assert('test modify bad pattern')
-            ->exception(function() use ($mock) {
-                $mock->modify('year -1');
+        $this->assert('test Dates::modify with native keyword')
+            ->given($keywordUsed = '')
+            ->if($this->mock->setTime(16, 36, 23))
+            ->and($this->calling($this->mock)->modifyWithOthersKeywords = function($modify) use (&$keywordUsed) {
+                $keywordUsed = $modify;
             })
-            ->hasCode($mock::ERR_MODIFY_PATTERN_NOT_MATCH)
-            ->hasMessage('Dates::modify pattern not match.');
-            
-        $this->assert('test modify unknown keyword')
-            ->exception(function() use ($mock) {
-                $mock->modify('+1 annees');
+            ->then
+            ->object($this->mock->modify('+1 hour'))
+                ->isIdenticalTo($this->mock)
+            ->then
+            ->string($keywordUsed)
+                ->isEmpty() //Function not called
+            ->integer($this->mock->getHour())
+                ->isEqualTo(17)
+        ;
+        
+        $this->assert('test Dates::modify with personal keyword')
+            ->given($keywordUsed = '')
+            ->if($this->mock->setTime(16, 36, 23))
+            ->and($this->calling($this->mock)->modifyWithOthersKeywords = function($modify) use (&$keywordUsed) {
+                $keywordUsed = $modify;
             })
-            ->hasCode($mock::ERR_MODIFY_UNKNOWN_MODIFIER)
-            ->hasMessage('Dates::modify Parameter annees is unknown.');
+            ->then
+            ->object($this->mock->modify('+1 heure'))
+                ->isIdenticalTo($this->mock)
+            ->then
+            ->string($keywordUsed)
+                ->isEqualTo('+1 heure')
+            ->integer($this->mock->getHour())
+                ->isEqualTo(16) //No change because mocking
+        ;
     }
     
-    /**
-     * Test method for getSqlFormat()
-     * 
-     * @return void
-     */
+    public function testObtainNewKeywordsForModify()
+    {
+        $this->assert('test Dates::obtainNewKeywordsForModify without keyword')
+            ->object($obj = $this->invoke($this->mock)->obtainNewKeywordsForModify())
+                ->isInstanceOf('\stdClass')
+            ->boolean(property_exists($obj, 'search'))
+                ->isTrue()
+            ->boolean(property_exists($obj, 'replace'))
+                ->isTrue()
+            ->array($obj->search)
+                ->isEmpty()
+            ->array($obj->replace)
+                ->isEmpty()
+        ;
+        
+        $this->assert('test Dates::obtainNewKeywordsForModify with keywords')
+            ->if(\BFW\Dates::setModifyNewKeywords([
+                'an'      => 'year',
+                'mois'    => 'month',
+                'jour'    => 'day',
+                'heure'   => 'hour',
+                'seconde' => 'second'
+            ]))
+            ->then
+            
+            ->object($obj = $this->invoke($this->mock)->obtainNewKeywordsForModify())
+                ->isInstanceOf('\stdClass')
+            ->boolean(property_exists($obj, 'search'))
+                ->isTrue()
+            ->boolean(property_exists($obj, 'replace'))
+                ->isTrue()
+            ->array($obj->search)
+                ->isEqualTo(['an', 'mois', 'jour', 'heure', 'seconde'])
+            ->array($obj->replace)
+                ->isEqualTo(['year', 'month', 'day', 'hour', 'second'])
+        ;
+    }
+    
+    public function testModifyWithOthersKeywords()
+    {
+        $this->assert('test Dates::modifyWithOthersKeywords with bad pattern')
+            ->given($this->calling($this->mock)->obtainNewKeywordsForModify = (object) [
+                'search'  => [],
+                'replace' => []
+            ])
+            ->exception(function() {
+                $this->invoke($this->mock)->modifyWithOthersKeywords('test');
+            })
+                ->hasCode(\BFW\Dates::ERR_MODIFY_PATTERN_NOT_MATCH)
+        ;
+            
+        $this->assert('test Dates::modifyWithOthersKeywords with unknown keyword')
+            ->given($this->calling($this->mock)->obtainNewKeywordsForModify = (object) [
+                'search'  => ['heure'],
+                'replace' => ['hour']
+            ])
+            ->exception(function() {
+                $this->invoke($this->mock)->modifyWithOthersKeywords('+1 jour');
+            })
+                ->hasCode(\BFW\Dates::ERR_MODIFY_UNKNOWN_MODIFIER)
+        ;
+            
+        $this->assert('test Dates::modifyWithOthersKeywords with correct keyword')
+            ->given($this->calling($this->mock)->obtainNewKeywordsForModify = (object) [
+                'search'  => ['heure'],
+                'replace' => ['hour']
+            ])
+            ->if($this->mock->setTime(16, 36, 23))
+            ->then
+            ->variable($this->invoke($this->mock)->modifyWithOthersKeywords('+1 heure'))
+                ->isNull()
+            ->integer($this->mock->getHour())
+                ->isEqualTo(17)
+        ;
+    }
+    
     public function testGetSqlFormat()
     {
-        $this->assert('test getSqlFormat string return')
+        $this->assert('test Dates::getSqlFormat for string format')
             ->string($this->mock->getSqlFormat())
-                ->isEqualTo($this->mock->format('Y-m-d H:i:s'));
+                ->isEqualTo('2018-02-01 13:10:23')
+        ;
         
-        $this->assert('test getSqlFormat array return')
+        $this->assert('test Dates::getSqlFormat for array format')
             ->array($this->mock->getSqlFormat(true))
-                ->isEqualTo([
-                    $this->mock->format('Y-m-d'),
-                    $this->mock->format('H:i:s')
-                ]);
+                ->isEqualTo(['2018-02-01', '13:10:23'])
+        ;
     }
     
-    /**
-     * Test method for lstTimeZone()
-     * 
-     * @return void
-     */
     public function testLstTimeZone()
     {
-        $dateTimeZone = new \DateTimeZone('Europe/Paris');
-        $lstTimeZone  = $dateTimeZone->listIdentifiers();
-        
-        $this->assert('test lstTimeZone')
+        $this->assert('test Dates::lstTimeZone')
+            ->given($dateTimeZone = new \DateTimeZone('Europe/Paris'))
+            ->and($lstTimeZone  = $dateTimeZone->listIdentifiers())
+            ->then
+            
             ->array($this->mock->lstTimeZone())
-                ->isEqualTo($lstTimeZone);
+                ->isEqualTo($lstTimeZone)
+        ;
     }
     
-    /**
-     * Test method for lstTimeZoneContinent()
-     * 
-     * @return void
-     */
     public function testLstTimeZoneContinent()
     {
-        $this->assert('test lstTimeZoneContinent')
+        $this->assert('test Dates::lstTimeZoneContinent')
             ->array($this->mock->lstTimeZoneContinent())
                 ->isEqualTo([
-                    'africa',
-                    'america',
-                    'antartica',
-                    'arctic',
-                    'asia',
-                    'atlantic',
-                    'australia',
-                    'europe',
-                    'indian',
-                    'pacific'
-                ]);
+                    'Africa',
+                    'America',
+                    'Antartica',
+                    'Arctic',
+                    'Asia',
+                    'Atlantic',
+                    'Australia',
+                    'Europe',
+                    'Indian',
+                    'Pacific'
+                ])
+        ;
     }
     
-    /**
-     * Test method for lstTimeZonePays()
-     * 
-     * @return void
-     */
-    public function testLstTimeZonePays()
+    public function testLstTimeZoneCountries()
     {
-        //Some time zone has added with new version of php
-        //And Antarctica is the time zone with lesser of values
-        $lstAntarticaTimeZone = [
-            'Antarctica/Casey',
-            'Antarctica/Davis',
-            'Antarctica/DumontDUrville',
-            'Antarctica/Macquarie',
-            'Antarctica/Mawson',
-            'Antarctica/McMurdo',
-            'Antarctica/Palmer',
-            'Antarctica/Rothera',
-            'Antarctica/South_Pole',
-            'Antarctica/Syowa',
-            'Antarctica/Troll',
-            'Antarctica/Vostok'
-        ];
-        
-        $dateTimeZone = new \DateTimeZone('Europe/Paris');
-        $lstTimeZone  = $dateTimeZone->listIdentifiers();
-        
-        //So we list all time zone,
-        //and if it's on the antarctica list, we save it
-        $lstTimeZoneTest = [];
-        foreach ($lstAntarticaTimeZone as $timeZone) {
-            if (in_array($timeZone, $lstTimeZone)) {
-                $lstTimeZoneTest[] = $timeZone;
-            }
-        }
-        
-        $this->assert('test lstTimeZonePays')
-            ->array($this->mock->lstTimeZonePays('Antarctica'))
-                ->isEqualTo($lstTimeZoneTest);
+        $this->assert('test Dates::lstTimeZoneCountries')
+            ->array($lstCountries = $this->mock->lstTimeZoneCountries('Antarctica'))
+                ->isNotEmpty()
+                ->contains('Antarctica/McMurdo')
+        ;
     }
     
-    /**
-     * Test method for humanReadable()
-     * 
-     * @return void
-     */
+    protected function prepareHumanReadable()
+    {
+        $this
+            ->and($this->calling($this->mock)->humanDateNow = function($parsedTxt) {
+                $parsedTxt->date = 'dateNow';
+                $parsedTxt->time = 'timeNow';
+            })
+            ->and($this->calling($this->mock)->humanDateYesterday = function($parsedTxt) {
+                $parsedTxt->date = 'dateYesterday';
+                $parsedTxt->time = 'timeYesterday';
+            })
+            ->and($this->calling($this->mock)->humanDateTomorrow = function($parsedTxt) {
+                $parsedTxt->date = 'dateTomorrow';
+                $parsedTxt->time = 'timeTomorrow';
+            })
+            ->and($this->calling($this->mock)->humanDateToday = function($parsedTxt, $diff) {
+                $parsedTxt->date = 'dateToday';
+                $parsedTxt->time = 'timeToday';
+            })
+            ->and($this->calling($this->mock)->humanDateOther = function($parsedTxt, $current) {
+                $parsedTxt->date = 'dateOther';
+                $parsedTxt->time = 'timeOther';
+            })
+        ;
+    }
+    
     public function testHumanReadable()
     {
-        $hrFormat = MockDates::getHumanReadableFormats();
+        $this->assert('test Dates::humanReadable call humanDateNow')
+            //Disabled because have exactly the same second is too hard
+            //Not always working :/
+        ;
         
-        /*
-         * Disable because this test fail all, a "lag" return "since 1s"
-        $this->assert('test humaneReadable : now')
+        $this->assert('test Dates::humanReadable call humanDateYesterday')
+            ->if($this->mock = new \mock\BFW\Dates)
+            ->and($this->prepareHumanReadable())
+            ->and($this->mock->modify('-25 hours'))
+            ->then
+            
             ->string($this->mock->humanReadable())
-                ->isEqualTo($hrI18n['now']);
-        */
+                ->isEqualTo('dateYesterday timeYesterday')
+            ->mock($this->mock)->call('humanDateNow')->never()
+            ->mock($this->mock)->call('humanDateYesterday')->once()
+            ->mock($this->mock)->call('humanDateTomorrow')->never()
+            ->mock($this->mock)->call('humanDateToday')->never()
+            ->mock($this->mock)->call('humanDateOther')->never()
+            
+            ->then
+            //-1 month -25 hours => Not yesterday
+            ->and($this->mock->modify('-1 month'))
+            ->then
+            ->variable($this->mock->humanReadable())
+            ->mock($this->mock)->call('humanDateYesterday')->once()
+            
+            ->then
+            //-1 year -25 hours => Not yesterday
+            ->and($this->mock->modify('-11 month'))
+            ->then
+            ->variable($this->mock->humanReadable())
+            ->mock($this->mock)->call('humanDateYesterday')->once()
+        ;
         
-        $this->assert('test humanReadable : Since')
-            /*->given($this->mock->modify('-10 second'))
+        $this->assert('test Dates::humanReadable call humanDateTomorrow - tomorrow')
+            ->if($this->mock = new \mock\BFW\Dates)
+            ->and($this->prepareHumanReadable())
+            ->and($this->mock->modify('+25 hours'))
+            ->then
             ->string($this->mock->humanReadable())
-                ->isEqualTo('Since 10s')
-            ->string($this->mock->humanReadable(false, true))
-                ->isEqualTo('since 10s')*/
-            ->given($this->mock->modify('-30 minute'))
-            ->string($this->mock->humanReadable())
-                ->isEqualTo('since 30min')
-            ->string($this->mock->humanReadable(false))
-                ->isEqualTo('since 30min')
-            ->given($this->mock->modify('-1 hour'))
-            ->string($this->mock->humanReadable())
-                ->isEqualTo('since 1h')
-            ->string($this->mock->humanReadable(false))
-                ->isEqualTo('since 1h')
-            ->given($this->mock->modify('+3 hour'))
-            ->string($this->mock->humanReadable())
-                ->isEqualTo('in 1h')
-            ->string($this->mock->humanReadable(false))
-                ->isEqualTo('in 1h');
+                ->isEqualTo('dateTomorrow timeTomorrow')
+            ->mock($this->mock)->call('humanDateNow')->never()
+            ->mock($this->mock)->call('humanDateYesterday')->never()
+            ->mock($this->mock)->call('humanDateTomorrow')->once()
+            ->mock($this->mock)->call('humanDateToday')->never()
+            ->mock($this->mock)->call('humanDateOther')->never()
+            
+            ->then
+            //+1 month +25 hours => Not tomorrow
+            ->and($this->mock->modify('+1 month'))
+            ->then
+            ->variable($this->mock->humanReadable())
+            ->mock($this->mock)->call('humanDateTomorrow')->once()
+            
+            ->then
+            //+1 year +25 hours => Not tomorrow
+            ->and($this->mock->modify('+11 month'))
+            ->then
+            ->variable($this->mock->humanReadable())
+            ->mock($this->mock)->call('humanDateTomorrow')->once()
+        ;
         
-        $this->assert('test humanReadable : Yesterday')
-            ->given($this->mock->modify('-28 hour'))
-            ->given($yesterdayFormat = $this->mock->format($hrFormat['time']))
+        $this->assert('test Dates::humanReadable call humanDateToday')
+            ->if($this->mock = new \mock\BFW\Dates)
+            ->and($this->prepareHumanReadable())
+            ->and($this->mock->modify('-20 hours'))
+            ->then
             ->string($this->mock->humanReadable())
-                ->isEqualTo('yesterday at '.$yesterdayFormat)
-            ->string($this->mock->humanReadable(false))
-                ->isEqualTo('yesterday')
+                ->isEqualTo('dateToday timeToday')
+            ->mock($this->mock)->call('humanDateNow')->never()
+            ->mock($this->mock)->call('humanDateYesterday')->never()
+            ->mock($this->mock)->call('humanDateTomorrow')->never()
+            ->mock($this->mock)->call('humanDateToday')->once()
+            ->mock($this->mock)->call('humanDateOther')->never()
+        ;
+        
+        $this->assert('test Dates::humanReadable call humanDateOther - 2 days before')
+            ->if($this->mock = new \mock\BFW\Dates)
+            ->and($this->prepareHumanReadable())
+            ->and($this->mock->modify('-50 hours'))
+            ->then
+            ->string($this->mock->humanReadable())
+                ->isEqualTo('dateOther timeOther')
+            ->mock($this->mock)->call('humanDateNow')->never()
+            ->mock($this->mock)->call('humanDateYesterday')->never()
+            ->mock($this->mock)->call('humanDateTomorrow')->never()
+            ->mock($this->mock)->call('humanDateToday')->never()
+            ->mock($this->mock)->call('humanDateOther')->once()
+        ;
+        
+        $this->assert('test Dates::humanReadable call humanDateOther - 2 days after')
+            ->if($this->mock = new \mock\BFW\Dates)
+            ->and($this->prepareHumanReadable())
+            ->and($this->mock->modify('+50 hours'))
+            ->then
+            ->string($this->mock->humanReadable())
+                ->isEqualTo('dateOther timeOther')
+            ->mock($this->mock)->call('humanDateNow')->never()
+            ->mock($this->mock)->call('humanDateYesterday')->never()
+            ->mock($this->mock)->call('humanDateTomorrow')->never()
+            ->mock($this->mock)->call('humanDateToday')->never()
+            ->mock($this->mock)->call('humanDateOther')->once()
+        ;
+        
+        $this->assert('test Dates::humanReadable call humanDateOther - last month')
+            ->if($this->mock = new \mock\BFW\Dates)
+            ->and($this->prepareHumanReadable())
+            ->and($this->mock->modify('-1 month'))
+            ->then
+            ->string($this->mock->humanReadable())
+                ->isEqualTo('dateOther timeOther')
+            ->mock($this->mock)->call('humanDateNow')->never()
+            ->mock($this->mock)->call('humanDateYesterday')->never()
+            ->mock($this->mock)->call('humanDateTomorrow')->never()
+            ->mock($this->mock)->call('humanDateToday')->never()
+            ->mock($this->mock)->call('humanDateOther')->once()
+        ;
+        
+        $this->assert('test Dates::humanReadable call humanDateOther - last year')
+            ->if($this->mock = new \mock\BFW\Dates)
+            ->and($this->prepareHumanReadable())
+            ->and($this->mock->modify('-1 year'))
+            ->then
+            ->string($this->mock->humanReadable())
+                ->isEqualTo('dateOther timeOther')
+            ->mock($this->mock)->call('humanDateNow')->never()
+            ->mock($this->mock)->call('humanDateYesterday')->never()
+            ->mock($this->mock)->call('humanDateTomorrow')->never()
+            ->mock($this->mock)->call('humanDateToday')->never()
+            ->mock($this->mock)->call('humanDateOther')->once()
+        ;
+    }
+    
+    public function testHumanReadableWithoutTime()
+    {
+        $this->assert('test Dates::humanReadable without time part')
+            ->if($this->mock = new \mock\BFW\Dates)
+            ->and($this->prepareHumanReadable())
+            ->and($this->mock->modify('-25 hours'))
+            ->then
+            
+            ->string($this->mock->humanReadable())
+                ->isEqualTo('dateYesterday timeYesterday')
             ->string($this->mock->humanReadable(true))
-                ->isEqualTo('yesterday at '.$yesterdayFormat);
-        
-        //Not testable current january month because the month before is not
-        //in the same year.
-        if ((int) $this->mock->format('m') !== 1) {
-            $this->assert('test humanReadable : Before yesterday; Same year')
-                ->given($this->mock->modify('-1 month'))
-                ->given($dateFormat = $this->mock->format($hrFormat['dateSameYear']))
-                ->given($timeFormat = $this->mock->format($hrFormat['time']))
-                ->string($this->mock->humanReadable())
-                    ->isEqualTo('the '.$dateFormat.' at '.$timeFormat)
-                ->string($this->mock->humanReadable(false))
-                    ->isEqualTo('the '.$dateFormat)
-                ->string($this->mock->humanReadable(true))
-                    ->isEqualTo('the '.$dateFormat.' at '.$timeFormat);
-        }
-        
-        $this->assert('test humanReadable : Before yesterday; Different year')
-            ->given($this->mock->modify('-1 year'))
-            ->given($dateFormat = $this->mock->format($hrFormat['dateDifferentYear']))
-            ->given($timeFormat = $this->mock->format($hrFormat['time']))
-            ->string($this->mock->humanReadable())
-                ->isEqualTo('the '.$dateFormat.' at '.$timeFormat)
+                ->isEqualTo('dateYesterday timeYesterday')
             ->string($this->mock->humanReadable(false))
-                ->isEqualTo('the '.$dateFormat)
-            ->string($this->mock->humanReadable(true))
-                ->isEqualTo('the '.$dateFormat.' at '.$timeFormat);
+                ->isEqualTo('dateYesterday')
+        ;
+    }
+    
+    /**
+     * Issue #81
+     */
+    public function testHumanReadableDifferentTimeZone()
+    {
+        $this->assert('test Dates::humanReadable with different timezone')
+            ->if(ini_set('date.timezone', 'Europe/Paris'))
+            ->and($this->mock = new \mock\BFW\Dates)
+            ->and($this->prepareHumanReadable())
+            ->given($dateTimeZone = new \DateTimeZone('America/New_York')) //-6/7 hours
+            ->and($this->mock->setTimezone($dateTimeZone))
+            ->and($this->mock->modify('-20 hours'))
+            ->then
+            
+            //\DateTime::diff use same TimeZone to compare. So it's the same
+            //day and not yesterday :)
+            ->string($this->mock->humanReadable())
+                ->isEqualTo('dateToday timeToday')
+        ;
+    }
+    
+    public function testHumanDateNow()
+    {
+        $this->assert('test Dates::humanDateNow')
+            ->given($parsedTxt = (object) [
+                'date' => '',
+                'time' => ''
+            ])
+            ->then
+            ->variable($this->invoke($this->mock)->humanDateNow($parsedTxt))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo(\BFW\Dates::getHumanReadableI18n()['now'])
+            ->string($parsedTxt->time)
+                ->isEmpty()
+        ;
+    }
+    
+    public function testHumanDateToday()
+    {
+        $this->assert('test Dates::humanDateToday - 5 seconds before')
+            ->given($parsedTxt = (object) [
+                'date' => '',
+                'time' => ''
+            ])
+            ->given($now = new \DateTime)
+            ->given($toDiff = new \DateTime)
+            ->then
+            
+            ->if($toDiff->modify('-5 seconds'))
+            ->and($diff = $toDiff->diff($now))
+            ->then
+            
+            ->variable($this->invoke($this->mock)->humanDateToday($parsedTxt, $diff))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo(\BFW\Dates::getHumanReadableI18n()['since'].' 5s')
+            ->string($parsedTxt->time)
+                ->isEmpty()
+        ;
+        
+        $this->assert('test Dates::humanDateToday - 10 minutes before')
+            ->if($toDiff->modify('-10 minutes'))
+            ->and($diff = $toDiff->diff($now))
+            ->then
+            
+            ->variable($this->invoke($this->mock)->humanDateToday($parsedTxt, $diff))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo(\BFW\Dates::getHumanReadableI18n()['since'].' 10min')
+            ->string($parsedTxt->time)
+                ->isEmpty()
+        ;
+        
+        $this->assert('test Dates::humanDateToday - 2 hours before')
+            ->if($toDiff->modify('-2 hours'))
+            ->and($diff = $toDiff->diff($now))
+            ->then
+            
+            ->variable($this->invoke($this->mock)->humanDateToday($parsedTxt, $diff))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo(\BFW\Dates::getHumanReadableI18n()['since'].' 2h')
+            ->string($parsedTxt->time)
+                ->isEmpty()
+        ;
+        
+        $this->assert('test Dates::humanDateToday - 5 seconds after')
+            ->given($now = new \DateTime)
+            ->given($toDiff = new \DateTime)
+            ->then
+            
+            ->if($toDiff->modify('+5 seconds'))
+            ->and($diff = $toDiff->diff($now))
+            ->then
+            
+            ->variable($this->invoke($this->mock)->humanDateToday($parsedTxt, $diff))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo(\BFW\Dates::getHumanReadableI18n()['in'].' 5s')
+            ->string($parsedTxt->time)
+                ->isEmpty()
+        ;
+        
+        $this->assert('test Dates::humanDateToday - 10 minutes after')
+            ->if($toDiff->modify('+10 minutes'))
+            ->and($diff = $toDiff->diff($now))
+            ->then
+            
+            ->variable($this->invoke($this->mock)->humanDateToday($parsedTxt, $diff))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo(\BFW\Dates::getHumanReadableI18n()['in'].' 10min')
+            ->string($parsedTxt->time)
+                ->isEmpty()
+        ;
+        
+        $this->assert('test Dates::humanDateToday - 2 hours after')
+            ->if($toDiff->modify('+2 hours'))
+            ->and($diff = $toDiff->diff($now))
+            ->then
+            
+            ->variable($this->invoke($this->mock)->humanDateToday($parsedTxt, $diff))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo(\BFW\Dates::getHumanReadableI18n()['in'].' 2h')
+            ->string($parsedTxt->time)
+                ->isEmpty()
+        ;
+    }
+    
+    public function testHumanDateYesterday()
+    {
+        $this->assert('test Dates::humanDateYesterday')
+            ->given($parsedTxt = (object) [
+                'date' => '',
+                'time' => ''
+            ])
+            ->given($i18n = \BFW\Dates::getHumanReadableI18n())
+            ->then
+            ->variable($this->invoke($this->mock)->humanDateYesterday($parsedTxt))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo($i18n['yesterday'])
+            ->string($parsedTxt->time)
+                ->isEqualTo($i18n['at'].' '.$this->mock->format('H:i'))
+        ;
+    }
+    
+    public function testHumanDateTomorrow()
+    {
+        $this->assert('test Dates::humanDateTomorrow')
+            ->given($parsedTxt = (object) [
+                'date' => '',
+                'time' => ''
+            ])
+            ->given($i18n = \BFW\Dates::getHumanReadableI18n())
+            ->then
+            ->variable($this->invoke($this->mock)->humanDateTomorrow($parsedTxt))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo($i18n['tomorrow'])
+            ->string($parsedTxt->time)
+                ->isEqualTo($i18n['at'].' '.$this->mock->format('H:i'))
+        ;
+    }
+    
+    public function testHumanDateOther()
+    {
+        $this->assert('test Dates::humanDateOther - same year')
+            ->given($current = new \mock\BFW\Dates)
+            ->given($parsedTxt = (object) [
+                'date' => '',
+                'time' => ''
+            ])
+            ->given($i18n = \BFW\Dates::getHumanReadableI18n())
+            ->then
+            ->variable($this->invoke($this->mock)->humanDateOther($parsedTxt, $current))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo($i18n['the'].' '.$this->mock->format('m-d'))
+            ->string($parsedTxt->time)
+                ->isEqualTo($i18n['at'].' '.$this->mock->format('H:i'))
+        ;
+        
+        $this->assert('test Dates::humanDateOther - different year')
+            ->given($current = new \mock\BFW\Dates)
+            ->given($parsedTxt = (object) [
+                'date' => '',
+                'time' => ''
+            ])
+            ->given($i18n = \BFW\Dates::getHumanReadableI18n())
+            ->if($this->mock->modify('-1 year'))
+            ->then
+            ->variable($this->invoke($this->mock)->humanDateOther($parsedTxt, $current))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo($i18n['the'].' '.$this->mock->format('Y-m-d'))
+            ->string($parsedTxt->time)
+                ->isEqualTo($i18n['at'].' '.$this->mock->format('H:i'))
+        ;
     }
 }

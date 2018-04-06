@@ -1,260 +1,311 @@
 <?php
 
 namespace BFW\test\unit;
+
 use \atoum;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
+/**
+ * @engine isolate
+ */
 class Request extends atoum
 {
-    /**
-     * @var $class Class instance
-     */
-    protected $class;
-
-    /**
-     * Call before each test method
-     * Declare all $_SERVER used
-     * Instantiate the class
-     * 
-     * @param $testMethod string The name of the test method executed
-     * 
-     * @return void
-     */
+    //use \BFW\Test\Helpers\Application;
+    
+    protected $mock;
+    
     public function beforeTestMethod($testMethod)
     {
-        if($testMethod === 'testGetInstance') {
+        //$this->createApp();
+        //$this->initApp();
+        
+        $this->mockGenerator
+            ->makeVisible('serverValue')
+            ->makeVisible('detectIp')
+            ->makeVisible('detectLang')
+            ->makeVisible('detectReferer')
+            ->makeVisible('detectMethod')
+            ->makeVisible('detectSsl')
+            ->makeVisible('detectRequest')
+            ->generate('BFW\Request')
+        ;
+        
+        if ($testMethod === 'testConstructAndGetInstance') {
             return;
         }
         
-        $_SERVER['HTTP_ACCEPT_LANGUAGE']   = '';
-        $_SERVER['HTTP_HOST']              = '';
-        $_SERVER['HTTP_REFERER']           = '';
-        $_SERVER['HTTP_X_FORWARDED_PROTO'] = '';
-        $_SERVER['HTTP_X_FORWARDED_SSL']   = '';
-        $_SERVER['HTTPS']                  = '';
-        $_SERVER['REMOTE_ADDR']            = '';
-        $_SERVER['REQUEST_METHOD']         = '';
-        $_SERVER['REQUEST_URI']            = '';
-        
-        $this->class = \BFW\Request::getInstance();
+        $this->mock = \mock\BFW\Request::getInstance();
     }
     
-    /**
-     * Test method for getInstance()
-     * 
-     * @return void
-     */
-    public function testGetInstance()
+    public function testConstructAndGetInstance()
     {
-        $this->assert('test getInstance : create new instance')
-            ->given($firstInstance = \BFW\Request::getInstance())
-            ->object($firstInstance)
-                ->isInstanceOf('\BFW\Request');
-        
-        $this->assert('test getInstance : get last instance')
-            ->given($getInstance = \BFW\Request::getInstance())
-            ->object($getInstance)
+        $this->assert('test Constructor')
+            ->object($request = \BFW\Request::getInstance())
                 ->isInstanceOf('\BFW\Request')
-                ->isIdenticalTo($firstInstance);
+            ->object(\mock\BFW\Request::getInstance())
+                ->isIdenticalTo($request)
+        ;
     }
     
-    /**
-     * Test method for getIp()
-     * 
-     * @return void
-     */
-    public function testGetIp()
-    {
-        $this->assert('test getIp : default return')
-            ->string($this->class->getIp())
-                ->isEmpty();
-        
-        $this->assert('test getIp with a fake value')
-            ->given($newValue = '192.168.0.1')
-            ->given($_SERVER['REMOTE_ADDR'] = $newValue)
-            ->given($this->class->runDetect())
-            ->string($this->class->getIp())
-                ->isEqualTo($newValue);
-    }
-
-    /**
-     * Test method for getLang()
-     * 
-     * @return void
-     */
-    public function testGetLang()
-    {
-        $this->assert('test getLang : default return')
-            ->string($this->class->getLang())
-                ->isEmpty();
-        
-        //Thanks to http://www.albertcasadessus.com/2012/06/27/get-web-browser-preferrer-language-with-php-_server-variables-http_accept_language/
-        //For somes values
-        
-        $fakeValues =  [
-            'fr'       => (object) [
-                'value'    => 'fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4',
-                'expected' => 'fr'
-            ],
-            'caMoz'    => (object) [
-                'value'    => 'ca,en-us;q=0.7,en;q=0.3',
-                'expected' => 'ca'
-            ],
-            'caIE'     => (object) [
-                'value'    => 'es-ES',
-                'expected' => 'es'
-            ],
-            'caChr'    => (object) [
-                'value'    => 'ca-ES,ca;q=0.8',
-                'expected' => 'ca'
-            ]
-        ];
-        
-        foreach ($fakeValues as $name => $infos) {
-            $this->assert('test getLang with a fake value ('.$name.')')
-                ->given($_SERVER['HTTP_ACCEPT_LANGUAGE'] = $infos->value)
-                ->given($this->class->runDetect())
-                ->string($this->class->getLang())
-                    ->isEqualTo($infos->expected);
-        }
-    }
-
-    /**
-     * Test method for getReferer()
-     * 
-     * @return void
-     */
-    public function testGetReferer()
-    {
-        $this->assert('test getReferer : default return')
-            ->string($this->class->getReferer())
-                ->isEmpty();
-        
-        $this->assert('test getReferer with a fake value')
-            ->given($newValue = 'http://www.bulton.fr/')
-            ->given($_SERVER['HTTP_REFERER'] = $newValue)
-            ->given($this->class->runDetect())
-            ->string($this->class->getReferer())
-                ->isEqualTo($newValue);
-    }
-
-    /**
-     * Test method for getMethod()
-     * 
-     * @return void
-     */
-    public function testGetMethod()
-    {
-        $this->assert('test getMethod : default return')
-            ->string($this->class->getMethod())
-                ->isEmpty();
-        
-        $this->assert('test getMethod with a fake value (GET)')
-            ->given($newValue = 'GET')
-            ->given($_SERVER['REQUEST_METHOD'] = $newValue)
-            ->given($this->class->runDetect())
-            ->string($this->class->getMethod())
-                ->isEqualTo($newValue);
-        
-        $this->assert('test getMethod with a fake value (POST)')
-            ->given($newValue = 'POST')
-            ->given($_SERVER['REQUEST_METHOD'] = $newValue)
-            ->given($this->class->runDetect())
-            ->string($this->class->getMethod())
-                ->isEqualTo($newValue);
-    }
-
-    /**
-     * Test method for getSsl()
-     * 
-     * @return void
-     */
-    public function testGetSsl()
-    {
-        $this->assert('test getSsl : default return')
-            ->boolean($this->class->getSsl())
-                ->isFalse();
-        
-        $this->assert('test getSsl with a fake value for HTTP_X_FORWARDED_SSL')
-            ->given($_SERVER['HTTP_X_FORWARDED_SSL'] = 'on')
-            ->given($this->class->runDetect())
-            ->boolean($this->class->getSsl())
-                ->isTrue();
-        
-        $this->assert('test getSsl with a fake value for HTTP_X_FORWARDED_PROTO')
-            ->given($_SERVER['HTTP_X_FORWARDED_SSL'] = 'off')
-            ->given($_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https')
-            ->given($this->class->runDetect())
-            ->boolean($this->class->getSsl())
-                ->isTrue();
-        
-        $this->assert('test getSsl with a fake value for HTTPS')
-            ->given($_SERVER['HTTP_X_FORWARDED_PROTO'] = 'off')
-            ->given($_SERVER['HTTPS'] = 'on')
-            ->given($this->class->runDetect())
-            ->boolean($this->class->getSsl())
-                ->isTrue();
-    }
-
-    /**
-     * Test method for getRequest()
-     * 
-     * @return void
-     */
-    public function testGetRequest()
-    {
-        $this->assert('test getRequest : default return')
-            ->object($request = $this->class->getRequest())
-                ->string($request->scheme)->isEqualTo('http')
-                ->string($request->host)->isEmpty()
-                ->string($request->port)->isEmpty()
-                ->string($request->user)->isEmpty()
-                ->string($request->pass)->isEmpty()
-                ->string($request->path)->isEmpty()
-                ->string($request->query)->isEmpty()
-                ->string($request->fragment)->isEmpty();
-        
-        $fakeUrl = 'https://github.com/bulton-fr/bfw/blob/3.0/.atoum.php?fa=ke&foo=bar#L1';
-        $this->assert('test getRequest with fake url')
-            ->given($_SERVER['REQUEST_URI'] = $fakeUrl)
-            ->given($_SERVER['HOST'] = 'github.com')
-            ->given($this->class->runDetect())
-            ->object($request = $this->class->getRequest())
-                ->string($request->scheme)->isEqualTo('https')
-                ->string($request->host)->isEqualTo('github.com')
-                ->string($request->port)->isEqualTo('')
-                ->string($request->user)->isEqualTo('')
-                ->string($request->pass)->isEqualTo('')
-                ->string($request->path)->isEqualTo('/bulton-fr/bfw/blob/3.0/.atoum.php')
-                ->string($request->query)->isEqualTo('fa=ke&foo=bar')
-                ->string($request->fragment)->isEqualTo('L1');
-    }
-
-    /**
-     * Test method for getServerValue()
-     * 
-     * @return void
-     */
     public function testGetServerValue()
     {
-        $this->assert('test getServerValue with default value')
+        $this->assert('test Request::getServerValue with not existing key')
             ->exception(function() {
-                \BFW\Request::getServerValue('HOST');
+                \BFW\Request::getServerValue('atoum');
             })
                 ->hasCode(\BFW\Request::ERR_KEY_NOT_EXIST)
-                ->hasMessage('The key HOST not exist into $_SERVER array');
+        ;
         
-        $this->assert('test getServerValue with a fake value')
-            ->given($_SERVER['HOST'] = 'bulton.fr')
-            ->string(\BFW\Request::getServerValue('HOST'))
-                ->isEqualTo('bulton.fr');
+        $this->assert('test Request::getServerValue with existing key')
+            ->if($_SERVER['atoum'] = 'unitTest')
+            ->then
+            ->string(\BFW\Request::getServerValue('atoum'))
+                ->isEqualTo('unitTest')
+        ;
+    }
+    
+    public function testServerValue()
+    {
+        //Atoum not allow to mock static method, so we can't mock the
+        //return of getServerValue().
+        //But it's tested before, so if there is a fail, it will be seen.
+        $this->assert('test Request::serverValue with not existing key')
+            ->string($this->mock->serverValue('atoum'))
+                ->isEmpty()
+        ;
         
-        $this->assert('test getServerValue with an unknown value')
-            ->exception(function() {
-                \BFW\Request::getServerValue('BULTON');
-            })
-                ->hasCode(\BFW\Request::ERR_KEY_NOT_EXIST)
-                ->hasMessage('The key BULTON not exist into $_SERVER array');
+        $this->assert('test Request::serverValue with existing key')
+            ->if($_SERVER['atoum'] = 'unitTest')
+            ->then
+            ->string($this->mock->serverValue('atoum'))
+                ->isEqualTo('unitTest')
+        ;
+    }
+    
+    public function testRunDetect()
+    {
+        $this->assert('test Request::runDetect')
+            ->if($this->calling($this->mock)->detectIp = null)
+            ->and($this->calling($this->mock)->detectLang = null)
+            ->and($this->calling($this->mock)->detectReferer = null)
+            ->and($this->calling($this->mock)->detectMethod = null)
+            ->and($this->calling($this->mock)->detectSsl = null)
+            ->and($this->calling($this->mock)->detectRequest = null)
+            ->then
+            
+            ->variable($this->mock->runDetect())
+                ->isNull()
+            ->mock($this->mock)
+                ->call('detectIp')->once()
+                ->call('detectLang')->once()
+                ->call('detectReferer')->once()
+                ->call('detectMethod')->once()
+                ->call('detectSsl')->once()
+                ->call('detectRequest')->once()
+        ;
+    }
+    
+    public function testGetAndDetectIp()
+    {
+        $this->assert('test Request::getIp with default value')
+            ->string($this->mock->getIp())
+                ->isEmpty()
+        ;
+        
+        $this->assert('test Request::detectIp and Request::getIp')
+            ->if($_SERVER['REMOTE_ADDR'] = '192.168.0.255')
+            ->then
+            ->variable($this->mock->detectIp())
+                ->isNull()
+            ->string($this->mock->getIp())
+                ->isEqualTo('192.168.0.255')
+        ;
+    }
+    
+    public function testGetAndDetectLang()
+    {
+        $this->assert('test Request::getLang with default value')
+            ->string($this->mock->getLang())
+                ->isEmpty()
+        ;
+        
+        $this->assert('test Request::detectLang and Request::getLang for empty preference')
+            ->if($_SERVER['HTTP_ACCEPT_LANGUAGE'] = '')
+            ->then
+            ->variable($this->mock->detectLang())
+                ->isNull()
+            ->string($this->mock->getLang())
+                ->isEmpty()
+        ;
+        
+        $this->assert('test Request::detectLang and Request::getLang with preference')
+            ->if($_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4')
+            ->then
+            ->variable($this->mock->detectLang())
+                ->isNull()
+            ->string($this->mock->getLang())
+                ->isEqualTo('fr')
+        ;
+    }
+    
+    public function testGetAndDetectReferer()
+    {
+        $this->assert('test Request::getReferer with default value')
+            ->string($this->mock->getReferer())
+                ->isEmpty()
+        ;
+        
+        $this->assert('test Request::detectReferer and Request::getReferer')
+            ->if($_SERVER['HTTP_REFERER'] = 'https://bfw.bulton.fr')
+            ->then
+            ->variable($this->mock->detectReferer())
+                ->isNull()
+            ->string($this->mock->getReferer())
+                ->isEqualTo('https://bfw.bulton.fr')
+        ;
+    }
+    
+    public function testGetAndDetectMethod()
+    {
+        $this->assert('test Request::getMethod with default value')
+            ->string($this->mock->getMethod())
+                ->isEmpty()
+        ;
+        
+        $this->assert('test Request::detectMethod and Request::getMethod')
+            ->if($_SERVER['REQUEST_METHOD'] = 'GET')
+            ->then
+            ->variable($this->mock->detectMethod())
+                ->isNull()
+            ->string($this->mock->getMethod())
+                ->isEqualTo('GET')
+        ;
+    }
+    
+    public function testGetAndDetectSsl()
+    {
+        $this->assert('test Request::getSsl with default value')
+            ->variable($this->mock->getSsl())
+                ->isNull()
+        ;
+        
+        $this->assert('test Request::detectSsl and Request::getSsl for no ssl')
+            ->if($_SERVER['HTTPS'] = '')
+            ->and($_SERVER['HTTP_X_FORWARDED_PROTO'] = '')
+            ->and($_SERVER['HTTP_X_FORWARDED_SSL'] = '')
+            ->then
+            ->variable($this->mock->detectSsl())
+                ->isNull()
+            ->boolean($this->mock->getSsl())
+                ->isFalse()
+        ;
+        
+        $this->assert('test Request::detectSsl and Request::getSsl for HTTP_X_FORWARDED_SSL')
+            ->if($_SERVER['HTTPS'] = '')
+            ->and($_SERVER['HTTP_X_FORWARDED_PROTO'] = '')
+            ->and($_SERVER['HTTP_X_FORWARDED_SSL'] = 'on')
+            ->then
+            ->variable($this->mock->detectSsl())
+                ->isNull()
+            ->boolean($this->mock->getSsl())
+                ->isTrue()
+        ;
+        
+        $this->assert('test Request::detectSsl and Request::getSsl for HTTP_X_FORWARDED_PROTO')
+            ->if($_SERVER['HTTPS'] = '')
+            ->and($_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https')
+            ->and($_SERVER['HTTP_X_FORWARDED_SSL'] = '')
+            ->then
+            ->variable($this->mock->detectSsl())
+                ->isNull()
+            ->boolean($this->mock->getSsl())
+                ->isTrue()
+        ;
+        
+        $this->assert('test Request::detectSsl and Request::getSsl for HTTPS')
+            ->if($_SERVER['HTTPS'] = 'on')
+            ->and($_SERVER['HTTP_X_FORWARDED_PROTO'] = '')
+            ->and($_SERVER['HTTP_X_FORWARDED_SSL'] = '')
+            ->then
+            ->variable($this->mock->detectSsl())
+                ->isNull()
+            ->boolean($this->mock->getSsl())
+                ->isTrue()
+        ;
+    }
+    
+    public function testGetAndDetectRequest()
+    {
+        $this->assert('test Request::getRequest with default value')
+            ->variable($this->mock->getRequest())
+                ->isNull()
+        ;
+        
+        $this->assert('test Request::detectRequest and Request::getRequest with empty infos')
+            ->if($_SERVER['REQUEST_URI'] = '')
+            ->and($_SERVER['HTTP_HOST'] = '')
+            ->and($_SERVER['SERVER_PORT'] = '')
+            ->and($_SERVER['PHP_AUTH_USER'] = '')
+            ->and($_SERVER['PHP_AUTH_PW'] = '')
+            ->then
+            ->variable($this->mock->detectRequest())
+                ->isNull()
+            ->object($this->mock->getRequest())
+                ->isEqualTo((object) [
+                    'scheme'   => 'http',
+                    'host'     => '',
+                    'port'     => '',
+                    'user'     => '',
+                    'pass'     => '',
+                    'path'     => '',
+                    'query'    => '',
+                    'fragment' => '',
+                ])
+        ;
+        
+        $this->assert('test Request::detectRequest and Request::getRequest with only default infos')
+            ->if($_SERVER['REQUEST_URI'] = '')
+            ->and($_SERVER['HTTP_HOST'] = 'bfw.bulton.fr')
+            ->and($_SERVER['SERVER_PORT'] = '80')
+            ->and($_SERVER['PHP_AUTH_USER'] = 'unit')
+            ->and($_SERVER['PHP_AUTH_PW'] = 'atoum')
+            ->then
+            ->variable($this->mock->detectRequest())
+                ->isNull()
+            ->object($this->mock->getRequest())
+                ->isEqualTo((object) [
+                    'scheme'   => 'http',
+                    'host'     => 'bfw.bulton.fr',
+                    'port'     => '80',
+                    'user'     => 'unit',
+                    'pass'     => 'atoum',
+                    'path'     => '',
+                    'query'    => '',
+                    'fragment' => '',
+                ])
+        ;
+        
+        $this->assert('test Request::detectRequest and Request::getRequest with all infos')
+            ->if($_SERVER['REQUEST_URI'] = 'https://bfw.bulton.fr/wiki/v3.0/fr/introduction')
+            ->and($_SERVER['HTTP_HOST'] = 'www.bulton.fr')
+            ->and($_SERVER['SERVER_PORT'] = '80')
+            ->and($_SERVER['PHP_AUTH_USER'] = 'unit')
+            ->and($_SERVER['PHP_AUTH_PW'] = 'atoum')
+            ->then
+            ->variable($this->mock->detectRequest())
+                ->isNull()
+            ->object($this->mock->getRequest())
+                ->isEqualTo((object) [
+                    'scheme'   => 'https',
+                    'host'     => 'bfw.bulton.fr',
+                    'port'     => '80', //Not exist into REQUEST_URI
+                    'user'     => 'unit', //Not exist into REQUEST_URI
+                    'pass'     => 'atoum', //Not exist into REQUEST_URI
+                    'path'     => '/wiki/v3.0/fr/introduction',
+                    'query'    => '',
+                    'fragment' => '',
+                ])
+        ;
     }
 }

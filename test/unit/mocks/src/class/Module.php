@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\test\unit\mocks;
+namespace BFW\Test\Mock;
 
 /**
  * Mock for Module class
@@ -17,6 +17,17 @@ class Module extends \BFW\Module
         
         $this->config    = new \stdClass;
         $this->loadInfos = new \stdClass;
+    }
+    
+    /**
+     * Called when a instance of this class is cloned.
+     * Clone the instance for property which have an object too.
+     */
+    public function __clone()
+    {
+        $this->config    = clone $this->config;
+        $this->loadInfos = clone $this->loadInfos;
+        $this->status    = clone $this->status;
     }
     
     /**
@@ -53,9 +64,19 @@ class Module extends \BFW\Module
      */
     public function setStatus($load, $run)
     {
-        $this->status = (object) [
-            'load' => $load,
-            'run'  => $run
-        ];
+        $this->status->load = $load;
+        $this->status->run  = $run;
+    }
+    
+    /**
+     * Call the static method readJsonFile
+     * 
+     * @param array $args args to pass at readJsonFile
+     * 
+     * @return mixed
+     */
+    public function callReadJsonFile(...$args)
+    {
+        return self::readJsonFile(...$args);
     }
 }

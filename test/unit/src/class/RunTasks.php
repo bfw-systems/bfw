@@ -3,144 +3,171 @@
 namespace BFW\test\unit;
 
 use \atoum;
-use \BFW\test\unit\mocks\Observer as MockObserver;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
+/**
+ * @engine isolate
+ */
 class RunTasks extends atoum
 {
-    protected $class;
+    //use \BFW\Test\Helpers\Application;
     
-    /**
-     * Call before each test method
-     * 
-     * @param $testMethod string The name of the test method executed
-     * 
-     * @return void
-     */
+    protected $mock;
+    protected $observer;
+    
     public function beforeTestMethod($testMethod)
     {
-        $this->class = new \BFW\RunTasks([], 'unitTest');
-        $this->class->attach(new MockObserver);
+        //$this->createApp();
+        //$this->initApp();
+        
+        if ($testMethod === 'testConstruct') {
+            return;
+        }
+        
+        $this->observer = new \BFW\Test\Helpers\ObserverArray;
+        $this->mock     = new \mock\BFW\RunTasks([], 'unitTest');
+        $this->mock->attach($this->observer);
     }
     
-    /**
-     * Test the constructor
-     */
-    public function testConstructor()
+    public function testConstruct()
     {
         $this->assert('test Constructor')
-            ->object($this->class)
+            ->object($runTasks = new \mock\BFW\RunTasks([], 'unitTest'))
                 ->isInstanceOf('\BFW\RunTasks')
-                ->isInstanceOf('\BFW\Subjects')
-            ->array($this->class->getRunSteps())
+            ->array($runTasks->getRunSteps())
                 ->isEmpty()
-            ->string($this->class->getNotifyPrefix())
-                ->isEqualTo('unitTest')
+            ->string($runTasks->getNotifyPrefix())
+                ->isEqualto('unitTest')
         ;
     }
     
-    public function testSetters()
+    public function testGetSetAddRunSteps()
     {
-        $this->assert('test setter for runSteps')
-            ->array($this->class->getRunSteps())
+        $this->assert('test RunTasks::getRunSteps with construct value')
+            ->array($this->mock->getRunSteps())
                 ->isEmpty()
-            ->given($runSteps = [
-                'testSetter' => (object) []
-            ])
-            ->object($this->class->setRunSteps($runSteps))
-                ->isIdenticalTo($this->class)
-            ->array($this->class->getRunSteps())
-                ->isEqualTo($runSteps)
         ;
         
-        $this->assert('test setter for notifyPrefix')
-            ->string($this->class->getNotifyPrefix())
-                ->isEqualTo('unitTest')
-            ->object($this->class->setNotifyPrefix('unitTestSetters'))
-                ->isIdenticalTo($this->class)
-            ->string($this->class->getNotifyPrefix())
-                ->isEqualTo('unitTestSetters')
+        $this->assert('test RunTasks::setRunSteps')
+            ->given($objAtoumStep = (object) [
+                'context' => $this
+            ])
+            ->object($this->mock->setRunSteps([
+                'atoum' => $objAtoumStep
+            ]))
+                ->isIdenticalTo($this->mock)
+            ->array($this->mock->getRunSteps())
+                ->isEqualTo([
+                    'atoum' => $objAtoumStep
+                ])
+        ;
+        
+        $this->assert('test RunTasks::addRunSteps')
+            ->given($objHelloStep = (object) [
+                'callback' => function() {
+                    echo 'hello world !';
+                }
+            ])
+            ->object($this->mock->addToRunSteps('hello', $objHelloStep))
+                ->isIdenticalTo($this->mock)
+            ->array($this->mock->getRunSteps())
+                ->isEqualTo([
+                    'atoum' => $objAtoumStep,
+                    'hello' => $objHelloStep
+                ])
         ;
     }
     
-    public function testAddToRunSteps()
+    public function testGetAndSetNotifyPrefix()
     {
-        $this->assert('test method addToRunSteps')
-            ->array($this->class->getRunSteps())
-                ->isEmpty()
-            ->given($runStep1 = (object) [])
-            ->object($this->class->addToRunSteps('test1', $runStep1))
-                ->isIdenticalTo($this->class)
-            ->array($this->class->getRunSteps())
-                ->isEqualTo([
-                    'test1' => $runStep1
-                ])
-            ->given($runStep2 = (object) [])
-            ->object($this->class->addToRunSteps('test2', $runStep2))
-                ->isIdenticalTo($this->class)
-            ->array($this->class->getRunSteps())
-                ->isEqualTo([
-                    'test1' => $runStep1,
-                    'test2' => $runStep2
-                ])
+        $this->assert('test RunTasks::getNotifyPrefix with construct value')
+            ->string($this->mock->getNotifyPrefix())
+                ->isEqualTo('unitTest')
+        ;
+        
+        $this->assert('test RunTasks::setNotifyPrefix')
+            ->object($this->mock->setNotifyPrefix('atoum'))
+                ->isIdenticalTo($this->mock)
+            ->string($this->mock->getNotifyPrefix())
+                ->isEqualTo('atoum')
         ;
     }
     
     public function testRun()
     {
-        $this->assert('test method run without steps')
-            ->array($this->class->getRunSteps())
-                ->isEmpty()
-            ->output(function() {
-                $this->class->run();
-            })
-                ->isEqualTo(
-                    'unitTest_start_run_tasks'."\n"
-                    .'unitTest_end_run_tasks'."\n"
-                )
-        ;
-        
-        $this->assert('test method run with one step, no callback or context')
-            ->if($this->class->addToRunSteps('test1', (object) []))
-            ->then
-            ->output(function() {
-                $this->class->run();
-            })
-                ->isEqualTo(
-                    'unitTest_start_run_tasks'."\n"
-                    .'unitTest_exec_test1'."\n"
-                    .'unitTest_end_run_tasks'."\n"
-                )
-        ;
-        
-        $this->assert('test method run with one step, with callback but no context')
-            ->if($this->class->addToRunSteps('test1', (object) [
-                'callback' => function() {
-                    echo 'echo from callback :)'."\n";
-                }
+        $this->assert('test RunTasks::run - prepare')
+            ->given($helloOutput = '')
+            ->given($this->mock->setRunSteps([
+                'atoum' => (object) [
+                    'context' => $this
+                ],
+                'hello' => (object) [
+                    'callback' => function() use(&$helloOutput) {
+                        $helloOutput = 'hello world !';
+                    }
+                ]
             ]))
-            ->then
-            ->output(function() {
-                $this->class->run();
-            })
-                ->isEqualTo(
-                    'unitTest_start_run_tasks'."\n"
-                    .'unitTest_run_test1'."\n"
-                    .'echo from callback :)'."\n"
-                    .'unitTest_finish_test1'."\n"
-                    .'unitTest_end_run_tasks'."\n"
-                )
+        ;
+        
+        $this->assert('test RunTasks::run')
+            ->variable($this->mock->run())
+            ->string($helloOutput)
+                ->isEqualTo('hello world !')
+            ->array($this->observer->getUpdateReceived())
+                ->isEqualTo([
+                    (object) [
+                        'action'  => 'unitTest_start_run_tasks',
+                        'context' => null
+                    ],
+                    (object) [
+                        'action'  => 'unitTest_exec_atoum',
+                        'context' => $this
+                    ],
+                    (object) [
+                        'action'  => 'unitTest_run_hello',
+                        'context' => null
+                    ],
+                    (object) [
+                        'action'  => 'unitTest_done_hello',
+                        'context' => null
+                    ],
+                    (object) [
+                        'action'  => 'unitTest_end_run_tasks',
+                        'context' => null
+                    ]
+                ])
         ;
     }
     
     public function testSendNotify()
     {
-        $this->assert('test method sendNotify')
-            ->output(function() {
-                $this->class->sendNotify('notify from unit test');
-            })
-                ->isEqualTo('notify from unit test'."\n")
+        $this->assert('test RunTasks::sendNotify without context')
+            ->variable($this->mock->sendNotify('hello_from_unit_test'))
+                ->isNull()
+            ->array($this->observer->getUpdateReceived())
+                ->isEqualTo([
+                    (object) [
+                        'action'  => 'hello_from_unit_test',
+                        'context' => null
+                    ]
+                ])
+        ;
+        
+        $this->assert('test RunTasks::sendNotify with context')
+            ->variable($this->mock->sendNotify('hi_from_atoum', $this))
+                ->isNull()
+            ->array($this->observer->getUpdateReceived())
+                ->isEqualTo([
+                    (object) [
+                        'action'  => 'hello_from_unit_test',
+                        'context' => null
+                    ],
+                    (object) [
+                        'action'  => 'hi_from_atoum',
+                        'context' => $this
+                    ]
+                ])
         ;
     }
 }

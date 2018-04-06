@@ -3,8 +3,6 @@
 namespace BFW\Memcache\test\unit;
 
 use \atoum;
-use \BFW\Memcache\test\unit\mocks\Memcached as MockMemcached;
-use \BFW\test\helpers\ApplicationInit as AppInit;
 
 require_once(__DIR__.'/../../../../../vendor/autoload.php');
 
@@ -13,338 +11,200 @@ require_once(__DIR__.'/../../../../../vendor/autoload.php');
  */
 class Memcached extends atoum
 {
-    /**
-     * @var $class Class instance
-     */
-    protected $class;
+    use \BFW\Test\Helpers\Application;
+    use MemcacheTrait;
     
-    /**
-     * @var \BFW\test\helpers\ApplicationInit $app BFW Application instance
-     */
-    protected $app;
+    protected $mock;
+    protected $addServersArg = [];
     
-    /**
-     * @var array $forcedConfig Config used for all test into this file
-     */
-    protected $forcedConfig = [];
-
-    /**
-     * Call before each test method
-     * Define forced config
-     * Instantiate BFW Application class
-     * 
-     * @param $testMethod string The name of the test method executed
-     * 
-     * @return void
-     */
     public function beforeTestMethod($testMethod)
     {
-        $this->forcedConfig = [
-            'debug'              => false,
-            'errorRenderFct'     => [
-                'enabled' => false,
-                'default' => [
-                    'class'  => '',
-                    'method' => ''
-                ],
-                'cli'     => [
-                    'class'  => '',
-                    'method' => ''
-                ]
-            ],
-            'exceptionRenderFct' => [
-                'enabled' => false,
-                'default' => [
-                    'class'  => '',
-                    'method' => ''
-                ],
-                'cli'     => [
-                    'class'  => '',
-                    'method' => ''
-                ]
-            ],
-            'memcached'          => [
-                'enabled'      => false,
-                'class'        => '\BFW\Memcache\Memcached',
-                'persistentId' => null,
-                'servers'       => [
-                    [
-                        'host'       => '',
-                        'port'       => 0,
-                        'timeout'    => null,
-                        'persistent' => false,
-                        'weight'     => 0
-                    ]
-                ]
-            ]
-        ];
+        $this->mockGenerator
+            ->makeVisible('completeServerInfos')
+            ->makeVisible('testConnect')
+            ->makeVisible('generateServerList')
+            ->generate('BFW\Memcache\Memcached')
+        ;
         
-        $this->app = AppInit::init([
-            'forceConfig' => $this->forcedConfig
-        ]);
+        $this->createApp();
+        $this->initApp();
         
-        //$this->class = new \BFW\Memcache\Memcache($this->app);
-    }
-    
-    /**
-     * Connect to localhost memcache server
-     * 
-     * @param string $testName The test method name which have call this method
-     * 
-     * @return void
-     */
-    protected function connectToServer($testName)
-    {
-        $this->assert('Connect to server for test '.$testName)
-            ->if($this->forcedConfig['memcached']['servers'][0] = [
-                    'host' => 'localhost',
-                    'port' => 11211,
-            ])
-            ->and($this->app->forceConfig($this->forcedConfig))
-            ->and($this->class = new MockMemcached);
-    }
-    
-    /**
-     * Obtain memcached extension version
-     * 
-     * @return string
-     * 
-     * @throws \Exception If the version could not be defined
-     */
-    protected function getMemcachedVersion()
-    {
-        $cmdReturn = trim(shell_exec('php --re memcached | grep "version"'));
-        
-        $matches = [];
-        $pregMatch = preg_match(
-            '/(.*)version ((\d+).(\d+).(\d+))(.*)/mi',
-            $cmdReturn,
-            $matches
-        );
-        
-        if($pregMatch === false) {
-            throw new \Exception(
-                'Error : Could not be define memcached version. Return is '
-                .$cmdReturn
-            );
+        if ($testMethod === 'testConstruct') {
+            return;
         }
         
-        return $matches[2];
+        $this->mock = new \mock\BFW\Memcache\Memcached;
     }
     
-    /**
-     * Test method for __constructor() when no server is declared
-     * 
-     * @return void
-     */
-    public function testConstructorWithoutServer()
+    public function testConstruct()
     {
-        $memcachedVersion = $this->getMemcachedVersion();
-        $this->assert('test constructor without memcache server');
-        
-        if($memcachedVersion < '3.0.0') {
-            $this->object($this->class = new \BFW\Memcache\Memcached)
-                    ->isInstanceOf('\BFW\Memcache\Memcached');
-        } else {
-            $this->given($app = $this->app)
-                ->exception(function() {
-                    new \BFW\Memcache\Memcached;
-                })
-                    ->hasCode(\BFW\Memcache\Memcached::ERR_NO_SERVER_CONNECTED)
-                    ->hasMessage('No memcached server connected.');
-        }
+        //How test the construt ? We can't access to persistant value into
+        //the \Memcached object. So there is not test to do here :/
     }
     
-    /**
-     * Test method for __constructor() with a declared server
-     * 
-     * @return void
-     */
-    public function testConstructorWithServer()
+    public function testGetConfig()
     {
-        $this->assert('test constructor with a memcache server')
-            ->if($this->forcedConfig['memcached']['servers'][0] = [
-                    'host' => 'localhost',
-                    'port' => 11211
-            ])
-            ->and($this->app->forceConfig($this->forcedConfig))
-            ->then
-            ->object($this->class = new \BFW\Memcache\Memcached)
-                ->isInstanceOf('\BFW\Memcache\Memcached')
-            ->and($this->class->quit());
-    }
-    
-    /**
-     * Test method for __constructor() with a declared server and ???
-     * 
-     * @TODO Check this test, it seem to be a WTF
-     * 
-     * @return void
-     */
-    public function testConstructorWithMultipleInstance()
-    {
-        $this->assert('test constructor with multiple instance to memcache server')
-            ->if($this->forcedConfig['memcached']['persistentId'] = 'testpersistent')
-            ->and($this->forcedConfig['memcached']['servers'][0] = [
-                    'host' => 'localhost',
-                    'port' => 11211
-            ])
-            ->and($this->app->forceConfig($this->forcedConfig))
-            ->then
-            ->object($this->class = new \BFW\Memcache\Memcached)
-                ->isInstanceOf('\BFW\Memcache\Memcached')
-            ->object($this->class = new \BFW\Memcache\Memcached)
-                ->isInstanceOf('\BFW\Memcache\Memcached')
-            ->and($this->class->quit());
-    }
-    
-    /**
-     * Test method for __constructor() with a declared server but when the
-     * server not exist.
-     * 
-     * @return void
-     */
-    public function testConstructorWithBadServer()
-    {
-        $exceptionMsg     = 'Memcached server localhost:11212 not connected';
-        $exceptionCode    = \BFW\Memcache\Memcached::ERR_A_SERVER_IS_NOT_CONNECTED;
-        $memcachedVersion = $this->getMemcachedVersion();
-        
-        if($memcachedVersion >= '3.0.0') {
-            $exceptionMsg  = 'No memcached server connected.';
-            $exceptionCode = \BFW\Memcache\Memcached::ERR_NO_SERVER_CONNECTED;
-        }
-        
-        $this->assert('test constructor with a bad memcache server infos')
-            ->if($this->forcedConfig['memcached']['servers'][0] = [
-                    'host' => 'localhost',
-                    'port' => 11212
-            ])
-            ->and($this->app->forceConfig($this->forcedConfig))
-            ->then
-            ->given($app = $this->app)
-            ->exception(function() {
-                new \BFW\Memcache\Memcached;
-            })
-                ->hasCode($exceptionCode)
-                ->hasMessage($exceptionMsg)
+        $this->assert('test \Memcache\Memcache::getConfig')
+            ->array($this->mock->getConfig())
+                ->isNotEmpty()
         ;
     }
     
-    /**
-     * Test method for getServerInfos()
-     * 
-     * @return void
-     */
-    public function testGetServerInfos()
+    protected function mockMethodsUsedByConnectToServer()
     {
-        $this->connectToServer(__METHOD__);
-        
-        $this->assert('test getServerInfos without datas')
-            ->given($serverInfos = [])
-            ->if($this->class->callGetServerInfos($serverInfos))
-            ->then
-            ->array($serverInfos)
-                ->isEqualTo([
-                    'host'       => null,
-                    'port'       => null,
-                    'weight'     => 0,
-                    'timeout'    => null,
-                    'persistent' => false,
-                ]);
-        
-        $this->assert('test getServerInfos with datas')
-            ->given($serverInfos = $this->forcedConfig['memcached']['servers'][0])
-            ->if($serverInfos['weight'] = 10)
-            ->and($this->class->callGetServerInfos($serverInfos))
-            ->then
-            ->array($serverInfos)
-                ->isEqualTo([
-                    'host'       => 'localhost',
-                    'port'       => 11211,
-                    'weight'     => 10,
-                    'timeout'    => null,
-                    'persistent' => false
-                ]);
-        
-        $this->assert('test getServerInfos exception')
-            ->given($class = $this->class)
-            ->exception(function () use ($class) {
-                $serverInfos = 'test';
-                $class->callGetServerInfos($serverInfos);
+        $this
+            ->given($that = $this)
+            ->if($this->calling($this->mock)->generateServerList = [])
+            ->and($this->calling($this->mock)->completeServerInfos = function ($infos) {
+                return $infos;
             })
-                ->hasCode($class::ERR_SERVER_INFOS_FORMAT)
-                ->hasMessage('Memcache(d) server information is not an array.');
+            ->and($this->calling($this->mock)->addServers = function($servers) use ($that) {
+                $that->addServersArg = $servers;
+            })
+            ->and($this->calling($this->mock)->testConnect = true)
+        ;
     }
     
-    /**
-     * Test method for ifExists()
-     * 
-     * @return void
-     */
-    public function testIfExists()
+    public function testConnectToServersWithoutServer()
     {
-        $this->connectToServer(__METHOD__);
-        $this->class->delete('test');
-        
-        $this->assert('test ifExists with a key which does not exist')
-            ->boolean($this->class->ifExists('test'))
-                ->isFalse();
-        
-        $this->assert('test ifExists with a key which does exist')
-            ->if($this->class->set('test', 'unit test', 100))
+        $this->assert('test Memcache\Memcached::connectToServers without server to connect')
+            ->if($this->mockMethodsUsedByConnectToServer())
             ->then
-            ->boolean($this->class->ifExists('test'))
-                ->isTrue()
-            ->and($this->class->delete('test')); //Remove tested key
-        
-        $this->assert('test ifExists exception')
-            ->given($class = $this->class)
-            ->exception(function() use ($class) {
-                $class->ifExists(10);
-            })
-                ->hasCode($class::ERR_IFEXISTS_PARAM_TYPE)
-                ->hasMessage(
-                    'The $key parameters must be a string. '
-                    .'Currently the value is a/an integer and is equal to 10'
-                );
-        
-        $this->and($this->class->quit());
+            ->variable($this->mock->connectToServers())
+                ->isNull()
+            ->array($this->addServersArg)
+                ->isEmpty()
+        ;
     }
     
-    /**
-     * Test method for updateExpire()
-     * 
-     * @return void
-     */
-    public function testUpdateExpire()
+    public function testConnectToServersWithOneServer()
     {
-        $this->connectToServer(__METHOD__);
-        $this->class->delete('test');
-        
-        $this->assert('test majExpire with a key which does not exist')
-            ->given($class = $this->class)
-            ->exception(function() use ($class) {
-                $class->updateExpire('test', 150);
-            })
-                ->hasCode($class::ERR_KEY_NOT_EXIST)
-                ->hasMessage('The key test not exist on memcache(d) server');
-        
-        $this->assert('test majExpire with a key which does exist')
-            ->if($this->class->set('test', 'unit test', 3600))
+        $this->assert('test Memcache\Memcached::connectToServers with one memcache server')
+            ->given($config = $this->app->getConfig()->getValue('memcached'))
+            ->if($config['servers'][0]['host'] = 'localhost')
+            ->and($config['servers'][0]['port'] = 11211)
+            ->and($this->app->getConfig()->setConfigKeyForFile(
+                'config.php',
+                'memcached',
+                $config
+            ))
             ->then
-            ->boolean($this->class->updateExpire('test', 150))
-                ->isTrue()
-            ->and($this->class->delete('test')); //Remove tested key
-        
-        $this->assert('test majExpire exception')
-            ->given($class = $this->class)
-            ->exception(function() use ($class) {
-                $class->updateExpire(10, '150');
+            
+            ->given($this->mock = new \mock\BFW\Memcache\Memcached)
+            ->if($this->mockMethodsUsedByConnectToServer())
+            ->then
+            
+            ->variable($this->mock->connectToServers())
+                ->isNull()
+            ->array($this->addServersArg)
+                ->isNotEmpty()
+            ->array($this->addServersArg[0])
+                ->isEqualTo([
+                   'localhost', //host
+                    11211, //port
+                    0, //weight
+                ])
+        ;
+    }
+    
+    public function testConnectToServersWithManyServerAndWithPersistent()
+    {
+        $this->assert('test Memcache\Memcached::connectToServers with many memcache server and with persistent')
+            ->given($config = $this->app->getConfig()->getValue('memcached'))
+            ->if($config['servers'][0]['host'] = 'localhost')
+            ->and($config['servers'][0]['port'] = 11211)
+            ->and($config['servers'][1] = $config['servers'][0])
+            ->and($config['servers'][1]['port'] = 11212)
+            ->and($config['servers'][1]['weight'] = 1)
+            ->and($config['servers'][2] = $config['servers'][0])
+            ->and($config['servers'][2]['port'] = 11213)
+            ->and($config['servers'][2]['weight'] = 2)
+            ->and($this->app->getConfig()->setConfigKeyForFile(
+                'config.php',
+                'memcached',
+                $config
+            ))
+            ->then
+            
+            ->given($this->mock = new \mock\BFW\Memcache\Memcached)
+            ->if($this->mockMethodsUsedByConnectToServer())
+            ->and($this->calling($this->mock)->generateServerList = function() {
+                return [
+                    'localhost:11212'
+                ];
             })
-                ->hasCode($class::ERR_UPDATEEXPIRE_PARAM_TYPE)
-                ->hasMessage('Once of parameters $key or $expire not have a correct type.');
-        
-        $this->and($this->class->quit());
+            ->then
+            
+            ->variable($this->mock->connectToServers())
+                ->isNull()
+            ->array($this->addServersArg)
+                ->isNotEmpty()
+                ->size
+                    ->isEqualTo(2) //Not 3, because persistent not added
+            ->array($this->addServersArg[0])
+                ->isEqualTo([
+                   'localhost', //host
+                    11211, //port
+                    0, //weight
+                ])
+            ->array($this->addServersArg[1])
+                ->isEqualTo([
+                   'localhost', //host
+                    11213, //port
+                    2, //weight
+                ])
+        ;
+    }
+    
+    public function testGenerateServerList()
+    {
+        $this->assert('test Memcache\Memcached::generateServerList without server')
+            ->if($this->calling($this->mock)->getServerList = function() {
+                return [];
+            })
+            ->then
+            ->array($this->mock->generateServerList())
+                ->isEmpty()
+        ;
+            
+        $this->assert('test Memcache\Memcached::generateServerList with servers')
+            ->if($this->calling($this->mock)->getServerList = function() {
+                return [
+                    [
+                        'host'   => 'mc1.localhost.com',
+                        'port'   => 11211,
+                        'weight' => 1
+                    ],
+                    [
+                        'host'   => 'mc2.localhost.com',
+                        'port'   => 11212,
+                        'weight' => 4
+                    ]
+                ];
+            })
+            ->then
+            ->array($this->mock->generateServerList())
+                ->isEqualTo([
+                    'mc1.localhost.com:11211',
+                    'mc2.localhost.com:11212',
+                ])
+        ;
+    }
+    
+    //******************* NOW TEST THE TRAIT METHODS *******************\\
+    
+    protected function testUpdateExpireCheckReplaceArgs($replaceArgs)
+    {
+        $this->assert('test Memcache\MemcacheTrait::updateExpire - check replace args')
+            ->array($replaceArgs)
+                ->size
+                    ->isEqualTo(3)
+            ->array($replaceArgs)
+                ->isEqualTo([
+                    'unit-test-lib',
+                    'atoum',
+                    42
+                ])
+        ;
     }
 }

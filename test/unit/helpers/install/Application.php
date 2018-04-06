@@ -1,26 +1,26 @@
 <?php
 
-namespace BFW\Test\Helpers;
+namespace BFW\Install\Test\Helpers;
 
 trait Application
 {
     /**
-     * @var \BFW\Test\Mock\Application $app 
+     * @var \BFW\Install\Test\Mock\Application $app
      */
     protected $app;
     
     /**
-     * Create the bfw Application instance
+     * Create the bfw Application instance used by the install system
      * 
      * @return void
      */
     protected function createApp()
     {
         $mockedConfigValues = require(
-            realpath(__DIR__.'/../../../install/skeleton/config.php')
+            realpath(__DIR__.'/../../../../install/skeleton/config.php')
         );
         
-        $this->app = \BFW\Test\Mock\Application::getInstance();
+        $this->app = \BFW\Install\Test\Mock\Application::getInstance();
         $this->app->setMockedConfigValues($mockedConfigValues);
     }
     
@@ -34,8 +34,8 @@ trait Application
     protected function initApp($runSession = false)
     {
         $this->app->initSystem([
-            'rootDir'    => realpath(__DIR__.'/../../..'),
-            'vendorDir'  => realpath(__DIR__.'/../../../vendor'),
+            'rootDir'    => realpath(__DIR__.'/../../../..'),
+            'vendorDir'  => realpath(__DIR__.'/../../../../vendor'),
             'runSession' => $runSession
         ]);
     }

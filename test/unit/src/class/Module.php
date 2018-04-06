@@ -1,354 +1,411 @@
 <?php
 
 namespace BFW\test\unit;
+
 use \atoum;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
+/**
+ * @engine isolate
+ */
 class Module extends atoum
 {
-    /**
-     * @var $class Class instance
-     */
-    protected $class;
-
-    /**
-     * Call before each test method
-     * Define CONFIG_DIR and MODULES_DIR constants
-     * 
-     * @param $testMethod string The name of the test method executed
-     * 
-     * @return void
-     */
+    use \BFW\Test\Helpers\Application;
+    
+    protected $mock;
+    
     public function beforeTestMethod($testMethod)
     {
-        define('CONFIG_DIR', 'config/');
-        define('MODULES_DIR', 'modules/');
+        $this->createApp();
+        $this->initApp();
+        
+        $this->mockGenerator
+            ->makeVisible('loadConfig')
+            ->makeVisible('obtainLoadInfos')
+            ->makeVisible('readJsonFile')
+            ->makeVisible('obtainRunnerFile')
+            ->generate('BFW\Module')
+        ;
+        
+        if ($testMethod == 'testConstruct') {
+            return;
+        }
+        
+        $this->mock = new \mock\BFW\Module('atoum');
     }
     
-    /**
-     * Test method for __constructor() without the load of the module
-     * 
-     * @return void
-     */
-    public function testConstructorWithoutLoad()
+    protected function mockLoadJsonFile($filePath, $json)
     {
-        $this->assert('test constructor without load')
-            ->given($class = new \BFW\Module('unit_test', false))
-            ->object($class)
-                ->isInstanceOf('\BFW\Module');
+        $this->given($this->function->file_exists = function($path) use (&$filePath) {
+                return ($path === $filePath);
+            })
+            ->given($this->function->file_get_contents = function($path) use (&$filePath, $json) {
+                if ($path !== $filePath) {
+                    return false;
+                }
+                
+                return $json;
+            })
+        ;
     }
     
-    /**
-     * Test method for __constructor() with the load of the module
-     * 
-     * @return void
-     */
-    public function testConstructorWithLoad()
+    public function testConstruct()
     {
-        $this->assert('test constructor with load')
-            ->if($this->function->file_exists = true)
-            ->and($this->function->file_get_contents = '{}')
-            ->and($this->function->scandir = ['.', '..', 'test.json'])
+        $this->assert('test Module::__construct and getPathName')
+            ->object($this->mock = new \mock\BFW\Module('atoum'))
+                ->isInstanceOf('\BFW\Module')
+            ->string($this->mock->getPathName())
+                ->isEqualTo('atoum')
+            ->object($status = $this->mock->getStatus())
+                ->isInstanceOf('\stdClass')
+            ->boolean(property_exists($status, 'load'))
+                ->isTrue()
+            ->boolean(property_exists($status, 'run'))
+                ->isTrue()
+            ->boolean($status->load)
+                ->isFalse()
+            ->boolean($status->run)
+                ->isFalse()
+        ;
+    }
+    
+    public function testLoadModule()
+    {
+        $this->assert('test Module::loadModule')
+            ->if($this->calling($this->mock)->loadConfig = null)
+            ->and($this->calling($this->mock)->obtainLoadInfos = null)
             ->then
-            ->given($class = new \BFW\Module('unit_test'))
-            ->object($class)
-                ->isInstanceOf('\BFW\Module');
+            ->variable($this->invoke($this->mock)->loadModule())
+                ->isNull()
+            ->boolean($this->mock->getStatus()->load)
+                ->isTrue()
+        ;
     }
     
-    /**
-     * Test method for __constructor() with module.json file
-     * 
-     * @return void
-     */
-    public function testConstructorWithDescriptorFile()
+    public function testInstallInfos()
     {
-        $this->assert('test constructor with descriptor file')
-            ->if($this->function->file_exists = function($pathFile) {
-                if ($pathFile === 'modules/unit_test/module.json') {
+        $this->assert('test Module::installInfos')
+            ->given($mock = $this->mock)
+        /* Can't mock static method :'(
+            ->given($moduleInfos = new \stdClass)
+            ->if($this->calling($this->mock)->loadJsonFile = $moduleInfos)
+        */
+            ->given($this->mockLoadJsonFile(
+                ROOT_DIR.'vendor/unknown/mymodule/bfwModulesInfos.json',
+                '{
+                    "srcPath": "src/",
+                    "configPath": "config/",
+                    "configFiles": [
+                        "mymodule.json"
+                    ],
+                    "installScript": ""
+                }'
+            ))
+            ->then
+            ->object($mock::installInfos(ROOT_DIR.'vendor/unknown/mymodule'))
+                ->isEqualTo((object) [
+                    'srcPath'       => 'src/',
+                    'configPath'    => 'config/',
+                    'configFiles'   => ['mymodule.json'],
+                    'installScript' => ''
+                ])
+        ;
+    }
+    
+    public function testGetPathName()
+    {
+        $this->assert('test Module::getPathName')
+            ->string($this->mock->getPathName())
+                ->isEqualTo('atoum')
+        ;
+    }
+    
+    public function testLoadAndGetConfig()
+    {
+        $this->assert('test Module::getConfig without load')
+            ->variable($this->mock->getConfig())
+                ->isNull()
+        ;
+        
+        $this->assert('test Module::loadConfig without a config directory')
+            ->if($this->function->file_exists = false)
+            ->and($this->mock->loadConfig())
+            ->then
+            ->variable($this->mock->getConfig())
+                ->isNull()
+        ;
+        
+        $this->assert('test Module::loadConfig with a config directory')
+            ->given($fileExistsNbCalls = 0)
+            ->if($this->function->file_exists = function($path) use (&$fileExistsNbCalls) {
+                $fileExistsNbCalls++;
+                
+                if ($path === CONFIG_DIR.'atoum' && $fileExistsNbCalls === 1) {
                     return true;
                 }
                 
                 return false;
             })
-            ->and($this->function->file_get_contents = '{}')
+            ->and($this->mock->loadConfig())
             ->then
-            ->given($class = new \BFW\Module('unit_test'))
-            ->object($class)
-                ->isInstanceOf('\BFW\Module');
+            ->object($this->mock->getConfig())
+                ->isInstanceOf('\BFW\Config')
+        ;
     }
     
-    /**
-     * Test method for __constructor() without module.json file
-     * 
-     * @return void
-     */
-    public function testConstructorWithoutDescriptorFile()
+    public function testObtainAndGetLoadInfos()
     {
-        $this->assert('test constructor without descriptor file')
-            ->if($this->function->file_exists = false)
-            ->then
-            ->exception(function() {
-                new \BFW\Module('unit_test');
-            })
-                ->hasCode(\BFW\Module::ERR_FILE_NOT_FOUND)
-                ->hasMessage('File modules/unit_test/module.json not found.');
-    }
-    
-    /**
-     * Method to generate mock php functions
-     * 
-     * @param array Options to configure this method
-     * 
-     * @return Object Atoum asserters
-     */
-    protected function overridePhpFunctions($options = [])
-    {
-        if(!isset($options['noRunner'])) {
-            $options['noRunner'] = false;
-        }
+        $this->assert('test Module::getLoadInfos without load')
+            ->variable($this->mock->getLoadInfos())
+                ->isNull()
+        ;
         
-        if(!isset($options['noFileExistRunner'])) {
-            $options['noFileExistRunner'] = false;
-        }
-        
-        $fileGetContents = function($path) use ($options) {
-            if ($path === 'vendor/unit/unit_test/bfwModulesInfos.json') {
-                return '{
-                    "srcPath": "src"
-                }';
-            } elseif ($path === 'modules/unit_test/module.json') {
-                $runner = '';
-                if ($options['noRunner'] === false) {
-                    $runner = 'run_unit_test_with_atoum.php';
-                }
-                
-                return '{
-                    "runner": "'.$runner.'",
+        $this->assert('test Module::loadInfos')
+            //Can't mock directly a static method (like loadJsonFile) :'(
+            ->given($this->mockLoadJsonFile(
+                MODULES_DIR.$this->mock->getPathName().'/module.json',
+                '{
+                    "runner": "mymodule.php",
                     "priority": 0,
                     "require": []
-                }';
-            } elseif ($path === 'config/unit_test/test.json') {
-                return '{
-                    "unit_test": true,
-                    "lib": "atoum"
-                }';
-            }
-
-            return '{}';
-        };
-        
-        $fileExists = function($path) use ($options) {
-            if(
-                $path === 'modules/unit_test/run_unit_test_with_atoum.php' &&
-                $options['noFileExistRunner'] === true
-            ) {
-                return false;
-            }
-            
-            return true;
-        };
-        
-        return $this
-            ->if($this->function->file_exists = $fileExists)
-            ->and($this->function->scandir = ['.', '..', 'test.json'])
-            ->and($this->function->is_file = true)
-            ->and($this->function->file_get_contents = $fileGetContents);
+                }'
+            ))
+            ->and($this->invoke($this->mock)->obtainLoadInfos())
+            ->then
+            ->object($this->mock->getLoadInfos())
+                ->isEqualTo((object) [
+                    'runner'   => 'mymodule.php',
+                    'priority' => 0,
+                    'require'  => []
+                ])
+        ;
     }
     
-    /**
-     * Test method for getPathName()
-     * 
-     * @return void
-     */
-    public function testGetPathName()
-    {
-        $this->overridePhpFunctions()
-            ->assert('test module getPathName')
-            ->given($class = new \BFW\Module('unit_test'))
-            ->string($class->getPathName())
-                ->isEqualTo('unit_test');
-    }
-
-    /**
-     * Test method for getConfig()
-     * 
-     * @return void
-     */
-    public function testGetConfig()
-    {
-        $this->overridePhpFunctions()
-            ->assert('test module getConfig')
-            ->given($class = new \BFW\Module('unit_test'))
-            ->object($config = $class->getConfig())
-                ->isInstanceOf('\BFW\Config')
-            ->boolean($config->getValue('unit_test'))
-                ->isTrue()
-            ->string($config->getValue('lib'))
-                ->isEqualTo('atoum');
-    }
-
-    /**
-     * Test method for getLoadInfos()
-     * 
-     * @return void
-     */
-    public function testGetLoadInfos()
-    {
-        $this->overridePhpFunctions()
-            ->assert('test module getLoadInfos')
-            ->given($class = new \BFW\Module('unit_test'))
-            ->object($loadInfos = $class->getLoadInfos())
-                ->isInstanceOf('\stdClass')
-            ->string($loadInfos->runner)
-                ->isEqualTo('run_unit_test_with_atoum.php')
-            ->integer($loadInfos->priority)
-                ->isEqualTo(0)
-            ->array($loadInfos->require)
-                ->hasSize(0)
-                ->isEqualTo([]);
-    }
-
-    /**
-     * Test method for getStatus()
-     * 
-     * @return void
-     */
     public function testGetStatus()
     {
-        $this->overridePhpFunctions()
-            ->assert('test module getStatus')
-            ->given($class = new \BFW\Module('unit_test'))
-            ->object($status = $class->getStatus())
+        $this->mock = new \BFW\Test\Mock\Module('atoum');
+        
+        $this->assert('test Module::getStatus for default value')
+            ->object($status = $this->mock->getStatus())
+                ->isInstanceOf('\stdClass')
+            ->boolean($status->load)
+                ->isFalse()
+            ->boolean($status->run)
+                ->isFalse()
+        ;
+        
+        $this->assert('test Module::getStatus with load to true')
+            ->if($this->mock->setStatus(true, false))
+            ->then
+            ->object($status = $this->mock->getStatus())
             ->boolean($status->load)
                 ->isTrue()
             ->boolean($status->run)
-                ->isFalse();
+                ->isFalse()
+        ;
+        
+        $this->assert('test Module::getStatus with run to true')
+            ->if($this->mock->setStatus(true, true))
+            ->then
+            ->object($status = $this->mock->getStatus())
+            ->boolean($status->load)
+                ->isTrue()
+            ->boolean($status->run)
+                ->isTrue()
+        ;
     }
-
-    /**
-     * Test method for isLoaded()
-     * 
-     * @return void
-     */
+    
     public function testIsLoaded()
     {
-        $this->overridePhpFunctions()
-            ->assert('test module isLoaded')
-            ->given($class = new \BFW\Module('unit_test'))
-            ->boolean($status = $class->isLoaded())
-                ->isTrue();
+        $this->mock = new \BFW\Test\Mock\Module('atoum');
+        
+        $this->assert('test Module::isLoaded when is not loaded')
+            ->boolean($this->mock->isLoaded())
+                ->isFalse()
+        ;
+        
+        $this->assert('test Module::isLoaded when is loaded')
+            ->if($this->mock->setStatus(true, false))
+            ->then
+            ->boolean($this->mock->isLoaded())
+                ->isTrue()
+        ;
     }
-
-    /**
-     * Test method for isRun()
-     * 
-     * @return void
-     */
+    
     public function testIsRun()
     {
-        $this->overridePhpFunctions()
-            ->assert('test module isRun')
-            ->given($class = new \BFW\Module('unit_test'))
-            ->boolean($status = $class->isRun())
-                ->isFalse();
+        $this->mock = new \BFW\Test\Mock\Module('atoum');
+        
+        $this->assert('test Module::isRun when is not runned')
+            ->boolean($this->mock->isRun())
+                ->isFalse()
+        ;
+        
+        $this->assert('test Module::isRun when is runned')
+            ->if($this->mock->setStatus(false, true))
+            ->then
+            ->boolean($this->mock->isRun())
+                ->isTrue()
+        ;
     }
     
-    /**
-     * Test method for addDependency()
-     * 
-     * @return void
-     */
-    public function testAddDependency()
+    public function testReadJsonFile()
     {
-        $this->overridePhpFunctions()
-            ->assert('test module addDependency')
-            ->given($class = new \BFW\Module('unit_test'))
-            ->object($class->addDependency('module1'))
-                ->isIdenticalTo($class)
-            ->array($class->getLoadInfos()->require)
-                ->isEqualTo(['module1'])
-            ->and()
-            ->given($class->addDependency('module2'))
-            ->array($class->getLoadInfos()->require)
-                ->isEqualTo(['module1', 'module2']);
-    }
-    
-    /**
-     * Test method for installInfos()
-     * 
-     * @return void
-     */
-    public function testInstallInfos()
-    {
-        $this->overridePhpFunctions()
-            ->assert('test module installInfos')
-            ->object($installInfos = \BFW\Module::installInfos('vendor/unit/unit_test'))
-                ->isInstanceOf('\stdClass')
-            ->string($installInfos->srcPath)
-                ->isEqualTo('src');
-    }
-    
-    /**
-     * Test method for installInfos()
-     * when there is an exceptionabout the json syntax
-     * 
-     * @return void
-     */
-    public function testInstallInfosExceptionFormat()
-    {
-        $this->assert('test module installInfos exception json_decode')
-            ->if($this->function->file_exists = true)
-            ->and($this->function->file_get_contents = function($path){
-                if ($path === 'vendor/unit/unit_test/bfwModulesInfos.json') {
-                    return '{
-                        "srcPath": "src",
-                    }';
-                }
-            })
+        $this->mock = new \BFW\Test\Mock\Module('atoum');
+        
+        $this->assert('test Modulle::readJsonFile without file')
+            ->if($this->function->file_exists = false)
             ->then
             ->exception(function() {
-                \BFW\Module::installInfos('vendor/unit/unit_test');
+                $this->mock->callReadJsonFile(MODULES_DIR.'atoum/module.json');
+            })
+                ->hasCode(\BFW\Module::ERR_FILE_NOT_FOUND)
+        ;
+        
+        $this->assert('test Modulle::readJsonFile with a bad json')
+            ->if($this->function->file_exists = true)
+            ->and($this->function->file_get_contents = '{"runner": "helloWorld.php",')
+            ->then
+            ->exception(function() {
+                $this->mock->callReadJsonFile(MODULES_DIR.'atoum/module.json');
             })
                 ->hasCode(\BFW\Module::ERR_JSON_PARSE)
-                ->hasMessage('Syntax error');
-    }
-    
-    /**
-     * Test method for runModule() without a runner file
-     * 
-     * @return void
-     */
-    public function testRunWithoutRunnerFile()
-    {
-        $this->overridePhpFunctions(['noRunner' => true])
-            ->assert('test module run without runner file')
-            ->given($class = new \BFW\Module('unit_test'))
-            ->given($class->runModule())
-            ->boolean($class->isRun())
-                ->isTrue();
-    }
-    
-    /**
-     * Test method for runModule() with a runner file
-     * 
-     * @return void
-     */
-    public function testRunnerFile()
-    {
-        $this->overridePhpFunctions()
-            ->assert('test module run with runner file')
-            ->given($class = new \BFW\test\unit\mocks\ModuleRunnerFile('unit_test'))
-            ->string($class->callGetRunnerFile())
-                ->isEqualTo('modules/unit_test/run_unit_test_with_atoum.php');
+                ->message
+                    ->isNotEmpty()
+        ;
         
-        $this->overridePhpFunctions(['noFileExistRunner' => true])
-            ->assert('test module run with runner file exception file exists')
-            ->given($class = new \BFW\test\unit\mocks\ModuleRunnerFile('unit_test'))
-            ->exception(function() use ($class) {
-                $class->callGetRunnerFile();
+        $this->assert('test Modulle::readJsonFile with a correct json')
+            ->if($this->function->file_exists = true)
+            ->and($this->function->file_get_contents = '{
+                    "runner": "mymodule.php",
+                    "priority": 0,
+                    "require": []
+                }'
+            )
+            ->then
+            ->object($this->mock->callReadJsonFile(MODULES_DIR.'atoum/module.json'))
+                ->isEqualTo((object) [
+                    'runner'   => 'mymodule.php',
+                    'priority' => 0,
+                    'require'  => []
+                ])
+        ;
+    }
+    
+    public function testAddDependency()
+    {
+        $this->mock = new \BFW\Test\Mock\Module('atoum');
+        
+        $this->assert('test Module::addDependency with "require" into loadInfos')
+            ->given($this->mock->setLoadInfos((object) [
+                'require' => []
+            ]))
+            ->if($this->mock->addDependency('unitTest'))
+            ->then
+            ->object($this->mock->getLoadInfos())
+                ->isEqualTo((object) [
+                    'require' => ['unitTest']
+                ])
+        ;
+        
+        $this->assert('test Module::addDependency with "require" into loadInfos but not as array')
+            ->given($this->mock->setLoadInfos((object) [
+                'require' => 'hello-world'
+            ]))
+            ->if($this->mock->addDependency('unitTest'))
+            ->then
+            ->object($this->mock->getLoadInfos())
+                ->isEqualTo((object) [
+                    'require' => ['hello-world', 'unitTest']
+                ])
+        ;
+        
+        $this->assert('test Module::addDependency without "require" into loadInfos')
+            ->given($this->mock->setLoadInfos(new \stdClass))
+            ->if($this->mock->addDependency('unitTest'))
+            ->then
+            ->object($this->mock->getLoadInfos())
+                ->isEqualTo((object) [
+                    'require' => ['unitTest']
+                ])
+        ;
+    }
+    
+    public function testObtainRunnerFile()
+    {
+        $this->mockGenerator
+            ->makeVisible('obtainRunnerFile')
+            ->generate('BFW\Test\Mock\Module')
+        ;
+        
+        $this->mock = new \mock\BFW\Test\Mock\Module('atoum');
+        
+        $this->assert('test Module::obtainRunnerFile without property "runner"')
+            ->variable($this->invoke($this->mock)->obtainRunnerFile())
+                ->isNull()
+        ;
+        
+        $this->assert('test Module::obtainRunnerFile with empty property "runner"')
+            ->given($this->mock->setLoadInfos((object) ['runner' => '']))
+            ->variable($this->invoke($this->mock)->obtainRunnerFile())
+                ->isNull()
+        ;
+        
+        $this->assert('test Module::obtainRunnerFile without runner file')
+            ->given($this->mock->setLoadInfos((object) ['runner' => 'run_atoum.php']))
+            ->and($this->function->file_exists = false)
+            ->exception(function() {
+                $this->invoke($this->mock)->obtainRunnerFile();
             })
-                ->hasCode($class::ERR_RUNNER_FILE_NOT_FOUND)
-                ->hasMessage('Runner file for module unit_test not found.');
+                ->hasCode(\BFW\Module::ERR_RUNNER_FILE_NOT_FOUND)
+        ;
+        
+        $this->assert('test Module::obtainRunnerFile with runner file')
+            ->given($this->mock->setLoadInfos((object) ['runner' => 'run_atoum.php']))
+            ->and($this->function->file_exists = true)
+            ->string($this->invoke($this->mock)->obtainRunnerFile())
+                ->isEqualTo(MODULES_DIR.$this->mock->getPathName().'/run_atoum.php')
+        ;
+    }
+    
+    public function testRunModule()
+    {
+        $this->mockGenerator
+            ->makeVisible('obtainRunnerFile')
+            ->generate('BFW\Test\Mock\Module')
+        ;
+        
+        $this->mock = new \mock\BFW\Test\Mock\Module('atoum');
+        
+        $this->assert('test Module::runModule if the module is already runned')
+            ->if($this->mock->setStatus(true, true))
+            ->and($this->calling($this->mock)->obtainRunnerFile = null)
+            ->then
+            ->variable($this->mock->runModule())
+                ->isNull()
+            ->mock($this->mock)
+                ->call('obtainRunnerFile')
+                    ->never()
+            ->boolean($this->mock->isRun())
+                ->isTrue()
+        ;
+        
+        $this->assert('test Module::runModule without file to run')
+            ->if($this->mock->setStatus(true, false))
+            ->and($this->calling($this->mock)->obtainRunnerFile = function() {
+                return null;
+            })
+            ->then
+            ->variable($this->mock->runModule())
+                ->isNull()
+            ->mock($this->mock)
+                ->call('obtainRunnerFile')
+                    ->once()
+            ->boolean($this->mock->isRun())
+                ->isTrue()
+        ;
+        
+        //Require not mockable, so we can't test with file to execute.
     }
 }

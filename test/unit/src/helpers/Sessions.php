@@ -6,49 +6,39 @@ use \atoum;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
+/**
+ * @engine isolate
+ */
 class Sessions extends atoum
 {
-    /**
-     * Test method for isStarted() when the script is runned by cli
-     * 
-     * @return void
-     */
-    public function testIsStartedForCli()
+    public function testIsStartedWithCli()
     {
-        $this->assert('test Sessions::isStarted for cli')
+        $this->assert('test Helpers\Sessions::isStarted with cli')
             ->if($this->constant->PHP_SAPI = 'cli')
             ->then
             ->boolean(\BFW\Helpers\Sessions::isStarted())
-                ->isFalse();
+                ->isFalse()
+        ;
     }
     
-    /**
-     * Test method for isStarted() when the script is not runned by cli
-     * 
-     * @return void
-     */
-    public function testIsStartedForNotActive()
+    public function testIsStarted()
     {
-        $this->assert('test Sessions::isStarted for session not active')
-            ->if($this->constant->PHP_SAPI = 'www')
-            ->and($this->function->session_status = PHP_SESSION_NONE)
+        $this->given($this->constant->PHP_SAPI = 'www');
+        
+        $this->assert('test Helpers\Sessions::isStarted if it\'s started')
+            ->if($this->function->session_status = function() {
+                return PHP_SESSION_ACTIVE;
+            })
             ->then
             ->boolean(\BFW\Helpers\Sessions::isStarted())
-                ->isFalse();
-    }
-    
-    /**
-     * Test method for isStarted with an already session started
-     * 
-     * @return void
-     */
-    public function testIsStartedForActive()
-    {
-        $this->assert('test Sessions::isStarted for session active')
-            ->if($this->constant->PHP_SAPI = 'www')
-            ->and($this->function->session_status = PHP_SESSION_ACTIVE)
+                ->isTrue()
+        ;
+        
+        $this->assert('test Helpers\Sessions::isStarted if it\'s not started')
+            ->if($this->function->session_status = null)
             ->then
             ->boolean(\BFW\Helpers\Sessions::isStarted())
-                ->isTrue();
+                ->isFalse()
+        ;
     }
 }

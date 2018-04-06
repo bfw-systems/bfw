@@ -3,49 +3,52 @@
 namespace BFW\Helpers\test\unit;
 
 use \atoum;
-use \DateTime;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
+/**
+ * @engine isolate
+ */
 class Cookies extends atoum
 {
-    /**
-     * Test method for create()
-     * 
-     * @return void
-     */
     public function testCreate()
     {
-        $nowDateTime = new DateTime;
-        $cookieInfos = null;
-        
-        $this->function->time = $nowDateTime->format('U');
-        $this->function->setcookie = function($name, $value, $expire) use (&$cookieInfos) {
-            $cookieInfos = (object) [
-                'name'   => $name,
-                'value'  => $value,
-                'expire' => $expire
-            ];
-        };
-        
-        $this->assert('test Cookies::create without expire')
-            ->if(\BFw\Helpers\Cookies::create('test', 'test value'))
+        $this->assert('test Helpers\Cookies::create with default expire time')
+            ->given($time = time())
+            ->given($setCookieArgs = [])
+            ->if($this->function->setcookie = function(...$args) use (&$setCookieArgs) {
+                $setCookieArgs = $args;
+            })
             ->then
-            ->string($cookieInfos->name)
-                ->isEqualTo('test')
-            ->string($cookieInfos->value)
-                ->isEqualTo('test value')
-            ->integer($cookieInfos->expire)
-                ->isEqualTo($nowDateTime->format('U') + 1209600);
+            
+            ->variable(\BFW\Helpers\Cookies::create('unit_test', 'atoum'))
+                ->isNull()
+            ->string($setCookieArgs[0])
+                ->isEqualTo('unit_test')
+            ->string($setCookieArgs[1])
+                ->isEqualTo('atoum')
+            ->integer($setCookieArgs[2])
+                ->isGreaterThanOrEqualTo($time + 1209600)
+                ->isLessThanOrEqualTo($time + 1209600 + 10) //margin 10sec
+        ;
         
-        $this->assert('test Cookies::create with expire')
-            ->if(\BFw\Helpers\Cookies::create('test2', 'test2 value', 230))
+        $this->assert('test Helpers\Cookies::create with an expire time')
+            ->given($time = time())
+            ->given($setCookieArgs = [])
+            ->if($this->function->setcookie = function(...$args) use (&$setCookieArgs) {
+                $setCookieArgs = $args;
+            })
             ->then
-            ->string($cookieInfos->name)
-                ->isEqualTo('test2')
-            ->string($cookieInfos->value)
-                ->isEqualTo('test2 value')
-            ->integer($cookieInfos->expire)
-                ->isEqualTo($nowDateTime->format('U') + 230);
+            
+            ->variable(\BFW\Helpers\Cookies::create('unit_test', 'atoum', 42))
+                ->isNull()
+            ->string($setCookieArgs[0])
+                ->isEqualTo('unit_test')
+            ->string($setCookieArgs[1])
+                ->isEqualTo('atoum')
+            ->integer($setCookieArgs[2])
+                ->isGreaterThanOrEqualTo($time + 42)
+                ->isLessThanOrEqualTo($time + 42 + 10) //margin 10sec
+        ;
     }
 }

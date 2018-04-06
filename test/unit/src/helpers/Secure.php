@@ -3,246 +3,209 @@
 namespace BFW\Helpers\test\unit;
 
 use \atoum;
-use \BFW\Helpers\Secure as BfwSecure;
-use \BFW\test\helpers\ApplicationInit as AppInit;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
+require_once(__DIR__.'/../../helpers/SecureSqlMethodFct.php');
 
+/**
+ * @engine isolate
+ */
 class Secure extends atoum
 {
-    /**
-     * @var \BFW\test\helpers\ApplicationInit $app BFW Application instance
-     */
-    protected $app;
+    use \BFW\Test\Helpers\Application;
     
-    /**
-     * Call before each test method
-     * Instantiate BFW Application class
-     * 
-     * @param $testMethod string The name of the test method executed
-     * 
-     * @return void
-     */
     public function beforeTestMethod($testMethod)
     {
-        $this->app = AppInit::init();
+        $this->createApp();
+        $this->initApp();
     }
     
-    /**
-     * Mock for sql securised method
-     * 
-     * @param string $str Date to securise
-     * 
-     * @return string
-     */
-    public static function secureMethod($str)
-    {
-        return 'testSecurised_'.$str;
-    }
-    
-    /**
-     * Test method for hash()
-     * 
-     * @return void
-     */
     public function testHash()
     {
-        $this->assert('test Secure::hash')
-            ->string($hashed = BfwSecure::hash('test'))
-                ->length
-                    ->isEqualTo(64);
+        $this->assert('test Helpers\Secure::hash')
+            ->string(\BFW\Helpers\Secure::hash('atoum'))
+                ->isEqualTo(hash('sha256', md5('atoum')))
+        ;
     }
     
-    /**
-     * Test method for securiseKnownTypes
-     * 
-     * @return void
-     */
+    protected function assertSecuriseKnownTypes(
+        &$filterType,
+        $dataToTest,
+        $filter,
+        $expectedData,
+        $expectedFilter
+    ) {
+        $this->assert('test Helpers\Secure::securiseKnownTypes with '.$filter.' types')
+            ->given($filterType = null)
+            ->variable(\BFW\Helpers\Secure::securiseKnownTypes($dataToTest, $filter))
+                ->isIdenticalTo($expectedData)
+            ->variable($filterType)
+                ->isIdenticalTo($expectedFilter)
+        ;
+    }
+    
     public function testSecuriseKnownTypes()
     {
-        $this->assert('test Secure::securiseKnownTypes for int and integer types')
-            ->integer(BfwSecure::securiseKnownTypes(10, 'int'))
-                ->isEqualTo(10)
-            ->integer(BfwSecure::securiseKnownTypes(10, 'integer'))
-                ->isEqualTo(10)
-            ->integer(BfwSecure::securiseKnownTypes('10', 'integer'))
-                ->isEqualTo(10)
-            ->boolean(BfwSecure::securiseKnownTypes('test', 'int'))
-                ->isFalse();
-        
-        $this->assert('test Secure::securiseKnownTypes for float and double types')
-            ->float(BfwSecure::securiseKnownTypes(10.2, 'float'))
-                ->isEqualTo(10.2)
-            ->float(BfwSecure::securiseKnownTypes(10.2, 'double'))
-                ->isEqualTo(10.2)
-            ->float(BfwSecure::securiseKnownTypes('10', 'float'))
-                ->isEqualTo(10.0)
-            ->boolean(BfwSecure::securiseKnownTypes('test', 'double'))
-                ->isFalse();
-        
-        $this->assert('test Secure::securiseKnownTypes for bool and boolean types')
-            ->boolean(BfwSecure::securiseKnownTypes(true, 'bool'))
-                ->isTrue()
-            ->boolean(BfwSecure::securiseKnownTypes(false, 'boolean'))
-                ->isFalse()
-            ->boolean(BfwSecure::securiseKnownTypes('true', 'bool'))
-                ->isTrue()
-            ->boolean(BfwSecure::securiseKnownTypes('test', 'boolean'))
-                ->isFalse();
-        
-        $this->assert('test Secure::securiseKnownTypes for email type')
-            ->boolean(BfwSecure::securiseKnownTypes('bulton.frATgmail.com', 'email'))
-                ->isFalse()
-            ->string(BfwSecure::securiseKnownTypes('bulton.fr@gmail.com', 'email'))
-                ->isEqualTo('bulton.fr@gmail.com');
-        
-        $this->assert('test Secure::securiseKnownTypes exception with other type')
-            ->exception(function() {
-                BfwSecure::securiseKnownTypes('test securise', 'text');
+        $this->assert('test Helpers\Secure::securiseKnownTypes - prepare')
+            ->given($filterType = null)
+            ->given($this->function->filter_var = function($variable, $filter) use (&$filterType) {
+                $filterType = $filter;
+                
+                return \filter_var($variable, $filter);
             })
-                ->hasCode(BfwSecure::ERR_SECURE_UNKNOWN_TYPE)
-                ->hasMessage('Unknown type')
-            ->exception(function() {
-                BfwSecure::securiseKnownTypes('test securise', 'mixed');
-            })
-                ->hasCode(BfwSecure::ERR_SECURE_UNKNOWN_TYPE)
-                ->hasMessage('Unknown type');
-    }
-    
-    /**
-     * Test method for securise() without a declared sql secure method
-     * 
-     * @return void
-     */
-    public function testSecurise()
-    {
-        $this->app->updateKey('sqlSecureMethod', '');
+        ;
         
-        $this->assert('test Secure::securise for direct data')
-            ->integer(BfwSecure::securise('10', 'int', false))
-                ->isEqualTo(10)
-            ->string(BfwSecure::securise('test securise', 'text', false))
-                ->isEqualTo('test securise');
+        $this->assertSecuriseKnownTypes($filterType, 42, 'int', 42, FILTER_VALIDATE_INT);
+        $this->assertSecuriseKnownTypes($filterType, '42', 'integer', 42, FILTER_VALIDATE_INT);
         
-        $this->assert('test Secure::securise for array data')
-            ->array(BfwSecure::securise([
-                    'a' => 'test',
-                    1 => 'test2'
-                ],
-                'text',
-                false
-            ))
-                ->isEqualTo([
-                    'a' => 'test',
-                    1 => 'test2'
-                ]);
+        $this->assertSecuriseKnownTypes($filterType, 15.3, 'float', 15.3, FILTER_VALIDATE_FLOAT);
+        $this->assertSecuriseKnownTypes($filterType, '15.3', 'double', 15.3, FILTER_VALIDATE_FLOAT);
         
-        $this->assert('test Secure::securise with addslashes text')
-            ->string(BfwSecure::securise('it\'s a test !', 'text', false))
-                ->isEqualTo('it\\\'s a test !');
+        $this->assertSecuriseKnownTypes($filterType, true, 'bool', true, FILTER_VALIDATE_BOOLEAN);
+        $this->assertSecuriseKnownTypes($filterType, false, 'bool', false, FILTER_VALIDATE_BOOLEAN);
         
-        $this->assert('test Secure::securise with html text')
-            ->string(BfwSecure::securise('<p>Test</p>', 'text', true))
-                ->isEqualTo('&lt;p&gt;Test&lt;/p&gt;');
-    }
-    
-    /**
-     * Test method for securise() with a declared sql secure method
-     * 
-     * @return void
-     */
-    public function testSecuriseWithSqlSecureMethod()
-    {
-        $this->assert('test Secure::securise with a secure method')
-            ->if($this->app->updateKey(
-                'sqlSecureMethod',
-                ['\BFW\Helpers\test\unit\Secure', 'secureMethod']
-            ))
-            ->then
-            ->string(BfwSecure::securise('test', 'text', false))
-                ->isEqualTo('testSecurised_test');
-    }
-    
-    /**
-     * Test method for getSqlSecureMethod
-     * 
-     * @return void
-     */
-    public function testGetSqlSecureMethod()
-    {
-        $this->app->updateKey(
-            'sqlSecureMethod',
-            ['\BFW\Helpers\test\unit\Secure', 'secureMethod']
+        $this->assertSecuriseKnownTypes(
+            $filterType,
+            'myemail@mywebsite.com',
+            'email',
+            'myemail@mywebsite.com',
+            FILTER_VALIDATE_EMAIL
         );
         
-        $this->assert('test Secure::getSqlSecureMethod')
-            ->array(BfwSecure::getSqlSecureMethod())
-                ->isEqualTo([
-                    '\BFW\Helpers\test\unit\Secure',
-                    'secureMethod'
-                ]);
+        $this->assert('test Helpers\Secure::securiseKnownTypes with an unknown types')
+            ->exception(function() {
+                \BFW\Helpers\Secure::securiseKnownTypes('atoum', 'string');
+            })
+                ->hasCode(\BFW\Helpers\Secure::ERR_SECURE_UNKNOWN_TYPE)
+        ;
     }
     
-    /**
-     * Test method for getSecurisedKeyInArray
-     * 
-     * @return void
-     */
+    public function testSecurise()
+    {
+        //We can not mock anything into :/
+        //So we test only the return and not the args passed to called method inside
+        
+        $this->assert('test Helpers\Secure::securise with an integer value')
+            ->integer(\BFW\Helpers\Secure::securise(42, 'integer', false))
+                ->isEqualTo(42)
+        ;
+        
+        $this->assert('test Helpers\Secure::securise with a string value')
+            ->string(\BFW\Helpers\Secure::securise('atoum', 'string', false))
+                ->isEqualTo('atoum')
+            ->string(\BFW\Helpers\Secure::securise(
+                '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+                'string',
+                false
+            ))
+                ->isEqualTo('<p>Il est recommandé d\\\'utiliser composer pour installer</p>')
+            ->string(\BFW\Helpers\Secure::securise(
+                '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+                'string',
+                true
+            ))
+                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;')
+        ;
+        
+        $this->assert('test Helpers\Secure::securise with an array value')
+            ->array(\BFW\Helpers\Secure::securise(
+                [
+                    'id'      => 42,
+                    'titre'   => 'install',
+                    'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+                ],
+                'string',
+                true
+            ))
+                ->isEqualTo([
+                    'id'      => '42',
+                    'titre'   => 'install',
+                    'content' => '&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;',
+                ])
+        ;
+    }
+    
+    public function testGetSqlSecureMethod()
+    {
+        $this->assert('test Helpers\Secure::getSqlSecureMethod without method configured')
+            ->boolean(\BFW\Helpers\Secure::getSqlSecureMethod())
+                ->isFalse()
+        ;
+        
+        $this->assert('test Helpers\Secure::getSqlSecureMethod with a callable function configured')
+            ->if($this->app->getConfig()->setConfigKeyForFile(
+                'config.php',
+                'sqlSecureMethod',
+                '\BFW\Test\Helpers\secureSqlMethod'
+            ))
+            ->string(\BFW\Helpers\Secure::getSqlSecureMethod())
+                ->isEqualTo('\BFW\Test\Helpers\secureSqlMethod')
+        ;
+    }
+    
     public function testGetSecurisedKeyInArray()
     {
-        $this->app->updateKey('sqlSecureMethod', '');
+        //We can not mock anything into :/
+        //So we test only the return and not the args passed to called method inside
         
-        $this->assert('test Secure::getSecurisedKeyInArray')
-            ->given($testedArray = [
-                'a' => 'test',
-                1 => 'test2'
-            ])
-            ->string(BfwSecure::getSecurisedKeyInArray($testedArray, 'a', 'text'))
-                ->isEqualTo('test');
-        
-        $this->assert('test Secure::getSecurisedKeyInArray exception')
-            ->exception(function() use ($testedArray) {
-                BfwSecure::getSecurisedKeyInArray($testedArray, 'b', 'text');
+        $this->assert('test Helpers\Secure::getSecurisedKeyInArray with not existing key')
+            ->exception(function() {
+                $array = [];
+                
+                \BFW\Helpers\Secure::getSecurisedKeyInArray(
+                    $array,
+                    'libs',
+                    'string'
+                );
             })
-                ->hasCode(BfwSecure::ERR_SECURE_ARRAY_KEY_NOT_EXIST)
-                ->hasMessage('The key b not exist');
+                ->hasCode(\BFW\Helpers\Secure::ERR_SECURE_ARRAY_KEY_NOT_EXIST)
+        ;
+        
+        $this->assert('test Helpers\Secure::getSecurisedKeyInArray with a existing key')
+            ->given($array = [
+                'id'      => 42,
+                'titre'   => 'install',
+                'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+            ])
+            ->string(\BFW\Helpers\Secure::getSecurisedKeyInArray(
+                    $array,
+                    'content',
+                    'string',
+                    true
+            ))
+                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;')
+        ;
     }
     
-    /**
-     * Test method for getSecurisedPostKey
-     * 
-     * @return void
-     */
-    public function testgetSecurisedPostKey()
+    public function testGetSecurisedPostKey()
     {
-        $_POST = [
-            'login' => 'test login',
-            'password' => 'test pwd'
-        ];
+        //We can not mock anything into :/
+        //So we test only the return and not the args passed to called method inside
         
-        $this->app->updateKey('sqlSecureMethod', '');
-        
-        $this->assert('test Secure::getSecurisedPostKey')
-            ->string(BfwSecure::getSecurisedPostKey('login', 'text'))
-                ->isEqualTo('test login');
+        $this->assert('test Helpers\Secure::getSecurisedPostKey')
+            ->given($_POST = [
+                'id'      => 42,
+                'titre'   => 'install',
+                'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+            ])
+            ->string(\BFW\Helpers\Secure::getSecurisedPostKey('content', 'string', true))
+                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;')
+        ;
     }
     
-    /**
-     * Test method for getSecurisedGetKey
-     * 
-     * @return void
-     */
-    public function testgetSecurisedGetKey()
+    public function testGetSecurisedGetKey()
     {
-        $_GET = [
-            'id' => 12350,
-            'page' => 2
-        ];
+        //We can not mock anything into :/
+        //So we test only the return and not the args passed to called method inside
         
-        $this->app->updateKey('sqlSecureMethod', '');
-        
-        $this->assert('test Secure::getSecurisedGetKey')
-            ->integer(BfwSecure::getSecurisedGetKey('id', 'int'))
-                ->isEqualTo(12350);
+        $this->assert('test Helpers\Secure::getSecurisedGetKey')
+            ->given($_GET = [
+                'id'      => 42,
+                'titre'   => 'install',
+                'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+            ])
+            ->string(\BFW\Helpers\Secure::getSecurisedGetKey('content', 'string', true))
+                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;')
+        ;
     }
 }

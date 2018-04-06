@@ -1,8 +1,8 @@
 <?php
 
-namespace BFW\Test\Mock;
+namespace BFW\Install\Test\Mock;
 
-class Application extends \BFW\Application
+class Application extends \BFW\Install\Application
 {
     /**
      * @var array|object $mockedConfigValues The values to use for config
@@ -97,24 +97,6 @@ class Application extends \BFW\Application
         
         $this->config = new \BFW\Config('bfw');
         $this->config->setConfigForFile('config.php', $this->mockedConfigValues);
-    }
-    
-    /**
-     * {@inheritdoc}
-     * Use the mocked class
-     */
-    protected function initCli()
-    {
-        $this->cli = new \BFW\Core\Test\Mock\Cli;
-    }
-    
-    /**
-     * {@inheritdoc}
-     * Use the mocked class
-     */
-    protected function initErrors()
-    {
-        $this->errors = new \BFW\Core\Test\Mock\Errors;
     }
     
     /**

@@ -3,8 +3,6 @@
 namespace BFW\test\unit;
 
 use \atoum;
-use \BFW\test\unit\mocks\Application as MockApp;
-use \BFW\test\unit\mocks\Observer as MockObserver;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
@@ -13,89 +11,109 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
  */
 class Application extends atoum
 {
-    /**
-     * @var $mock Mock instance
-     */
-    protected $mock;
+    use \BFW\Test\Helpers\Application;
     
-    /**
-     * @var array $forcedConfig Config used for all test into this file
-     */
-    protected $forcedConfig;
-
-    /**
-     * Call before each test method
-     * Define forced config
-     * Remove existing BFW Application instance
-     * Instantiate the mock
-     * 
-     * @param $testMethod string The name of the test method executed
-     * 
-     * @return void
-     */
     public function beforeTestMethod($testMethod)
     {
-        $this->forcedConfig = require(__DIR__.'/../../helpers/applicationConfig.php');
-        
-        MockApp::removeInstance();
-        
-        if ($testMethod === 'testConstructor') {
+        if ($testMethod === 'testConstructAndGetInstance') {
             return;
         }
         
-        //All condition is on the test method.
-        //If I put all condition here => no effect oO
-        if ($testMethod === 'testInitSessionDisabled') {
-            return;
-        }
+        $this->createApp();
         
-        $options = [
-            'forceConfig'     => $this->forcedConfig,
-            'vendorDir'       => __DIR__.'/../../../../vendor',
-            'testOption'      => 'unit test',
-            'overrideMethods' => [
-                'runCliFile'     => null,
-                'initModules'    => function() {
-                    $this->modules = new \BFW\test\unit\mocks\Modules;
-                },
-                'readAllModules' => function() {
-                    $modules = $this->modules;
-                    foreach($this->modulesToAdd as $moduleName => $module) {
-                        $modules::setModuleConfig($moduleName, $module->config);
-                        $modules::setModuleLoadInfos($moduleName, $module->loadInfos);
-                    }
-
-                    parent::readAllModules();
-                }
-            ]
+        $testWithAppInitialized = [
+            'testGetModuleForName',
+            'testGetAndDeclareRunSteps'
         ];
         
-        if ($testMethod === 'testInitSessionDisabled') {
-            $options['runSession'] = false;
+        if (in_array($testMethod, $testWithAppInitialized)) {
+            $this->initApp();
+        }
+    }
+    
+    protected function addModule($moduleName, $isCore = false)
+    {
+        $this
+            //Add the module to the mocked list
+            ->if($this->app->addMockedModulesList(
+                $moduleName,
+                (object) [
+                    'config'    => (object) [],
+                    'loadInfos' => (object) []
+                ]
+            ))
+        ;
+        
+        if ($isCore === true) {
+            $this
+                //Mock the config to add a core module
+                ->given($mockedConfig = $this->app->getMockedConfigValues())
+                ->if($mockedConfig['modules']['controller']['name'] = $moduleName)
+                ->and($mockedConfig['modules']['controller']['enabled'] = true)
+                ->and($this->app->setMockedConfigValues($mockedConfig))
+            ;
         }
         
-        $this->function->scandir = ['.', '..']; //used by test which call run()
-        $this->mock = MockApp::init($options);
+        $this->moduleMockNativeFunctions($moduleName);
+        
+        return $this;
     }
     
     /**
-     * Test method for __constructor()
+     * Mock php native function used by readAllModules()
+     * 
+     * @param type $moduleName
+     * @return type
+     */
+    protected function moduleMockNativeFunctions($moduleName = null)
+    {
+        if (is_null($moduleName)) {
+            $this->function->scandir = ['.', '..'];
+            return $this;
+        }
+        
+        $this->function->scandir  = ['.', '..', $moduleName];
+        $this->function->realpath = $moduleName;
+        $this->function->is_dir   = true;
+        
+        return $this;
+    }
+    
+    protected function moduleAddRunSteps($loadCore = true, $loadApp = true)
+    {
+        $runSteps = [
+            [$this->app, 'loadAllModules']
+        ];
+        
+        if ($loadCore === true) {
+            $runSteps[] = [$this->app, 'runAllCoreModules'];
+        }
+        
+        if ($loadApp === true) {
+            $runSteps[] = [$this->app, 'runAllAppModules'];
+        }
+        
+        return $this
+            //Redefine run steps and init Application
+            ->if($this->app->setRunSteps($runSteps))
+        ;
+    }
+    
+    /**
+     * Test method for __constructor() and getInstance()
      * 
      * @return void
      */
-    public function testConstructor()
+    public function testConstructAndGetInstance()
     {
         $this->assert('test Constructor')
-            ->object($app = MockApp::init([
-                'forceConfig'        => $this->forcedConfig,
-                'vendorDir'          => __DIR__.'/../../../../vendor',
-                'overrideAllMethods' => true
-            ]))
+            ->object($app = \BFW\Test\Mock\Application::getInstance())
                 ->isInstanceOf('\BFW\Application')
-            ->object(MockApp::getInstance())
-                ->isEqualTo($app)
+            ->object(\BFW\Test\Mock\Application::getInstance())
+                ->isIdenticalTo($app)
             ->string(ini_get('default_charset'))
                 ->isEqualTo('UTF-8');
+        ;
     }
     
     /**
@@ -103,11 +121,18 @@ class Application extends atoum
      * 
      * @return void
      */
-    public function testGetComposerLoader()
+    public function testInitAndGetComposerLoader()
     {
-        $this->assert('test getComposerLoader')
-            ->object($this->mock->getComposerLoader())
-                ->isInstanceOf('Composer\Autoload\ClassLoader');
+        $this->assert('test getComposerLoader before init')
+            ->variable($this->app->getComposerLoader())
+                ->isNull()
+        ;
+        
+        $this->assert('test getComposerLoader after init')
+            ->if($this->initApp())
+            ->object($this->app->getComposerLoader())
+                ->isInstanceOf('Composer\Autoload\ClassLoader')
+        ;
     }
     
     /**
@@ -115,51 +140,152 @@ class Application extends atoum
      * 
      * @return void
      */
-    public function testGetConfig()
+    public function testInitAndGetConfig()
     {
-        $this->assert('test getConfig')
-            ->boolean($this->mock->getConfig()->getValue('debug'))
-                ->isFalse()
-            ->array($this->mock->getConfig()->getValue('errorRenderFct'))
-                ->isEqualto([
-                    'enabled' => false,
-                    'default' => [
-                        'class'  => '',
-                        'method' => ''
-                    ],
-                    'cli'     => [
-                        'class'  => '',
-                        'method' => ''
-                    ]
-                ]);
+        $this->assert('test getConfig before init')
+            ->variable($this->app->getConfig())
+                ->isNull()
+        ;
         
-        $this->assert('test getConfig exception')
-            ->given($app = $this->mock)
-            ->exception(function() use ($app) {
-                $app->getConfig()->getValue('unitTest');
-            })
-                ->hasCode(\BFW\Config::ERR_KEY_NOT_FOUND)
-                ->hasMessage('The config key unitTest has not been found');
+        $this->assert('test getConfig after init')
+            ->if($this->initApp())
+            ->object($this->app->getConfig())
+                ->isInstanceOf('BFW\Config')
+        ;
     }
     
     /**
-     * Test method for getOption()
+     * Test method for getErrors()
      * 
      * @return void
      */
-    public function testGetOption()
+    public function testInitAndGetErrors()
     {
-        $this->assert('test getOption')
-            ->string($this->mock->getOption('testOption'))
-                ->isEqualTo('unit test');
+        $this->assert('test getErrors before init')
+            ->variable($this->app->getErrors())
+                ->isNull()
+        ;
         
-        $this->assert('test getOption exception')
-            ->given($app = $this->mock)
-            ->exception(function() use ($app) {
-                $app->getOption('testNotExist');
+        $this->assert('test getErrors after init')
+            ->if($this->initApp())
+            ->object($this->app->getErrors())
+                ->isInstanceOf('BFW\Core\Errors')
+        ;
+    }
+    
+    /**
+     * Test method for getErrors()
+     * 
+     * @return void
+     */
+    public function testInitAndGetCli()
+    {
+        $this->assert('test getCli before init')
+            ->variable($this->app->getCli())
+                ->isNull()
+        ;
+        
+        $this->assert('test getCli after init')
+            ->if($this->initApp())
+            ->object($this->app->getCli())
+                ->isInstanceOf('BFW\Core\Cli')
+        ;
+    }
+    
+    /**
+     * Test method for getMemcached()
+     * 
+     * @return void
+     */
+    public function testLoadAndGetMemcached()
+    {
+        $this->assert('test getMemcached - not call run() method')
+            ->variable($this->app->getMemcached())
+                ->isNull()
+        ;
+        
+        $this->assert('test getMemcached after init - change run step for nexts tests')
+            ->given($this->app->setRunSteps([
+                [$this->app, 'loadMemcached']
+            ]))
+            ->and($this->initApp())
+        ;
+        
+        $this->assert('test getMemcached after init - call run() method but memcached disabled')
+            ->if($this->app->run())
+            ->then
+            ->variable($this->app->getMemcached())
+                ->isNull()
+        ;
+        
+        $this->assert('test getMemcached after init - call run() method with memcached enabled')
+            ->if($config = $this->app->getConfig()->getConfigForFile('config.php'))
+            ->and($config['memcached']['enabled'] = true)
+            //We define a real memcached server, else run() return an Exception.
+            ->and($config['memcached']['servers'][0]['host'] = 'localhost')
+            ->and($config['memcached']['servers'][0]['port'] = 11211)
+            ->and($this->app->getConfig()->setConfigForFile('config.php', $config))
+            ->and($this->app->run())
+            ->then
+            ->object($this->app->getMemcached())
+                ->isInstanceOf('BFW\Memcache\Memcached')
+        ;
+    }
+    
+    /**
+     * Test method for getModules()
+     * 
+     * @return void
+     */
+    public function testInitAndGetModules()
+    {
+        $this->assert('test getModules before init')
+            ->variable($this->app->getModules())
+                ->isNull()
+        ;
+        
+        $this->assert('test getModules after init')
+            ->if($this->initApp())
+            ->object($this->app->getModules())
+                ->isInstanceOf('BFW\Modules')
+        ;
+    }
+    
+    /**
+     * Test method for getModuleForName()
+     * 
+     * @return void
+     */
+    public function testGetModuleForName()
+    {
+        //Not test with existing module because we not have an installed system
+        //Tested with test into the directory "test/bin".
+        
+        $this->assert('test getModuleForName')
+            ->exception(function() {
+                $this->app->getModuleForName('test');
             })
-                ->hasCode(\BFW\Options::ERR_KEY_NOT_EXIST)
-                ->hasMessage('Option key testNotExist not exist.');
+                ->hasCode(\BFW\Modules::ERR_NOT_FOUND)
+        ;
+    }
+    
+    /**
+     * Test method for getOptions()
+     * 
+     * @return void
+     */
+    public function testInitAndGetOptions()
+    {
+        $this->assert('test getOptions before init')
+            ->variable($this->app->getOptions())
+                ->isNull()
+        ;
+        
+        $this->assert('test getOptions after init')
+            ->if($this->initApp())
+            ->object($this->app->getOptions())
+                ->isInstanceOf('BFW\Options')
+        ;
     }
     
     /**
@@ -167,329 +293,161 @@ class Application extends atoum
      * 
      * @return void
      */
-    public function testGetRequest()
+    public function testInitAndGetRequest()
     {
-        $this->assert('test getRequest')
-            ->object($request = $this->mock->getRequest())
-                ->isInstanceOf('\BFW\Request');
-    }
-    
-    /**
-     * Test method for initOptions()
-     * 
-     * @return void
-     */
-    public function testInitOptions()
-    {
-        //rootdir back 5 directories. He think to be in the vendor.
-        $rootDir = dirname(dirname(realpath(__DIR__.'/../../../../'))).'/';
-        
-        $this->assert('test initOptions')
-            ->string($this->mock->getOption('rootDir'))
-                ->isEqualTo($rootDir)
-            ->string($this->mock->getOption('vendorDir'))
-                ->isEqualTo(__DIR__.'/../../../../vendor/')
-            ->boolean($this->mock->getOption('runSession'))
-                ->isTrue();
-    }
-    
-    /**
-     * Test method for initConstants()
-     * 
-     * @return void
-     */
-    public function testInitConstants()
-    {
-        //rootdir back 5 directories. He think to be in the vendor.
-        $rootDir = dirname(dirname(realpath(__DIR__.'/../../../../'))).'/';
-        
-        $this->assert('test constants ROOT_DIR')
-            ->string(ROOT_DIR)
-                ->isEqualTo($rootDir);
-        
-        $this->assert('test constants APP_DIR')
-            ->string(APP_DIR)
-                ->isEqualTo($rootDir.'app/');
-        
-        $this->assert('test constants SRC_DIR')
-            ->string(SRC_DIR)
-                ->isEqualTo($rootDir.'src/');
-        
-        $this->assert('test constants WEB_DIR')
-            ->string(WEB_DIR)
-                ->isEqualTo($rootDir.'web/');
-        
-        $this->assert('test constants CONFIG_DIR')
-            ->string(CONFIG_DIR)
-                ->isEqualTo($rootDir.'app/config/');
-        
-        $this->assert('test constants MODULES_DIR')
-            ->string(MODULES_DIR)
-                ->isEqualTo($rootDir.'app/modules/');
-        
-        $this->assert('test constants CLI_DIR')
-            ->string(CLI_DIR)
-                ->isEqualTo($rootDir.'src/cli/');
-        
-        $this->assert('test constants CTRL_DIR')
-            ->string(CTRL_DIR)
-                ->isEqualTo($rootDir.'src/controllers/');
-        
-        $this->assert('test constants MODELES_DIR')
-            ->string(MODELES_DIR)
-                ->isEqualTo($rootDir.'src/modeles/');
-        
-        $this->assert('test constants VIEW_DIR')
-            ->string(VIEW_DIR)
-                ->isEqualTo($rootDir.'src/view/');
-    }
-    
-    /**
-     * test method for initComposerLoader
-     * Done by test getComposerLoader and addComposerNamespaces
-     * 
-     * @return void
-     */
-    public function testInitComposerLoader()
-    {
-        
-    }
-    
-    /**
-     * Test method for initConfig
-     * Done by getConfig
-     * Not in coverrage because mocking.
-     * 
-     * @return void
-     */
-    public function testInitConfig()
-    {
-        
-    }
-    
-    /**
-     * Test method for initRequest
-     * Done by getRequest
-     * 
-     * @return void
-     */
-    public function testInitRequest()
-    {
-        
-    }
-    
-    /**
-     * Test method for initSessionEnabled()
-     * 
-     * @return void
-     */
-    public function testInitSessionEnabled()
-    {
-        $this->assert('test initSession enabled')
-            ->string(session_id())
-                ->isNotEmpty();
-    }
-    
-    /**
-     * Test method for initSessionDisabled()
-     * 
-     * @return void
-     */
-    public function testInitSessionDisabled()
-    {
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            session_destroy();
-        }
-        
-        //Strange to be forced to put that here !!
-        //beforeTestMethod should be doing this.
-        $this->assert('test initSession disabled')
-            ->if(MockApp::removeInstance())
-            ->and($this->mock = MockApp::init([
-                'forceConfig' => $this->forcedConfig,
-                'vendorDir'   => __DIR__.'/../../../../vendor',
-                'runSession'  => false
-            ]))
-            ->then
-            ->string(session_id())
-                ->isEmpty();
-    }
-    
-    /**
-     * Test method for initErrors()
-     * 
-     * @return void
-     */
-    public function testInitErrors()
-    {
-        $this->assert('test initErrors')
-            ->object($this->mock->getErrors())
-                ->isInstanceOf('\BFW\Core\Errors');
-    }
-    
-    /**
-     * Test method for initErrors()
-     * 
-     * @return void
-     */
-    public function testInitRunTasks()
-    {
-        $this->assert('test initRunTasks')
-            ->object($this->mock->getErrors())
-                ->isInstanceOf('\BFW\Core\Errors');
-    }
-    
-    /**
-     * Test method for initModules()
-     * 
-     * @return void
-     */
-    public function testInitModules()
-    {
-        $this->assert('test initModules')
-            ->object($this->mock->getModules())
-                ->isInstanceOf('\BFW\Modules');
-    }
-    
-    /**
-     * Test method for addComposerNamespaces()
-     * 
-     * @return void
-     */
-    public function testAddComposerNamespaces()
-    {
-        $this->assert('test addComposerNamespaces')
-            ->array($loaderPrefixes = $this->mock->getComposerLoader()->getPrefixesPsr4())
-                ->hasKeys([
-                    'Controller\\',
-                    'Modules\\',
-                    'Modeles\\'
-                ])
-            ->array($loaderPrefixes['Controller\\'])
-                ->size->isEqualTo(1)
-            ->array($loaderPrefixes['Modules\\'])
-                ->size->isEqualTo(1)
-            ->array($loaderPrefixes['Modeles\\'])
-                ->size->isEqualTo(1)
-            ->string($loaderPrefixes['Controller\\'][0])
-                ->isEqualTo(CTRL_DIR)
-            ->string($loaderPrefixes['Modules\\'][0])
-                ->isEqualTo(MODULES_DIR)
-            ->string($loaderPrefixes['Modeles\\'][0])
-                ->isEqualTo(MODELES_DIR);
-    }
-    
-    /**
-     * Test method for declareRunSteps()
-     * 
-     * @return void
-     */
-    public function testDeclareRunSteps()
-    {
-        $this->assert('test declareRunSteps')
-            ->array($runSteps = $this->mock->getRunSteps())
-                ->size
-                    ->isEqualTo(6)
-            ->object($runSteps[0][0])
-                ->isInstanceOf('\BFW\Application')
-            ->object($runSteps[1][0])
-                ->isInstanceOf('\BFW\Application')
-            ->object($runSteps[2][0])
-                ->isInstanceOf('\BFW\Application')
-            ->object($runSteps[3][0])
-                ->isInstanceOf('\BFW\Application')
-            ->object($runSteps[4][0])
-                ->isInstanceOf('\BFW\Application')
-            ->object($runSteps[5][0])
-                ->isInstanceOf('\BFW\Application')
-            ->string($runSteps[0][1])
-                ->isEqualTo('loadMemcached')
-            ->string($runSteps[1][1])
-                ->isEqualTo('readAllModules')
-            ->string($runSteps[2][1])
-                ->isEqualTo('loadAllCoreModules')
-            ->string($runSteps[3][1])
-                ->isEqualTo('loadAllAppModules')
-            ->string($runSteps[4][1])
-                ->isEqualTo('runCliFile')
-            ->string($runSteps[5][1])
-                ->isEqualTo('initCtrlRouterLink');
-    }
-    
-    /**
-     * Test method for notify message during the call to method run()
-     * 
-     * @return void
-     */
-    public function testNotifyDuringRun()
-    {
-        $notifyText = 
-            'BfwApp_start_run_tasks'."\n"
-            .'BfwApp_run_loadMemcached'."\n"
-            .'BfwApp_finish_loadMemcached'."\n"
-            .'BfwApp_run_readAllModules'."\n"
-            .'BfwApp_finish_readAllModules'."\n"
-            .'BfwApp_run_loadAllCoreModules'."\n"
-            .'BfwApp_finish_loadAllCoreModules'."\n"
-            .'BfwApp_run_loadAllAppModules'."\n"
-            .'BfwApp_finish_loadAllAppModules'."\n"
-            .'BfwApp_run_runCliFile'."\n"
-            .'BfwApp_finish_runCliFile'."\n"
-            .'BfwApp_run_initCtrlRouterLink'."\n"
-            .'BfwApp_finish_initCtrlRouterLink'."\n"
-            .'BfwApp_end_run_tasks'."\n"
-            .'bfw_run_finish'."\n"
+        $this->assert('test getRequest before init')
+            ->variable($this->app->getRequest())
+                ->isNull()
         ;
         
-        $this->assert('test run')
-            ->given($app = $this->mock)
-            ->given($observer = new MockObserver)
-            ->if($this->mock->getSubjectForName('ApplicationTasks')->attach($observer))
-            ->output(function() use ($app) {
-                $app->run();
-            })
-                ->isEqualTo($notifyText);
+        $this->assert('test getRequest after init')
+            ->if($this->initApp())
+            ->object($this->app->getRequest())
+                ->isInstanceOf('BFW\Request')
+        ;
     }
     
     /**
-     * Test method for loadMemcached()
+     * Test method for getRunSteps()
      * 
      * @return void
      */
-    public function testLoadMemcached()
+    public function testGetAndDeclareRunSteps()
     {
-        $app = $this->mock;
+        $this->assert('test getRunSteps size')
+            ->array($runSteps = $this->app->getRunSteps())
+                ->size
+                    ->isEqualTo(7)
+        ;
         
-        $this->assert('test loadMemcached enabled without class')
-            ->if($this->forcedConfig['memcached']['enabled'] = true)
-            ->and($this->mock->forceConfig($this->forcedConfig))
-            ->then
-            ->exception(function() use ($app) {
-                $app->run();
-            })
-                ->hasCode($app::ERR_MEMCACHED_NOT_CLASS_DEFINED)
-                ->hasMessage('Memcached is active but no class is define');
+        $this->assert('test getRunSteps content')
+            ->object($runSteps[0][0])->isInstanceOf('\BFW\Application')
+            ->string($runSteps[0][1])->isEqualTo('loadMemcached')
+            
+            ->object($runSteps[1][0])->isInstanceOf('\BFW\Application')
+            ->string($runSteps[1][1])->isEqualTo('loadAllModules')
+            
+            ->object($runSteps[2][0])->isInstanceOf('\BFW\Application')
+            ->string($runSteps[2][1])->isEqualTo('runAllCoreModules')
+            
+            ->object($runSteps[3][0])->isInstanceOf('\BFW\Application')
+            ->string($runSteps[3][1])->isEqualTo('runAllAppModules')
+            
+            ->object($runSteps[4][0])->isInstanceOf('\BFW\Application')
+            ->string($runSteps[4][1])->isEqualTo('runCliFile')
+            
+            ->object($runSteps[5][0])->isInstanceOf('\BFW\Application')
+            ->string($runSteps[5][1])->isEqualTo('initCtrlRouterLink')
+            
+            ->object($runSteps[6][0])->isInstanceOf('\BFW\Application')
+            ->string($runSteps[6][1])->isEqualTo('runCtrlRouterLink')
+        ;
+    }
+    
+    public function testInitAndGetSubjectsList()
+    {
+        $this->assert('test getSubjectsList before init')
+            ->array($this->app->getSubjectsList())
+                ->isEmpty()
+        ;
         
-        $this->assert('test loadMemcached enabled without class exist')
-            ->if($this->forcedConfig['memcached']['class'] = 'TestMemcached')
-            ->and($this->mock->forceConfig($this->forcedConfig))
-            ->then
-            ->exception(function() use ($app) {
-                $app->run();
-            })
-                ->hasCode($app::ERR_MEMCACHED_CLASS_NOT_FOUND)
-                ->hasMessage('Memcache class TestMemcached not found.');
+        $this->assert('test getSubjectsList after init')
+            ->if($this->initApp())
+            ->array($subjectsList = $this->app->getSubjectsList())
+                ->isNotEmpty()
+            ->boolean(array_key_exists('ApplicationTasks', $subjectsList))
+                ->isTrue()
+            ->object($subjectsList['ApplicationTasks'])
+                ->isInstanceOf('BFW\Subjects')
+        ;
+    }
+    
+    public function testInitConstants()
+    {
+        $this->assert('test initConstants before init')
+            ->boolean(defined('ROOT_DIR'))
+                ->isFalse()
+        ;
         
-        $this->assert('test loadMemcached enabled without class exist')
-            ->if($this->forcedConfig['memcached']['class'] = '\BFW\Memcache\Memcached')
-            ->and($this->forcedConfig['memcached']['servers'][0] = [
-                    'host' => 'localhost',
-                    'port' => 11211
-            ])
-            ->and($this->mock->forceConfig($this->forcedConfig))
+        $this->assert('test initConstants after init')
+            ->if($this->initApp())
+            ->given($rootDir = $this->app->getOptions()->getValue('rootDir'))
             ->then
-            ->variable($this->mock->run())
-                ->isNull();
+            ->boolean(defined('ROOT_DIR'))->isTrue()
+                ->string(ROOT_DIR)->isEqualTo($rootDir)
+            ->boolean(defined('APP_DIR'))->isTrue()
+                ->string(APP_DIR)->isEqualTo($rootDir.'app/')
+            ->boolean(defined('SRC_DIR'))->isTrue()
+                ->string(SRC_DIR)->isEqualTo($rootDir.'src/')
+            ->boolean(defined('WEB_DIR'))->isTrue()
+                ->string(WEB_DIR)->isEqualTo($rootDir.'web/')
+            ->boolean(defined('CONFIG_DIR'))->isTrue()
+                ->string(CONFIG_DIR)->isEqualTo($rootDir.'app/config/')
+            ->boolean(defined('MODULES_DIR'))->isTrue()
+                ->string(MODULES_DIR)->isEqualTo($rootDir.'app/modules/')
+            ->boolean(defined('CLI_DIR'))->isTrue()
+                ->string(CLI_DIR)->isEqualTo($rootDir.'src/cli/')
+            ->boolean(defined('CTRL_DIR'))->isTrue()
+                ->string(CTRL_DIR)->isEqualTo($rootDir.'src/controllers/')
+            ->boolean(defined('MODELES_DIR'))->isTrue()
+                ->string(MODELES_DIR)->isEqualTo($rootDir.'src/modeles/')
+            ->boolean(defined('VIEW_DIR'))->isTrue()
+                ->string(VIEW_DIR)->isEqualTo($rootDir.'src/view/')
+        ;
+    }
+    
+    public function testAddComposerNamespaces()
+    {
+        $autoload = require(__DIR__.'/../../../../vendor/autoload.php');
+        
+        $this->assert('test addComposerNamespaces before init')
+            ->given($prefixPsr4 = $autoload->getPrefixesPsr4())
+            ->boolean(array_key_exists('Controller\\', $prefixPsr4))
+                ->isFalse()
+            ->boolean(array_key_exists('Modules\\', $prefixPsr4))
+                ->isFalse()
+            ->boolean(array_key_exists('Modeles\\', $prefixPsr4))
+                ->isFalse()
+        ;
+        
+        $this->assert('test addComposerNamespaces after init')
+            ->if($this->initApp())
+            ->given($prefixPsr4 = $autoload->getPrefixesPsr4())
+            ->boolean(array_key_exists('Controller\\', $prefixPsr4))
+                ->isTrue()
+            ->boolean(array_key_exists('Modules\\', $prefixPsr4))
+                ->isTrue()
+            ->boolean(array_key_exists('Modeles\\', $prefixPsr4))
+                ->isTrue()
+        ;
+    }
+    
+    public function testInitSessionDisabled()
+    {
+        $this->assert('test initSession before init')
+            ->variable(session_status())
+                ->isNotEqualTo(PHP_SESSION_ACTIVE)
+        ;
+        
+        $this->assert('test initSession after init')
+            ->if($this->initApp())
+            ->variable(session_status())
+                ->isNotEqualTo(PHP_SESSION_ACTIVE)
+        ;
+    }
+    
+    public function testInitSessionEnabled()
+    {
+        $this->assert('test initSession before init')
+            ->variable(session_status())
+                ->isNotEqualTo(PHP_SESSION_ACTIVE)
+        ;
+        
+        $this->assert('test initSession after init')
+            ->if($this->initApp(true))
+            ->variable(session_status())
+                ->isEqualTo(PHP_SESSION_ACTIVE)
+        ;
     }
     
     /**
@@ -497,11 +455,16 @@ class Application extends atoum
      * 
      * @return void
      */
-    public function testReadAllModulesWithoutModule()
+    public function testLoadAllModulesWithoutModules()
     {
-        $this->assert('test readAllModules without modules')
-            ->given($this->mock->run())
-            ->array($this->mock->getModules()->getLoadTree())
+        $this->assert('test loadAllModules without modules')
+            ->given($this->moduleAddRunSteps())
+            ->and($this->moduleMockNativeFunctions())
+            ->and($this->initApp())
+            ->and($this->app->run())
+            ->then
+            
+            ->array($this->app->getModules()->getLoadTree())
                 ->size
                     ->isEqualTo(0);
     }
@@ -511,29 +474,22 @@ class Application extends atoum
      * 
      * @return void
      */
-    public function testReadAllModulesWithOneGoodModule()
+    public function testLoadAllModulesWithoutFailedModule()
     {
-        $this->assert('test readAllModules with one module')
-            ->if($this->mock->modulesToAdd['test1'] = (object) [
-                'config'       => (object) [],
-                'loadInfos'    => (object) []
-            ])
-            ->and($this->function->scandir = ['.', '..', 'test1'])
-            ->and($this->function->realpath = 'test1')
-            ->and($this->function->is_dir = true)
+        $this->assert('test loadAllModules with one module')
+            ->given($this->addModule('test1'))
+            ->and($this->moduleAddRunSteps())
+            ->and($this->initApp())
+            ->and($this->app->run())
             ->then
-            ->given($this->mock->run())
-            ->array($this->mock->getModules()->getLoadTree())
+            
+            ->array($this->app->getModules()->getLoadTree())
                 ->size
                     ->isGreaterThan(0);
         
-        $this->assert('test loadAllAppModules')
-            ->boolean($this->mock->getModules()->getModule('test1')->isRun())
-                ->isTrue();
-        
-        $this->assert('test getModule')
-            ->object($this->mock->getModule('test1'))
-                ->isIdenticalTo($this->mock->getModules()->getModule('test1'));
+        $this->assert('test getModuleForName')
+            ->object($this->app->getModuleForName('test1'))
+                ->isIdenticalTo($this->app->getModules()->getModuleForName('test1'));
     }
     
     /**
@@ -541,102 +497,253 @@ class Application extends atoum
      * 
      * @return void
      */
-    public function testReadAllModulesWithOneBadModule()
+    public function testLoadAllModulesWithFailedModule()
     {
-        $this->assert('test readAllModules with one module')
-            ->if($this->mock->modulesToAdd['test1'] = (object) [
-                'config'       => (object) [],
-                'loadInfos'    => (object) []
-            ])
-            ->and($this->function->scandir = ['.', '..', 'test1'])
-            ->and($this->function->realpath = 'test1')
-            ->and($this->function->is_dir = false)
+        $this->assert('test loadAllModules with one module')
+            ->given($this->addModule('test1'))
+            ->and($this->moduleAddRunSteps())
+            ->and($this->function->is_dir = false) //<--- Not a dir. => Fail
+            ->and($this->initApp())
+            ->and($this->app->run())
             ->then
-            ->given($this->mock->run())
-            ->array($this->mock->getModules()->getLoadTree())
+            
+            ->array($this->app->getModules()->getLoadTree())
                 ->size
                     ->isEqualTo(0);
     }
     
-    /**
-     * Test method for loadAllCoreModules() when there is no declared modules
-     * 
-     * @return void
-     */
-    public function testLoadAllCoreModulesWithoutModule()
+    public function testRunAllCoreModules()
     {
-        $this->assert('test loadAllCoreModules')
-            ->given($app = $this->mock)
-            ->given($observer = new MockObserver)
-            ->if($this->mock->getSubjectForName('ApplicationTasks')->attach($observer))
-            ->output(function() use ($app) {
-                $app->run();
-            })
-                ->notContains('load_module_');
-    }
-    
-    /**
-     * Test method for loadAllCoreModules()
-     * when there is one module without fail
-     * 
-     * @return void
-     */
-    public function testLoadAllCoreModulesWithOneModule()
-    {
-        $this->assert('test loadAllCoreModules')
-            ->given($app = $this->mock)
-            ->given($observer = new MockObserver)
-            ->if($this->mock->getSubjectForName('ApplicationTasks')->attach($observer))
-            ->and($this->forcedConfig['modules']['controller']['name'] = 'test1')
-            ->and($this->forcedConfig['modules']['controller']['enabled'] = true)
-            ->and($this->mock->forceConfig($this->forcedConfig))
-            ->and($this->mock->modulesToAdd['test1'] = (object) [
-                'config'       => (object) [],
-                'loadInfos'    => (object) []
-            ])
-            ->and($this->function->scandir = ['.', '..', 'test1'])
-            ->and($this->function->realpath = 'test1')
-            ->and($this->function->is_dir = true)
+        $this->assert('test runAllCoreModules')
+            ->given($this->addModule('test1'))
+            //Load only core module, not app modules
+            ->and($this->moduleAddRunSteps(true, false))
+            ->and($this->initApp())
+            ->and($this->app->run())
             ->then
-            ->output(function() use ($app) {
-                $app->run();
-            })
+            
+            ->variable($module = $this->app->getModuleForName('test1'))
+                ->isNotNull()
+            ->boolean($module->isLoaded())
+                ->isTrue()
+        ;
+    }
+    
+    public function testRunAllAppModules()
+    {
+        $this->assert('test runAllAppModules')
+            ->given($this->addModule('test1'))
+            //Load only app module, not core modules
+            ->and($this->moduleAddRunSteps(false, true))
+            ->and($this->initApp())
+            ->and($this->app->run())
+            ->then
+            
+            ->variable($module = $this->app->getModuleForName('test1'))
+                ->isNotNull()
+            ->boolean($module->isLoaded())
+                ->isTrue()
+        ;
+    }
+    
+    public function testRunModule()
+    {
+        $this->assert('test runModule')
+            ->given($this->addModule('test1'))
+            ->and($this->moduleAddRunSteps())
+            ->and($this->initApp())
+            ->then
+            
+            //Define observer
+            ->given($observer = new \BFW\Test\Helpers\ObserverArray())
+            ->if($subject = $this->app->getSubjectForName('ApplicationTasks'))
+            ->and($subject->attach($observer))
+            ->then
+            
+            ->if($this->app->run())
+            ->then
+            
+            ->variable($module = $this->app->getModuleForName('test1'))
+                ->isNotNull()
+            ->boolean($module->isLoaded())
+                ->isTrue()
+            ->boolean($module->isRun())
+                ->isTrue()
+            ->array($observer->getActionReceived())
                 ->contains('BfwApp_load_module_test1')
-            ->boolean($this->mock->getModules()->getModule('test1')->isRun())
-                ->isTrue();
+        ;
     }
     
-    /**
-     * Test method for loadAllAppModules()
-     * Tested on testReadAllModulesWithOneGoodModule
-     * 
-     * @return void
-     */
-    public function testLoadAllAppModules()
+    public function testRunCliFileWhenNotCli()
     {
-        
+        $this->assert('test runCliFile if is not cli')
+            ->if($this->constant->PHP_SAPI = 'www')
+            ->and($this->app->setRunSteps([
+                [$this->app, 'runCliFile']
+            ]))
+            ->and($this->initApp())
+            ->then
+            //No errors, no exceptions
+            ->variable($this->app->run())
+                ->isNull();
+            //@TODO better test later with monolog integration
+        ;
     }
     
-    /**
-     * Test method for loadModule()
-     * Tested on testReadAllModulesWithOneGoodModule
-     * and testLoadAllCoreModulesWithOneModule
-     * 
-     * @return void
-     */
-    public function testLoadModule()
+    public function testRunCliFileWhenExecCliFile()
     {
-        
+        $this->assert('test runCliFile if cli file is exec')
+            ->if($this->constant->PHP_SAPI = 'cli')
+            //Mock native function not used because is into Cli class, not App.
+            //->and($this->function->getopt = ['f' => 'example'])
+            //->and($this->function->file_exists = true)
+            ->and($this->app->setRunSteps([
+                [$this->app, 'runCliFile']
+            ]))
+            ->and($this->initApp())
+            ->and($this->app->getCli()->setFileInArg('/cli/example.php'))
+            ->and($this->app->getCli()->setUseArgToObtainFile(false))
+            ->then
+            
+            //Define observer
+            ->given($observer = new \BFW\Test\Helpers\ObserverArray())
+            ->if($subject = $this->app->getSubjectForName('ApplicationTasks'))
+            ->and($subject->attach($observer))
+            ->then
+            
+            ->if($this->app->run())
+            ->string($this->app->getCli()->getExecutedFile())
+                ->isEqualTo('/cli/example.php')
+            ->boolean($this->app->getCli()->getIsExecuted())
+                ->isTrue()
+            ->array($observer->getActionReceived())
+                ->contains('run_cli_file')
+        ;
     }
     
-    /**
-     * Test method for runCliFile()
-     * Tested on test installer scripts
-     * 
-     * @return void
-     */
-    public function testRunCliFile()
+    public function testInitCtrlRouterLinkInCli()
     {
+        $this->assert('test initCtrlRouterLink if it\'s runned in cli')
+            ->if($this->constant->PHP_SAPI = 'cli')
+            ->and($this->app->setRunSteps([
+                [$this->app, 'initCtrlRouterLink']
+            ]))
+            ->and($this->initApp())
+            ->and($this->app->run())
+            ->then
+            
+            ->variable($this->app->getCtrlRouterInfos())
+                ->isNull()
+            ->array($this->app->getSubjectsList())
+                ->notHasKey('ctrlRouterLink')
+        ;
+    }
+    
+    public function testInitCtrlRouterLinkNotInCli()
+    {
+        $this->assert('test initCtrlRouterLink if it\'s not runned in cli')
+            ->if($this->constant->PHP_SAPI = 'www')
+            ->and($this->app->setRunSteps([
+                [$this->app, 'initCtrlRouterLink']
+            ]))
+            ->and($this->initApp())
+            ->then
+            
+            //Define observer
+            ->given($observer = new \BFW\Test\Helpers\ObserverArray())
+            ->if($subject = $this->app->getSubjectForName('ApplicationTasks'))
+            ->and($subject->attach($observer))
+            ->and($this->app->run())
+            ->then
+            
+            ->object($this->app->getCtrlRouterInfos())
+                ->isInstanceOf('\stdClass')
+            ->array($this->app->getSubjectsList())
+                ->hasKey('ctrlRouterLink')
+            ->array($observer->getActionReceived())
+                ->contains('bfw_ctrlRouterLink_subject_added')
+        ;
+    }
+    
+    protected function setRunStepsForTestRunCtrlRouterLink($observer)
+    {
+        return $this
+            ->and($this->app->setRunSteps([
+                [$this->app, 'initCtrlRouterLink'],
+                function() use ($observer) {
+                    try {
+                        $ctrlRouterLink = $this->app->getSubjectForName('ctrlRouterLink');
+                    } catch (\Exception $e) {
+                        return;
+                    }
+                    
+                    $ctrlRouterLink->attach($observer);
+                },
+                [$this->app, 'runCtrlRouterLink']
+            ]))
+        ;
+    }
+    
+    public function testRunCtrlRouterLinkInCli()
+    {
+        $this->assert('test runCtrlRouterLink if it\'s runned in cli')
+            ->given($observer = new \BFW\Test\Helpers\ObserverArray())
+            ->if($this->constant->PHP_SAPI = 'cli')
+            ->and($this->setRunStepsForTestRunCtrlRouterLink($observer))
+            ->and($this->initApp())
+            ->and($this->app->run())
+            ->then
+            
+            ->array($observer->getActionReceived())
+                ->notContains('ctrlRouterLink_start_run_tasks')
+        ;
+    }
+    
+    public function testRunCtrlRouterLinkNotInCli()
+    {
+        $this->assert('test runCtrlRouterLink if it\'s not runned in cli')
+            ->given($observer = new \BFW\Test\Helpers\ObserverArray())
+            ->if($this->constant->PHP_SAPI = 'www')
+            ->and($this->setRunStepsForTestRunCtrlRouterLink($observer))
+            ->and($this->initApp())
+            ->and($this->app->run())
+            ->then
+            
+            ->array($observer->getActionReceived())
+                ->contains('ctrlRouterLink_start_run_tasks')
+        ;
+    }
+    
+    public function testAddSubject()
+    {
+        $this->assert('test addSubject')
+            ->given($subject = new \BFW\Subjects)
+            ->if($this->app->addSubject($subject, 'UnitTest'))
+            ->then
+            
+            ->array($subjectList = $this->app->getSubjectsList())
+                ->hasKey('UnitTest')
+            ->object($subjectList['UnitTest'])
+                ->isIdenticalTo($subject)
+        ;
+    }
+    
+    public function testGetSubjectForName()
+    {
+        $this->assert('test getSubjectForName with not existing subject')
+            ->exception(function() {
+                $this->app->getSubjectForName('UnitTest');
+            })
+                ->hasCode(\BFW\Application::ERR_SUBJECT_NAME_NOT_EXIST)
+        ;
         
+        $this->assert('test getSubjectForName with existing subject')
+            ->given($subject = new \BFW\Subjects)
+            ->if($this->app->addSubject($subject, 'UnitTest'))
+            ->then
+            
+            ->object($this->app->getSubjectForName('UnitTest'))
+                ->isIdenticalTo($subject)
+        ;
     }
 }

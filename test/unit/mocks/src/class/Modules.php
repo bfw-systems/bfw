@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\test\unit\mocks;
+namespace BFW\Test\Mock;
 
 /**
  * Mock for Modules class
@@ -26,7 +26,8 @@ class Modules extends \BFW\Modules
      * 
      * @return void
      */
-    public static function setModuleConfig($moduleName, $config) {
+    public static function setModuleConfig($moduleName, $config)
+    {
         self::$config[$moduleName] = $config;
     }
     
@@ -38,7 +39,8 @@ class Modules extends \BFW\Modules
      * 
      * @return void
      */
-    public static function setModuleLoadInfos($moduleName, $loadInfos) {
+    public static function setModuleLoadInfos($moduleName, $loadInfos)
+    {
         self::$loadInfos[$moduleName] = $loadInfos;
     }
     
@@ -47,7 +49,7 @@ class Modules extends \BFW\Modules
      */
     public function addModule($moduleName)
     {
-        $this->modules[$moduleName] = new \BFW\test\unit\mocks\Module($moduleName, false);
+        $this->modules[$moduleName] = new \BFW\Test\Mock\Module($moduleName, false);
         
         if (isset(self::$config[$moduleName])) {
             $this->modules[$moduleName]->setConfig(self::$config[$moduleName]);

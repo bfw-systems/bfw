@@ -6,67 +6,96 @@ use \atoum;
 
 require_once(__DIR__.'/../../../../vendor/autoload.php');
 
+/**
+ * @engine isolate
+ */
 class Datas extends atoum
 {
-    /**
-     * Test method for checkType()
-     * 
-     * @return void
-     */
     public function testCheckType()
     {
-        $this->assert('test Datas::checkType with bad parameter formats')
-            ->boolean(\BFW\Helpers\Datas::checkType('test'))
-                ->isFalse()
-            ->boolean(\BFW\Helpers\Datas::checkType(['test']))
-                ->isFalse();
+        $this->assert('test Helpers\Datas::checkType with bad argument')
+            ->exception(function() {
+                \BFW\Helpers\Datas::checkType(42);
+            })
+                ->hasCode(\BFW\Helpers\Datas::ERR_CHECKTYPE_ARG_TYPE)
+        ;
         
-        $this->assert('test Datas::checkType with bad infos')
-            ->boolean(\BFW\Helpers\Datas::checkType([['type' => '', 'data' => 'test']]))
-                ->isFalse()
-            ->boolean(\BFW\Helpers\Datas::checkType([['type' => 'string']]))
-                ->isFalse()
-            ->boolean(\BFW\Helpers\Datas::checkType([['data' => 'string']]))
-                ->isFalse()
-            ->boolean(\BFW\Helpers\Datas::checkType([[]]))
-                ->isFalse();
+        $this->assert('test Helpers\Datas::checkType with bad infos')
+            ->exception(function() {
+                \BFW\Helpers\Datas::checkType([42]);
+            })
+                ->hasCode(\BFW\Helpers\Datas::ERR_CHECKTYPE_INFOS_FORMAT)
+        ;
         
-        $this->assert('test Datas::checkType with bad type')
-            ->boolean(\BFW\Helpers\Datas::checkType([['type' => 10, 'data' => 'test']]))
+        $this->assert('test Helpers\Datas::checkType with missing data key')
+            ->exception(function() {
+                \BFW\Helpers\Datas::checkType([[
+                    'type' => 'integer'
+                ]]);
+            })
+                ->hasCode(\BFW\Helpers\Datas::ERR_CHECKTYPE_DATA_OR_TYPE_VALUE_FORMAT)
+        ;
+        
+        $this->assert('test Helpers\Datas::checkType with missing type key')
+            ->exception(function() {
+                \BFW\Helpers\Datas::checkType([[
+                    'data' => 42
+                ]]);
+            })
+                ->hasCode(\BFW\Helpers\Datas::ERR_CHECKTYPE_DATA_OR_TYPE_VALUE_FORMAT)
+        ;
+        
+        $this->assert('test Helpers\Datas::checkType with empty type key')
+            ->exception(function() {
+                \BFW\Helpers\Datas::checkType([[
+                    'data' => 42,
+                    'type' => ''
+                ]]);
+            })
+                ->hasCode(\BFW\Helpers\Datas::ERR_CHECKTYPE_DATA_OR_TYPE_VALUE_FORMAT)
+        ;
+        
+        $this->assert('test Helpers\Datas::checkType with expected type not equal to data type')
+            ->boolean(\BFW\Helpers\Datas::checkType([[
+                'data' => 42,
+                'type' => 'string'
+            ]]))
                 ->isFalse()
-            ->boolean(\BFW\Helpers\Datas::checkType([['type' => 'string', 'data' => 10]]))
-                ->isFalse();
+        ;
         
-        $this->assert('test Datas::checkType with empty array')
-            ->boolean(\BFW\Helpers\Datas::checkType([]))
-                ->isTrue();
-        
-        $this->assert('test Datas::checkType with good datas')
-            ->boolean(\BFW\Helpers\Datas::checkType([['type' => 'integer', 'data' => 10]]))
+        $this->assert('test Helpers\Datas::checkType with correct type')
+            ->boolean(\BFW\Helpers\Datas::checkType([
+                [
+                    'data' => 42,
+                    'type' => 'int'
+                ], [
+                    'data' => 42,
+                    'type' => 'integer'
+                ], [
+                    'data' => 3.14,
+                    'type' => 'float'
+                ], [
+                    'data' => 3.14,
+                    'type' => 'double'
+                ], [
+                    'data' => 'atoum',
+                    'type' => 'string'
+                ]
+            ]))
                 ->isTrue()
-            ->boolean(\BFW\Helpers\Datas::checkType([['type' => 'int', 'data' => 10]]))
-                ->isTrue()
-            ->boolean(\BFW\Helpers\Datas::checkType([['type' => 'float', 'data' => 10.2]]))
-                ->isTrue()
-            ->boolean(\BFW\Helpers\Datas::checkType([['type' => 'double', 'data' => 10.2]]))
-                ->isTrue()
-            ->boolean(\BFW\Helpers\Datas::checkType([['type' => 'string', 'data' => 'test']]))
-                ->isTrue();
+        ;
     }
     
-    /**
-     * Test method for checkMail()
-     * 
-     * @return void
-     */
     public function testCheckMail()
     {
-        $this->assert('test Datas::checkMail with bad mail format')
-            ->boolean(\BFW\Helpers\Datas::checkMail('bulton.frATgmail.com'))
-                ->isFalse();
+        $this->assert('test Helpers\Datas::checkMail with bad mail')
+            ->boolean(\BFW\Helpers\Datas::checkMail('test@unit'))
+                ->isFalse()
+        ;
         
-        $this->assert('test Datas::checkMail with good mail format')
-            ->boolean(\BFW\Helpers\Datas::checkMail('bulton.fr@gmail.com'))
-                ->isTrue();
+        $this->assert('test Helpers\Datas::checkMail with correct mail')
+            ->boolean(\BFW\Helpers\Datas::checkMail('test@unit.com'))
+                ->isTrue()
+        ;
     }
 }
