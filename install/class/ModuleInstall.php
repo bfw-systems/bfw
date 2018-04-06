@@ -468,10 +468,8 @@ class ModuleInstall
         if ($alreadyExist && $this->forceReinstall === true) {
             Cli::displayMsg('[Force Reinstall: Remove directory] ');
             
-            $calledClass  = get_called_class(); //Autorize extends this class
             $alreadyExist = false;
-            
-            if (!$calledClass::removeDirectory($this->targetConfigPath)) {
+            if (!$this->removeRecursiveDirectory($this->targetConfigPath)) {
                 Cli::displayMsgNL(
                     'Remove the module config directory have fail',
                     'red',
@@ -507,39 +505,24 @@ class ModuleInstall
     /**
      * Remove folders recursively
      * 
+     * @see http://php.net/manual/fr/function.rmdir.php#110489
+     * 
      * @param string $dirPath Path to directory to remove
      * 
      * @return boolean
      */
-    protected static function removeDirectory($dirPath)
+    protected function removeRecursiveDirectory($dirPath)
     {
-        $calledClass  = get_called_class(); //Autorize extends this class
+        $fileList = array_diff(scandir($dirPath), ['.','..']);
         
-        $dir = opendir($dirPath);
-        if ($dir === false) {
-            return false;
-        }
-        
-        while (($file = readdir($dir)) !== false) {
-            if ($file === '.' || $file === '..') {
-                continue;
-            }
-            
-            $removeStatus = true;
-            $filePath     = $dirPath.'/'.$file;
-            
+        foreach ($fileList as $filePath) {
             if (is_dir($filePath)) {
-                $removeStatus = $calledClass::removeDirectory($filePath);
-            } elseif (is_file($filePath) || is_link($filePath)) {
-                $removeStatus = unlink($filePath);
-            }
-            
-            if ($removeStatus === false) {
-                return false;
+                $this->removeRecursiveDirectory($filePath);
+            } else {
+                unlink($filePath);
             }
         }
         
-        closedir($dir);
         return rmdir($dirPath);
     }
     
