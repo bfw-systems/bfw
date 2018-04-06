@@ -373,7 +373,7 @@ class Dates extends DateTime
      * 
      * @return string[]
      */
-    public function lstTimeZonePays($continent)
+    public function lstTimeZoneCountries($continent)
     {
         $allCountries = $this->lstTimeZone();
         $countries    = [];
