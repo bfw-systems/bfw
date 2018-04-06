@@ -163,11 +163,11 @@ searchBfwPath
 
 # Copy skeleton files
 echo ''
-copyFile "install/skeleton/.htaccess" "web/.htaccess"
-copyFile "install/skeleton/config.php" "app/config/bfw/config.php"
-copyFile "install/skeleton/index.php" "web/index.php"
-copyFile "install/skeleton/cli.php" "cli.php"
-copyFile "install/skeleton/cli/exemple.php" "src/cli/exemple.php"
+copyFile "skel/cli.php" "cli.php"
+copyFile "skel/app/config/bfw/config.php" "app/config/bfw/config.php"
+copyFile "skel/src/cli/exemple.php" "src/cli/exemple.php"
+copyFile "skel/web/.htaccess" "web/.htaccess"
+copyFile "skel/web/index.php" "web/index.php"
 
 # Install status
 echo ''
