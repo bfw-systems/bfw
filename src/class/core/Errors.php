@@ -26,9 +26,7 @@ class Errors
      */
     protected function defineErrorHandler()
     {
-        //Find the correct class to call (return the child class if extended)
-        $calledClass = get_called_class();
-        $errorRender = $calledClass::getErrorRender();
+        $errorRender = $this->getErrorRender();
         
         //If not render to use
         if ($errorRender === false) {
@@ -46,9 +44,7 @@ class Errors
      */
     protected function defineExceptionHandler()
     {
-        //Find the correct class to call (return the child class if extended)
-        $calledClass     = get_called_class();
-        $exceptionRender = $calledClass::getExceptionRender();
+        $exceptionRender = $this->getExceptionRender();
         
         //If not render to use
         if ($exceptionRender === false) {
@@ -66,12 +62,12 @@ class Errors
      *  Boolean : false if no render to use
      *  Array   : Infos from config
      */
-    public static function getErrorRender()
+    protected function getErrorRender()
     {
         $app        = \BFW\Application::getInstance();
         $renderFcts = $app->getConfig()->getValue('errorRenderFct');
         
-        return self::defineRenderToUse($renderFcts);
+        return $this->defineRenderToUse($renderFcts);
     }
     
     /**
@@ -81,12 +77,12 @@ class Errors
      *  Boolean : false if no render to use
      *  Array   : Infos from config
      */
-    public static function getExceptionRender()
+    protected function getExceptionRender()
     {
         $app        = \BFW\Application::getInstance();
         $renderFcts = $app->getConfig()->getValue('exceptionRenderFct');
         
-        return self::defineRenderToUse($renderFcts);
+        return $this->defineRenderToUse($renderFcts);
     }
     
     /**
@@ -99,7 +95,7 @@ class Errors
      *  Boolean : false if is no enabled or if no render is defined
      *  Array : The render to use
      */
-    protected static function defineRenderToUse($renderConfig)
+    protected function defineRenderToUse($renderConfig)
     {
         //Check enabled
         if ($renderConfig['enabled'] === false) {
@@ -126,14 +122,11 @@ class Errors
      * 
      * @return void
      */
-    public static function exceptionHandler($exception)
+    public function exceptionHandler($exception)
     {
-        //Get the current class (childs class if extended)
-        $calledClass = get_called_class();
-        $errorRender = $calledClass::getExceptionRender();
+        $errorRender = $this->getExceptionRender();
         
-        //Call the "callRender" method for this class (or child class)
-        $calledClass::callRender(
+        $this->callRender(
             $errorRender,
             'Exception Uncaught', 
             $exception->getMessage(), 
@@ -153,19 +146,17 @@ class Errors
      * 
      * @return void
      */
-    public static function errorHandler(
+    public function errorHandler(
         $errSeverity,
         $errMsg,
         $errFile,
         $errLine
     ) {
-        //Get the current class (childs class if extended)
-        $calledClass = get_called_class();
-        $errType     = $calledClass::getErrorType($errSeverity);
-        $errorRender = $calledClass::getErrorRender();
+        $errType     = $this->getErrorType($errSeverity);
+        $errorRender = $this->getErrorRender();
         
         //Call the "callRender" method for this class (or child class)
-        $calledClass::callRender(
+        $this->callRender(
             $errorRender,
             $errType,
             $errMsg,
@@ -188,7 +179,7 @@ class Errors
      * 
      * @return void
      */
-    protected static function callRender(
+    protected function callRender(
         $renderInfos,
         $errType,
         $errMsg,
@@ -196,8 +187,7 @@ class Errors
         $errLine,
         $backtrace
     ) {
-        $calledClass = get_called_class();
-        $calledClass::saveIntoPhpLog($errType, $errMsg, $errFile, $errLine);
+        $this->saveIntoPhpLog($errType, $errMsg, $errFile, $errLine);
         
         $class  = $renderInfos['class'];
         $method = $renderInfos['method'];
@@ -235,7 +225,7 @@ class Errors
      * 
      * @return void
      */
-    protected static function saveIntoPhpLog(
+    protected function saveIntoPhpLog(
         $errType,
         $errMsg,
         $errFile,
@@ -256,7 +246,7 @@ class Errors
      * 
      * @return string
      */
-    protected static function getErrorType($errSeverity)
+    protected function getErrorType($errSeverity)
     {
         $errorMap = [
             E_ERROR             => 'Fatal',
