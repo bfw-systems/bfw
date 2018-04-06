@@ -46,6 +46,12 @@ class ModuleInstall
     const ERR_LOAD_EMPTY_PROPERTY_SRCPATH = 1102006;
     
     /**
+     * @const ERR_LOAD_PATH_NOT_EXIST Exception code if the path define into
+     * srcPath or configPath not exist
+     */
+    const ERR_LOAD_PATH_NOT_EXIST = 1102007;
+    
+    /**
      * @var string $projectPath : Path to root bfw project
      */
     protected $projectPath = '';
@@ -273,6 +279,14 @@ class ModuleInstall
         $this->sourceConfigPath = realpath(
             $this->sourcePath.'/'.$this->sourceConfigPath
         );
+        
+        if (is_bool($this->sourceSrcPath) || is_bool($this->sourceConfigPath)) {
+            throw new Exception(
+                'The srcPath or the configPath (if define) properties not exist'
+                .' for the module '.$this->name,
+                $this::ERR_LOAD_PATH_NOT_EXIST
+            );
+        }
     }
     
     /**
