@@ -59,7 +59,9 @@ class Cli
         $style = 'normal',
         $colorBg = 'black'
     ) {
-        if (func_num_args() === 1) {
+        $nbArgs = func_num_args();
+        
+        if ($nbArgs === 1) {
             echo $msg;
             
             if (self::$callObFlush === self::FLUSH_AUTO) {
@@ -70,13 +72,18 @@ class Cli
         }
         
         //Get colors values
-        $styleNum    = self::styleForShell($style);
-        $colorTxtNum = self::colorForShell($colorTxt, 'txt');
-        $colorBgNum  = self::colorForShell($colorBg, 'bg');
+        $currentClass = get_called_class();
+        $styleNum     = $currentClass::styleForShell($style);
+        $colorTxtNum  = $currentClass::colorForShell($colorTxt, 'txt');
+        $colorBgNum   = $currentClass::colorForShell($colorBg, 'bg');
 
-        echo "\033[".$styleNum.";".$colorBgNum.";".$colorTxtNum."m"
-            .$msg
-            ."\033[0m";
+        if ($nbArgs > 3) {
+            echo "\033[".$styleNum.";".$colorTxtNum.";".$colorBgNum."m";
+        } else {
+            echo "\033[".$styleNum.";".$colorTxtNum."m";
+        }
+        
+        echo $msg."\033[0m";
         
         if (self::$callObFlush === self::FLUSH_AUTO) {
             ob_flush();
