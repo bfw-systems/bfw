@@ -7,7 +7,7 @@ use \Exception;
 /**
  * Class to manage connection to memcache(d) server with memcache lib
  */
-class Memcache extends \Memcache
+class Memcache extends \Memcache implements MemcacheInterface
 {
     //Include Memcache trait to add some common methods with Memcached class
     use \BFW\Memcache\MemcacheTrait;

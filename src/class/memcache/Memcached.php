@@ -5,7 +5,7 @@ namespace BFW\Memcache;
 /**
  * Class to manage connection to memcache(d) server with memcached lib
  */
-class Memcached extends \Memcached
+class Memcached extends \Memcached implements MemcacheInterface
 {
     //Include Memcache trait to add some common methods with Memcache class
     use \BFW\Memcache\MemcacheTrait;

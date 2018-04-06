@@ -25,6 +25,12 @@ class Application
     const ERR_MEMCACHED_CLASS_NOT_FOUND = 1301002;
     
     /**
+     * @const ERR_MEMCACHED_NOT_IMPLEMENT_INTERFACE Exception code the
+     * memcache(d) class not implement the interface.
+     */
+    const ERR_MEMCACHED_NOT_IMPLEMENT_INTERFACE = 1301003;
+    
+    /**
      * @var \BFW\Application|null $instance Application instance (Singleton)
      */
     protected static $instance = null;
@@ -502,6 +508,13 @@ class Application
         }
 
         $this->memcached = new $class;
+        
+        if (!($this->memcached instanceof \BFW\Memcache\MemcacheInterface)) {
+            throw new Exception(
+                'Memcache class '.$class.' not implement the interface.',
+                $this::ERR_MEMCACHED_NOT_IMPLEMENT_INTERFACE
+            );
+        }
     }
 
     /**
