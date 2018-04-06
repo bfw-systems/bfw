@@ -316,6 +316,10 @@ class Config
             );
         }
         
+        if (!isset($this->configFiles[$filename])) {
+            $this->configFiles[$filename] = $filename;
+        }
+        
         $this->config[$filename] = $config;
         
         return $this;
@@ -336,6 +340,10 @@ class Config
     {
         if (!isset($this->config[$filename])) {
             $this->config[$filename] = new \stdClass;
+        }
+        
+        if (!isset($this->configFiles[$filename])) {
+            $this->configFiles[$filename] = $filename;
         }
         
         if (is_array($this->config[$filename])) {
