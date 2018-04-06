@@ -259,7 +259,7 @@ class Dates extends DateTime
      * 
      * @return \stdClass
      */
-    protected function getNewKeywordsForModify()
+    protected function obtainNewKeywordsForModify()
     {
         $search  = [];
         $replace = [];
@@ -284,7 +284,7 @@ class Dates extends DateTime
      */
     protected function modifyWithOthersKeywords($modify)
     {
-        $keywords = $this->getNewKeywordsForModify();
+        $keywords = $this->obtainNewKeywordsForModify();
         $match    = [];
         
         //Regex on the $modify parameter to get the used keyword
