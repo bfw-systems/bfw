@@ -149,7 +149,7 @@ class Application extends \BFW\Application
         }
         
         foreach ($installScripts as $scriptPath) {
-            $module->runInstall($scriptPath);
+            $module->runInstallScript($scriptPath);
         }
     }
 }

@@ -613,7 +613,7 @@ class ModuleInstall
      * 
      * @return void
      */
-    public function runInstall($scriptName) {
+    public function runInstallScript($scriptName) {
         Cli::displayMsg(' >> ');
         Cli::displayMsgNL('Execute script '.$scriptName, 'yellow', 'bold');
         
