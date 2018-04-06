@@ -136,20 +136,6 @@ class Application
     }
 
     /**
-     * Like getInstance. This is to have a keyword easier for users who want
-     * initialize the application
-     * 
-     * @param array $options Options passed to application
-     * 
-     * @return \BFW\Application The current instance of this class
-     */
-    public static function init($options = [])
-    {
-        $calledClass = get_called_class(); //Autorize extends this class
-        return $calledClass::getInstance($options);
-    }
-
-    /**
      * Getter to access to composerLoader property
      * 
      * @return \Composer\Autoload\ClassLoader The composer class loader
