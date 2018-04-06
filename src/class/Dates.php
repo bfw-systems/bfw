@@ -352,16 +352,16 @@ class Dates extends DateTime
     public function lstTimeZoneContinent()
     {
         return [
-            'africa',
-            'america',
-            'antartica',
-            'arctic',
-            'asia',
-            'atlantic',
-            'australia',
-            'europe',
-            'indian',
-            'pacific'
+            'Africa',
+            'America',
+            'Antartica',
+            'Arctic',
+            'Asia',
+            'Atlantic',
+            'Australia',
+            'Europe',
+            'Indian',
+            'Pacific'
         ];
     }
 
