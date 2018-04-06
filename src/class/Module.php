@@ -68,7 +68,7 @@ class Module
     public function loadModule()
     {
         $this->loadConfig();
-        $this->loadModuleInfos();
+        $this->obtainLoadInfos();
 
         $this->status->load = true;
     }
@@ -168,7 +168,7 @@ class Module
      * 
      * @return void
      */
-    public function loadModuleInfos()
+    protected function obtainLoadInfos()
     {
         $currentClass = get_called_class(); //Allow extends
         
