@@ -30,7 +30,7 @@ return [
              * @var string class : Class where is the render error function.
              * Empty if it's not a class
              */
-            'class'  => '\BFW\Core\Errors',
+            'class'  => '\BFW\Core\ErrorsDisplay',
             /**
              * @var string method : Method or function for the render error.
              */
@@ -44,7 +44,7 @@ return [
              * @var string class : Class where is the render error function.
              * Empty if it's not a class
              */
-            'class'  => '\BFW\Core\Errors',
+            'class'  => '\BFW\Core\ErrorsDisplay',
             /**
              * @var string method : Method or function for the render error.
              */
@@ -69,7 +69,7 @@ return [
              * @var string class : Class where is the render exception function
              * Empty if it's not a class
              */
-            'class'  => '\BFW\Core\Errors',
+            'class'  => '\BFW\Core\ErrorsDisplay',
             /**
              * @var string method : Method or function for the render exception
              */
@@ -83,7 +83,7 @@ return [
              * @var string class : Class where is the render exception function
              * Empty if it's not a class
              */
-            'class'  => '\BFW\Core\Errors',
+            'class'  => '\BFW\Core\ErrorsDisplay',
             /**
              * @var string method : Method or function for the render exception
              */
