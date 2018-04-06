@@ -31,6 +31,12 @@ class Application
     const ERR_MEMCACHED_NOT_IMPLEMENT_INTERFACE = 1301003;
     
     /**
+     * @const ERR_SUBJECT_NAME_NOT_EXIST Exception code if a subject name is
+     * not found.
+     */
+    const ERR_SUBJECT_NAME_NOT_EXIST = 1301004;
+    
+    /**
      * @var \BFW\Application|null $instance Application instance (Singleton)
      */
     protected static $instance = null;
