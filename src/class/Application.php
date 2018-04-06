@@ -395,8 +395,15 @@ class Application
     protected function initRunTasks()
     {
         $stepsToRun = [];
+        $closureNb  = 0;
+        
         foreach ($this->runSteps as $step) {
-            $stepName = $step[1];
+            if ($step instanceof \Closure) {
+                $stepName = 'closure_'.$closureNb;
+                $closureNb++;
+            } else {
+                $stepName = $step[1];
+            }
             
             //To keep methods to run protected
             $stepsToRun[$stepName] = (object) [
