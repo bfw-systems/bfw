@@ -122,6 +122,8 @@ class ReadDirectory
         if (in_array($fileName, $this->ignore)) {
             return 'continue';
         }
+        
+        return '';
     }
     
     /**
