@@ -205,22 +205,14 @@ trait MemcacheTrait
         ;
         
         $this->assert('test Memcache\MemcacheTrait::updateExpire with exist key')
-            ->given($replaceArgs = [])
             ->if($this->calling($this->mock)->ifExists = true)
-            ->if($this->calling($this->mock)->get = function() {
-                return 'atoum';
-            })
-            ->and($this->calling($this->mock)->replace = function (...$args) use (&$replaceArgs) {
-                $replaceArgs = $args;
-                return true;
-            })
+            ->and($this->calling($this->mock)->get = 'atoum')
+            ->and($this->calling($this->mock)->replace = true)
             ->then
             ->boolean($this->mock->updateExpire('unit-test-lib', 42))
                 ->isTrue()
-            ->array($replaceArgs)
-                ->isNotEmpty()
         ;
         
-        $this->testUpdateExpireCheckReplaceArgs($replaceArgs);
+        $this->testUpdateExpireCheckReplaceArgs();
     }
 }

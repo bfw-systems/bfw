@@ -193,18 +193,13 @@ class Memcached extends atoum
     
     //******************* NOW TEST THE TRAIT METHODS *******************\\
     
-    protected function testUpdateExpireCheckReplaceArgs($replaceArgs)
+    protected function testUpdateExpireCheckReplaceArgs()
     {
-        $this->assert('test Memcache\MemcacheTrait::updateExpire - check replace args')
-            ->array($replaceArgs)
-                ->size
-                    ->isEqualTo(3)
-            ->array($replaceArgs)
-                ->isEqualTo([
-                    'unit-test-lib',
-                    'atoum',
-                    42
-                ])
+        $this
+            ->mock($this->mock)
+                ->call('replace')
+                    ->withArguments('unit-test-lib', 'atoum', 42)
+                    ->once()
         ;
     }
 }
