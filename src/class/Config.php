@@ -120,6 +120,13 @@ class Config
      */
     public function getConfigForFile($file)
     {
+        if (!isset($this->config[$file])) {
+            throw new Exception(
+                'The file '.$file.' has not been found',
+                $this::ERR_FILE_NOT_FOUND
+            );
+        }
+        
         return $this->config[$file];
     }
     
