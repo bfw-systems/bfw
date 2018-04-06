@@ -21,7 +21,7 @@ class ReadDirectory
     /**
      * @var array $ignore : Item to ignore during the reading of directories
      */
-    private $ignore = ['.', '..'];
+    protected $ignore = ['.', '..'];
 
     /*
      * Constructeur
