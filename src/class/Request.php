@@ -50,15 +50,6 @@ class Request
     protected $request;
 
     /**
-     * Constructor
-     * Call runDetect to detect all informations
-     */
-    protected function __construct()
-    {
-        $this->runDetect();
-    }
-
-    /**
      * Create singleton instance for this class
      * 
      * @return \BFW\Request

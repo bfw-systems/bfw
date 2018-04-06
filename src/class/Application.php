@@ -357,6 +357,7 @@ class Application
     protected function initRequest()
     {
         $this->request = \BFW\Request::getInstance();
+        $this->request->runDetect();
     }
 
     /**
