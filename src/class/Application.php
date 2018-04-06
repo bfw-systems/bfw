@@ -84,7 +84,7 @@ class Application
     /**
      * @var \BFW\Subjects[] $subjectsList List of all subjects declared
      */
-    protected $subjectsList;
+    protected $subjectsList = [];
     
     /**
      * @var \stdClass $ctrlRouterInfos Infos from router for controller system
