@@ -328,6 +328,10 @@ class ModuleInstall
      */
     public function install($reinstall)
     {
+        if (empty($this->sourceSrcPath)) {
+            $this->loadInfos();
+        }
+        
         $this->forceReinstall = $reinstall;
         
         echo $this->name." : Run install.\n";
