@@ -2,6 +2,7 @@
 
 namespace BFW;
 
+use \Exception;
 use \SplSubject;
 use \SplObserver;
 
@@ -10,6 +11,12 @@ use \SplObserver;
  */
 class Subjects implements SplSubject
 {
+    /**
+     * @const ERR_OBSERVER_NOT_FOUND Exception code if the observer to detach
+     * has not been found.
+     */
+    const ERR_OBSERVER_NOT_FOUND = 1314001;
+    
     /**
      * @var \SplObserver[] $observers List of all observers
      */
@@ -94,10 +101,15 @@ class Subjects implements SplSubject
     public function detach(SplObserver $observer)
     {
         $key = array_search($observer, $this->observers, true);
-
-        if ($key !== false) {
-            unset($this->observers[$key]);
+        
+        if ($key === false) {
+            throw new Exception(
+                'The observer has not been found.',
+                self::ERR_OBSERVER_NOT_FOUND
+            );
         }
+        
+        unset($this->observers[$key]);
 
         return $this;
     }
