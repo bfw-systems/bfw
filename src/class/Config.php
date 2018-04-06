@@ -72,6 +72,36 @@ class Config
     }
     
     /**
+     * Getter accessor to the property configDirName
+     * 
+     * @return string
+     */
+    public function getConfigDirName()
+    {
+        return $this->configDirName;
+    }
+
+    /**
+     * Getter accessor to the property configDir
+     * 
+     * @return string
+     */
+    public function getConfigDir()
+    {
+        return $this->configDir;
+    }
+
+    /**
+     * Getter accessor to the property configFiles
+     * 
+     * @return string[]
+     */
+    public function getConfigFiles()
+    {
+        return $this->configFiles;
+    }
+    
+    /**
      * Getter accessor to $config property
      * 
      * @return array
