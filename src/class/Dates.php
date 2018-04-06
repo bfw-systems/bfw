@@ -51,18 +51,7 @@ class Dates extends DateTime
      *  with the modify method. The key is the new keyword and the value the
      *  corresponding keyword into DateTime::modify method.
      */
-    protected static $modifyNewKeywords = [
-        'an'       => 'year',
-        'ans'      => 'year',
-        'mois'     => 'month',
-        'jour'     => 'day',
-        'jours'    => 'day',
-        'heure'    => 'hour',
-        'heures'   => 'hour',
-        'minutes'  => 'minute',
-        'seconde'  => 'second',
-        'secondes' => 'second'
-    ];
+    protected static $modifyNewKeywords = [];
 
     /**
      * Return the value of the humanReadableI18n property
