@@ -24,10 +24,9 @@ class Form
     const ERR_NO_TOKEN_FOR_FORM_ID = 1307002;
     
     /**
-     * @const ERR_FORM_ID_UNDEFINED Exception code if the form id is not
-     * declared.
+     * @const ERR_FORM_ID_EMPTY Exception code if the form id is not declared.
      */
-    const ERR_FORM_ID_UNDEFINED = 1307003;
+    const ERR_FORM_ID_EMPTY = 1307003;
     
     /**
      * @var string $formId The form id 
@@ -43,6 +42,10 @@ class Form
     public function __construct($formId)
     {
         $this->formId = (string) $formId;
+        
+        if (empty($this->formId)) {
+            throw new Exception('Form id is empty.', $this::ERR_FORM_ID_EMPTY);
+        }
     }
     
     /**
@@ -130,13 +133,6 @@ class Form
      */
     public function createToken()
     {
-        if (empty($this->formId)) {
-            throw new Exception(
-                'Form id is undefined.',
-                $this::ERR_FORM_ID_UNDEFINED
-            );
-        }
-
         $token    = uniqid(rand(), true);
         $datetime = new DateTime;
 
