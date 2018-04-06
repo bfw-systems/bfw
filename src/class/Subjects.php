@@ -128,6 +128,11 @@ class Subjects implements SplSubject
         return $this;
     }
     
+    /**
+     * Read the notify heap list and send each notify into the list.
+     * 
+     * @return $this
+     */
     public function readNotifyHeap()
     {
         foreach ($this->notifyHeap as $notifyIndex => $notifyDatas) {
