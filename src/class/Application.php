@@ -293,6 +293,10 @@ class Application
         ];
 
         $this->options = new \BFW\Core\Options($defaultOptions, $options);
+        $this->options
+            ->searchPaths()
+            ->checkPaths()
+        ;
     }
 
     /**

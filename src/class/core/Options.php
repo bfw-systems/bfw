@@ -8,15 +8,12 @@ namespace BFW\Core;
 class Options extends \BFW\Options
 {
     /**
-     * Constructor
+     * Search the root and vendor paths if they are not declared.
      * 
-     * @param array $defaultOption : The default options from BFW Application
-     * @param array $options : The options declared by user
+     * @return $this
      */
-    public function __construct($defaultOption, $options)
+    public function searchPaths()
     {
-        parent::__construct($defaultOption, $options);
-
         //Search root directory if is not declared
         if ($this->options['rootDir'] === null) {
             $this->options['rootDir'] = $this->searchRootDir();
@@ -26,20 +23,38 @@ class Options extends \BFW\Options
         if ($this->options['vendorDir'] === null) {
             $this->options['vendorDir'] = $this->searchVendorDir();
         }
-
-        //Get the length of paths to get the last character position
-        $rootDirPosLastLetter   = strlen($this->options['rootDir']) - 1;
-        $vendorDirPosLastLetter = strlen($this->options['vendorDir']) - 1;
-
-        //If the last caracter is not a "/", add "/" at the end of the path
         
-        if ($this->options['rootDir'][$rootDirPosLastLetter] !== '/') {
+        return $this;
+    }
+    
+    /**
+     * Check root and vendor path declared or found.
+     * 
+     * @return $this
+     */
+    public function checkPaths()
+    {
+        if (empty($this->options['rootDir'])) {
             $this->options['rootDir'] .= '/';
+        } else {
+            $rootDirPosLastChar = strlen($this->options['rootDir']) - 1;
+            
+            if ($this->options['rootDir'][$rootDirPosLastChar] !== '/') {
+                $this->options['rootDir'] .= '/';
+            }
         }
-
-        if ($this->options['vendorDir'][$vendorDirPosLastLetter] !== '/') {
+        
+        if (empty($this->options['vendorDir'])) {
             $this->options['vendorDir'] .= '/';
+        } else {
+            $vendorDirPosLastChar = strlen($this->options['vendorDir']) - 1;
+            
+            if ($this->options['vendorDir'][$vendorDirPosLastChar] !== '/') {
+                $this->options['vendorDir'] .= '/';
+            }
         }
+        
+        return $this;
     }
 
     /**
