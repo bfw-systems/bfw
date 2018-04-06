@@ -40,12 +40,12 @@ class Request
     protected $method = '';
 
     /**
-     * @var boolean $ssl If the request is with ssl (https) or not
+     * @var boolean|null $ssl If the request is with ssl (https) or not
      */
     protected $ssl;
 
     /**
-     * @var \stdClass The current request
+     * @var \stdClass|null The current request
      */
     protected $request;
 
@@ -126,7 +126,7 @@ class Request
 
     /**
      * Get the information from the $_SERVER array if the key exist.
-     * If not exist, return a empty string.
+     * If not exist, return an exception.
      * 
      * @param string $keyName The key's value in $_SERVER array
      * 
@@ -146,6 +146,14 @@ class Request
         return $_SERVER[$keyName];
     }
     
+    /**
+     * Get the information from the $_SERVER array if the key exist.
+     * If not exist, return a empty string.
+     * 
+     * @param string $keyName The key's value in $_SERVER array
+     * 
+     * @return string
+     */
     protected function serverValue($keyName)
     {
         $calledClass = get_called_class(); //Autorize extends this class
