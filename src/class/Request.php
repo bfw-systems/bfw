@@ -22,22 +22,22 @@ class Request
     /**
      * @var string $ip The client IP
      */
-    protected $ip;
+    protected $ip = '';
 
     /**
      * @var string $lang The client primary language
      */
-    protected $lang;
+    protected $lang = '';
 
     /**
      * @var string $referer The referer url
      */
-    protected $referer;
+    protected $referer = '';
 
     /**
      * @var string $method The HTTP method (GET/POST/PUT/DELETE/...)
      */
-    protected $method;
+    protected $method = '';
 
     /**
      * @var boolean $ssl If the request is with ssl (https) or not
