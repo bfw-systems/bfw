@@ -8,6 +8,7 @@ require_once(__DIR__.'/../../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
+ * @php >= 7.0
  */
 class Memcached extends atoum
 {
