@@ -363,14 +363,16 @@ class Dates extends atoum
     
     public function testGetSqlFormat()
     {
+        $currentTimeZone = date('O');
+        
         $this->assert('test Dates::getSqlFormat for string format')
             ->string($this->mock->getSqlFormat())
-                ->isEqualTo('2018-02-01 13:10:23')
+                ->isEqualTo('2018-02-01 13:10:23'.$currentTimeZone)
         ;
         
         $this->assert('test Dates::getSqlFormat for array format')
             ->array($this->mock->getSqlFormat(true))
-                ->isEqualTo(['2018-02-01', '13:10:23'])
+                ->isEqualTo(['2018-02-01', '13:10:23'.$currentTimeZone])
         ;
     }
     

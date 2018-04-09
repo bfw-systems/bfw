@@ -328,7 +328,7 @@ class Dates extends DateTime
     public function getSqlFormat($returnArray = false)
     {
         $date = $this->format('Y-m-d');
-        $time = $this->format('H:i:s');
+        $time = $this->format('H:i:sO');
 
         if ($returnArray) {
             return [$date, $time];
