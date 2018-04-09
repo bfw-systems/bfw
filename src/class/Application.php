@@ -31,12 +31,6 @@ class Application
     const ERR_MEMCACHED_NOT_IMPLEMENT_INTERFACE = 1301003;
     
     /**
-     * @const ERR_SUBJECT_NAME_NOT_EXIST Exception code if a subject name is
-     * not found.
-     */
-    const ERR_SUBJECT_NAME_NOT_EXIST = 1301004;
-    
-    /**
      * @var \BFW\Application|null $instance Application instance (Singleton)
      */
     protected static $instance = null;
@@ -94,9 +88,9 @@ class Application
     protected $cli;
     
     /**
-     * @var \BFW\Subjects[] $subjectsList List of all subjects declared
+     * @var \BFW\SubjectList $subjectList System who manage subjects list
      */
-    protected $subjectsList = [];
+    protected $subjectList;
     
     /**
      * @var \stdClass $ctrlRouterInfos Infos from router for controller system
@@ -255,11 +249,11 @@ class Application
     /**
      * Getter to access to the subjects list
      * 
-     * @return \BFW\Subjects[]
+     * @return \BFW\SubjectList
      */
-    public function getSubjectsList()
+    public function getSubjectList()
     {
-        return $this->subjectsList;
+        return $this->subjectList;
     }
     
     /**
@@ -274,6 +268,7 @@ class Application
         $this->initOptions($options);
         $this->initConstants();
         $this->initComposerLoader();
+        $this->initSubjectList();
         $this->initConfig();
         $this->initRequest();
         $this->initSession();
@@ -341,6 +336,16 @@ class Application
             $this->options->getValue('vendorDir').'autoload.php'
         );
         $this->addComposerNamespaces();
+    }
+    
+    /**
+     * Initialize the subjectList object
+     * 
+     * @return void
+     */
+    protected function initSubjectList()
+    {
+        $this->subjectList = new \BFW\SubjectList;
     }
 
     /**
@@ -431,7 +436,7 @@ class Application
         }
         
         $runTasks = new \BFW\RunTasks($stepsToRun, 'BfwApp');
-        $this->addSubject($runTasks, 'ApplicationTasks');
+        $this->subjectList->addSubject($runTasks, 'ApplicationTasks');
     }
 
     /**
@@ -481,7 +486,7 @@ class Application
      */
     public function run()
     {
-        $runTasks = $this->getSubjectForName('ApplicationTasks');
+        $runTasks = $this->subjectList->getSubjectForName('ApplicationTasks');
         
         $runTasks->run();
         $runTasks->sendNotify('bfw_run_done');
@@ -605,7 +610,7 @@ class Application
      */
     protected function runModule($moduleName)
     {
-        $this->getSubjectForName('ApplicationTasks')
+        $this->subjectList->getSubjectForName('ApplicationTasks')
             ->sendNotify('BfwApp_load_module_'.$moduleName);
         
         $this->modules->getModuleForName($moduleName)->runModule();
@@ -624,7 +629,7 @@ class Application
             return;
         }
 
-        $this->getSubjectForName('ApplicationTasks')
+        $this->subjectList->getSubjectForName('ApplicationTasks')
             ->sendNotify('run_cli_file');
         
         $fileToExec = $this->cli->obtainFileFromArg();
@@ -656,9 +661,9 @@ class Application
             'ctrlRouterLink'
         );
         
-        $this->addSubject($ctrlRouterTask, 'ctrlRouterLink');
+        $this->subjectList->addSubject($ctrlRouterTask, 'ctrlRouterLink');
         
-        $runTasks = $this->getSubjectForName('ApplicationTasks');
+        $runTasks = $this->subjectList->getSubjectForName('ApplicationTasks');
         $runTasks->sendNotify('bfw_ctrlRouterLink_subject_added');
     }
     
@@ -675,50 +680,10 @@ class Application
             return;
         }
         
-        $ctrlRouterTask = $this->getSubjectForName('ctrlRouterLink');
-        $ctrlRouterTask->run();
+        $this->subjectList->getSubjectForName('ctrlRouterLink')->run();
         
         if ($this->ctrlRouterInfos->isFound === false) {
             http_response_code(404);
         }
-    }
-    
-    /**
-     * Add a new subject to the list
-     * 
-     * @param \BFW\Subjects $subject The new subject to add
-     * @param string|null $subjectName (default null) The subject name, if null,
-     * the name of the class will be used
-     * 
-     * @return void
-     */
-    public function addSubject(\BFW\Subjects $subject, $subjectName = null)
-    {
-        if ($subjectName === null) {
-            $subjectName = get_class($subject);
-        }
-        
-        $this->subjectsList[$subjectName] = $subject;
-    }
-    
-    /**
-     * Obtain a subject object with this name
-     * 
-     * @param string $subjectName The name of the subject object
-     * 
-     * @return \BFW\Subjects
-     * 
-     * @throws Exception If the subject name not exist
-     */
-    public function getSubjectForName($subjectName)
-    {
-        if (!array_key_exists($subjectName, $this->subjectsList)) {
-            throw new Exception(
-                'The subject '.$subjectName.' is not in the list.',
-                self::ERR_SUBJECT_NAME_NOT_EXIST
-            );
-        }
-        
-        return $this->subjectsList[$subjectName];
     }
 }

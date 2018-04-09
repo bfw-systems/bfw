@@ -88,7 +88,7 @@ class Application extends \BFW\Application
      */
     public function run()
     {
-        $runTasks = $this->getSubjectForName('ApplicationTasks');
+        $runTasks = $this->subjectList->getSubjectForName('ApplicationTasks');
         
         $runTasks->setNotifyPrefix('BfwAppModulesInstall');
         $runTasks->run();

@@ -344,21 +344,17 @@ class Application extends atoum
         ;
     }
     
-    public function testInitAndGetSubjectsList()
+    public function testInitAndGetSubjectList()
     {
-        $this->assert('test getSubjectsList before init')
-            ->array($this->app->getSubjectsList())
-                ->isEmpty()
+        $this->assert('test getSubjectList before init')
+            ->variable($this->app->getSubjectList())
+                ->isNull()
         ;
         
-        $this->assert('test getSubjectsList after init')
+        $this->assert('test getSubjectList after init')
             ->if($this->initApp())
-            ->array($subjectsList = $this->app->getSubjectsList())
-                ->isNotEmpty()
-            ->boolean(array_key_exists('ApplicationTasks', $subjectsList))
-                ->isTrue()
-            ->object($subjectsList['ApplicationTasks'])
-                ->isInstanceOf('BFW\Subjects')
+            ->object($subjectList = $this->app->getSubjectList())
+                ->isInstanceOf('BFW\SubjectList')
         ;
     }
     
@@ -556,7 +552,7 @@ class Application extends atoum
             
             //Define observer
             ->given($observer = new \BFW\Test\Helpers\ObserverArray())
-            ->if($subject = $this->app->getSubjectForName('ApplicationTasks'))
+            ->if($subject = $this->app->getSubjectList()->getSubjectForName('ApplicationTasks'))
             ->and($subject->attach($observer))
             ->then
             
@@ -607,7 +603,7 @@ class Application extends atoum
             
             //Define observer
             ->given($observer = new \BFW\Test\Helpers\ObserverArray())
-            ->if($subject = $this->app->getSubjectForName('ApplicationTasks'))
+            ->if($subject = $this->app->getSubjectList()->getSubjectForName('ApplicationTasks'))
             ->and($subject->attach($observer))
             ->then
             
@@ -634,7 +630,7 @@ class Application extends atoum
             
             ->variable($this->app->getCtrlRouterInfos())
                 ->isNull()
-            ->array($this->app->getSubjectsList())
+            ->array($this->app->getSubjectList()->getSubjectList())
                 ->notHasKey('ctrlRouterLink')
         ;
     }
@@ -651,14 +647,14 @@ class Application extends atoum
             
             //Define observer
             ->given($observer = new \BFW\Test\Helpers\ObserverArray())
-            ->if($subject = $this->app->getSubjectForName('ApplicationTasks'))
+            ->if($subject = $this->app->getSubjectList()->getSubjectForName('ApplicationTasks'))
             ->and($subject->attach($observer))
             ->and($this->app->run())
             ->then
             
             ->object($this->app->getCtrlRouterInfos())
                 ->isInstanceOf('\stdClass')
-            ->array($this->app->getSubjectsList())
+            ->array($this->app->getSubjectList()->getSubjectList())
                 ->hasKey('ctrlRouterLink')
             ->array($observer->getActionReceived())
                 ->contains('bfw_ctrlRouterLink_subject_added')
@@ -672,7 +668,7 @@ class Application extends atoum
                 [$this->app, 'initCtrlRouterLink'],
                 function() use ($observer) {
                     try {
-                        $ctrlRouterLink = $this->app->getSubjectForName('ctrlRouterLink');
+                        $ctrlRouterLink = $this->app->getSubjectList()->getSubjectForName('ctrlRouterLink');
                     } catch (\Exception $e) {
                         return;
                     }
@@ -711,39 +707,6 @@ class Application extends atoum
             
             ->array($observer->getActionReceived())
                 ->contains('ctrlRouterLink_start_run_tasks')
-        ;
-    }
-    
-    public function testAddSubject()
-    {
-        $this->assert('test addSubject')
-            ->given($subject = new \BFW\Subjects)
-            ->if($this->app->addSubject($subject, 'UnitTest'))
-            ->then
-            
-            ->array($subjectList = $this->app->getSubjectsList())
-                ->hasKey('UnitTest')
-            ->object($subjectList['UnitTest'])
-                ->isIdenticalTo($subject)
-        ;
-    }
-    
-    public function testGetSubjectForName()
-    {
-        $this->assert('test getSubjectForName with not existing subject')
-            ->exception(function() {
-                $this->app->getSubjectForName('UnitTest');
-            })
-                ->hasCode(\BFW\Application::ERR_SUBJECT_NAME_NOT_EXIST)
-        ;
-        
-        $this->assert('test getSubjectForName with existing subject')
-            ->given($subject = new \BFW\Subjects)
-            ->if($this->app->addSubject($subject, 'UnitTest'))
-            ->then
-            
-            ->object($this->app->getSubjectForName('UnitTest'))
-                ->isIdenticalTo($subject)
         ;
     }
 }
