@@ -176,4 +176,62 @@ class Secure extends atoum
                 ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;')
         ;
     }
+    
+    public function testObtainManyKeys()
+    {
+        //We can not mock anything into :/
+        //So we test only the return and not the args passed to called method inside
+        
+        $this->given($testedArray = [
+            'id'      => 42,
+            'titre'   => 'install',
+            'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+        ]);
+        
+        $this->assert('test Helpers\Secure::getSecurisedManyKeys with all existing keys')
+            ->array(\BFW\Helpers\Secure::getSecurisedManyKeys(
+                $testedArray,
+                [
+                    'titre'   => 'string',
+                    'content' => (object) [
+                        'type'         => 'string',
+                        'htmlentities' => true
+                    ]
+                ]
+            ))
+                ->isEqualTo([
+                    'titre'   => 'install',
+                    'content' => '&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;'
+                ])
+        ;
+        
+        $this->assert('test Helpers\Secure::getSecurisedManyKeys with a not existing key and not exception')
+            ->array(\BFW\Helpers\Secure::getSecurisedManyKeys(
+                $testedArray,
+                [
+                    'titre'  => 'string',
+                    'banner' => 'string'
+                ],
+                false
+            ))
+                ->isEqualTo([
+                    'titre'  => 'install',
+                    'banner' => null
+                ])
+        ;
+        
+        $this->assert('test Helpers\Secure::getSecurisedManyKeys with a not existing key and with exception')
+            ->exception(function() use (&$testedArray) {
+                \BFW\Helpers\Secure::getSecurisedManyKeys(
+                    $testedArray,
+                    [
+                        'titre'  => 'string',
+                        'banner' => 'string'
+                    ],
+                    true
+                );
+            })
+                ->hasCode(\BFW\Helpers\Secure::ERR_OBTAIN_KEY)
+        ;
+    }
 }

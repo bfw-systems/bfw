@@ -85,4 +85,58 @@ class Http extends atoum
                 ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;')
         ;
     }
+    
+    public function testObtainManyPostKey()
+    {
+        //We can not mock anything into :/
+        //So we test only the return and not the args passed to called method inside
+        
+        $this->assert('test Helpers\Http::obtainManyPostKeys')
+            ->given($_POST = [
+                'id'      => 42,
+                'titre'   => 'install',
+                'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+            ])
+            ->array(\BFW\Helpers\Http::obtainManyPostKeys(
+                [
+                    'titre' => 'string',
+                    'content' => (object) [
+                        'type'         => 'string',
+                        'htmlentities' => true
+                    ]
+                ]
+            ))
+                ->isEqualTo([
+                    'titre'   => 'install',
+                    'content' => '&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;'
+                ])
+        ;
+    }
+    
+    public function testObtainManyGetKey()
+    {
+        //We can not mock anything into :/
+        //So we test only the return and not the args passed to called method inside
+        
+        $this->assert('test Helpers\Http::obtainManyGetKeys')
+            ->given($_GET = [
+                'id'      => 42,
+                'titre'   => 'install',
+                'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+            ])
+            ->array(\BFW\Helpers\Http::obtainManyGetKeys(
+                [
+                    'titre' => 'string',
+                    'content' => (object) [
+                        'type'         => 'string',
+                        'htmlentities' => true
+                    ]
+                ]
+            ))
+                ->isEqualTo([
+                    'titre'   => 'install',
+                    'content' => '&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;'
+                ])
+        ;
+    }
 }

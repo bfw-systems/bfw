@@ -22,6 +22,11 @@ class Secure
     const ERR_SECURE_ARRAY_KEY_NOT_EXIST = 1207002;
     
     /**
+     * @const ERR_OBTAIN_KEY Exception code if the key asked not exist
+     */
+    const ERR_OBTAIN_KEY = 1207003;
+    
+    /**
      * Hash a string
      * 
      * @param string $val String to hash
@@ -165,5 +170,61 @@ class Secure
             $type,
             $htmlentities
         );
+    }
+    
+    /**
+     * Obtain many key from an array in one time
+     * 
+     * @param array &$arraySrc The source array
+     * @param array $keysList The key list to obtain.
+     *  For each item, the key is the name of the key in source array; And the
+     *  value the type of the value. The value can also be an object. In this
+     *  case, the properties "type" contain the value type, and the "htmlenties"
+     *  property contain the boolean who indicate if secure system 
+     *  will use htmlentities.
+     * @param boolean $throwOnError (defaut true) If a key not exist, throw an
+     *  exception. If false, the value will be null into returned array
+     * 
+     * @return array
+     * 
+     * @throws Exception If a key is not found and if $throwOnError is true
+     */
+    public static function getSecurisedManyKeys(
+        &$arraySrc,
+        $keysList,
+        $throwOnError = true
+    ) {
+        $currentClass = get_called_class();
+        $result       = [];
+        
+        foreach ($keysList as $keyName => $infos) {
+            if (!is_object($infos)) {
+                $infos = (object) [
+                    'type'         => $infos,
+                    'htmlentities' => false
+                ];
+            }
+            
+            try {
+                $result[$keyName] = $currentClass::getSecurisedKeyInArray(
+                    $arraySrc,
+                    $keyName,
+                    $infos->type,
+                    $infos->htmlentities
+                );
+            } catch (Exception $ex) {
+                if ($throwOnError === true) {
+                    throw new Exception(
+                        'Error to obtain the key '.$keyName,
+                        self::ERR_OBTAIN_KEY,
+                        $ex
+                    );
+                } else {
+                    $result[$keyName] = null;
+                }
+            }
+        }
+        
+        return $result;
     }
 }
