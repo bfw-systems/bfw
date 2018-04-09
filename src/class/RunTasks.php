@@ -2,7 +2,7 @@
 
 namespace BFW;
 
-class RunTasks extends Subjects
+class RunTasks extends Subject
 {
     /**
      * @var \stdClass[] $runSteps All steps used for run the application

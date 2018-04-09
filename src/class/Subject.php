@@ -9,7 +9,7 @@ use \SplObserver;
 /**
  * Class to manage subject in observers systems
  */
-class Subjects implements SplSubject
+class Subject implements SplSubject
 {
     /**
      * @const ERR_OBSERVER_NOT_FOUND Exception code if the observer to detach
@@ -82,7 +82,7 @@ class Subjects implements SplSubject
      * 
      * @param \SplObserver $observer The new observer
      * 
-     * @return \BFW\Subjects The current instance of this class
+     * @return \BFW\Subject The current instance of this class
      */
     public function attach(SplObserver $observer)
     {
@@ -96,7 +96,7 @@ class Subjects implements SplSubject
      * 
      * @param \SplObserver $observer The observer instance to detach
      * 
-     * @return \BFW\Subjects The current instance of this class
+     * @return \BFW\Subject The current instance of this class
      */
     public function detach(SplObserver $observer)
     {
@@ -117,7 +117,7 @@ class Subjects implements SplSubject
     /**
      * Send a notification to all observers
      * 
-     * @return \BFW\Subjects The current instance of this class
+     * @return \BFW\Subject The current instance of this class
      */
     public function notify()
     {
@@ -162,7 +162,7 @@ class Subjects implements SplSubject
      * @param string $action The action to send
      * @param notification $context (default null) The context to send
      * 
-     * @return \BFW\Subjects The current instance of this class
+     * @return \BFW\Subject The current instance of this class
      */
     public function addNotification($action, $context = null)
     {

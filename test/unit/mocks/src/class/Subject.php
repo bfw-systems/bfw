@@ -5,7 +5,7 @@ namespace BFW\Test\Mock;
 /**
  * Mock for Subject class
  */
-class Subjects extends \BFW\Subjects
+class Subject extends \BFW\Subject
 {
     /**
      * Setter to property observers
