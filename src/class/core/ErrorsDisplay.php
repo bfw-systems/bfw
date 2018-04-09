@@ -7,11 +7,12 @@ class ErrorsDisplay
     /**
      * The default cli render in BFW
      * 
-     * @param string  $errType : Human readable error severity
-     * @param string  $errMsg : Error/exception message
-     * @param string  $errFile : File where the error/exception is triggered
-     * @param integer $errLine : Line where the error/exception is triggered
-     * @param array   $backtrace : Error/exception backtrace
+     * @param string   $errType : Human readable error severity
+     * @param string   $errMsg : Error/exception message
+     * @param string   $errFile : File where the error/exception is triggered
+     * @param integer  $errLine : Line where the error/exception is triggered
+     * @param array    $backtrace : Error/exception backtrace
+     * @param int|null $exceptionCode : (default null) Exception code
      * 
      * @return void
      */
@@ -20,8 +21,13 @@ class ErrorsDisplay
         $errMsg,
         $errFile,
         $errLine,
-        $backtrace
+        $backtrace,
+        $exceptionCode
     ) {
+        if (!empty($exceptionCode)) {
+            $errMsg = '#'.$exceptionCode.' : '.$errMsg;
+        }
+        
         //Create the cli message
         $msgError = $errType.' Error : '.$errMsg.
             ' in '.$errFile.' at line '.$errLine;
@@ -40,11 +46,12 @@ class ErrorsDisplay
     /**
      * The default error render in BFW
      * 
-     * @param string  $errType : Human readable error severity
-     * @param string  $errMsg : Error/exception message
-     * @param string  $errFile : File where the error/exception is triggered
-     * @param integer $errLine : Line where the error/exception is triggered
-     * @param array   $backtrace : Error/exception backtrace
+     * @param string   $errType : Human readable error severity
+     * @param string   $errMsg : Error/exception message
+     * @param string   $errFile : File where the error/exception is triggered
+     * @param integer  $errLine : Line where the error/exception is triggered
+     * @param array    $backtrace : Error/exception backtrace
+     * @param int|null $exceptionCode : (default null) Exception code
      * 
      * @return void
      */
@@ -53,11 +60,16 @@ class ErrorsDisplay
         $errMsg,
         $errFile,
         $errLine,
-        $backtrace
+        $backtrace,
+        $exceptionCode
     ) {
         http_response_code(500);
         ob_clean();
 
+        if (!empty($exceptionCode)) {
+            $errMsg = '#'.$exceptionCode.' : '.$errMsg;
+        }
+        
         echo '
         <!doctype html>
         <html lang="fr">

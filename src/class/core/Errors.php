@@ -132,7 +132,8 @@ class Errors
             $exception->getMessage(), 
             $exception->getFile(), 
             $exception->getLine(), 
-            $exception->getTrace()
+            $exception->getTrace(),
+            $exception->getCode()
         );
     }
     
@@ -170,12 +171,13 @@ class Errors
      * Call the personnal class-method or function declared on config when
      * an exception or an error is triggered.
      * 
-     * @param array   $renderInfos : Infos from config
-     * @param string  $errType : Human readable error severity
-     * @param string  $errMsg : Error/exception message
-     * @param string  $errFile : File where the error/exception is triggered
-     * @param integer $errLine : Line where the error/exception is triggered
-     * @param array   $backtrace : Error/exception backtrace
+     * @param array    $renderInfos : Infos from config
+     * @param string   $errType : Human readable error severity
+     * @param string   $errMsg : Error/exception message
+     * @param string   $errFile : File where the error/exception is triggered
+     * @param integer  $errLine : Line where the error/exception is triggered
+     * @param array    $backtrace : Error/exception backtrace
+     * @param int|null $exceptionCode : (default null) Exception code
      * 
      * @return void
      */
@@ -185,7 +187,8 @@ class Errors
         $errMsg,
         $errFile,
         $errLine,
-        $backtrace
+        $backtrace,
+        $exceptionCode = null
     ) {
         $this->saveIntoPhpLog($errType, $errMsg, $errFile, $errLine);
         
@@ -199,7 +202,8 @@ class Errors
                 $errMsg,
                 $errFile,
                 $errLine,
-                $backtrace
+                $backtrace,
+                $exceptionCode
             );
             
             return;
@@ -211,7 +215,8 @@ class Errors
             $errMsg,
             $errFile,
             $errLine,
-            $backtrace
+            $backtrace,
+            $exceptionCode
         );
     }
     

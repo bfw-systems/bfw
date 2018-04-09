@@ -243,7 +243,7 @@ class Errors extends atoum
                 ->isNull()
             ->array($callRenderArgs)
                 ->isNotEmpty()
-                ->size->isEqualTo(6)
+                ->size->isEqualTo(7)
             ->array($callRenderArgs[0]) //Render to use
                 ->isEqualTo([$this->mock, 'fakeRender'])
             ->string($callRenderArgs[1]) //Error type
@@ -256,6 +256,8 @@ class Errors extends atoum
                 ->isGreaterThan(0)
             ->array($callRenderArgs[5]) //Trace
                 ->isNotEmpty()
+            ->integer($callRenderArgs[6]) //Exception code
+                ->isEqualTo(1304001)
         ;
     }
     
@@ -282,7 +284,7 @@ class Errors extends atoum
                 ->isNull()
             ->array($callRenderArgs)
                 ->isNotEmpty()
-                ->size->isEqualTo(6)
+                ->size->isEqualTo(7)
             ->array($callRenderArgs[0]) //Render to use
                 ->isEqualTo([$this->mock, 'fakeRender'])
             ->string($callRenderArgs[1]) //Error type
@@ -295,6 +297,8 @@ class Errors extends atoum
                 ->isGreaterThan(0)
             ->array($callRenderArgs[5]) //Trace
                 ->isNotEmpty()
+            ->variable($callRenderArgs[6]) //Exception code
+                ->isNull()
         ;
     }
     
