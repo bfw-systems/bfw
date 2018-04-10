@@ -149,14 +149,10 @@ class Modules extends atoum
             ))
             ->and($this->mock->addModule('hello-world'))
             ->and($this->mock->addModule('atoum'))
-            /*
-             * Temporary disabled : https://github.com/bulton-fr/dependency-tree/issues/5
             ->variable($this->mock->generateTree())
                 ->isNull()
             ->array($tree = $this->mock->getLoadTree())
                 ->isNotEmpty()
-            ->given(var_dump($tree))
-            */
         ;
     }
 }
