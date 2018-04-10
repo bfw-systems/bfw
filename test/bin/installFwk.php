@@ -15,7 +15,7 @@ if ($composerWhereIs === 'composer:'."\n") {
     $composerBin = 'php composer.phar';
 }
 
-`cd $installDir && $composerBin install`;
+`cd $installDir && $composerBin install -n --prefer-dist`;
 echo "\n";
 
 $bfwVendorPath = realpath($installDir.'/vendor/bulton-fr/bfw/');
