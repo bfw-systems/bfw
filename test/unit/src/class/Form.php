@@ -17,6 +17,7 @@ class Form extends atoum
     
     public function beforeTestMethod($testMethod)
     {
+        $this->setRootDir(__DIR__.'/../../../..');
         $this->createApp();
         $this->initApp();
         

@@ -27,6 +27,7 @@ class Memcached extends atoum
             ->generate('BFW\Memcache\Memcached')
         ;
         
+        $this->setRootDir(__DIR__.'/../../../../..');
         $this->createApp();
         $this->initApp();
         

@@ -15,6 +15,8 @@ class Application extends atoum
     
     public function beforeTestMethod($testMethod)
     {
+        $this->setRootDir(__DIR__.'/../../../..');
+        
         if ($testMethod === 'testConstructAndGetInstance') {
             return;
         }
