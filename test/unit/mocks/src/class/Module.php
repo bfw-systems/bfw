@@ -11,9 +11,9 @@ class Module extends \BFW\Module
      * {@inheritdoc}
      * Reset properties config and loadInfos to empty object
      */
-    public function __construct($pathName, $loadModule = true)
+    public function __construct($pathName)
     {
-        parent::__construct($pathName, $loadModule);
+        parent::__construct($pathName);
         
         $this->config    = new \stdClass;
         $this->loadInfos = new \stdClass;
