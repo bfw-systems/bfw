@@ -2,6 +2,9 @@
 
 namespace BFW\Test\Helpers;
 
+//To be included by module who use it
+require_once(__DIR__.'/../mocks/src/class/Application.php');
+
 trait Application
 {
     /**

@@ -2,6 +2,11 @@
 
 namespace BFW\Test\Mock;
 
+//To be included by module who use it
+require_once(__DIR__.'/core/Cli.php');
+require_once(__DIR__.'/core/Errors.php');
+require_once(__DIR__.'/Modules.php');
+
 class Application extends \BFW\Application
 {
     /**
