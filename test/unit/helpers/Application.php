@@ -13,6 +13,24 @@ trait Application
     protected $app;
     
     /**
+     * @var string $rootDir : The root directory path of the application
+     */
+    protected $rootDir;
+    
+    /**
+     * Setter accessor for rootDir property
+     * 
+     * @param string $rootDir
+     * 
+     * @return $this
+     */
+    public function setRootDir($rootDir)
+    {
+        $this->rootDir = $rootDir;
+        return $this;
+    }
+    
+    /**
      * Create the bfw Application instance
      * 
      * @return void
@@ -37,8 +55,8 @@ trait Application
     protected function initApp($runSession = false)
     {
         $this->app->initSystem([
-            'rootDir'    => realpath(__DIR__.'/../../..'),
-            'vendorDir'  => realpath(__DIR__.'/../../../vendor'),
+            'rootDir'    => realpath($this->rootDir),
+            'vendorDir'  => realpath($this->rootDir.'/vendor'),
             'runSession' => $runSession
         ]);
     }
