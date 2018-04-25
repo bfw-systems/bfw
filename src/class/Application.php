@@ -649,7 +649,10 @@ class Application
 
         //Others properties can be dynamically added by modules
         $this->ctrlRouterInfos = (object) [
-            'isFound' => false
+            'isFound' => false,
+            'forWho'  => null,
+            'target'  => null,
+            'datas'   => null
         ];
         
         $ctrlRouterTask = new RunTasks(
