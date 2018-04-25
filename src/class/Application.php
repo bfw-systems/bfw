@@ -659,6 +659,9 @@ class Application
             [
                 'searchRoute' => (object) [
                     'context' => $this->ctrlRouterInfos
+                ],
+                'execRoute'   => (object) [
+                    'context' => $this->ctrlRouterInfos
                 ]
             ],
             'ctrlRouterLink'
