@@ -164,7 +164,11 @@ for ($installIndex = 0; $installIndex < 3; $installIndex++) {
 
     testDirectoryOrFile($installDir, 'web');
 
-    testDirectoryOrFile($installDir, 'app/config/bfw/config.php');
+    testDirectoryOrFile($installDir, 'app/config/bfw/errors.php');
+    testDirectoryOrFile($installDir, 'app/config/bfw/global.php');
+    testDirectoryOrFile($installDir, 'app/config/bfw/memcached.php');
+    testDirectoryOrFile($installDir, 'app/config/bfw/modules.php');
+    testDirectoryOrFile($installDir, 'app/config/bfw/monolog.php');
     testDirectoryOrFile($installDir, 'src/cli/exemple.php');
     testDirectoryOrFile($installDir, 'web/index.php');
     testDirectoryOrFile($installDir, 'web/.htaccess');
