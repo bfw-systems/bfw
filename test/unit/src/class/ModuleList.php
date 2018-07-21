@@ -9,7 +9,7 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
 /**
  * @engine isolate
  */
-class Modules extends atoum
+class ModuleList extends atoum
 {
     use \BFW\Test\Helpers\Application;
     
@@ -25,7 +25,7 @@ class Modules extends atoum
             return;
         }
         
-        $this->mock = new \mock\BFW\Test\Mock\Modules;
+        $this->mock = new \mock\BFW\Test\Mock\ModuleList;
     }
     
     public function testGetModules()
@@ -35,7 +35,7 @@ class Modules extends atoum
                 ->isEmpty()
         ;
         
-        //add with extended method, not test method \BFW\Modules::addModule().
+        //add with extended method, not test method \BFW\ModuleList::addModule().
         $this->assert('test Modules::addModule')
             ->variable($this->mock->addModule('atoum'))
                 ->isNull()
@@ -63,7 +63,7 @@ class Modules extends atoum
             ->exception(function() {
                 $this->mock->getModuleForName('atoum');
             })
-                ->hasCode(\BFW\Modules::ERR_NOT_FOUND)
+                ->hasCode(\BFW\ModuleList::ERR_NOT_FOUND)
         ;
         
         $this->assert('test Modules::getModuleForName with an existing module')
@@ -118,7 +118,7 @@ class Modules extends atoum
             ->exception(function() {
                 $this->mock->readNeedMeDependencies();
             })
-                ->hasCode(\BFW\Modules::ERR_NEEDED_NOT_FOUND)
+                ->hasCode(\BFW\ModuleList::ERR_NEEDED_NOT_FOUND)
         ;
     }
     

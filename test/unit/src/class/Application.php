@@ -235,21 +235,21 @@ class Application extends atoum
     }
     
     /**
-     * Test method for getModules()
+     * Test method for getModuleList()
      * 
      * @return void
      */
-    public function testInitAndGetModules()
+    public function testInitAndGetModuleList()
     {
-        $this->assert('test getModules before init')
-            ->variable($this->app->getModules())
+        $this->assert('test getModuleList before init')
+            ->variable($this->app->getModuleList())
                 ->isNull()
         ;
         
-        $this->assert('test getModules after init')
+        $this->assert('test getModuleList after init')
             ->if($this->initApp())
-            ->object($this->app->getModules())
-                ->isInstanceOf('BFW\Modules')
+            ->object($this->app->getModuleList())
+                ->isInstanceOf('BFW\ModuleList')
         ;
     }
     
@@ -267,7 +267,7 @@ class Application extends atoum
             ->exception(function() {
                 $this->app->getModuleForName('test');
             })
-                ->hasCode(\BFW\Modules::ERR_NOT_FOUND)
+                ->hasCode(\BFW\ModuleList::ERR_NOT_FOUND)
         ;
     }
     
@@ -462,7 +462,7 @@ class Application extends atoum
             ->and($this->app->run())
             ->then
             
-            ->array($this->app->getModules()->getLoadTree())
+            ->array($this->app->getModuleList()->getLoadTree())
                 ->size
                     ->isEqualTo(0);
     }
@@ -481,13 +481,13 @@ class Application extends atoum
             ->and($this->app->run())
             ->then
             
-            ->array($this->app->getModules()->getLoadTree())
+            ->array($this->app->getModuleList()->getLoadTree())
                 ->size
                     ->isGreaterThan(0);
         
         $this->assert('test getModuleForName')
             ->object($this->app->getModuleForName('test1'))
-                ->isIdenticalTo($this->app->getModules()->getModuleForName('test1'));
+                ->isIdenticalTo($this->app->getModuleList()->getModuleForName('test1'));
     }
     
     /**
@@ -505,7 +505,7 @@ class Application extends atoum
             ->and($this->app->run())
             ->then
             
-            ->array($this->app->getModules()->getLoadTree())
+            ->array($this->app->getModuleList()->getLoadTree())
                 ->size
                     ->isEqualTo(0);
     }

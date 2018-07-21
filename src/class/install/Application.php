@@ -104,7 +104,7 @@ class Application extends \BFW\Application
     {
         Cli::displayMsgNL('Read all modules to run install script...');
         
-        $tree = $this->modules->getLoadTree();
+        $tree = $this->moduleList->getLoadTree();
 
         foreach ($tree as $firstLine) {
             foreach ($firstLine as $secondLine) {

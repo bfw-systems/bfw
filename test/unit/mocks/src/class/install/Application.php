@@ -3,7 +3,7 @@
 namespace BFW\Install\Test\Mock;
 
 //To be included by module who use it
-require_once(__DIR__.'/../Modules.php');
+require_once(__DIR__.'/../ModuleList.php');
 
 class Application extends \BFW\Install\Application
 {
@@ -122,9 +122,9 @@ class Application extends \BFW\Install\Application
      * {@inheritdoc}
      * Use the mocked class
      */
-    protected function initModules()
+    protected function initModuleList()
     {
-        $this->modules = new \BFW\Test\Mock\Modules;
+        $this->moduleList = new \BFW\Test\Mock\ModuleList;
     }
     
     /**
@@ -134,10 +134,10 @@ class Application extends \BFW\Install\Application
      */
     protected function loadAllModules()
     {
-        $modules = $this->modules;
+        $moduleList = $this->moduleList;
         foreach($this->mockedModulesList as $moduleName => $module) {
-            $modules::setModuleConfig($moduleName, $module->config);
-            $modules::setModuleLoadInfos($moduleName, $module->loadInfos);
+            $moduleList::setModuleConfig($moduleName, $module->config);
+            $moduleList::setModuleLoadInfos($moduleName, $module->loadInfos);
         }
         
         parent::loadAllModules();

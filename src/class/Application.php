@@ -73,9 +73,9 @@ class Application
     protected $request;
 
     /**
-     * @var \BFW\Modules $modules System who manage all modules
+     * @var \BFW\ModuleList $moduleList System who manage all modules
      */
-    protected $modules;
+    protected $moduleList;
     
     /**
      * @var \BFW\Core\Errors $errors System who manage personal errors page
@@ -195,13 +195,13 @@ class Application
     }
     
     /**
-     * Getter to access to modules system
+     * Getter to access to moduleList system
      * 
-     * @return \BFW\Modules
+     * @return \BFW\ModuleList
      */
-    public function getModules()
+    public function getModuleList()
     {
-        return $this->modules;
+        return $this->moduleList;
     }
     
     /**
@@ -213,7 +213,7 @@ class Application
      */
     public function getModuleForName($moduleName)
     {
-        return $this->modules->getModuleForName($moduleName);
+        return $this->moduleList->getModuleForName($moduleName);
     }
 
     /**
@@ -275,7 +275,7 @@ class Application
         $this->initErrors();
         $this->initCli();
         $this->initRunTasks();
-        $this->initModules();
+        $this->initModuleList();
         
         return $this;
     }
@@ -440,13 +440,13 @@ class Application
     }
 
     /**
-     * Initialize modules property with the \BFW\Modules class
+     * Initialize moduleList property with the \BFW\ModuleList class
      * 
      * @return void
      */
-    protected function initModules()
+    protected function initModuleList()
     {
-        $this->modules = new \BFW\Modules;
+        $this->moduleList = new \BFW\ModuleList;
     }
 
     /**
@@ -554,11 +554,11 @@ class Application
                 continue;
             }
 
-            $this->modules->addModule($moduleName);
+            $this->moduleList->addModule($moduleName);
         }
 
-        $this->modules->readNeedMeDependencies();
-        $this->modules->generateTree();
+        $this->moduleList->readNeedMeDependencies();
+        $this->moduleList->generateTree();
     }
 
     /**
@@ -591,7 +591,7 @@ class Application
      */
     protected function runAllAppModules()
     {
-        $tree = $this->modules->getLoadTree();
+        $tree = $this->moduleList->getLoadTree();
 
         foreach ($tree as $firstLine) {
             foreach ($firstLine as $secondLine) {
@@ -614,7 +614,7 @@ class Application
         $this->subjectList->getSubjectForName('ApplicationTasks')
             ->sendNotify('BfwApp_load_module_'.$moduleName);
         
-        $this->modules->getModuleForName($moduleName)->runModule();
+        $this->moduleList->getModuleForName($moduleName)->runModule();
     }
 
     /**

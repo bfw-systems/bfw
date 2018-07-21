@@ -3,9 +3,9 @@
 namespace BFW\Test\Mock;
 
 /**
- * Mock for Modules class
+ * Mock for ModuleList class
  */
-class Modules extends \BFW\Modules
+class ModuleList extends \BFW\ModuleList
 {
     /**
      * @var array $config Config for each module to add (can be different)

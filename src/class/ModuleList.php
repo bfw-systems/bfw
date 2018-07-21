@@ -7,7 +7,7 @@ use \Exception;
 /**
  * Class to manage all modules in the application
  */
-class Modules
+class ModuleList
 {
     /**
      * @const ERR_NOT_FOUND Exception code if a module is not found
