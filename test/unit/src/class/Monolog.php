@@ -78,10 +78,10 @@ class Monolog extends atoum
         ;
     }
     
-    public function testGetMonolog()
+    public function testGetLogger()
     {
-        $this->assert('test Monolog::getMonolog')
-            ->object($this->mock->getMonolog())
+        $this->assert('test Monolog::getLogger')
+            ->object($this->mock->getLogger())
                 ->isInstanceOf('\Monolog\Logger')
         ;
     }
@@ -165,7 +165,7 @@ class Monolog extends atoum
                 ->isNull()
             ->array($mockHandlersList = $this->mock->getHandlers())
                 ->isNotEmpty()
-            ->array($monologHandlersList = $this->mock->getMonolog()->getHandlers())
+            ->array($monologHandlersList = $this->mock->getLogger()->getHandlers())
                 ->isNotEmpty()
             ->object($mockHandlersList[0])
                 ->isIdenticalTo($mockHandlersList[0])

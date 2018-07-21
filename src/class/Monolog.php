@@ -50,9 +50,9 @@ class Monolog
     protected $config;
     
     /**
-     * @var \Monolog\Logger $monolog The monolog logger object
+     * @var \Monolog\Logger $logger The monolog logger object
      */
-    protected $monolog;
+    protected $logger;
     
     /**
      * @var array $handlers List of all declared handler
@@ -70,7 +70,7 @@ class Monolog
     {
         $this->channelName = (string) $channelName;
         $this->config      = $config;
-        $this->monolog     = new \Monolog\Logger($this->channelName);
+        $this->logger      = new \Monolog\Logger($this->channelName);
     }
     
     /**
@@ -94,13 +94,13 @@ class Monolog
     }
     
     /**
-     * Get accessor to property monolog
+     * Get accessor to property logger
      * 
      * @return \Monolog\Logger
      */
-    public function getMonolog()
+    public function getLogger()
     {
-        return $this->monolog;
+        return $this->logger;
     }
     
     /**
@@ -163,7 +163,7 @@ class Monolog
         $handler          = new $handlerClassName(...$handlerInfos->args);
         
         $this->handlers[] = $handler;
-        $this->monolog->pushHandler($handler);
+        $this->logger->pushHandler($handler);
     }
     
     /**
