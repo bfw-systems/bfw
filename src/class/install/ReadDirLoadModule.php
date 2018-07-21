@@ -10,10 +10,10 @@ class ReadDirLoadModule extends \BFW\Helpers\ReadDirectory
     /**
      * {@inheritdoc}
      */
-    protected function fileAction($fileName, $pathToFile)
+    protected function itemAction($fileName, $pathToFile)
     {
         //Call parent method to check ignored files
-        $parentAction = parent::fileAction($fileName, $pathToFile);
+        $parentAction = parent::itemAction($fileName, $pathToFile);
 
         if (!empty($parentAction)) {
             return $parentAction;

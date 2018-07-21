@@ -91,7 +91,7 @@ class ReadDirectory
 
         //Tant qu'il y a des fichiers à lire dans le dossier
         while (($file = readdir($dir)) !== false) {
-            $action = $this->fileAction($file, $path);
+            $action = $this->itemAction($file, $path);
 
             if ($action === 'continue') {
                 continue;
@@ -110,14 +110,14 @@ class ReadDirectory
     }
 
     /**
-     * Action to do when a file is found.
+     * Action to do when an item (file or directory) is found.
      * 
      * @param string $fileName The file's name
      * @param string $pathToFile The file's path
      * 
      * @return string
      */
-    protected function fileAction($fileName, $pathToFile)
+    protected function itemAction($fileName, $pathToFile)
     {
         if (in_array($fileName, $this->ignore)) {
             return 'continue';

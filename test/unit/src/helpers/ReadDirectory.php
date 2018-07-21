@@ -22,7 +22,7 @@ class ReadDirectory extends atoum
         //$this->initApp();
         
         $this->mockGenerator
-            ->makeVisible('fileAction')
+            ->makeVisible('itemAction')
             ->makeVisible('dirAction')
             ->generate('BFW\Helpers\ReadDirectory')
         ;
@@ -58,7 +58,7 @@ class ReadDirectory extends atoum
         ;
         
         $this->assert('test Helpers\ReadDirectory::run')
-            ->given($fileActionListFiles = [])
+            ->given($itemActionListFiles = [])
             ->given($isDirListCheck = [])
             ->given($dirActionListPath = [])
             ->if($this->function->opendir = true)
@@ -70,11 +70,11 @@ class ReadDirectory extends atoum
             ->and($this->function->readdir[4] = 'memcache')
             ->and($this->function->readdir[5] = 'Application.php')
             ->and($this->function->readdir[6] = 'Config.php')
-            ->and($this->calling($this->mock)->fileAction = function(
+            ->and($this->calling($this->mock)->itemAction = function(
                 $fileName,
                 $pathToFile
-            ) use (&$fileActionListFiles) {
-                $fileActionListFiles[] = $fileName;
+            ) use (&$itemActionListFiles) {
+                $itemActionListFiles[] = $fileName;
                 
                 if ($fileName === 'Application.php') {
                     return 'break'; //So "Config.php" will not be read
@@ -108,7 +108,7 @@ class ReadDirectory extends atoum
             
             ->variable($this->mock->run(__DIR__))
                 ->isNull()
-            ->array($fileActionListFiles)
+            ->array($itemActionListFiles)
                 ->isEqualTo([
                     '.',
                     '..',
@@ -130,17 +130,17 @@ class ReadDirectory extends atoum
         ;
     }
     
-    public function testFileAction()
+    public function testItemAction()
     {
-        $this->assert('test Helpers\ReadDirectory::fileAction for ignored path')
-            ->string($this->invoke($this->mock)->fileAction('.', __DIR__))
+        $this->assert('test Helpers\ReadDirectory::itemAction for ignored path')
+            ->string($this->invoke($this->mock)->itemAction('.', __DIR__))
                 ->isEqualTo('continue')
-            ->string($this->invoke($this->mock)->fileAction('..', __DIR__))
+            ->string($this->invoke($this->mock)->itemAction('..', __DIR__))
                 ->isEqualTo('continue')
         ;
         
-        $this->assert('test Helpers\ReadDirectory::fileAction for not ignored path')
-            ->string($this->invoke($this->mock)->fileAction('Application.php', __DIR__))
+        $this->assert('test Helpers\ReadDirectory::itemAction for not ignored path')
+            ->string($this->invoke($this->mock)->itemAction('Application.php', __DIR__))
                 ->isEmpty()
         ;
     }
