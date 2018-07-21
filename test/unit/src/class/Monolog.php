@@ -24,7 +24,6 @@ class Monolog extends atoum
         $this->initApp();
         
         $this->mockGenerator
-            ->makeVisible('addNewHandler')
             ->makeVisible('checkHandlerInfos')
             ->makeVisible('checkHandlerName')
             ->makeVisible('checkHandlerArgs')

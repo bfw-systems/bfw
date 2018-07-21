@@ -155,7 +155,7 @@ class Monolog
      * 
      * @return void
      */
-    protected function addNewHandler($handlerInfos)
+    public function addNewHandler($handlerInfos)
     {
         $this->checkHandlerInfos($handlerInfos);
         
