@@ -85,7 +85,7 @@ class Memcache extends atoum
     public function testConnectToServersWithOneServer()
     {
         $this->assert('test Memcache\Memcache::connectToServers with one memcache server')
-            ->given($config = $this->app->getConfig()->getValue('memcached'))
+            ->given($config = $this->app->getConfig()->getValue('memcached', 'memcached.php'))
             ->if($config['servers'][0]['host'] = 'localhost')
             ->and($config['servers'][0]['port'] = 11211)
             ->and($this->app->getConfig()->setConfigKeyForFile(
@@ -116,7 +116,7 @@ class Memcache extends atoum
     public function testConnectToServersWithTwoServerAndTimeout()
     {
         $this->assert('test Memcache\Memcache::connectToServers with two memcache server and timeout config')
-            ->given($config = $this->app->getConfig()->getValue('memcached'))
+            ->given($config = $this->app->getConfig()->getValue('memcached', 'memcached.php'))
             ->if($config['servers'][0]['host'] = 'localhost')
             ->and($config['servers'][0]['port'] = 11211)
             ->and($config['servers'][1] = $config['servers'][0])
