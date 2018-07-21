@@ -37,12 +37,23 @@ trait Application
      */
     protected function createApp()
     {
-        $mockedConfigValues = require(
-            realpath(__DIR__.'/../../../skel/app/config/bfw/config.php')
-        );
-        
         $this->app = \BFW\Test\Mock\Application::getInstance();
-        $this->app->setMockedConfigValues($mockedConfigValues);
+        
+        $configFileList = [
+            'errors.php',
+            'global.php',
+            'memcached.php',
+            'modules.php',
+            'monolog.php'
+        ];
+        
+        foreach ($configFileList as $filename) {
+            $configValue = require(
+                realpath(__DIR__.'/../../../skel/app/config/bfw/'.$filename)
+            );
+            
+            $this->app->setMockedConfigValues($filename, $configValue);
+        }
     }
     
     /**

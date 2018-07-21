@@ -165,7 +165,7 @@ class Errors extends atoum
         $this->assert('test Core\Errors::defineRenderToUse - prepare')
             ->given($this->createApp())
             ->and($this->initApp())
-            ->and($renderFcts = $this->app->getConfig()->getValue('errorRenderFct'))
+            ->and($renderFcts = $this->app->getConfig()->getValue('errorRenderFct', 'errors.php'))
         ;
         
         $this->assert('test Core\Errors::defineRenderToUse if disabled')
@@ -186,7 +186,7 @@ class Errors extends atoum
         $this->assert('test Core\Errors::defineRenderToUse - in cli - prepare')
             ->given($this->createApp())
             ->and($this->initApp())
-            ->and($renderFcts = $this->app->getConfig()->getValue('errorRenderFct'))
+            ->and($renderFcts = $this->app->getConfig()->getValue('errorRenderFct', 'errors.php'))
         ;
         
         $this->assert('test Core\Errors::defineRenderToUse if render enabled and in cli')
@@ -210,7 +210,7 @@ class Errors extends atoum
         $this->assert('test Core\Errors::defineRenderToUse - not in cli - prepare')
             ->given($this->createApp())
             ->and($this->initApp())
-            ->and($renderFcts = $this->app->getConfig()->getValue('errorRenderFct'))
+            ->and($renderFcts = $this->app->getConfig()->getValue('errorRenderFct', 'errors.php'))
         ;
         
         $this->assert('test Core\Errors::defineRenderToUse if render enabled but not in cli')
@@ -309,7 +309,7 @@ class Errors extends atoum
         $this->assert('test \Core\Errors::callRender with a class')
             ->given($this->createApp())
             ->and($this->initApp())
-            ->and($renderConfig = $this->app->getConfig()->getValue('errorRenderFct'))
+            ->and($renderConfig = $this->app->getConfig()->getValue('errorRenderFct', 'errors.php'))
             ->and($renderInfos = $renderConfig['default'])
             ->and($renderInfos['class'] = '\BFW\Test\Helpers\ErrorsRenderClass')
             ->and($renderInfos['method'] = 'render')
@@ -360,7 +360,7 @@ class Errors extends atoum
         $this->assert('test \Core\Errors::callRender with a function')
             ->given($this->createApp())
             ->and($this->initApp())
-            ->and($renderConfig = $this->app->getConfig()->getValue('errorRenderFct'))
+            ->and($renderConfig = $this->app->getConfig()->getValue('errorRenderFct', 'errors.php'))
             ->and($renderInfos = $renderConfig['default'])
             ->and($renderInfos['class'] = '')
             ->and($renderInfos['method'] = '\BFW\Test\Helpers\errorsRenderFunction')

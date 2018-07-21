@@ -10,9 +10,9 @@ require_once(__DIR__.'/Modules.php');
 class Application extends \BFW\Application
 {
     /**
-     * @var array|object $mockedConfigValues The values to use for config
+     * @var array $mockedConfigValues The values to use for config
      */
-    protected $mockedConfigValues;
+    protected $mockedConfigValues = [];
     
     /**
      * @var \stdClass[] $mockedModulesList List of fake module to load, the
@@ -47,13 +47,14 @@ class Application extends \BFW\Application
     /**
      * Setter to property mockedConfigValues
      * 
+     * @param string $filename
      * @param array|object $mockedConfigValues
      * 
      * @return $this
      */
-    public function setMockedConfigValues($mockedConfigValues)
+    public function setMockedConfigValues($filename, $mockedConfigValues)
     {
-        $this->mockedConfigValues = $mockedConfigValues;
+        $this->mockedConfigValues[$filename] = $mockedConfigValues;
         return $this;
     }
     
@@ -94,14 +95,29 @@ class Application extends \BFW\Application
     protected function initConfig()
     {
         if ($this->mockedConfigValues === null) {
-            $this->mockedConfigValues = require(
-                $this->options->getValue('vendorDir')
-                .'/bulton-fr/bfw/skel/app/config/bfw/config.php'
-            );
+            $configList = [
+                'errors.php',
+                'global.php',
+                'memcached.php',
+                'modules.php',
+                'monolog.php'
+            ];
+            
+            foreach ($configList as $configFilename) {
+                $this->mockedConfigValues[$configFilename] = require(
+                    $this->options->getValue('vendorDir')
+                    .'/bulton-fr/bfw/skel/app/config/bfw/'.$configFilename
+                );
+            }
         }
         
         $this->config = new \BFW\Config('bfw');
-        $this->config->setConfigForFile('config.php', $this->mockedConfigValues);
+        foreach ($this->mockedConfigValues as $configFilename => $configValues) {
+            $this->config->setConfigForFile(
+                $configFilename,
+                $configValues
+            );
+        }
     }
     
     /**

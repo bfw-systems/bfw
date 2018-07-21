@@ -65,7 +65,10 @@ class Errors
     protected function obtainErrorRender()
     {
         $app        = \BFW\Application::getInstance();
-        $renderFcts = $app->getConfig()->getValue('errorRenderFct');
+        $renderFcts = $app->getConfig()->getValue(
+            'errorRenderFct',
+            'errors.php'
+        );
         
         return $this->defineRenderToUse($renderFcts);
     }
@@ -80,7 +83,10 @@ class Errors
     protected function obtainExceptionRender()
     {
         $app        = \BFW\Application::getInstance();
-        $renderFcts = $app->getConfig()->getValue('exceptionRenderFct');
+        $renderFcts = $app->getConfig()->getValue(
+            'exceptionRenderFct',
+            'errors.php'
+        );
         
         return $this->defineRenderToUse($renderFcts);
     }

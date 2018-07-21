@@ -502,7 +502,7 @@ class Application
      */
     protected function loadMemcached()
     {
-        $memcachedConfig = $this->config->getValue('memcached');
+        $memcachedConfig = $this->config->getValue('memcached', 'memcached.php');
 
         if ($memcachedConfig['enabled'] === false) {
             return;
@@ -569,7 +569,8 @@ class Application
      */
     protected function runAllCoreModules()
     {
-        foreach ($this->config->getValue('modules') as $moduleInfos) {
+        $moduleList = $this->config->getValue('modules', 'modules.php');
+        foreach ($moduleList as $moduleInfos) {
             $moduleName    = $moduleInfos['name'];
             $moduleEnabled = $moduleInfos['enabled'];
 

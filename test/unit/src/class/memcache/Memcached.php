@@ -82,11 +82,11 @@ class Memcached extends atoum
     public function testConnectToServersWithOneServer()
     {
         $this->assert('test Memcache\Memcached::connectToServers with one memcache server')
-            ->given($config = $this->app->getConfig()->getValue('memcached'))
+            ->given($config = $this->app->getConfig()->getValue('memcached', 'memcached.php'))
             ->if($config['servers'][0]['host'] = 'localhost')
             ->and($config['servers'][0]['port'] = 11211)
             ->and($this->app->getConfig()->setConfigKeyForFile(
-                'config.php',
+                'memcached.php',
                 'memcached',
                 $config
             ))
@@ -112,7 +112,7 @@ class Memcached extends atoum
     public function testConnectToServersWithManyServerAndWithPersistent()
     {
         $this->assert('test Memcache\Memcached::connectToServers with many memcache server and with persistent')
-            ->given($config = $this->app->getConfig()->getValue('memcached'))
+            ->given($config = $this->app->getConfig()->getValue('memcached', 'memcached.php'))
             ->if($config['servers'][0]['host'] = 'localhost')
             ->and($config['servers'][0]['port'] = 11211)
             ->and($config['servers'][1] = $config['servers'][0])
@@ -122,7 +122,7 @@ class Memcached extends atoum
             ->and($config['servers'][2]['port'] = 11213)
             ->and($config['servers'][2]['weight'] = 2)
             ->and($this->app->getConfig()->setConfigKeyForFile(
-                'config.php',
+                'memcached.php',
                 'memcached',
                 $config
             ))

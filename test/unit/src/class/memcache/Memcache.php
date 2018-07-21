@@ -89,7 +89,7 @@ class Memcache extends atoum
             ->if($config['servers'][0]['host'] = 'localhost')
             ->and($config['servers'][0]['port'] = 11211)
             ->and($this->app->getConfig()->setConfigKeyForFile(
-                'config.php',
+                'memcached.php',
                 'memcached',
                 $config
             ))
@@ -123,7 +123,7 @@ class Memcache extends atoum
             ->and($config['servers'][1]['port'] = 11212)
             ->and($config['servers'][1]['timeout'] = 50)
             ->and($this->app->getConfig()->setConfigKeyForFile(
-                'config.php',
+                'memcached.php',
                 'memcached',
                 $config
             ))

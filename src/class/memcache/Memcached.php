@@ -58,7 +58,10 @@ class Memcached extends \Memcached implements MemcacheInterface
     public function __construct()
     {
         $app          = \BFW\Application::getInstance();
-        $this->config = $app->getConfig()->getValue('memcached');
+        $this->config = $app->getConfig()->getValue(
+            'memcached',
+            'memcached.php'
+        );
         
         if (!empty($this->config['persistentId'])) {
             parent::__construct($this->config['persistentId']);

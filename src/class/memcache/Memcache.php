@@ -75,7 +75,10 @@ class Memcache extends \Memcache implements MemcacheInterface
         }
         
         $app          = \BFW\Application::getInstance();
-        $this->config = $app->getConfig()->getValue('memcached');
+        $this->config = $app->getConfig()->getValue(
+            'memcached',
+            'memcached.php'
+        );
     }
     
     /**

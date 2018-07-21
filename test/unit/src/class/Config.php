@@ -331,7 +331,7 @@ class Config extends atoum
         $this->assert('test Config::loadPhpConfigFile')
             ->variable($this->invoke($this->mock)->loadPhpConfigFile(
                 'test.php',
-                __DIR__.'/../../../../skel/app/config/bfw/config.php'
+                __DIR__.'/../../../../skel/app/config/bfw/global.php'
             ))
                 ->isNull()
             ->array($config = $this->mock->getConfigForFile('test.php'))

@@ -129,7 +129,10 @@ class Secure
     public static function getSqlSecureMethod()
     {
         $app       = \BFW\Application::getInstance();
-        $secureFct = $app->getConfig()->getValue('sqlSecureMethod');
+        $secureFct = $app->getConfig()->getValue(
+            'sqlSecureMethod',
+            'global.php'
+        );
 
         if (!is_callable($secureFct, false)) {
             return false;

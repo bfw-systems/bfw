@@ -164,7 +164,11 @@ searchBfwPath
 # Copy skeleton files
 echo ''
 copyFile "skel/cli.php" "cli.php"
-copyFile "skel/app/config/bfw/config.php" "app/config/bfw/config.php"
+copyFile "skel/app/config/bfw/errors.php" "app/config/bfw/errors.php"
+copyFile "skel/app/config/bfw/global.php" "app/config/bfw/global.php"
+copyFile "skel/app/config/bfw/memcached.php" "app/config/bfw/memcached.php"
+copyFile "skel/app/config/bfw/modules.php" "app/config/bfw/modules.php"
+copyFile "skel/app/config/bfw/monolog.php" "app/config/bfw/monolog.php"
 copyFile "skel/src/cli/exemple.php" "src/cli/exemple.php"
 copyFile "skel/web/.htaccess" "web/.htaccess"
 copyFile "skel/web/index.php" "web/index.php"

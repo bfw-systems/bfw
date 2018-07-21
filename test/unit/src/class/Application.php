@@ -49,10 +49,10 @@ class Application extends atoum
         if ($isCore === true) {
             $this
                 //Mock the config to add a core module
-                ->given($mockedConfig = $this->app->getMockedConfigValues())
+                ->given($mockedConfig = $this->app->getMockedConfigValues()['modules.php'])
                 ->if($mockedConfig['modules']['controller']['name'] = $moduleName)
                 ->and($mockedConfig['modules']['controller']['enabled'] = true)
-                ->and($this->app->setMockedConfigValues($mockedConfig))
+                ->and($this->app->setMockedConfigValues('modules.php', $mockedConfig))
             ;
         }
         
@@ -221,12 +221,12 @@ class Application extends atoum
         ;
         
         $this->assert('test getMemcached after init - call run() method with memcached enabled')
-            ->if($config = $this->app->getConfig()->getConfigForFile('config.php'))
+            ->if($config = $this->app->getConfig()->getConfigForFile('memcached.php'))
             ->and($config['memcached']['enabled'] = true)
             //We define a real memcached server, else run() return an Exception.
             ->and($config['memcached']['servers'][0]['host'] = 'localhost')
             ->and($config['memcached']['servers'][0]['port'] = 11211)
-            ->and($this->app->getConfig()->setConfigForFile('config.php', $config))
+            ->and($this->app->getConfig()->setConfigForFile('memcached.php', $config))
             ->and($this->app->run())
             ->then
             ->object($this->app->getMemcached())
