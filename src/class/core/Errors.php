@@ -35,6 +35,12 @@ class Errors
 
         //add the handler for errors
         set_error_handler([$this, 'errorHandler']);
+        
+        \BFW\Application::getInstance()
+            ->getMonolog()
+            ->getLogger()
+            ->debug('New error handler defined.')
+        ;
     }
     
     /**
@@ -53,6 +59,12 @@ class Errors
         
         //add the handler for exceptions
         set_exception_handler([$this, 'exceptionHandler']);
+        
+        \BFW\Application::getInstance()
+            ->getMonolog()
+            ->getLogger()
+            ->debug('New exception handler defined.')
+        ;
     }
     
     /**
@@ -130,6 +142,18 @@ class Errors
      */
     public function exceptionHandler($exception)
     {
+        \BFW\Application::getInstance()
+            ->getMonolog()
+            ->getLogger()
+            ->debug(
+                'New exception catched.',
+                [
+                    'msg'  => $exception->getMessage(),
+                    'file' => $exception->getFile(),
+                    'line' => $exception->getLine()
+                ]
+            );
+        
         $errorRender = $this->obtainExceptionRender();
         
         $this->callRender(
@@ -161,6 +185,19 @@ class Errors
     ) {
         $errType     = $this->obtainErrorType($errSeverity);
         $errorRender = $this->obtainErrorRender();
+        
+        \BFW\Application::getInstance()
+            ->getMonolog()
+            ->getLogger()
+            ->debug(
+                'New error catched.',
+                [
+                    'type' => $errType,
+                    'msg'  => $errMsg,
+                    'file' => $errFile,
+                    'line' => $errLine
+                ]
+            );
         
         //Call the "callRender" method for this class (or child class)
         $this->callRender(

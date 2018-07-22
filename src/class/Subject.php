@@ -121,6 +121,14 @@ class Subject implements SplSubject
      */
     public function notify()
     {
+        \BFW\Application::getInstance()
+            ->getMonolog()
+            ->getLogger()
+            ->debug(
+                'Subject notify event',
+                ['action' => $this->action]
+            );
+        
         foreach ($this->observers as $observer) {
             $observer->update($this);
         }

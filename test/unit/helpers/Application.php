@@ -52,10 +52,18 @@ trait Application
                 realpath(__DIR__.'/../../../skel/app/config/bfw/'.$filename)
             );
             
+            if ($filename === 'monolog.php') {
+                //1.x Monolog always send to stdout if no handler is define :/
+                $configValue->handlers[] = (object) [
+                    'name' => '\Monolog\Handler\TestHandler',
+                    'args' => []
+                ];
+            }
+            
             $this->app->setMockedConfigValues($filename, $configValue);
         }
     }
-    
+
     /**
      * Call the method initSystem of the bfw Application class
      * 

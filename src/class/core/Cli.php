@@ -97,6 +97,14 @@ class Cli
      */
     protected function execFile()
     {
+        \BFW\Application::getInstance()
+            ->getMonolog()
+            ->getLogger()
+            ->debug(
+                'execute cli file.',
+                ['file' => $this->executedFile]
+            );
+        
         $fctRunCliFile = function() {
             require($this->executedFile);
         };

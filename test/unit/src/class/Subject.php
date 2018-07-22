@@ -11,15 +11,16 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
  */
 class Subject extends atoum
 {
-    //use \BFW\Test\Helpers\Application;
+    use \BFW\Test\Helpers\Application;
     
     protected $mock;
     protected $observer;
     
     public function beforeTestMethod($testMethod)
     {
-        //$this->createApp();
-        //$this->initApp();
+        $this->setRootDir(__DIR__.'/../../../..');
+        $this->createApp();
+        $this->initApp();
         
         if ($testMethod === 'testConstruct') {
             return;

@@ -88,6 +88,8 @@ class Application extends \BFW\Application
      */
     public function run()
     {
+        $this->monolog->getLogger()->debug('running framework install');
+        
         $runTasks = $this->subjectList->getSubjectForName('ApplicationTasks');
         
         $runTasks->setNotifyPrefix('BfwAppModulesInstall');

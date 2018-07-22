@@ -113,6 +113,17 @@ class Memcached extends \Memcached implements MemcacheInterface
                 continue;
             }
             
+            \BFW\Application::getInstance()
+                ->getMonolog()
+                ->getLogger()
+                ->debug(
+                    'Try to connect to memcached server.',
+                    [
+                        'host' => $host,
+                        'port' => $port
+                    ]
+                );
+            
             //If not, add the server at the list to connect
             $addServers[] = [$host, $port, $weight];
         }

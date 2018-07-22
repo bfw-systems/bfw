@@ -346,6 +346,14 @@ class ModuleInstall
         
         $this->forceReinstall = $reinstall;
         
+        \BFW\Application::getInstance()
+            ->getMonolog()
+            ->getLogger()
+            ->debug(
+                'Installing module.',
+                ['name' => $this->name]
+            );
+        
         Cli::displayMsgNL($this->name.' : Run install.');
         
         try {
@@ -357,6 +365,14 @@ class ModuleInstall
                 'Module '.$this->name.' install error : '.$e->getMessage(),
                 E_USER_WARNING
             );
+        
+            \BFW\Application::getInstance()
+                ->getMonolog()
+                ->getLogger()
+                ->debug(
+                    'Module installation failed.',
+                    ['name' => $this->name]
+                );
         }
     }
     

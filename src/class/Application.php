@@ -96,6 +96,11 @@ class Application
      * @var \stdClass $ctrlRouterInfos Infos from router for controller system
      */
     protected $ctrlRouterInfos;
+    
+    /**
+     * @var \BFW\Monolog $monolog Monolog system for bfw debug
+     */
+    protected $monolog;
 
     /**
      * Constructor
@@ -215,7 +220,17 @@ class Application
     {
         return $this->moduleList->getModuleForName($moduleName);
     }
-
+    
+    /**
+     * Getter to access to Monolog system
+     * 
+     * @return \BFW\Monolog
+     */
+    public function getMonolog()
+    {
+        return $this->monolog;
+    }
+    
     /**
      * Getter to access to the options system
      * 
@@ -270,12 +285,15 @@ class Application
         $this->initComposerLoader();
         $this->initSubjectList();
         $this->initConfig();
+        $this->initMonolog();
         $this->initRequest();
         $this->initSession();
         $this->initErrors();
         $this->initCli();
         $this->initRunTasks();
         $this->initModuleList();
+        
+        $this->monolog->getLogger()->debug('Framework initializing done.');
         
         return $this;
     }
@@ -358,6 +376,21 @@ class Application
     {
         $this->config = new \BFW\Config('bfw');
         $this->config->loadFiles();
+    }
+    
+    /**
+     * Initialize the property monolog with \BFW\Monolog instance
+     * 
+     * @return void
+     */
+    protected function initMonolog()
+    {
+        $this->monolog = new \BFW\Monolog('bfw', $this->config);
+        $this->monolog->addAllHandlers('handlers', 'monolog.php');
+        
+        $this->monolog->getLogger()->debug(
+            'Currently during the initialization framework step.'
+        );
     }
 
     /**
@@ -486,6 +519,8 @@ class Application
      */
     public function run()
     {
+        $this->monolog->getLogger()->debug('running framework');
+        
         $runTasks = $this->subjectList->getSubjectForName('ApplicationTasks');
         
         $runTasks->run();

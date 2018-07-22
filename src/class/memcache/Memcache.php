@@ -113,6 +113,17 @@ class Memcache extends \Memcache implements MemcacheInterface
                 continue;
             }
             
+            \BFW\Application::getInstance()
+                ->getMonolog()
+                ->getLogger()
+                ->debug(
+                    'Try to connect to memcache server.',
+                    [
+                        'host' => $host,
+                        'port' => $port
+                    ]
+                );
+            
             //Error "Memcache::addserver(): weight must be a positive integer"
             if ($weight === 0) {
                 $weight = 1;

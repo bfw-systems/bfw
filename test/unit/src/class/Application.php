@@ -272,6 +272,39 @@ class Application extends atoum
     }
     
     /**
+     * Test method for getMonolog()
+     * 
+     * @return void
+     */
+    public function testInitAndGetMonolog()
+    {
+        $this->assert('test getMonolog before init')
+            ->variable($this->app->getMonolog())
+                ->isNull()
+        ;
+        
+        $this->assert('test getMonolog after init')
+            ->if($this->initApp())
+            ->given($monologHandler = $this->app->getMonolog()->getHandlers()[0])
+            ->then
+            ->object($this->app->getMonolog())
+                ->isInstanceOf('BFW\Monolog')
+            ->boolean($monologHandler->hasDebugRecords())
+                ->isTrue()
+            ->array($records = $monologHandler->getRecords())
+                ->isNotEmpty()
+            ->variable($records[0]['level'])
+                ->isEqualTo(\Monolog\Logger::DEBUG)
+            ->string($records[0]['formatted'])
+                ->contains('Currently during the initialization framework step.')
+            ->variable($records[1]['level'])
+                ->isEqualTo(\Monolog\Logger::DEBUG)
+            ->string($records[1]['formatted'])
+                ->contains('Framework initializing done.')
+        ;
+    }
+    
+    /**
      * Test method for getOptions()
      * 
      * @return void

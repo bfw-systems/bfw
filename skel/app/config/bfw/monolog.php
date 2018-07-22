@@ -11,6 +11,11 @@ use Monolog\Logger;
 
 return (object) [
     'handlers' => [
+        //1.x Monolog always send to stdout if no handler is define :/
+        (object) [
+            'name' => '\Monolog\Handler\TestHandler',
+            'args' => []
+        ]
         /**
          * Value example:
         (object) [

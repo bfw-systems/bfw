@@ -132,6 +132,18 @@ class RunTasks extends Subject
      */
     public function sendNotify($action, $context = null)
     {
+        \BFW\Application::getInstance()
+            ->getMonolog()
+            ->getLogger()
+            ->debug(
+                'RunTask notify',
+                [
+                    'prefix' => $this->notifyPrefix,
+                    'action' => $action
+                ]
+            )
+        ;
+        
         $this->addNotification($action, $context);
     }
 }
