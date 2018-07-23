@@ -647,7 +647,7 @@ class Application
     protected function runModule($moduleName)
     {
         $this->subjectList->getSubjectForName('ApplicationTasks')
-            ->sendNotify('BfwApp_load_module_'.$moduleName);
+            ->sendNotify('BfwApp_run_module_'.$moduleName);
         
         $this->moduleList->getModuleForName($moduleName)->runModule();
     }

@@ -601,7 +601,7 @@ class Application extends atoum
             ->boolean($module->isRun())
                 ->isTrue()
             ->array($observer->getActionReceived())
-                ->contains('BfwApp_load_module_test1')
+                ->contains('BfwApp_run_module_test1')
         ;
     }
     
