@@ -53,6 +53,12 @@ class Module
      */
     public function __construct($pathName)
     {
+        \BFW\Application::getInstance()
+            ->getMonolog()
+            ->getLogger()
+            ->debug('New module declared', ['name' => $pathName])
+        ;
+        
         $this->pathName = $pathName;
         $this->status   = (object) [
             'load' => false,
@@ -67,6 +73,12 @@ class Module
      */
     public function loadModule()
     {
+        \BFW\Application::getInstance()
+            ->getMonolog()
+            ->getLogger()
+            ->debug('Load module', ['name' => $this->pathName])
+        ;
+        
         $this->loadConfig();
         $this->obtainLoadInfos();
 
