@@ -692,14 +692,7 @@ class Application
         ];
         
         $ctrlRouterTask = new RunTasks(
-            [
-                'searchRoute' => (object) [
-                    'context' => $this->ctrlRouterInfos
-                ],
-                'execRoute'   => (object) [
-                    'context' => $this->ctrlRouterInfos
-                ]
-            ],
+            $this->obtainCtrlRouterLinkTasks(),
             'ctrlRouterLink'
         );
         
@@ -707,6 +700,30 @@ class Application
         
         $runTasks = $this->subjectList->getSubjectForName('ApplicationTasks');
         $runTasks->sendNotify('bfw_ctrlRouterLink_subject_added');
+    }
+    
+    /**
+     * List all tasks runned by ctrlRouterLink
+     * 
+     * @return array
+     */
+    protected function obtainCtrlRouterLinkTasks()
+    {
+        return [
+            'searchRoute'     => (object) [
+                'context' => $this->ctrlRouterInfos
+            ],
+            'checkRouteFound' => (object) [
+                'callback' => function() {
+                    if ($this->ctrlRouterInfos->isFound === false) {
+                        http_response_code(404);
+                    }
+                }
+            ],
+            'execRoute'       => (object) [
+                'context' => $this->ctrlRouterInfos
+            ]
+        ];
     }
     
     /**
@@ -723,9 +740,5 @@ class Application
         }
         
         $this->subjectList->getSubjectForName('ctrlRouterLink')->run();
-        
-        if ($this->ctrlRouterInfos->isFound === false) {
-            http_response_code(404);
-        }
     }
 }
