@@ -31,21 +31,21 @@ class SubjectList extends atoum
         ;
     }
     
-    public function testGetSubjectForName()
+    public function testGetSubjectByName()
     {
-        $this->assert('test SubjectList::getSubjectForName with not existing subject')
+        $this->assert('test SubjectList::getSubjectByName with not existing subject')
             ->exception(function() {
-                $this->mock->getSubjectForName('UnitTest');
+                $this->mock->getSubjectByName('UnitTest');
             })
                 ->hasCode(\BFW\SubjectList::ERR_SUBJECT_NAME_NOT_EXIST)
         ;
         
-        $this->assert('test SubjectList::getSubjectForName with existing subject')
+        $this->assert('test SubjectList::getSubjectByName with existing subject')
             ->given($subject = new \BFW\Subject)
             ->if($this->mock->addSubject($subject, 'UnitTest'))
             ->then
             
-            ->object($this->mock->getSubjectForName('UnitTest'))
+            ->object($this->mock->getSubjectByName('UnitTest'))
                 ->isIdenticalTo($subject)
         ;
     }

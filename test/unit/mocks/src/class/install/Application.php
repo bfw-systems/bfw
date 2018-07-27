@@ -111,7 +111,7 @@ class Application extends \BFW\Install\Application
         
         $this->config = new \BFW\Config('bfw');
         foreach ($this->mockedConfigValues as $configFilename => $configValues) {
-            $this->config->setConfigForFile(
+            $this->config->setConfigForFilename(
                 $configFilename,
                 $configValues
             );

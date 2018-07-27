@@ -216,9 +216,9 @@ class Application
      * 
      * @return \BFW\Module
      */
-    public function getModuleForName($moduleName)
+    public function getModuleByName($moduleName)
     {
-        return $this->moduleList->getModuleForName($moduleName);
+        return $this->moduleList->getModuleByName($moduleName);
     }
     
     /**
@@ -521,7 +521,7 @@ class Application
     {
         $this->monolog->getLogger()->debug('running framework');
         
-        $runTasks = $this->subjectList->getSubjectForName('ApplicationTasks');
+        $runTasks = $this->subjectList->getSubjectByName('ApplicationTasks');
         
         $runTasks->run();
         $runTasks->sendNotify('bfw_run_done');
@@ -646,10 +646,10 @@ class Application
      */
     protected function runModule($moduleName)
     {
-        $this->subjectList->getSubjectForName('ApplicationTasks')
+        $this->subjectList->getSubjectByName('ApplicationTasks')
             ->sendNotify('BfwApp_run_module_'.$moduleName);
         
-        $this->moduleList->getModuleForName($moduleName)->runModule();
+        $this->moduleList->getModuleByName($moduleName)->runModule();
     }
 
     /**
@@ -665,7 +665,7 @@ class Application
             return;
         }
 
-        $this->subjectList->getSubjectForName('ApplicationTasks')
+        $this->subjectList->getSubjectByName('ApplicationTasks')
             ->sendNotify('run_cli_file');
         
         $fileToExec = $this->cli->obtainFileFromArg();
@@ -698,7 +698,7 @@ class Application
         
         $this->subjectList->addSubject($ctrlRouterTask, 'ctrlRouterLink');
         
-        $runTasks = $this->subjectList->getSubjectForName('ApplicationTasks');
+        $runTasks = $this->subjectList->getSubjectByName('ApplicationTasks');
         $runTasks->sendNotify('bfw_ctrlRouterLink_subject_added');
     }
     
@@ -739,6 +739,6 @@ class Application
             return;
         }
         
-        $this->subjectList->getSubjectForName('ctrlRouterLink')->run();
+        $this->subjectList->getSubjectByName('ctrlRouterLink')->run();
     }
 }

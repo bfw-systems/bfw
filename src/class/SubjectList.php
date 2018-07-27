@@ -41,7 +41,7 @@ class SubjectList
      * 
      * @throws Exception If the subject name not exist
      */
-    public function getSubjectForName($subjectName)
+    public function getSubjectByName($subjectName)
     {
         if (!array_key_exists($subjectName, $this->subjectList)) {
             throw new Exception(

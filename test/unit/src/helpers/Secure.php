@@ -134,7 +134,7 @@ class Secure extends atoum
         ;
         
         $this->assert('test Helpers\Secure::getSqlSecureMethod with a callable function configured')
-            ->if($this->app->getConfig()->setConfigKeyForFile(
+            ->if($this->app->getConfig()->setConfigKeyForFilename(
                 'global.php',
                 'sqlSecureMethod',
                 '\BFW\Test\Helpers\secureSqlMethod'

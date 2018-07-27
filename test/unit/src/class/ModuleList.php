@@ -57,19 +57,19 @@ class ModuleList extends atoum
         //Tested with bin test with the module hello-world ;)
     }
     
-    public function testGetModuleForName()
+    public function testGetModuleByName()
     {
-        $this->assert('test Modules::getModuleForName with not existing module')
+        $this->assert('test Modules::getModuleByName with not existing module')
             ->exception(function() {
-                $this->mock->getModuleForName('atoum');
+                $this->mock->getModuleByName('atoum');
             })
                 ->hasCode(\BFW\ModuleList::ERR_NOT_FOUND)
         ;
         
-        $this->assert('test Modules::getModuleForName with an existing module')
+        $this->assert('test Modules::getModuleByName with an existing module')
             ->if($this->mock->addModule('atoum'))
             ->then
-            ->object($this->mock->getModuleForName('atoum'))
+            ->object($this->mock->getModuleByName('atoum'))
                 ->isInstanceOf('\BFW\Module')
         ;
     }
@@ -81,11 +81,11 @@ class ModuleList extends atoum
         $this->assert('test Modules::readNeedMeDependencies with a module which not have needMe property')
             ->if($mock::setModuleLoadInfos('atoum', new \stdClass))
             ->and($this->mock->addModule('atoum'))
-            ->given($module = clone $this->mock->getModuleForName('atoum'))
+            ->given($module = clone $this->mock->getModuleByName('atoum'))
             ->then
             ->variable($this->mock->readNeedMeDependencies())
                 ->isNull()
-            ->object($this->mock->getModuleForName('atoum'))
+            ->object($this->mock->getModuleByName('atoum'))
                 ->isEqualTo($module)
         ;
         
@@ -95,16 +95,16 @@ class ModuleList extends atoum
                 (object) ['needMe' => 'atoum']
             ))
             ->and($this->mock->addModule('hello-world'))
-            ->given($moduleAtoum = clone $this->mock->getModuleForName('atoum'))
-            ->given($moduleHelloWorld = clone $this->mock->getModuleForName('hello-world'))
+            ->given($moduleAtoum = clone $this->mock->getModuleByName('atoum'))
+            ->given($moduleHelloWorld = clone $this->mock->getModuleByName('hello-world'))
             ->then
             ->variable($this->mock->readNeedMeDependencies())
                 ->isNull()
-            ->object($this->mock->getModuleForName('atoum'))
+            ->object($this->mock->getModuleByName('atoum'))
             //We don't care about what is changed, it's for Module unit test.
             //But we need to check if something as changed.
                 ->isNotEqualTo($moduleAtoum)
-            ->object($this->mock->getModuleForName('hello-world'))
+            ->object($this->mock->getModuleByName('hello-world'))
                 ->isEqualTo($moduleHelloWorld)
         ;
         

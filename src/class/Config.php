@@ -118,22 +118,22 @@ class Config
     }
     
     /**
-     * Getter accessor to a value into the $config property
+     * Getter accessor to have all values contain into a config file
      * 
-     * @param string $file
+     * @param string $filename The filename config to read
      * 
      * @return mixed
      */
-    public function getConfigForFile($file)
+    public function getConfigByFilename($filename)
     {
-        if (!isset($this->config[$file])) {
+        if (!isset($this->config[$filename])) {
             throw new Exception(
-                'The file '.$file.' has not been found',
+                'The file '.$filename.' has not been found',
                 $this::ERR_FILE_NOT_FOUND
             );
         }
         
-        return $this->config[$file];
+        return $this->config[$filename];
     }
     
     /**
@@ -313,7 +313,7 @@ class Config
      * 
      * @throws \Exception If the new value if not an array or an object.
      */
-    public function setConfigForFile($filename, $config)
+    public function setConfigForFilename($filename, $config)
     {
         if (!is_array($config) && !is_object($config)) {
             throw new Exception(
@@ -342,7 +342,7 @@ class Config
      * 
      * @throws \Exception If the key has not been found
      */
-    public function setConfigKeyForFile($filename, $configKey, $configValue)
+    public function setConfigKeyForFilename($filename, $configKey, $configValue)
     {
         if (!isset($this->config[$filename])) {
             $this->config[$filename] = new \stdClass;

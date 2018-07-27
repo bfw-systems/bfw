@@ -24,7 +24,7 @@ class Application extends atoum
         $this->createApp();
         
         $testWithAppInitialized = [
-            'testGetModuleForName',
+            'testGetModuleByName',
             'testGetAndDeclareRunSteps'
         ];
         
@@ -221,12 +221,12 @@ class Application extends atoum
         ;
         
         $this->assert('test getMemcached after init - call run() method with memcached enabled')
-            ->if($config = $this->app->getConfig()->getConfigForFile('memcached.php'))
+            ->if($config = $this->app->getConfig()->getConfigByFilename('memcached.php'))
             ->and($config['memcached']['enabled'] = true)
             //We define a real memcached server, else run() return an Exception.
             ->and($config['memcached']['servers'][0]['host'] = 'localhost')
             ->and($config['memcached']['servers'][0]['port'] = 11211)
-            ->and($this->app->getConfig()->setConfigForFile('memcached.php', $config))
+            ->and($this->app->getConfig()->setConfigForFilename('memcached.php', $config))
             ->and($this->app->run())
             ->then
             ->object($this->app->getMemcached())
@@ -254,18 +254,18 @@ class Application extends atoum
     }
     
     /**
-     * Test method for getModuleForName()
+     * Test method for getModuleByName()
      * 
      * @return void
      */
-    public function testGetModuleForName()
+    public function testGetModuleByName()
     {
         //Not test with existing module because we not have an installed system
         //Tested with test into the directory "test/bin".
         
-        $this->assert('test getModuleForName')
+        $this->assert('test getModuleByName')
             ->exception(function() {
-                $this->app->getModuleForName('test');
+                $this->app->getModuleByName('test');
             })
                 ->hasCode(\BFW\ModuleList::ERR_NOT_FOUND)
         ;
@@ -518,9 +518,9 @@ class Application extends atoum
                 ->size
                     ->isGreaterThan(0);
         
-        $this->assert('test getModuleForName')
-            ->object($this->app->getModuleForName('test1'))
-                ->isIdenticalTo($this->app->getModuleList()->getModuleForName('test1'));
+        $this->assert('test getModuleByName')
+            ->object($this->app->getModuleByName('test1'))
+                ->isIdenticalTo($this->app->getModuleList()->getModuleByName('test1'));
     }
     
     /**
@@ -553,7 +553,7 @@ class Application extends atoum
             ->and($this->app->run())
             ->then
             
-            ->variable($module = $this->app->getModuleForName('test1'))
+            ->variable($module = $this->app->getModuleByName('test1'))
                 ->isNotNull()
             ->boolean($module->isLoaded())
                 ->isTrue()
@@ -570,7 +570,7 @@ class Application extends atoum
             ->and($this->app->run())
             ->then
             
-            ->variable($module = $this->app->getModuleForName('test1'))
+            ->variable($module = $this->app->getModuleByName('test1'))
                 ->isNotNull()
             ->boolean($module->isLoaded())
                 ->isTrue()
@@ -587,14 +587,14 @@ class Application extends atoum
             
             //Define observer
             ->given($observer = new \BFW\Test\Helpers\ObserverArray())
-            ->if($subject = $this->app->getSubjectList()->getSubjectForName('ApplicationTasks'))
+            ->if($subject = $this->app->getSubjectList()->getSubjectByName('ApplicationTasks'))
             ->and($subject->attach($observer))
             ->then
             
             ->if($this->app->run())
             ->then
             
-            ->variable($module = $this->app->getModuleForName('test1'))
+            ->variable($module = $this->app->getModuleByName('test1'))
                 ->isNotNull()
             ->boolean($module->isLoaded())
                 ->isTrue()
@@ -638,7 +638,7 @@ class Application extends atoum
             
             //Define observer
             ->given($observer = new \BFW\Test\Helpers\ObserverArray())
-            ->if($subject = $this->app->getSubjectList()->getSubjectForName('ApplicationTasks'))
+            ->if($subject = $this->app->getSubjectList()->getSubjectByName('ApplicationTasks'))
             ->and($subject->attach($observer))
             ->then
             
@@ -682,7 +682,7 @@ class Application extends atoum
             
             //Define observer
             ->given($observer = new \BFW\Test\Helpers\ObserverArray())
-            ->if($subject = $this->app->getSubjectList()->getSubjectForName('ApplicationTasks'))
+            ->if($subject = $this->app->getSubjectList()->getSubjectByName('ApplicationTasks'))
             ->and($subject->attach($observer))
             ->and($this->app->run())
             ->then
@@ -703,7 +703,7 @@ class Application extends atoum
                 [$this->app, 'initCtrlRouterLink'],
                 function() use ($observer) {
                     try {
-                        $ctrlRouterLink = $this->app->getSubjectList()->getSubjectForName('ctrlRouterLink');
+                        $ctrlRouterLink = $this->app->getSubjectList()->getSubjectByName('ctrlRouterLink');
                     } catch (\Exception $e) {
                         return;
                     }

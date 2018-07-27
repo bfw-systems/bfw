@@ -31,7 +31,7 @@ class Monolog extends atoum
         ;
         
         $this->config = new \BFW\Config('bfw');
-        $this->config->setConfigForFile(
+        $this->config->setConfigForFilename(
             'monolog.php',
             (object) [
                 'handlers' => []
@@ -110,7 +110,7 @@ class Monolog extends atoum
         ;
         
         $this->assert('test Monolog::addAllHandlers with one handler')
-            ->if($this->config->setConfigKeyForFile(
+            ->if($this->config->setConfigKeyForFilename(
                 'monolog.php',
                 'handlers',
                 [$handlerInfosFileLog]
@@ -125,7 +125,7 @@ class Monolog extends atoum
         ;
         
         $this->assert('test Monolog::addAllHandlers with handlers config object format')
-            ->if($this->config->setConfigKeyForFile(
+            ->if($this->config->setConfigKeyForFilename(
                 'monolog.php',
                 'handlers',
                 $handlerInfosFileLog
@@ -140,7 +140,7 @@ class Monolog extends atoum
         ;
         
         $this->assert('test Monolog::addAllHandlers with handlers config bad value')
-            ->if($this->config->setConfigKeyForFile(
+            ->if($this->config->setConfigKeyForFilename(
                 'monolog.php',
                 'handlers',
                 123

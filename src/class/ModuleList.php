@@ -73,7 +73,7 @@ class ModuleList
      * 
      * @throws Exception If the module is not found
      */
-    public function getModuleForName($moduleName)
+    public function getModuleByName($moduleName)
     {
         if (!isset($this->modules[$moduleName])) {
             throw new Exception(

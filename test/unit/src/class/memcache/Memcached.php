@@ -85,7 +85,7 @@ class Memcached extends atoum
             ->given($config = $this->app->getConfig()->getValue('memcached', 'memcached.php'))
             ->if($config['servers'][0]['host'] = 'localhost')
             ->and($config['servers'][0]['port'] = 11211)
-            ->and($this->app->getConfig()->setConfigKeyForFile(
+            ->and($this->app->getConfig()->setConfigKeyForFilename(
                 'memcached.php',
                 'memcached',
                 $config
@@ -121,7 +121,7 @@ class Memcached extends atoum
             ->and($config['servers'][2] = $config['servers'][0])
             ->and($config['servers'][2]['port'] = 11213)
             ->and($config['servers'][2]['weight'] = 2)
-            ->and($this->app->getConfig()->setConfigKeyForFile(
+            ->and($this->app->getConfig()->setConfigKeyForFilename(
                 'memcached.php',
                 'memcached',
                 $config

@@ -72,7 +72,7 @@ class Config extends atoum
         ;
         
         $this->assert('test Config::getConfigFiles after adding a config')
-            ->if($this->mock->setConfigForFile('test', ['type' => 'unit']))
+            ->if($this->mock->setConfigForFilename('test', ['type' => 'unit']))
             ->then
             ->array($this->mock->getConfigFiles())
                 ->isEqualTo(['test' => 'test'])
@@ -87,36 +87,36 @@ class Config extends atoum
         ;
         
         $this->assert('test Config::getConfig after adding a config')
-            ->if($this->mock->setConfigForFile('test', ['type' => 'unit']))
+            ->if($this->mock->setConfigForFilename('test', ['type' => 'unit']))
             ->then
             ->array($this->mock->getConfig())
                 ->isEqualTo(['test' => ['type' => 'unit']])
         ;
     }
     
-    public function testGetAndSetConfigForFile()
+    public function testGetAndSetConfigFilename()
     {
-        $this->assert('test Config::getConfigForFile for default value')
+        $this->assert('test Config::getConfigByFilename for default value')
             ->exception(function() {
-                $this->mock->getConfigForFile('test');
+                $this->mock->getConfigByFilename('test');
             })
                 ->hasCode(\BFW\Config::ERR_FILE_NOT_FOUND)
         ;
         
-        $this->assert('test Config::setConfigForFile with bad value')
+        $this->assert('test Config::setConfigForFilename with bad value')
             ->exception(function() {
-                $this->mock->setConfigForFile('test', 'unit');
+                $this->mock->setConfigForFilename('test', 'unit');
             })
                 ->hasCode(\BFW\Config::ERR_VALUE_FORMAT)
         ;
         
-        $this->assert('test Config::setConfigForFile with correct value')
-            ->object($this->mock->setConfigForFile('test', ['type' => 'unit']))
+        $this->assert('test Config::setConfigForFilename with correct value')
+            ->object($this->mock->setConfigForFilename('test', ['type' => 'unit']))
                 ->isIdenticalTo($this->mock)
         ;
         
-        $this->assert('test Config::getConfigForFile after value set')
-            ->array($this->mock->getConfigForFile('test'))
+        $this->assert('test Config::getConfigByFilename after value set')
+            ->array($this->mock->getConfigByFilename('test'))
                 ->isEqualTo(['type' => 'unit'])
         ;
     }
@@ -135,8 +135,8 @@ class Config extends atoum
             ->and($this->calling($this->mock)->loadConfigFile = function ($fileKey, $filePath) use (&$listFilesLoaded) {
                 $listFilesLoaded[$fileKey] = $filePath;
             })
-            //So we add a into ConfigFiles with setConfigForFile method.
-            ->and($this->mock->setConfigForFile('test', ['type' => 'unit']))
+            //So we add a into ConfigFiles with setConfigForFilename method.
+            ->and($this->mock->setConfigForFilename('test', ['type' => 'unit']))
             ->then
             
             ->variable($this->mock->loadFiles())
@@ -301,7 +301,7 @@ class Config extends atoum
                 CONFIG_DIR.'test/test.json'
             ))
                 ->isNull()
-            ->object($config = $this->mock->getConfigForFile('test.json'))
+            ->object($config = $this->mock->getConfigByFilename('test.json'))
                 ->isEqualTo((object) [
                     'debug' => false,
                     'errorRenderFct' => (object) [
@@ -334,7 +334,7 @@ class Config extends atoum
                 __DIR__.'/../../../../skel/app/config/bfw/global.php'
             ))
                 ->isNull()
-            ->array($config = $this->mock->getConfigForFile('test.php'))
+            ->array($config = $this->mock->getConfigByFilename('test.php'))
                 ->isNotEmpty()
         ;
     }
@@ -342,7 +342,7 @@ class Config extends atoum
     public function testGetValue()
     {
         $this->assert('test Config::getValue with one file - prepare')
-            ->given($this->mock->setConfigForFile('test', ['type' => 'unit']))
+            ->given($this->mock->setConfigForFilename('test', ['type' => 'unit']))
         ;
         
         $this->assert('test Config::getValue with one file and existing key')
@@ -363,7 +363,7 @@ class Config extends atoum
         ;
         
         $this->assert('test Config::getValue with two file - prepare')
-            ->given($this->mock->setConfigForFile('test2', ['lib' => 'atoum']))
+            ->given($this->mock->setConfigForFilename('test2', ['lib' => 'atoum']))
         ;
         
         $this->assert('test Config::getValue with two file and existing key')
@@ -395,22 +395,22 @@ class Config extends atoum
         ;
     }
     
-    public function testSetConfigKeyForFile()
+    public function testSetConfigKeyForFilename()
     {
-        $this->assert('test Config::setConfigKeyForFile with existing file and key')
-            ->given($this->mock->setConfigForFile('test', ['type' => 'unit']))
+        $this->assert('test Config::setConfigKeyForFilename with existing file and key')
+            ->given($this->mock->setConfigForFilename('test', ['type' => 'unit']))
             ->string($this->mock->getValue('type'))
                 ->isEqualTo('unit')
-            ->object($this->mock->setConfigKeyForFile('test', 'type', 'unit with atoum'))
+            ->object($this->mock->setConfigKeyForFilename('test', 'type', 'unit with atoum'))
                 ->isIdenticalTo($this->mock)
             ->string($this->mock->getValue('type'))
                 ->isEqualTo('unit with atoum')
         ;
         
-        $this->assert('test Config::setConfigKeyForFile for new file and key')
+        $this->assert('test Config::setConfigKeyForFilename for new file and key')
             ->array($this->mock->getConfig())
                 ->notHasKey('test2')
-            ->object($this->mock->setConfigKeyForFile('test2', 'lib', 'atoum'))
+            ->object($this->mock->setConfigKeyForFilename('test2', 'lib', 'atoum'))
                 ->isIdenticalTo($this->mock)
             ->array($this->mock->getConfig())
                 ->hasKey('test2')
@@ -418,17 +418,17 @@ class Config extends atoum
                 ->isEqualTo('atoum')
         ;
         
-        $this->assert('test Config::setConfigKeyForFile with config value without keys')
+        $this->assert('test Config::setConfigKeyForFilename with config value without keys')
             ->if($this->function->file_get_contents = '"test"')
             ->and($this->invoke($this->mock)->loadJsonConfigFile(
                 'test3.json',
                 CONFIG_DIR.'test/test3.json'
             ))
             ->then
-            ->string($this->mock->getConfigForFile('test3.json'))
+            ->string($this->mock->getConfigByFilename('test3.json'))
                 ->isEqualTo('test')
             ->exception(function() {
-                $this->mock->setConfigKeyForFile('test3.json', 'lib', 'atoum');
+                $this->mock->setConfigKeyForFilename('test3.json', 'lib', 'atoum');
             })
                 ->hasCode(\BFW\Config::ERR_KEY_NOT_ADDED)
         ;
