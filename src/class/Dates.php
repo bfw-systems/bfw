@@ -322,13 +322,19 @@ class Dates extends DateTime
      * The return can be an array or a string.
      * 
      * @param boolean $returnArray (default false) True to return an array.
+     * @param boolean $withZone (default false) True to include the timezone
+     *  into the time returned data.
      * 
      * @return string[]|string
      */
-    public function getSqlFormat($returnArray = false)
+    public function getSqlFormat($returnArray = false, $withZone = false)
     {
         $date = $this->format('Y-m-d');
-        $time = $this->format('H:i:sO');
+        $time = $this->format('H:i:s');
+        
+        if ($withZone === true) {
+            $time .= $this->format('O');
+        }
 
         if ($returnArray) {
             return [$date, $time];

@@ -364,13 +364,23 @@ class Dates extends atoum
     
     public function testGetSqlFormat()
     {
-        $this->assert('test Dates::getSqlFormat for string format')
-            ->string($this->mock->getSqlFormat())
+        $this->assert('test Dates::getSqlFormat for string format without zone')
+            ->string($this->mock->getSqlFormat(false))
+                ->isEqualTo('2018-02-01 13:10:23')
+        ;
+        
+        $this->assert('test Dates::getSqlFormat for array format without zone')
+            ->array($this->mock->getSqlFormat(true))
+                ->isEqualTo(['2018-02-01', '13:10:23'])
+        ;
+        
+        $this->assert('test Dates::getSqlFormat for string format with zone')
+            ->string($this->mock->getSqlFormat(false, true))
                 ->isEqualTo('2018-02-01 13:10:23+0200')
         ;
         
-        $this->assert('test Dates::getSqlFormat for array format')
-            ->array($this->mock->getSqlFormat(true))
+        $this->assert('test Dates::getSqlFormat for array format with zone')
+            ->array($this->mock->getSqlFormat(true, true))
                 ->isEqualTo(['2018-02-01', '13:10:23+0200'])
         ;
     }
