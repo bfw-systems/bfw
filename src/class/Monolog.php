@@ -13,31 +13,31 @@ class Monolog
      * @const ERR_HANDLERS_LIST_FORMAT Exception code if config for handlers
      * list have not a correct format
      */
-    const ERR_HANDLERS_LIST_FORMAT = 1318001;
+    const ERR_HANDLERS_LIST_FORMAT = 1108001;
     
     /**
      * @const ERR_HANDLER_INFOS_FORMAT Exception code if the handler infos is
      * not in a correct format
      */
-    const ERR_HANDLER_INFOS_FORMAT = 1318002;
+    const ERR_HANDLER_INFOS_FORMAT = 1108002;
     
     /**
      * @const ERR_HANDLER_INFOS_MISSING_NAME Exception code if a handler not
      * have declared name
      */
-    const ERR_HANDLER_INFOS_MISSING_NAME = 1318003;
+    const ERR_HANDLER_INFOS_MISSING_NAME = 1108003;
     
     /**
      * @const ERR_HANDLER_NAME_NOT_A_STRING Exception code if a handler name
      * value is not a string
      */
-    const ERR_HANDLER_NAME_NOT_A_STRING = 1318004;
+    const ERR_HANDLER_NAME_NOT_A_STRING = 1108004;
     
     /**
      * @const ERR_HANDLER_CLASS_NOT_FOUND Exception code if a handler class
      * has not been found
      */
-    const ERR_HANDLER_CLASS_NOT_FOUND = 1318005;
+    const ERR_HANDLER_CLASS_NOT_FOUND = 1108005;
     
     /**
      * @var string $channelName The monolog channel name

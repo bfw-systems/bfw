@@ -13,7 +13,7 @@ class Constants
      * @const ERR_ALREADY_DEFINED Exception code if the constant is already
      * defined.
      */
-    const ERR_ALREADY_DEFINED = 1202001;
+    const ERR_ALREADY_DEFINED = 1602001;
     
     /**
      * Create a new constant if not exist

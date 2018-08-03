@@ -13,18 +13,18 @@ class Module
     /**
      * @const ERR_FILE_NOT_FOUND Exception code if the file is not found.
      */
-    const ERR_FILE_NOT_FOUND = 1310001;
+    const ERR_FILE_NOT_FOUND = 1106001;
     
     /**
      * @const ERR_JSON_PARSE Exception code if the parse of a json file fail.
      */
-    const ERR_JSON_PARSE = 1310002;
+    const ERR_JSON_PARSE = 1106002;
     
     /**
      * @const ERR_RUNNER_FILE_NOT_FOUND Exception code if the runner file to
      * execute is not found.
      */
-    const ERR_RUNNER_FILE_NOT_FOUND = 1310003;
+    const ERR_RUNNER_FILE_NOT_FOUND = 1106003;
 
     /**
      * @var string $pathName Module's name

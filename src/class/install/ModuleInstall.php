@@ -14,54 +14,54 @@ class ModuleInstall
      * @const ERR_LOAD_NO_PROPERTY_SRCPATH Exception code if the property
      * "srcPath" is not present into the bfwModulesInfos.json file.
      */
-    const ERR_LOAD_NO_PROPERTY_SRCPATH = 1102001;
+    const ERR_LOAD_NO_PROPERTY_SRCPATH = 1402001;
     
     /**
      * @const ERR_REINSTALL_FAIL_UNLINK Exception code if the reinstall fail
      * because the module symlink can not be remove.
      */
-    const ERR_REINSTALL_FAIL_UNLINK = 1102002;
+    const ERR_REINSTALL_FAIL_UNLINK = 1402002;
     
     /**
      * @const ERR_REINSTALL_FAIL_REMOVE_CONFIG_DIR Exception code if the
      * reinstall fail because the config directory can not be remove.
      */
-    const ERR_REINSTALL_FAIL_REMOVE_CONFIG_DIR = 1102003;
+    const ERR_REINSTALL_FAIL_REMOVE_CONFIG_DIR = 1402003;
     
     /**
      * @const ERR_COPY_CONFIG_SRC_FILE_NOT_EXIST Exception code if the source
      * config file not exist.
      */
-    const ERR_COPY_CONFIG_SRC_FILE_NOT_EXIST = 1102004;
+    const ERR_COPY_CONFIG_SRC_FILE_NOT_EXIST = 1402004;
     
     /**
      * @const ERR_COPY_CONFIG_FAIL Exception code if the copy of the config
      * file has failed.
      */
-    const ERR_COPY_CONFIG_FAIL = 1102005;
+    const ERR_COPY_CONFIG_FAIL = 1402005;
     
     /**
      * @const ERR_LOAD_EMPTY_PROPERTY_SRCPATH Exception code if the property
      * srcPath is empty during the load of the module
      */
-    const ERR_LOAD_EMPTY_PROPERTY_SRCPATH = 1102006;
+    const ERR_LOAD_EMPTY_PROPERTY_SRCPATH = 1402006;
     
     /**
      * @const ERR_LOAD_PATH_NOT_EXIST Exception code if the path define into
      * srcPath or configPath not exist
      */
-    const ERR_LOAD_PATH_NOT_EXIST = 1102007;
+    const ERR_LOAD_PATH_NOT_EXIST = 1402007;
     
     /**
      * @const ERR_INSTALL_FAIL_SYMLINK Exception code if the symlink fail
      */
-    const ERR_INSTALL_FAIL_SYMLINK = 1102008;
+    const ERR_INSTALL_FAIL_SYMLINK = 1402008;
     
     /**
      * @const ERR_FAIL_CREATE_CONFIG_DIR Exception code if the config directory
      * can not be create.
      */
-    const ERR_FAIL_CREATE_CONFIG_DIR = 1102009;
+    const ERR_FAIL_CREATE_CONFIG_DIR = 1402009;
     
     /**
      * @var string $projectPath : Path to root bfw project

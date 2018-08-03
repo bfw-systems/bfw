@@ -13,18 +13,18 @@ class Secure
      * @const ERR_SECURE_UNKNOWN_TYPE Exception code if the data into the
      * method secure() is not a predefined type.
      */
-    const ERR_SECURE_UNKNOWN_TYPE = 1207001;
+    const ERR_SECURE_UNKNOWN_TYPE = 1607001;
     
     /**
      * @const ERR_SECURE_ARRAY_KEY_NOT_EXIST If the asked key not exist into
      * the array to secure.
      */
-    const ERR_SECURE_ARRAY_KEY_NOT_EXIST = 1207002;
+    const ERR_SECURE_ARRAY_KEY_NOT_EXIST = 1607002;
     
     /**
      * @const ERR_OBTAIN_KEY Exception code if the key asked not exist
      */
-    const ERR_OBTAIN_KEY = 1207003;
+    const ERR_OBTAIN_KEY = 1607003;
     
     /**
      * Hash a string

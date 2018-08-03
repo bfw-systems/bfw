@@ -10,13 +10,13 @@ class Cli
      * @const ERR_NO_FILE_SPECIFIED_IN_ARG Exception code if the cli file to
      * run is not specified with the "-f" argument.
      */
-    const ERR_NO_FILE_SPECIFIED_IN_ARG = 1315001;
+    const ERR_NO_FILE_SPECIFIED_IN_ARG = 1201001;
     
     /**
      * @const ERR_CLI_FILE_NOT_FOUND Exception code if the cli file to run is
      * not found.
      */
-    const ERR_FILE_NOT_FOUND = 1315002;
+    const ERR_FILE_NOT_FOUND = 1201002;
     
     /**
      * @var string The name of the executed cli file

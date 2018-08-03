@@ -16,13 +16,13 @@ class Application
      * @const ERR_CALL_UNKNOWN_METHOD Exception code if __call is called with
      * an unmanaged method
      */
-    const ERR_CALL_UNKNOWN_METHOD = 1301001;
+    const ERR_CALL_UNKNOWN_METHOD = 1101001;
     
     /**
      * @const ERR_CALL_UNKNOWN_PROPERTY Exception code if __call is called with
      * an unmanaged property
      */
-    const ERR_CALL_UNKNOWN_PROPERTY = 1301002;
+    const ERR_CALL_UNKNOWN_PROPERTY = 1101002;
     
     /**
      * @var \BFW\Application|null $instance Application instance (Singleton)

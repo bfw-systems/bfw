@@ -12,38 +12,38 @@ class Config
     /**
      * @const ERR_JSON_PARSE Exception code if the parse of a json file fail.
      */
-    const ERR_JSON_PARSE = 1302001;
+    const ERR_JSON_PARSE = 1102001;
     
     /**
      * @const ERR_GETVALUE_FILE_NOT_INDICATED Exception code if the file to use
      * is not indicated into the method getValue().
      * (only if there are many config files)
      */
-    const ERR_GETVALUE_FILE_NOT_INDICATED = 1302002;
+    const ERR_GETVALUE_FILE_NOT_INDICATED = 1102002;
     
     /**
      * @const ERR_GETVALUE_FILE_NOT_FOUND Exception code if the file to use is
      * not found.
      */
-    const ERR_FILE_NOT_FOUND = 1302003;
+    const ERR_FILE_NOT_FOUND = 1102003;
     
     /**
      * @const ERR_GETVALUE_KEY_NOT_FOUND Exception code if the asked config key
      * not exist.
      */
-    const ERR_KEY_NOT_FOUND = 1303004;
+    const ERR_KEY_NOT_FOUND = 1102004;
     
     /**
      * @const ERR_VALUE_FORMAT Exception code if the value for a filename is
      * not an array or an object.
      */
-    const ERR_VALUE_FORMAT = 1303005;
+    const ERR_VALUE_FORMAT = 1102005;
     
     /**
      * @const ERR_KEY_NOT_ADDED Exception code if the key can not be added to
      * the config.
      */
-    const ERR_KEY_NOT_ADDED = 1303006;
+    const ERR_KEY_NOT_ADDED = 1102006;
     
     /**
      * @var string $configDirName Directory's name in config dir

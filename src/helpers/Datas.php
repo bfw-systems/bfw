@@ -13,19 +13,19 @@ class Datas
      * @const ERR_CHECKTYPE_ARG_TYPE Exception code if the arg type passed to
      * checkType method is not correct.
      */
-    const ERR_CHECKTYPE_ARG_TYPE = 1204001;
+    const ERR_CHECKTYPE_ARG_TYPE = 1604001;
     
     /**
      * @const ERR_CHECKTYPE_INFOS_FORMAT Exception code if the format of the
      * infos passed to checkType method is not correct.
      */
-    const ERR_CHECKTYPE_INFOS_FORMAT = 1204002;
+    const ERR_CHECKTYPE_INFOS_FORMAT = 1604002;
     
     /**
      * @const ERR_CHECKTYPE_DATA_OR_TYPE_VALUE_FORMAT Exception code if data or
      * type used to check the variable has not a correct value.
      */
-    const ERR_CHECKTYPE_DATA_OR_TYPE_VALUE_FORMAT = 1204003;
+    const ERR_CHECKTYPE_DATA_OR_TYPE_VALUE_FORMAT = 1604003;
     
     /**
      * Check types of variables

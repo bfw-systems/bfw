@@ -15,13 +15,13 @@ class Dates extends DateTime
      * @const ERR_MODIFY_PATTERN_NOT_MATCH Exception code if the pattern used
      * into the method modify() not match with the regex.
      */
-    const ERR_MODIFY_PATTERN_NOT_MATCH = 1306001;
+    const ERR_MODIFY_PATTERN_NOT_MATCH = 1103001;
     
     /**
      * @const ERR_MODIFY_UNKNOWN_MODIFIER Exception code if the modifier used
      * into the method modify() is unknown.
      */
-    const ERR_MODIFY_UNKNOWN_MODIFIER = 1306002;
+    const ERR_MODIFY_UNKNOWN_MODIFIER = 1103002;
     
     /**
      * @var string[] $humanReadableI18n Words used in method to transform

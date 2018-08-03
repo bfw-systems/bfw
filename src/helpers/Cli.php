@@ -13,13 +13,13 @@ class Cli
      * @const ERR_COLOR_NOT_AVAILABLE Exception code if the color is not
      * available.
      */
-    const ERR_COLOR_NOT_AVAILABLE = 1201001;
+    const ERR_COLOR_NOT_AVAILABLE = 1601001;
     
     /**
      * @const ERR_STYLE_NOT_AVAILABLE Exception code if the style is not
      * available.
      */
-    const ERR_STYLE_NOT_AVAILABLE = 1201002;
+    const ERR_STYLE_NOT_AVAILABLE = 1601002;
     
     /**
      * @const FLUSH_AUTO Value to use on $flushMethod property to automaticaly

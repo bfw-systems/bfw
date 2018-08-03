@@ -15,7 +15,7 @@ class Subject implements SplSubject
      * @const ERR_OBSERVER_NOT_FOUND Exception code if the observer to detach
      * has not been found.
      */
-    const ERR_OBSERVER_NOT_FOUND = 1314001;
+    const ERR_OBSERVER_NOT_FOUND = 1112001;
     
     /**
      * @var \SplObserver[] $observers List of all observers
