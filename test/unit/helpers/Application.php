@@ -38,6 +38,7 @@ trait Application
     protected function createApp()
     {
         $this->app = \BFW\Test\Mock\Application::getInstance();
+        $appConfig = $this->app->getCoreSystemList()['config'];
         
         $configFileList = [
             'errors.php',
@@ -60,7 +61,7 @@ trait Application
                 ];
             }
             
-            $this->app->setMockedConfigValues($filename, $configValue);
+            $appConfig->setMockedList($filename, $configValue);
         }
     }
 
@@ -73,7 +74,7 @@ trait Application
      */
     protected function initApp($runSession = false)
     {
-        $this->app->initSystem([
+        $this->app->initSystems([
             'rootDir'    => realpath($this->rootDir),
             'vendorDir'  => realpath($this->rootDir.'/vendor'),
             'runSession' => $runSession

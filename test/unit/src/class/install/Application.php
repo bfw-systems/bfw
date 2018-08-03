@@ -19,66 +19,9 @@ class Application extends atoum
         $this->setRootDir(__DIR__.'/../../../../..');
         $this->createApp();
         
-        $testWithAppInitialized = [
-            'testGetModuleForName',
-            'testGetAndDeclareRunSteps'
-        ];
-        
-        if (in_array($testMethod, $testWithAppInitialized)) {
+        if ($testMethod === 'testRun') {
             $this->initApp();
         }
-    }
-    
-    /**
-     * Mock php native function used by readAllModules()
-     * 
-     * @param type $moduleName
-     * @return type
-     */
-    protected function moduleMockNativeFunctions($moduleName = null)
-    {
-        /*
-         * Use eval like atoum core.
-         * It's because native function is called into namespace \BFW and not
-         * the namespace \BFw\Install, so use the atoum native function mock
-         * system failed because the function is re-created into the
-         * namespace \BFW\Install.
-         */
-        
-        if (is_null($moduleName)) {
-            //$this->function->scandir = ['.', '..'];
-            eval('
-                namespace BFW;
-                
-                function scandir(...$args) {
-                    return [\'.\', \'..\'];
-                }
-            ');
-            
-            return $this;
-        }
-        
-        /*
-        $this->function->scandir  = ['.', '..', $moduleName];
-        $this->function->realpath = $moduleName;
-        $this->function->is_dir   = true;
-        */
-        
-        eval('
-            namespace BFW;
-
-            function scandir(...$args) {
-                return [\'.\', \'..\', \''.$moduleName.'\'];
-            }
-            function realpath(...$args) {
-                return \''.$moduleName.'\';
-            }
-            function is_dir(...$args) {
-                return true;
-            }
-        ');
-        
-        return $this;
     }
     
     /**
@@ -88,7 +31,7 @@ class Application extends atoum
      */
     public function testConstructAndGetInstance()
     {
-        $this->assert('test Constructor')
+        $this->assert('test Install\Application::__construct')
             ->object($app = \BFW\Install\Test\Mock\Application::getInstance())
                 ->isInstanceOf('\BFW\Install\Application')
             ->object(\BFW\Install\Test\Mock\Application::getInstance())
@@ -96,292 +39,76 @@ class Application extends atoum
         ;
     }
     
-    /**
-     * Test method for getErrors()
-     * 
-     * @return void
-     */
-    public function testInitAndGetErrors()
+    public function testDefineCoreSystemList()
     {
-        $this->assert('test getErrors before init')
-            ->variable($this->app->getErrors())
-                ->isNull()
-        ;
-        
-        $this->assert('test getErrors after init')
-            ->if($this->initApp())
-            ->variable($this->app->getErrors())
-                ->isNull()
-        ;
-    }
-    
-    /**
-     * Test method for getErrors()
-     * 
-     * @return void
-     */
-    public function testInitAndGetCli()
-    {
-        $this->assert('test getCli before init')
-            ->variable($this->app->getCli())
-                ->isNull()
-        ;
-        
-        $this->assert('test getCli after init')
-            ->if($this->initApp())
-            ->variable($this->app->getCli())
-                ->isNull()
-        ;
-    }
-    
-    /**
-     * Test method for getRequest()
-     * 
-     * @return void
-     */
-    public function testInitAndGetRequest()
-    {
-        $this->assert('test getRequest before init')
-            ->variable($this->app->getRequest())
-                ->isNull()
-        ;
-        
-        $this->assert('test getRequest after init')
-            ->if($this->initApp())
-            ->variable($this->app->getRequest())
-                ->isNull()
-        ;
-    }
-    
-    /**
-     * Test method for getRunSteps()
-     * 
-     * @return void
-     */
-    public function testGetAndDeclareRunSteps()
-    {
-        $this->assert('test getRunSteps size')
-            ->array($runSteps = $this->app->getRunSteps())
+        $this->assert('test Install\Application::defineCoreSystemList')
+            ->array($list = $this->app->getCoreSystemList())
                 ->size
-                    ->isEqualTo(3)
+                    ->isEqualTo(10)
+            ->object($list['composerLoader'])
+                ->isInstanceOf('\BFW\Core\AppSystems\ComposerLoader')
+            ->object($list['config'])
+                ->isInstanceOf('\BFW\Core\AppSystems\Config')
+            ->object($list['constants'])
+                ->isInstanceOf('\BFW\Core\AppSystems\Constants')
+            ->object($list['ctrlRouterLink'])
+                ->isInstanceOf('\BFW\Core\AppSystems\CtrlRouterLink')
+            ->object($list['memcached'])
+                ->isInstanceOf('\BFW\Core\AppSystems\Memcached')
+            ->object($list['moduleInstall'])
+                ->isInstanceOf('\BFW\Install\Core\AppSystems\ModuleInstall')
+            ->object($list['moduleList'])
+                ->isInstanceOf('\BFW\Install\Core\AppSystems\ModuleList')
+            ->object($list['monolog'])
+                ->isInstanceOf('\BFW\Core\AppSystems\Monolog')
+            ->object($list['options'])
+                ->isInstanceOf('\BFW\Core\AppSystems\Options')
+            ->object($list['subjectList'])
+                ->isInstanceOf('\BFW\Core\AppSystems\SubjectList')
+        ;
+    }
+    
+    public function testRun()
+    {
+        $this->assert('test Install\Application::run')
+            ->given($runTasks = new \mock\BFW\RunTasks([], 'ApplicationTasks'))
+            ->if($this->app->setRunTasks($runTasks))
+            ->then
+            
+            ->variable($this->app->run())
+                ->isNull()
+            ->mock($runTasks)
+                ->call('run')
+                    ->once()
+                ->call('sendNotify')
+                    ->withArguments('bfw_modules_install_done')
+                        ->once()
+            ->then
+            
+            ->given(
+                $records = $this
+                    ->app
+                    ->getMonolog()
+                    ->getLogger()
+                    ->getHandlers()[0]
+                    ->getRecords()
+            )
+            ->string($records[4]['message'])
+                ->isEqualTo('running framework install')
+            ->string($records[8]['context']['action'])
+                ->isEqualTo('bfw_modules_install_done')
         ;
         
-        $this->assert('test getRunSteps content')
-            ->object($runSteps[0][0])->isInstanceOf('\BFW\Install\Application')
-            ->string($runSteps[0][1])->isEqualTo('loadMemcached')
-            
-            ->object($runSteps[1][0])->isInstanceOf('\BFW\Install\Application')
-            ->string($runSteps[1][1])->isEqualTo('loadAllModules')
-            
-            ->object($runSteps[2][0])->isInstanceOf('\BFW\Install\Application')
-            ->string($runSteps[2][1])->isEqualTo('installAllModules')
-        ;
-    }
-    
-    public function testInitSession()
-    {
-        $this->assert('test initSession before init')
-            ->variable(session_status())
-                ->isNotEqualTo(PHP_SESSION_ACTIVE)
-        ;
-        
-        $this->assert('test initSession after init')
-            ->if($this->initApp())
-            ->variable(session_status())
-                ->isNotEqualTo(PHP_SESSION_ACTIVE)
-        ;
-    }
-    
-    public function testGetAndAddModuleInstall()
-    {
-        $this->assert('test \Install\Application::getModuleInstall')
-            ->array(\BFW\Install\Application::getModulesInstall())
-                ->isEmpty()
-        ;
-        
-        $this->assert('test \Install\Application::addModuleInstall')
-            ->if($this->initApp()) //Need constants
-            ->and($module = new \BFW\Install\Test\Mock\ModuleInstall('modulePath'))
-            ->and($module->setName('unitTest'))
-            ->and(\BFW\Install\Application::addModuleInstall($module))
-            ->then
-            ->array(\BFW\Install\Application::getModulesInstall())
-                ->isEqualTo([
-                    'unitTest' => $module
-                ])
-        ;
-    }
-    
-    public function testInstallAllModulesWithoutModule()
-    {
-        $this->assert('test \Install\Application::installAllModules without module')
-            ->given($defineOutputBuffer = '')
-            ->and($this->defineOutputBuffer($lastFlushedMsg))
-            ->then
-            
-            ->if($this->moduleMockNativeFunctions())
-            ->and($this->app->setRunSteps([
-                [$this->app, 'loadAllModules'],
-                [$this->app, 'installAllModules'],
-            ]))
-            ->and($this->initApp())
-            ->and($this->app->run())
-            ->then
-            
-            ->string($lastFlushedMsg)
-                ->isEqualTo(
-                    'Read all modules to run install script...'."\n"
-                    .'All modules have been read.'."\n"
-                )
-        ;
-    }
-    
-    public function testInstallAllModulesWithAlreadyInstalledModule()
-    {
-        $this->assert('test \Install\Application::installAllModules with already installed module')
-            ->given($defineOutputBuffer = '')
-            ->and($this->defineOutputBuffer($lastFlushedMsg))
-            ->then
-            
-            ->if($this->moduleMockNativeFunctions('unitTest'))
-            ->and($this->app->setRunSteps([
-                [$this->app, 'loadAllModules'],
-                [$this->app, 'installAllModules'],
-            ]))
-            ->and($this->initApp())
-            ->then
-            
-            ->if($module = new \BFW\Install\Test\Mock\ModuleInstall('unitTest'))
-            ->and($module->setName('unitTest'))
-            
-            ->then
-            ->and($this->app->run())
-            ->then
-            
-            ->string($lastFlushedMsg)
-                ->isEqualTo(
-                    'Read all modules to run install script...'."\n"
-                    .'All modules have been read.'."\n"
-                )
-        ;
-    }
-    
-    public function testInstallModuleWithoutInstallScript()
-    {
-        $this->assert('test \Install\Application::installModule without install script')
-            ->given($defineOutputBuffer = '')
-            ->and($this->defineOutputBuffer($lastFlushedMsg))
-            ->then
-            
-            ->if($this->moduleMockNativeFunctions('unitTest'))
-            ->and($this->app->setRunSteps([
-                [$this->app, 'loadAllModules'],
-                [$this->app, 'installAllModules'],
-            ]))
-            ->and($this->initApp())
-            ->then
-            
-            ->if($module = new \BFW\Install\Test\Mock\ModuleInstall('unitTest'))
-            ->and($module->setName('unitTest'))
-            ->and(\BFW\Install\Application::addModuleInstall($module))
-            
-            ->then
-            ->and($this->app->run())
-            ->then
-            
-            ->string($lastFlushedMsg)
-                ->isEqualTo(
-                    'Read all modules to run install script...'."\n"
-                    .' > Read for module unitTest'."\n"
-                    .' >> No script to run.'."\n"
-                    .'All modules have been read.'."\n"
-                )
-        ;
-    }
-    
-    public function testInstallModuleWithOneInstallScript()
-    {
-        $this->assert('test \Install\Application::installModule with one install script')
-            ->given($defineOutputBuffer = '')
-            ->and($this->defineOutputBuffer($lastFlushedMsg))
-            ->then
-            
-            ->if($this->moduleMockNativeFunctions('unitTest'))
-            ->and($this->app->setRunSteps([
-                [$this->app, 'loadAllModules'],
-                [$this->app, 'installAllModules'],
-            ]))
-            ->and($this->initApp())
-            ->then
-            
-            ->given($listScripts = [])
-            ->if($module = new \mock\BFW\Install\Test\Mock\ModuleInstall('unitTest'))
-            ->and($this->calling($module)->runInstallScript = function($scriptName) use (&$listScripts) {
-                $listScripts[] = $scriptName;
-            })
-            ->and($module->setName('unitTest'))
-            ->and($module->setSourceInstallScript('install.php'))
-            ->and(\BFW\Install\Application::addModuleInstall($module))
-            
-            ->then
-            ->and($this->app->run())
-            ->then
-            
-            ->string($lastFlushedMsg)
-                ->isEqualTo(
-                    'Read all modules to run install script...'."\n"
-                    .' > Read for module unitTest'."\n"
-                    .'All modules have been read.'."\n"
-                )
-            ->array($listScripts)
-                ->isEqualTo([
-                    'install.php'
-                ])
-        ;
-    }
-    
-    public function testInstallModuleWithTwoInstallScript()
-    {
-        $this->assert('test \Install\Application::installModule with one install script')
-            ->given($defineOutputBuffer = '')
-            ->and($this->defineOutputBuffer($lastFlushedMsg))
-            ->then
-            
-            ->if($this->moduleMockNativeFunctions('unitTest'))
-            ->and($this->app->setRunSteps([
-                [$this->app, 'loadAllModules'],
-                [$this->app, 'installAllModules'],
-            ]))
-            ->and($this->initApp())
-            ->then
-            
-            ->given($listScripts = [])
-            ->if($module = new \mock\BFW\Install\Test\Mock\ModuleInstall('unitTest'))
-            ->and($this->calling($module)->runInstallScript = function($scriptName) use (&$listScripts) {
-                $listScripts[] = $scriptName;
-            })
-            ->and($module->setName('unitTest'))
-            ->and($module->setSourceInstallScript([
-                'install.php',
-                'checkInstall.php'
-            ]))
-            ->and(\BFW\Install\Application::addModuleInstall($module))
-            
-            ->then
-            ->and($this->app->run())
-            ->then
-            
-            ->string($lastFlushedMsg)
-                ->isEqualTo(
-                    'Read all modules to run install script...'."\n"
-                    .' > Read for module unitTest'."\n"
-                    .'All modules have been read.'."\n"
-                )
-            ->array($listScripts)
-                ->isEqualTo([
-                    'install.php',
-                    'checkInstall.php'
-                ])
-        ;
+        /*
+         * [2018-08-02 23:36:34] bfw.DEBUG: Currently during the initialization framework step. [] []
+         * [2018-08-02 23:36:34] bfw.DEBUG: RunTask notify {"prefix":"BfwApp","action":"bfw_ctrlRouterLink_subject_added"} []
+         * [2018-08-02 23:36:34] bfw.DEBUG: Subject notify event {"action":"bfw_ctrlRouterLink_subject_added"} []
+         * [2018-08-02 23:36:34] bfw.DEBUG: Framework initializing done. [] []
+         * [2018-08-02 23:36:34] bfw.DEBUG: running framework install [] []
+         * [2018-08-02 23:36:34] bfw.DEBUG: Subject notify event {"action":"ApplicationTasks_start_run_tasks"} []
+         * [2018-08-02 23:36:34] bfw.DEBUG: Subject notify event {"action":"ApplicationTasks_end_run_tasks"} []
+         * [2018-08-02 23:36:34] bfw.DEBUG: RunTask notify {"prefix":"ApplicationTasks","action":"bfw_modules_install_done"} []
+         * [2018-08-02 23:36:34] bfw.DEBUG: Subject notify event {"action":"bfw_modules_install_done"} []
+         */
     }
 }

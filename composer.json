@@ -40,8 +40,10 @@
         "psr-4": {
             "BFW\\": "src/class",
             "BFW\\Core\\": "src/class/core",
+            "BFW\\Core\\AppSystems\\": "src/class/core/appSystems",
             "BFW\\Helpers\\": "src/helpers",
             "BFW\\Install\\": "src/class/install",
+            "BFW\\Install\\Core\\AppSystems\\": "src/class/install/core/appSystems",
             "BFW\\Memcache\\": "src/class/memcache"
         }
     },
@@ -50,8 +52,10 @@
             "BFW\\Test\\Mock\\": "test/unit/mocks/src/class",
             "BFW\\Test\\Helpers\\": "test/unit/helpers",
             "BFW\\Install\\Test\\Mock\\": "test/unit/mocks/src/class/install",
+            "BFW\\Install\\Core\\AppSystems\\Test\\Mock\\": "test/unit/mocks/src/class/install/core/appSystems",
             "BFW\\Install\\Test\\Helpers\\": "test/unit/helpers/install",
             "BFW\\Core\\Test\\Mock\\": "test/unit/mocks/src/class/core",
+            "BFW\\Core\\AppSystems\\Test\\Mock\\": "test/unit/mocks/src/class/core/appSystems",
             "BFW\\Memcache\\test\\unit\\": "test/unit/src/class/memcache",
             "BFW\\Helpers\\Test\\Mock\\": "test/unit/mocks/src/helpers"
         }

@@ -21,7 +21,7 @@ require_once($vendorDir.'/autoload.php');
 
 //Initialise BFW application
 $app = \BFW\Application::getInstance();
-$app->initSystem([
+$app->initSystems([
     'rootDir'   => $rootDir,
     'vendorDir' => $vendorDir
 ]);

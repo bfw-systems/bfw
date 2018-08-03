@@ -79,7 +79,7 @@ if (
 }
 
 $app = \BFW\Install\Application::getInstance();
-$app->initSystem([
+$app->initSystems([
     'rootDir'    => $bfwPath,
     'vendorDir'  => $vendorPath,
     'runSession' => false
@@ -117,7 +117,7 @@ foreach ($listModulesFound as $moduleFindPath) {
     
     if ($specificModule === '' || $specificModule === $module->getName()) {
         $module->install($reinstall);
-        $app->addModuleInstall($module);
+        $app->getModuleInstall()->addToList($module);
     }
 }
 
