@@ -32,7 +32,10 @@
     },
     "suggest": {
         "ext-memcached": "*",
+        "bulton-fr/bfw-api": "@stable",
         "bulton-fr/bfw-controller": "@stable",
+        "bulton-fr/bfw-fastroute": "@stable",
+        "bulton-fr/bfw-fenom": "@stable",
         "bulton-fr/bfw-sql": "@stable"
     },
     "minimum-stability": "stable",
