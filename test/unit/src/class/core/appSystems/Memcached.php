@@ -19,7 +19,6 @@ class Memcached extends atoum
     {
         $this->mockGenerator
             ->makeVisible('loadMemcached')
-            ->makeVisible('obtainMemcachedClassName')
         ;
         
         $this->mock = new \mock\BFW\Core\AppSystems\Memcached;
@@ -73,7 +72,6 @@ class Memcached extends atoum
         $this->assert('test Core\AppSystems\Memcached::loadMemcached - prepare')
             ->given($config = \BFW\Application::getInstance()->getConfig())
             ->given($memcacheConfig = $config->getConfigByFilename('memcached.php'))
-            ->if($memcacheConfig['memcached']['class'] = '\mock\BFW\Memcache\Memcached')
             ->and($config->setConfigForFilename('memcached.php', $memcacheConfig))
         ;
         
@@ -93,56 +91,11 @@ class Memcached extends atoum
             ->variable($this->mock->loadMemcached())
                 ->isNull()
             ->object($this->mock->getMemcached())
-                ->isInstanceOf('\BFW\Memcache\Memcached')
+                ->isInstanceOf('\BFW\Memcached')
             ->object($this->mock->__invoke())
                 ->isIdenticalTo($this->mock->getMemcached())
-            ->mock($this->mock->getMemcached())
-                ->call('connectToServers')
-                    ->once()
-        ;
-        
-        $this->assert('test Core\AppSystems\Memcached::loadMemcached with memcached enabled but not interface')
-            ->if($memcacheConfig['memcached']['enabled'] = true)
-            ->if($memcacheConfig['memcached']['class'] = '\stdClass')
-            ->and($config->setConfigForFilename('memcached.php', $memcacheConfig))
-            ->then
-            ->exception(function() {
-                $this->mock->loadMemcached();
-            })
-                ->hasCode(\BFW\Core\AppSystems\Memcached::ERR_MEMCACHED_NOT_IMPLEMENT_INTERFACE)
-        ;
-    }
-    
-    public function testObtainMemcachedClassName()
-    {
-        $this->assert('test Core\AppSystems\Memcached::obtainMemcachedClassName - prepare')
-            ->given($config = \BFW\Application::getInstance()->getConfig())
-            ->given($memcacheConfig = $config->getConfigByFilename('memcached.php'))
-        ;
-        
-        $this->assert('test Core\AppSystems\Memcached::obtainMemcachedClassName without class')
-            ->if($memcacheConfig['memcached']['class'] = '')
-            ->then
-            ->exception(function() use ($memcacheConfig) {
-                $this->mock->obtainMemcachedClassName($memcacheConfig['memcached']);
-            })
-                ->hasCode(\BFW\Core\AppSystems\Memcached::ERR_MEMCACHED_NOT_CLASS_DEFINED)
-        ;
-        
-        $this->assert('test Core\AppSystems\Memcached::obtainMemcachedClassName with unknown class')
-            ->if($memcacheConfig['memcached']['class'] = 'foo')
-            ->then
-            ->exception(function() use ($memcacheConfig) {
-                $this->mock->obtainMemcachedClassName($memcacheConfig['memcached']);
-            })
-                ->hasCode(\BFW\Core\AppSystems\Memcached::ERR_MEMCACHED_CLASS_NOT_FOUND)
-        ;
-        
-        $this->assert('test Core\AppSystems\Memcached::obtainMemcachedClassName with unknown class')
-            ->if($memcacheConfig['memcached']['class'] = '\mock\BFW\Memcache\Memcached')
-            ->then
-            ->string($this->mock->obtainMemcachedClassName($memcacheConfig['memcached']))
-                ->isEqualTo('\mock\BFW\Memcache\Memcached')
+            ->array($this->mock->getMemcached()->getServerList())
+                ->isNotEmpty()
         ;
     }
 }

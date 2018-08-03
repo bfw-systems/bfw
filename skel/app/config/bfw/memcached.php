@@ -18,15 +18,6 @@ return [
         'enabled'      => false,
         
         /**
-         * @var string class : Class to use for connect to server
-         * you can use other class than BFW
-         * BFW class :
-         * * Memcached : \BFW\Memcache\Memcached
-         * * Memcache : \BFW\Memcache\Memcache
-         */
-        'class'        => '\BFW\Memcache\Memcached',
-        
-        /**
          * @var string|null persistantId : Unique ID for the instance.
          * To create an instance that persists between requests
          * 
