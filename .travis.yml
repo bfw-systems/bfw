@@ -17,7 +17,6 @@ services:
 
 before_install:
   - composer config -g github-oauth.github.com $GH_TOKEN
-  - if [ $(phpenv version-name) = "5.6" ]; then yes | pecl install memcache; fi
   - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 # execute any number of scripts before the test run, custom env's are available as variables
@@ -25,7 +24,6 @@ before_script:
 #   - wget http://downloads.atoum.org/nightly/mageekguy.atoum.phar;
   - composer install
   # Ensure the memcache extension is available
-  - if [ $(phpenv version-name) = "5.6" ]; then composer show --platform ext-memcache; fi
   - composer show --platform ext-memcached
   - chmod +x ./test/bin/installFwk.php
   - chmod +x ./test/bin/installModule.php
