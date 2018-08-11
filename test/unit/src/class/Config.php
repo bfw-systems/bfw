@@ -164,6 +164,7 @@ class Config extends atoum
                 if ($path === CONFIG_DIR.'test') {
                     return [
                         '.', '..',
+                        'manifest.json',
                         'test.php', 'test.json',
                         'test_link_file', 'test_link_dir',
                         'test_dir'

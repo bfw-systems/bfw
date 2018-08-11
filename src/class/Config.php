@@ -168,7 +168,10 @@ class Config
         }
 
         //Remove some value in list of file
-        $listFiles = array_diff(scandir($dirPath), ['.', '..']);
+        $listFiles = array_diff(
+            scandir($dirPath),
+            ['.', '..', 'manifest.json']
+        );
 
         foreach ($listFiles as $file) {
             $fileKey  = $pathIntoFirstDir.$file;
