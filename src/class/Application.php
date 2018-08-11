@@ -227,9 +227,7 @@ class Application
         if ($coreSystem->toRun() === true) {
             $this->runTasks->addToRunSteps(
                 $name,
-                (object) [
-                    'callback' => [$coreSystem, 'run']
-                ]
+                \BFW\RunTasks::generateStepItem(null, [$coreSystem, 'run'])
             );
         }
     }

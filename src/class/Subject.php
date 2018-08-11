@@ -174,10 +174,15 @@ class Subject implements SplSubject
      */
     public function addNotification($action, $context = null)
     {
-        $this->notifyHeap[] = (object) [
-            'action'  => $action,
-            'context' => $context
-        ];
+        $this->notifyHeap[] = new class($action, $context) {
+            public $action;
+            public $context;
+            
+            public function __construct($action, $context) {
+                $this->action  = $action;
+                $this->context = $context;
+            }
+        };
         
         if (count($this->notifyHeap) === 1) {
             $this->readNotifyHeap();

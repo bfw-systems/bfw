@@ -45,9 +45,17 @@ class ObserverArray implements \SplObserver
     {
         $this->actionReceived[] = $subject->getAction();
         
-        $this->updateReceived[] = (object) [
-            'action'  => $subject->getAction(),
-            'context' => $subject->getContext()
-        ];
+        $this->updateReceived[] = new class(
+            $subject->getAction(),
+            $subject->getContext()
+        ) {
+            public $action;
+            public $context;
+            
+            public function __construct($action, $context) {
+                $this->action  = $action;
+                $this->context = $context;
+            }
+        };
     }
 }

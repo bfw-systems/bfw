@@ -39,12 +39,12 @@ class CtrlRouterLink extends AbstractSystem
     public function init()
     {
         //Others properties can be dynamically added by modules
-        $this->ctrlRouterInfos = (object) [
-            'isFound' => false,
-            'forWho'  => null,
-            'target'  => null,
-            'datas'   => null
-        ];
+        $this->ctrlRouterInfos = new class {
+            public $isFound = false;
+            public $forWho = null;
+            public $target = null;
+            public $datas = null;
+        };
         
         $ctrlRouterTask = new \BFW\RunTasks(
             $this->obtainCtrlRouterLinkTasks(),
@@ -68,19 +68,20 @@ class CtrlRouterLink extends AbstractSystem
     protected function obtainCtrlRouterLinkTasks()
     {
         return [
-            'searchRoute'     => (object) [
-                'context' => $this->ctrlRouterInfos
-            ],
-            'checkRouteFound' => (object) [
-                'callback' => function() {
+            'searchRoute'     => \BFW\RunTasks::generateStepItem(
+                $this->ctrlRouterInfos
+            ),
+            'checkRouteFound' => \BFW\RunTasks::generateStepItem(
+                null,
+                function() {
                     if ($this->ctrlRouterInfos->isFound === false) {
                         http_response_code(404);
                     }
                 }
-            ],
-            'execRoute'       => (object) [
-                'context' => $this->ctrlRouterInfos
-            ]
+            ),
+            'execRoute'       => \BFW\RunTasks::generateStepItem(
+                $this->ctrlRouterInfos
+            )
         ];
     }
     

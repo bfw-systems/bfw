@@ -9,16 +9,16 @@
 
 use Monolog\Logger;
 
-return (object) [
+return [
     'handlers' => [
         //1.x Monolog always send to stdout if no handler is define :/
-        (object) [
+        [
             'name' => '\Monolog\Handler\TestHandler',
             'args' => []
         ]
         /**
          * Value example:
-        (object) [
+        [
             'name' => '\Monolog\Handler\StreamHandler',
             'args' => [
                 APP_DIR.'logs/bfw/bfw.log',

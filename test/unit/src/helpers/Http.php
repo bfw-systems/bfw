@@ -101,7 +101,7 @@ class Http extends atoum
             ->array(\BFW\Helpers\Http::obtainManyPostKeys(
                 [
                     'titre' => 'string',
-                    'content' => (object) [
+                    'content' => [
                         'type'         => 'string',
                         'htmlentities' => true
                     ]
@@ -128,7 +128,7 @@ class Http extends atoum
             ->array(\BFW\Helpers\Http::obtainManyGetKeys(
                 [
                     'titre' => 'string',
-                    'content' => (object) [
+                    'content' => [
                         'type'         => 'string',
                         'htmlentities' => true
                     ]

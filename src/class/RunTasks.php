@@ -52,12 +52,12 @@ class RunTasks extends Subject
     /**
      * Add a new run step to the list
      * 
-     * @param string    $name          The name of the new run step
-     * @param \stdClass $runStepsToAdd The run step to add
+     * @param string $name          The name of the new run step
+     * @param object $runStepsToAdd The run step to add
      * 
      * @return $this
      */
-    public function addToRunSteps($name, \stdClass $runStepsToAdd)
+    public function addToRunSteps($name, $runStepsToAdd)
     {
         $this->runSteps[(string) $name] = $runStepsToAdd;
         return $this;
@@ -100,11 +100,11 @@ class RunTasks extends Subject
         
         foreach ($this->runSteps as $actionName => $stepInfos) {
             $context = null;
-            if (property_exists($stepInfos, 'context')) {
+            if ($stepInfos->context !== null) {
                 $context = $stepInfos->context;
             }
             
-            if (!property_exists($stepInfos, 'callback')) {
+            if ($stepInfos->callback === null) {
                 $this->addNotification($prefix.'_exec_'.$actionName, $context);
                 continue;
             }
@@ -145,5 +145,19 @@ class RunTasks extends Subject
         ;
         
         $this->addNotification($action, $context);
+    }
+    
+    public static function generateStepItem($context = null, $callback = null)
+    {
+        return new class ($context, $callback) {
+            public $context;
+            public $callback;
+            
+            public function __construct($context, $callback)
+            {
+                $this->context  = $context;
+                $this->callback = $callback;
+            }
+        };
     }
 }

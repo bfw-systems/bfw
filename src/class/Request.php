@@ -286,6 +286,7 @@ class Request
             'fragment' => '',
         ];
 
+        //Keep auto-convert to object. Less complexity for merge with array.
         $this->request = (object) array_merge($request, $parseUrl);
     }
 }

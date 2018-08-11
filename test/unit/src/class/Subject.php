@@ -39,6 +39,19 @@ class Subject extends atoum
         $this->mock->attach($this->observer);
     }
     
+    protected function newNotify($action, $context)
+    {
+        return new class($action, $context) {
+            public $action;
+            public $context;
+            
+            public function __construct($action, $context) {
+                $this->action  = $action;
+                $this->context = $context;
+            }
+        };
+    }
+    
     public function testConstruct()
     {
         $this->assert('test Constructor')
@@ -113,57 +126,48 @@ class Subject extends atoum
         $this->assert('test Subject::readNotifyHeap')
             ->given($notifyList = [])
             ->given($mock = $this->mock)
-            ->if($this->calling($this->mock)->notify = function() use (&$notifyList, &$mock) {
-                $notifyList[] = (object) [
-                    'action'  => $mock->getAction(),
-                    'context' => $mock->getContext()
-                ];
+            ->given($atoum = $this)
+            ->if($this->calling($this->mock)->notify = function() use (&$notifyList, &$mock, $atoum) {
+                $notifyList[] = $atoum->newNotify(
+                    $mock->getAction(),
+                    $mock->getContext()
+                );
                 
                 if ($mock->getAction() === 'add_new_notify') {
                     $mock->addNotifyHeap('hello', 'world !');
                 }
             })
             ->and($this->mock->setNotifyHeap([
-                (object) [
-                    'action'  => 'atoum',
-                    'context' => $this
-                ],
-                (object) [
-                    'action'  => 'add_new_notify',
-                    'context' => null
-                ],
-                (object) [
-                    'action'  => 'hi',
-                    'context' => null
-                ]
+                $this->newNotify('atoum', $this),
+                $this->newNotify('add_new_notify', null),
+                $this->newNotify('hi', null)
             ]))
             ->then
             
             ->object($this->mock->readNotifyHeap())
                 ->isIdenticalTo($this->mock)
             ->array($notifyList)
-                ->size
-                    ->isEqualTo(4)
-            ->object($notifyList[0])
-                ->isEqualTo((object) [
-                    'action'  => 'atoum',
-                    'context' => $this
-                ])
-            ->object($notifyList[1])
-                ->isEqualTo((object) [
-                    'action'  => 'add_new_notify',
-                    'context' => null
-                ])
-            ->object($notifyList[2])
-                ->isEqualTo((object) [
-                    'action'  => 'hi',
-                    'context' => null
-                ])
-            ->object($notifyList[3])
-                ->isEqualTo((object) [
-                    'action'  => 'hello',
-                    'context' => 'world !'
-                ])
+                ->hasSize(4)
+                ->object($notifyList[0])
+                    ->string($notifyList[0]->action)
+                        ->isEqualTo('atoum')
+                    ->object($notifyList[0]->context)
+                        ->isIdenticalTo($this)
+                ->object($notifyList[1])
+                    ->string($notifyList[1]->action)
+                        ->isEqualTo('add_new_notify')
+                    ->variable($notifyList[1]->context)
+                        ->isNull()
+                ->object($notifyList[2])
+                    ->string($notifyList[2]->action)
+                        ->isEqualTo('hi')
+                    ->variable($notifyList[2]->context)
+                        ->isNull()
+                ->object($notifyList[3])
+                    ->string($notifyList[3]->action)
+                        ->isEqualTo('hello')
+                    ->string($notifyList[3]->context)
+                        ->isEqualTo('world !')
         ;
     }
     
@@ -182,13 +186,12 @@ class Subject extends atoum
             ->integer($nbCallToReadNotifyHeap)
                 ->isEqualTo(1)
             ->array($notifyHeap = $this->mock->getNotifyHeap())
-                ->size
-                    ->isEqualTo(1)
-            ->object($notifyHeap[0])
-                ->isEqualTo((object) [
-                    'action'  => 'atoum',
-                    'context' => null
-                ])
+                ->hasSize(1)
+                ->object($notifyHeap[0])
+                    ->string($notifyHeap[0]->action)
+                        ->isEqualTo('atoum')
+                    ->variable($notifyHeap[0]->context)
+                        ->isNull()
         ;
 
         $this->assert('test Subject::addNotification for second call')
@@ -197,18 +200,17 @@ class Subject extends atoum
             ->integer($nbCallToReadNotifyHeap)
                 ->isEqualTo(1) //Not recall
             ->array($notifyHeap = $this->mock->getNotifyHeap())
-                ->size
-                    ->isEqualTo(2)
-            ->object($notifyHeap[0])
-                ->isEqualTo((object) [
-                    'action'  => 'atoum',
-                    'context' => null
-                ])
-            ->object($notifyHeap[1])
-                ->isEqualTo((object) [
-                    'action'  => 'hello',
-                    'context' => 'world !'
-                ])
+                ->hasSize(2)
+                ->object($notifyHeap[0])
+                    ->string($notifyHeap[0]->action)
+                        ->isEqualTo('atoum')
+                    ->variable($notifyHeap[0]->context)
+                        ->isNull()
+                ->object($notifyHeap[1])
+                    ->string($notifyHeap[1]->action)
+                        ->isEqualTo('hello')
+                    ->string($notifyHeap[1]->context)
+                        ->isEqualTo('world !')
         ;
     }
 }

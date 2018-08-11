@@ -55,7 +55,7 @@ trait Application
             
             if ($filename === 'monolog.php') {
                 //1.x Monolog always send to stdout if no handler is define :/
-                $configValue->handlers[] = (object) [
+                $configValue['handlers'][] = [
                     'name' => '\Monolog\Handler\TestHandler',
                     'args' => []
                 ];

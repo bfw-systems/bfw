@@ -33,7 +33,7 @@ class Monolog extends atoum
         $this->config = new \BFW\Config('bfw');
         $this->config->setConfigForFilename(
             'monolog.php',
-            (object) [
+            [
                 'handlers' => []
             ]
         );
@@ -45,7 +45,7 @@ class Monolog extends atoum
     
     protected function obtainTestHandler()
     {
-        return (object) [
+        return [
             'name' => '\Monolog\Handler\StreamHandler',
             'args' => [
                 APP_DIR.'logs/bfw/bfw.log',
@@ -206,14 +206,14 @@ class Monolog extends atoum
     {
         $this->assert('test Monolog::checkHandlerName without name property')
             ->exception(function() {
-                $this->mock->checkHandlerName((object) []);
+                $this->mock->checkHandlerName([]);
             })
                 ->hasCode(\BFW\Monolog::ERR_HANDLER_INFOS_MISSING_NAME)
         ;
         
         $this->assert('test Monolog::checkHandlerName when is not a string')
             ->exception(function() {
-                $this->mock->checkHandlerName((object) [
+                $this->mock->checkHandlerName([
                     'name' => 123
                 ]);
             })
@@ -222,7 +222,7 @@ class Monolog extends atoum
         
         $this->assert('test Monolog::checkHandlerName when is not an existing class')
             ->exception(function() {
-                $this->mock->checkHandlerName((object) [
+                $this->mock->checkHandlerName([
                     'name' => '\unitTest'
                 ]);
             })
@@ -230,7 +230,7 @@ class Monolog extends atoum
         ;
         
         $this->assert('test Monolog::checkHandlerName when is all good')
-            ->variable($this->mock->checkHandlerName((object) [
+            ->variable($this->mock->checkHandlerName([
                 'name' => '\Monolog\Handler\StreamHandler'
             ]))
                 ->isNull()
@@ -240,36 +240,36 @@ class Monolog extends atoum
     public function testCheckHandlerArgs()
     {
         $this->assert('test Monolog::checkHandlerArgs without args property')
-            ->given($handlerInfos = (object) [])
+            ->given($handlerInfos = [])
             ->variable($this->mock->checkHandlerArgs($handlerInfos))
                 ->isNull()
-            ->boolean(property_exists($handlerInfos, 'args'))
-                ->isTrue()
-            ->array($handlerInfos->args)
+            ->array($handlerInfos)
+                ->hasKey('args')
+            ->array($handlerInfos['args'])
                 ->isEmpty()
         ;
         
         $this->assert('test Monolog::checkHandlerArgs with args property is not an array')
-            ->given($handlerInfos = (object) [
+            ->given($handlerInfos = [
                 'args' => 123
             ])
             ->variable($this->mock->checkHandlerArgs($handlerInfos))
                 ->isNull()
-            ->boolean(property_exists($handlerInfos, 'args'))
-                ->isTrue()
-            ->array($handlerInfos->args)
+            ->array($handlerInfos)
+                ->hasKey('args')
+            ->array($handlerInfos['args'])
                 ->isEqualTo([123])
         ;
         
         $this->assert('test Monolog::checkHandlerArgs with args property is an array')
-            ->given($handlerInfos = (object) [
+            ->given($handlerInfos = [
                 'args' => [APP_DIR.'logs/bfw/bfw.log']
             ])
             ->variable($this->mock->checkHandlerArgs($handlerInfos))
                 ->isNull()
-            ->boolean(property_exists($handlerInfos, 'args'))
-                ->isTrue()
-            ->array($handlerInfos->args)
+            ->array($handlerInfos)
+                ->hasKey('args')
+            ->array($handlerInfos['args'])
                 ->isEqualTo([APP_DIR.'logs/bfw/bfw.log'])
         ;
     }

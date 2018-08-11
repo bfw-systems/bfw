@@ -14,6 +14,7 @@ class Form extends atoum
     use \BFW\Test\Helpers\Application;
     
     protected $mock;
+    protected $saveInfos;
     
     public function beforeTestMethod($testMethod)
     {
@@ -28,6 +29,27 @@ class Form extends atoum
             ->makeVisible('obtainTokenFromSession')
             ->generate('BFW\Form')
         ;
+        
+        $this->saveInfos = new class() {
+            protected $token;
+            protected $date;
+            
+            public function defineInfos($token, $date = null)
+            {
+                if ($date === null) {
+                    $date = new \DateTime;
+                }
+                
+                $this->token = $token;
+                $this->date  = $date;
+                
+                return $this;
+            }
+            
+            public function __get($name) {
+                return $this->{$name};
+            }
+        };
         
         if ($testMethod !== 'testConstruct') {
             $this->mock = new \mock\BFW\Form('atoum');
@@ -60,10 +82,7 @@ class Form extends atoum
     public function testSaveToken()
     {
         $this->assert('test Form::saveToken')
-            ->given($saveInfos = (object) [
-                'token' => '123',
-                'date'  => new \DateTime
-            ])
+            ->given($saveInfos = $this->saveInfos->defineInfos('123'))
             ->if($this->calling($this->mock)->saveTokenInSession = true)
             ->then
             ->variable($this->invoke($this->mock)->saveToken($saveInfos))
@@ -79,10 +98,7 @@ class Form extends atoum
         global $_SESSION;
         
         $this->assert('test Form::saveTokenInSession')
-            ->given($saveInfos = (object) [
-                'token' => '123',
-                'date'  => new \DateTime
-            ])
+            ->given($saveInfos = $this->saveInfos->defineInfos('123'))
             ->then
             ->variable($this->invoke($this->mock)->saveTokenInSession($saveInfos))
                 ->isNull()
@@ -126,10 +142,7 @@ class Form extends atoum
         ;
         
         $this->assert('test Form::obtainTokenFromSession with a token')
-            ->given($tokenInfos = (object) [
-                'token' => '123',
-                'date'  => new \DateTime
-            ])
+            ->given($tokenInfos = $this->saveInfos->defineInfos('123'))
             ->if($_SESSION['formsTokens']['atoum'] = $tokenInfos)
             ->object($this->invoke($this->mock)->obtainTokenFromSession())
                 ->isIdenticalTo($tokenInfos)
@@ -147,7 +160,8 @@ class Form extends atoum
             ->string($token = $this->mock->createToken())
                 ->isNotEmpty()
             ->object($saveInfos)
-                ->isInstanceOf('\stdClass')
+                ->string(get_class($saveInfos))
+                    ->contains('class@anonymous')
             ->boolean(property_exists($saveInfos, 'token'))
                 ->isTrue()
             ->boolean(property_exists($saveInfos, 'date'))
@@ -165,10 +179,7 @@ class Form extends atoum
         
         $this->assert('test Form::checkToken with a incorrect token')
             ->given($formId = $this->mock->getFormId())
-            ->given($savedToken = (object) [
-                'token' => '123',
-                'date'  => new \DateTime
-            ])
+            ->given($savedToken = $this->saveInfos->defineInfos('123'))
             ->then
             ->if($this->calling($this->mock)->obtainToken = $savedToken)
             ->and($_SESSION['formsTokens'][$formId] = $savedToken)
@@ -182,10 +193,7 @@ class Form extends atoum
         
         $this->assert('test Form::checkToken with an expired token')
             ->given($formId = $this->mock->getFormId())
-            ->given($savedToken = (object) [
-                'token' => '123',
-                'date'  => new \DateTime
-            ])
+            ->given($savedToken = $this->saveInfos->defineInfos('123'))
             ->then
             ->if($savedToken->date->modify('-20 minutes'))
             ->and($this->calling($this->mock)->obtainToken = $savedToken)
@@ -200,10 +208,7 @@ class Form extends atoum
         
         $this->assert('test Form::checkToken with a not expired token')
             ->given($formId = $this->mock->getFormId())
-            ->given($savedToken = (object) [
-                'token' => '123',
-                'date'  => new \DateTime
-            ])
+            ->given($savedToken = $this->saveInfos->defineInfos('123'))
             ->then
             ->if($savedToken->date->modify('-5 minutes'))
             ->and($this->calling($this->mock)->obtainToken = $savedToken)
@@ -229,10 +234,7 @@ class Form extends atoum
         ;
         
         $this->assert('test Form::hasToken with an existing token')
-            ->if($this->calling($this->mock)->obtainToken = (object) [
-                'token' => '123',
-                'date'  => new \DateTime
-            ])
+            ->if($this->calling($this->mock)->obtainToken = $this->saveInfos->defineInfos('123'))
             ->then
             ->boolean($this->mock->hasToken())
                 ->isTrue()

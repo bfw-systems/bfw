@@ -69,9 +69,14 @@ class Subject extends \BFW\Subject
      */
     public function addNotifyHeap($action, $context)
     {
-        $this->notifyHeap[] = (object) [
-            'action'  => $action,
-            'context' => $context
-        ];
+        $this->notifyHeap[] = new class($action, $context) {
+            public $action;
+            public $context;
+            
+            public function __construct($action, $context) {
+                $this->action  = $action;
+                $this->context = $context;
+            }
+        };
     }
 }

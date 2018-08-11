@@ -289,15 +289,11 @@ class Dates extends atoum
     public function testObtainNewKeywordsForModify()
     {
         $this->assert('test Dates::obtainNewKeywordsForModify without keyword')
-            ->object($obj = $this->invoke($this->mock)->obtainNewKeywordsForModify())
-                ->isInstanceOf('\stdClass')
-            ->boolean(property_exists($obj, 'search'))
-                ->isTrue()
-            ->boolean(property_exists($obj, 'replace'))
-                ->isTrue()
-            ->array($obj->search)
+            ->array($obj = $this->invoke($this->mock)->obtainNewKeywordsForModify())
+                ->hasKeys(['search', 'replace'])
+            ->array($obj['search'])
                 ->isEmpty()
-            ->array($obj->replace)
+            ->array($obj['replace'])
                 ->isEmpty()
         ;
         
@@ -311,15 +307,11 @@ class Dates extends atoum
             ]))
             ->then
             
-            ->object($obj = $this->invoke($this->mock)->obtainNewKeywordsForModify())
-                ->isInstanceOf('\stdClass')
-            ->boolean(property_exists($obj, 'search'))
-                ->isTrue()
-            ->boolean(property_exists($obj, 'replace'))
-                ->isTrue()
-            ->array($obj->search)
+            ->array($obj = $this->invoke($this->mock)->obtainNewKeywordsForModify())
+                ->hasKeys(['search', 'replace'])
+            ->array($obj['search'])
                 ->isEqualTo(['an', 'mois', 'jour', 'heure', 'seconde'])
-            ->array($obj->replace)
+            ->array($obj['replace'])
                 ->isEqualTo(['year', 'month', 'day', 'hour', 'second'])
         ;
     }
@@ -327,7 +319,7 @@ class Dates extends atoum
     public function testModifyWithOthersKeywords()
     {
         $this->assert('test Dates::modifyWithOthersKeywords with bad pattern')
-            ->given($this->calling($this->mock)->obtainNewKeywordsForModify = (object) [
+            ->given($this->calling($this->mock)->obtainNewKeywordsForModify = [
                 'search'  => [],
                 'replace' => []
             ])
@@ -338,7 +330,7 @@ class Dates extends atoum
         ;
             
         $this->assert('test Dates::modifyWithOthersKeywords with unknown keyword')
-            ->given($this->calling($this->mock)->obtainNewKeywordsForModify = (object) [
+            ->given($this->calling($this->mock)->obtainNewKeywordsForModify = [
                 'search'  => ['heure'],
                 'replace' => ['hour']
             ])
@@ -349,7 +341,7 @@ class Dates extends atoum
         ;
             
         $this->assert('test Dates::modifyWithOthersKeywords with correct keyword')
-            ->given($this->calling($this->mock)->obtainNewKeywordsForModify = (object) [
+            ->given($this->calling($this->mock)->obtainNewKeywordsForModify = [
                 'search'  => ['heure'],
                 'replace' => ['hour']
             ])
@@ -627,10 +619,10 @@ class Dates extends atoum
     public function testHumanDateNow()
     {
         $this->assert('test Dates::humanDateNow')
-            ->given($parsedTxt = (object) [
-                'date' => '',
-                'time' => ''
-            ])
+            ->given($parsedTxt = new class {
+                public $date = '';
+                public $time = '';
+            })
             ->then
             ->variable($this->invoke($this->mock)->humanDateNow($parsedTxt))
                 ->isNull()
@@ -644,10 +636,10 @@ class Dates extends atoum
     public function testHumanDateToday()
     {
         $this->assert('test Dates::humanDateToday - 5 seconds before')
-            ->given($parsedTxt = (object) [
-                'date' => '',
-                'time' => ''
-            ])
+            ->given($parsedTxt = new class {
+                public $date = '';
+                public $time = '';
+            })
             ->given($now = new \DateTime)
             ->given($toDiff = new \DateTime)
             ->then
@@ -737,10 +729,10 @@ class Dates extends atoum
     public function testHumanDateYesterday()
     {
         $this->assert('test Dates::humanDateYesterday')
-            ->given($parsedTxt = (object) [
-                'date' => '',
-                'time' => ''
-            ])
+            ->given($parsedTxt = new class {
+                public $date = '';
+                public $time = '';
+            })
             ->given($i18n = \BFW\Dates::getHumanReadableI18n())
             ->then
             ->variable($this->invoke($this->mock)->humanDateYesterday($parsedTxt))
@@ -755,10 +747,10 @@ class Dates extends atoum
     public function testHumanDateTomorrow()
     {
         $this->assert('test Dates::humanDateTomorrow')
-            ->given($parsedTxt = (object) [
-                'date' => '',
-                'time' => ''
-            ])
+            ->given($parsedTxt = new class {
+                public $date = '';
+                public $time = '';
+            })
             ->given($i18n = \BFW\Dates::getHumanReadableI18n())
             ->then
             ->variable($this->invoke($this->mock)->humanDateTomorrow($parsedTxt))
@@ -774,10 +766,10 @@ class Dates extends atoum
     {
         $this->assert('test Dates::humanDateOther - same year')
             ->given($current = new \mock\BFW\Dates)
-            ->given($parsedTxt = (object) [
-                'date' => '',
-                'time' => ''
-            ])
+            ->given($parsedTxt = new class {
+                public $date = '';
+                public $time = '';
+            })
             ->given($i18n = \BFW\Dates::getHumanReadableI18n())
             ->then
             ->variable($this->invoke($this->mock)->humanDateOther($parsedTxt, $current))
@@ -790,10 +782,10 @@ class Dates extends atoum
         
         $this->assert('test Dates::humanDateOther - different year')
             ->given($current = new \mock\BFW\Dates)
-            ->given($parsedTxt = (object) [
-                'date' => '',
-                'time' => ''
-            ])
+            ->given($parsedTxt = new class {
+                public $date = '';
+                public $time = '';
+            })
             ->given($i18n = \BFW\Dates::getHumanReadableI18n())
             ->if($this->mock->modify('-1 year'))
             ->then

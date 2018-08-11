@@ -51,9 +51,7 @@ class RunTasks extends atoum
         ;
         
         $this->assert('test RunTasks::setRunSteps')
-            ->given($objAtoumStep = (object) [
-                'context' => $this
-            ])
+            ->given($objAtoumStep = \BFW\RunTasks::generateStepItem($this))
             ->object($this->mock->setRunSteps([
                 'atoum' => $objAtoumStep
             ]))
@@ -65,11 +63,12 @@ class RunTasks extends atoum
         ;
         
         $this->assert('test RunTasks::addRunSteps')
-            ->given($objHelloStep = (object) [
-                'callback' => function() {
+            ->given($objHelloStep = \BFW\RunTasks::generateStepItem(
+                null,
+                function() {
                     echo 'hello world !';
                 }
-            ])
+            ))
             ->object($this->mock->addToRunSteps('hello', $objHelloStep))
                 ->isIdenticalTo($this->mock)
             ->array($this->mock->getRunSteps())
@@ -100,14 +99,13 @@ class RunTasks extends atoum
         $this->assert('test RunTasks::run - prepare')
             ->given($helloOutput = '')
             ->given($this->mock->setRunSteps([
-                'atoum' => (object) [
-                    'context' => $this
-                ],
-                'hello' => (object) [
-                    'callback' => function() use(&$helloOutput) {
+                'atoum' => \BFW\RunTasks::generateStepItem($this),
+                'hello' => \BFW\RunTasks::generateStepItem(
+                    null,
+                    function() use(&$helloOutput) {
                         $helloOutput = 'hello world !';
                     }
-                ]
+                )
             ]))
         ;
         
@@ -115,29 +113,33 @@ class RunTasks extends atoum
             ->variable($this->mock->run())
             ->string($helloOutput)
                 ->isEqualTo('hello world !')
-            ->array($this->observer->getUpdateReceived())
-                ->isEqualTo([
-                    (object) [
-                        'action'  => 'unitTest_start_run_tasks',
-                        'context' => null
-                    ],
-                    (object) [
-                        'action'  => 'unitTest_exec_atoum',
-                        'context' => $this
-                    ],
-                    (object) [
-                        'action'  => 'unitTest_run_hello',
-                        'context' => null
-                    ],
-                    (object) [
-                        'action'  => 'unitTest_done_hello',
-                        'context' => null
-                    ],
-                    (object) [
-                        'action'  => 'unitTest_end_run_tasks',
-                        'context' => null
-                    ]
-                ])
+            ->array($received = $this->observer->getUpdateReceived())
+                ->hasSize(5)
+                ->object($received[0])
+                    ->string($received[0]->action)
+                        ->isEqualTo('unitTest_start_run_tasks')
+                    ->variable($received[0]->context)
+                        ->isNull()
+                ->object($received[1])
+                    ->string($received[1]->action)
+                        ->isEqualTo('unitTest_exec_atoum')
+                    ->object($received[1]->context)
+                        ->isIdenticalTo($this)
+                ->object($received[2])
+                    ->string($received[2]->action)
+                        ->isEqualTo('unitTest_run_hello')
+                    ->variable($received[2]->context)
+                        ->isNull()
+                ->object($received[3])
+                    ->string($received[3]->action)
+                        ->isEqualTo('unitTest_done_hello')
+                    ->variable($received[3]->context)
+                        ->isNull()
+                ->object($received[4])
+                    ->string($received[4]->action)
+                        ->isEqualTo('unitTest_end_run_tasks')
+                    ->variable($received[4]->context)
+                        ->isNull()
         ;
     }
     
@@ -146,29 +148,30 @@ class RunTasks extends atoum
         $this->assert('test RunTasks::sendNotify without context')
             ->variable($this->mock->sendNotify('hello_from_unit_test'))
                 ->isNull()
-            ->array($this->observer->getUpdateReceived())
-                ->isEqualTo([
-                    (object) [
-                        'action'  => 'hello_from_unit_test',
-                        'context' => null
-                    ]
-                ])
+            ->array($received = $this->observer->getUpdateReceived())
+                ->hasSize(1)
+                ->object($received[0])
+                    ->string($received[0]->action)
+                        ->isEqualTo('hello_from_unit_test')
+                    ->variable($received[0]->context)
+                        ->isNull()
         ;
         
         $this->assert('test RunTasks::sendNotify with context')
             ->variable($this->mock->sendNotify('hi_from_atoum', $this))
                 ->isNull()
-            ->array($this->observer->getUpdateReceived())
-                ->isEqualTo([
-                    (object) [
-                        'action'  => 'hello_from_unit_test',
-                        'context' => null
-                    ],
-                    (object) [
-                        'action'  => 'hi_from_atoum',
-                        'context' => $this
-                    ]
-                ])
+            ->array($received = $this->observer->getUpdateReceived())
+                ->hasSize(2)
+                ->object($received[0])
+                    ->string($received[0]->action)
+                        ->isEqualTo('hello_from_unit_test')
+                    ->variable($received[0]->context)
+                        ->isNull()
+                ->object($received[1])
+                    ->string($received[1]->action)
+                        ->isEqualTo('hi_from_atoum')
+                    ->object($received[1]->context)
+                        ->isIdenticalTo($this)
         ;
     }
 }

@@ -130,15 +130,15 @@ class Monolog
     ) {
         $handlers = $this->config->getValue($configKeyName, $configFileName);
         
-        if (is_object($handlers)) {
-            $handlers = [$handlers];
-        }
-        
         if (!is_array($handlers)) {
             throw new Exception(
                 'Handlers list into monolog config file should be an array.',
                 self::ERR_HANDLERS_LIST_FORMAT
             );
+        }
+        
+        if (array_key_exists('name', $handlers)) {
+            $handlers = [$handlers];
         }
         
         foreach ($handlers as $handlerInfos) {
@@ -159,8 +159,8 @@ class Monolog
     {
         $this->checkHandlerInfos($handlerInfos);
         
-        $handlerClassName = $handlerInfos->name;
-        $handler          = new $handlerClassName(...$handlerInfos->args);
+        $handlerClassName = $handlerInfos['name'];
+        $handler          = new $handlerClassName(...$handlerInfos['args']);
         
         $this->handlers[] = $handler;
         $this->logger->pushHandler($handler);
@@ -169,7 +169,7 @@ class Monolog
     /**
      * Check the handler infos
      * 
-     * @param \stdObject $handlerInfos Handler infos (name and args)
+     * @param array $handlerInfos Handler infos (name and args)
      * 
      * @throws \Exception
      * 
@@ -177,7 +177,7 @@ class Monolog
      */
     protected function checkHandlerInfos($handlerInfos)
     {
-        if (!is_object($handlerInfos)) {
+        if (!is_array($handlerInfos)) {
             throw new Exception(
                 'the handler infos should be an object.',
                 self::ERR_HANDLER_INFOS_FORMAT
@@ -191,7 +191,7 @@ class Monolog
     /**
      * Check the handler name
      * 
-     * @param \stdObject $handlerInfos Handler infos (name and args)
+     * @param array $handlerInfos Handler infos (name and args)
      * 
      * @throws \Exception
      * 
@@ -199,23 +199,23 @@ class Monolog
      */
     protected function checkHandlerName($handlerInfos)
     {
-        if (!property_exists($handlerInfos, 'name')) {
+        if (!array_key_exists('name', $handlerInfos)) {
             throw new Exception(
                 'The handler infos should have the property name',
                 self::ERR_HANDLER_INFOS_MISSING_NAME
             );
         }
         
-        if (!is_string($handlerInfos->name)) {
+        if (!is_string($handlerInfos['name'])) {
             throw new Exception(
                 'The handler name should be a string.',
                 self::ERR_HANDLER_NAME_NOT_A_STRING
             );
         }
         
-        if (!class_exists($handlerInfos->name)) {
+        if (!class_exists($handlerInfos['name'])) {
             throw new Exception(
-                'The class '.$handlerInfos->name.' has not been found.',
+                'The class '.$handlerInfos['name'].' has not been found.',
                 self::ERR_HANDLER_CLASS_NOT_FOUND
             );
         }
@@ -224,18 +224,18 @@ class Monolog
     /**
      * Check the handler arguments list
      * 
-     * @param \stdObject $handlerInfos Handler infos (name and args)
+     * @param array $handlerInfos Handler infos (name and args)
      * 
      * @return void
      */
-    protected function checkHandlerArgs($handlerInfos)
+    protected function checkHandlerArgs(&$handlerInfos)
     {
-        if (!property_exists($handlerInfos, 'args')) {
-            $handlerInfos->args = [];
+        if (!array_key_exists('args', $handlerInfos)) {
+            $handlerInfos['args'] = [];
         }
         
-        if (!is_array($handlerInfos->args)) {
-            $handlerInfos->args = [$handlerInfos->args];
+        if (!is_array($handlerInfos['args'])) {
+            $handlerInfos['args'] = [$handlerInfos['args']];
         }
     }
 }

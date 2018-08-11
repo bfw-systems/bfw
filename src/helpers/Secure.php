@@ -201,8 +201,8 @@ class Secure
         $result       = [];
         
         foreach ($keysList as $keyName => $infos) {
-            if (!is_object($infos)) {
-                $infos = (object) [
+            if (!is_array($infos)) {
+                $infos = [
                     'type'         => $infos,
                     'htmlentities' => false
                 ];
@@ -212,8 +212,8 @@ class Secure
                 $result[$keyName] = $currentClass::getSecurisedKeyInArray(
                     $arraySrc,
                     $keyName,
-                    $infos->type,
-                    $infos->htmlentities
+                    $infos['type'],
+                    $infos['htmlentities']
                 );
             } catch (Exception $ex) {
                 if ($throwOnError === true) {

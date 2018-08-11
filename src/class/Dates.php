@@ -271,7 +271,7 @@ class Dates extends DateTime
             $replace[] = $replaceKey;
         }
         
-        return (object) [
+        return [
             'search'  => $search,
             'replace' => $replace
         ];
@@ -298,8 +298,8 @@ class Dates extends DateTime
         }
         
         $keyword = str_replace(
-            $keywords->search,
-            $keywords->replace,
+            $keywords['search'],
+            $keywords['replace'],
             strtolower($match[3])
         );
         
@@ -409,10 +409,10 @@ class Dates extends DateTime
         $current = new Dates;
         $diff    = parent::diff($current);
         
-        $parsedTxt = (object) [
-            'date' => '',
-            'time' => ''
-        ];
+        $parsedTxt = new class {
+            public $date = '';
+            public $time = '';
+        };
 
         if ($current == $this) {
             //Now

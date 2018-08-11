@@ -194,7 +194,7 @@ class Secure extends atoum
                 $testedArray,
                 [
                     'titre'   => 'string',
-                    'content' => (object) [
+                    'content' => [
                         'type'         => 'string',
                         'htmlentities' => true
                     ]

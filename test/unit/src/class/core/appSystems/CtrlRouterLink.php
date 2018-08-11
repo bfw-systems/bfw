@@ -50,7 +50,8 @@ class CtrlRouterLink extends atoum
             ->variable($this->mock->init())
                 ->isNull()
             ->object($this->mock->getCtrlRouterInfos())
-                ->isInstanceOf('\stdClass')
+                ->string(get_class($this->mock->getCtrlRouterInfos()))
+                    ->contains('class@anonymous')
             ->boolean($this->mock->isInit())
                 ->isTrue()
             ->object($tasks = $subjectList->getSubjectByName('ctrlRouterLink'))
@@ -126,9 +127,9 @@ class CtrlRouterLink extends atoum
         ;
     }
     
-    public function testRunCliFileWhenNotCli()
+    public function testRunCtrlRouterLinkWhenNotCli()
     {
-        $this->assert('test Core\AppSystems\Cli::runCliFile')
+        $this->assert('test Core\AppSystems\CtrlRouterLink::runCtrlRouterLink')
             ->if($this->constant->PHP_SAPI = 'www')
             ->then
             

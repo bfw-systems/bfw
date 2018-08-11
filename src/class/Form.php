@@ -133,10 +133,20 @@ class Form
      */
     public function createToken()
     {
-        $saveInfos = (object) [
-            'token' => uniqid(rand(), true),
-            'date'  => new DateTime
-        ];
+        $saveInfos = new class(uniqid(rand(), true)) {
+            protected $token;
+            protected $date;
+            
+            public function __construct($token)
+            {
+                $this->token = $token;
+                $this->date  = new DateTime;
+            }
+            
+            public function __get($name) {
+                return $this->{$name};
+            }
+        };
 
         $this->saveToken($saveInfos);
         return $saveInfos->token;

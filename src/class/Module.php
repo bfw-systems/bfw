@@ -60,10 +60,10 @@ class Module
         ;
         
         $this->pathName = $pathName;
-        $this->status   = (object) [
-            'load' => false,
-            'run'  => false
-        ];
+        $this->status   = new class {
+            public $load = false;
+            public $run  = false;
+        };
     }
     
     /**
