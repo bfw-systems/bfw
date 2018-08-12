@@ -65,16 +65,7 @@ class Options extends \BFW\Options
      */
     protected function searchVendorDir(): string
     {
-        if (PHP_VERSION_ID >= 70000) {
-            return dirname(__FILE__, 4).'/';
-        }
-
-        $rootDir = __FILE__;
-        for ($i = 1; $i <= 4; $i++) {
-            $rootDir = dirname($rootDir);
-        }
-
-        return $rootDir.'/';
+        return dirname(__FILE__, 4).'/';
     }
 
     /**

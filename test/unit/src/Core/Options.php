@@ -185,38 +185,7 @@ class Options extends atoum
         ;
     }
     
-    /**
-     * @php >= 7.0
-     */
-    public function testSearchVendorDirPHP7()
-    {
-        $this->assert('test Core\Options::searchVendorDir - prepare');
-        
-        $composerLoader = require(__DIR__.'/../../../../vendor/autoload.php');
-        $classPath      = realpath($composerLoader->findFile('BFW\Core\Options'));
-        $classDirPath   = str_replace('/Options.php', '', $classPath);
-        
-        $explodeClassDirPath = explode('/', $classDirPath);
-        $countExplodeClassDirPath = count($explodeClassDirPath);
-        
-        unset(
-            $explodeClassDirPath[$countExplodeClassDirPath],
-            $explodeClassDirPath[$countExplodeClassDirPath-1],
-            $explodeClassDirPath[$countExplodeClassDirPath-2],
-            $explodeClassDirPath[$countExplodeClassDirPath-3]
-        );
-        $expectedVendorDir = implode('/', $explodeClassDirPath).'/';
-        
-        $this->assert('test Core\Options::searchVendorDir')
-            ->string($this->invoke($this->mock)->searchVendorDir())
-                ->isEqualTo($expectedVendorDir)
-        ;
-    }
-    
-    /**
-     * @php < 7.0
-     */
-    public function testSearchVendorDirPHP5()
+    public function testSearchVendorDir()
     {
         $this->assert('test Core\Options::searchVendorDir - prepare');
         
