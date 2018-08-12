@@ -1,14 +1,14 @@
 <?php
 
-namespace BFW\Test\Helpers;
+namespace BFW\Install\Test\Helpers;
 
 //To be included by module who use it
-require_once(__DIR__.'/../mocks/src/Application.php');
+require_once(__DIR__.'/../../mocks/src/Install/Application.php');
 
 trait Application
 {
     /**
-     * @var \BFW\Test\Mock\Application $app 
+     * @var \BFW\Install\Test\Mock\Application $app
      */
     protected $app;
     
@@ -31,13 +31,13 @@ trait Application
     }
     
     /**
-     * Create the bfw Application instance
+     * Create the bfw Application instance used by the install system
      * 
      * @return void
      */
     protected function createApp()
     {
-        $this->app = \BFW\Test\Mock\Application::getInstance();
+        $this->app = \BFW\Install\Test\Mock\Application::getInstance();
         $appConfig = $this->app->getCoreSystemList()['config'];
         
         $configFileList = [
@@ -50,7 +50,7 @@ trait Application
         
         foreach ($configFileList as $filename) {
             $configValue = require(
-                realpath(__DIR__.'/../../../skel/app/config/bfw/'.$filename)
+                realpath(__DIR__.'/../../../../skel/app/config/bfw/'.$filename)
             );
             
             if ($filename === 'monolog.php') {
@@ -64,7 +64,7 @@ trait Application
             $appConfig->setMockedList($filename, $configValue);
         }
     }
-
+    
     /**
      * Call the method initSystem of the bfw Application class
      * 
