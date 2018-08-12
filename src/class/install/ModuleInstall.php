@@ -124,7 +124,7 @@ class ModuleInstall
      * 
      * @param string $modulePath Path to the module which be installed
      */
-    public function __construct($modulePath)
+    public function __construct(string $modulePath)
     {
         $this->projectPath = ROOT_DIR;
         $this->sourcePath  = $modulePath;
@@ -135,7 +135,7 @@ class ModuleInstall
      * 
      * @return string : Module name
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -145,7 +145,7 @@ class ModuleInstall
      * 
      * @return string
      */
-    public function getSourcePath()
+    public function getSourcePath(): string
     {
         return $this->sourcePath;
     }
@@ -165,7 +165,7 @@ class ModuleInstall
      * 
      * @return string
      */
-    public function getProjectPath()
+    public function getProjectPath(): string
     {
         return $this->projectPath;
     }
@@ -175,7 +175,7 @@ class ModuleInstall
      * 
      * @return boolean
      */
-    public function getForceReinstall()
+    public function getForceReinstall(): bool
     {
         return $this->forceReinstall;
     }
@@ -185,7 +185,7 @@ class ModuleInstall
      * 
      * @return string
      */
-    public function getSourceSrcPath()
+    public function getSourceSrcPath(): string
     {
         return $this->sourceSrcPath;
     }
@@ -195,7 +195,7 @@ class ModuleInstall
      * 
      * @return string
      */
-    public function getSourceConfigPath()
+    public function getSourceConfigPath(): string
     {
         return $this->sourceConfigPath;
     }
@@ -203,9 +203,9 @@ class ModuleInstall
     /**
      * Get accessor to the property configFilesList
      * 
-     * @return string
+     * @return array
      */
-    public function getConfigFilesList()
+    public function getConfigFilesList(): array
     {
         return $this->configFilesList;
     }
@@ -215,7 +215,7 @@ class ModuleInstall
      * 
      * @return string
      */
-    public function getTargetSrcPath()
+    public function getTargetSrcPath(): string
     {
         return $this->targetSrcPath;
     }
@@ -225,7 +225,7 @@ class ModuleInstall
      * 
      * @return string
      */
-    public function getTargetConfigPath()
+    public function getTargetConfigPath(): string
     {
         return $this->targetConfigPath;
     }
@@ -249,7 +249,7 @@ class ModuleInstall
      * 
      * @return \stdClass
      */
-    protected function obtainInfosFromModule()
+    protected function obtainInfosFromModule(): \stdClass
     {
         return \BFW\Module::installInfos($this->sourcePath);
     }
@@ -308,9 +308,9 @@ class ModuleInstall
      * 
      * @return boolean
      * 
-     * @throws Exception If a check fail
+     * @throws \Exception If a check fail
      */
-    protected function checkPropertySrcPath($infos)
+    protected function checkPropertySrcPath(\stdClass $infos): bool
     {
         if (!property_exists($infos, 'srcPath')) {
             throw new Exception(
@@ -338,7 +338,7 @@ class ModuleInstall
      * 
      * @return void
      */
-    public function install($reinstall)
+    public function install(bool $reinstall)
     {
         if (empty($this->sourceSrcPath)) {
             $this->loadInfos();
@@ -381,7 +381,7 @@ class ModuleInstall
      * 
      * @return void
      * 
-     * @throws Exception : If remove symlink fail with the reinstall option
+     * @throws \Exception : If remove symlink fail with the reinstall option
      */
     protected function createSymbolicLink()
     {
@@ -464,7 +464,7 @@ class ModuleInstall
      * 
      * @return void
      * 
-     * @throws Exception : If remove directory fail with the reinstall option
+     * @throws \Exception : If remove directory fail with the reinstall option
      */
     protected function createConfigDirectory()
     {
@@ -519,7 +519,7 @@ class ModuleInstall
      * 
      * @return boolean
      */
-    protected function removeRecursiveDirectory($dirPath)
+    protected function removeRecursiveDirectory(string $dirPath): bool
     {
         $fileList = array_diff(scandir($dirPath), ['.','..']);
         
@@ -541,9 +541,9 @@ class ModuleInstall
      * 
      * @return void
      * 
-     * @throws Exception If copy fail or if the source file not exist
+     * @throws \Exception If copy fail or if the source file not exist
      */
-    protected function copyConfigFile($configFileName)
+    protected function copyConfigFile(string $configFileName)
     {
         Cli::displayMsg(' >> Copy '.$configFileName.' ... ');
 
@@ -629,7 +629,7 @@ class ModuleInstall
      * 
      * @return void
      */
-    public function runInstallScript($scriptName) {
+    public function runInstallScript(string $scriptName) {
         Cli::displayMsg(' >> ');
         Cli::displayMsgNL('Execute script '.$scriptName, 'yellow', 'bold');
         

@@ -5,7 +5,7 @@ namespace BFW;
 class RunTasks extends Subject
 {
     /**
-     * @var \stdClass[] $runSteps All steps used for run the application
+     * @var object[] $runSteps All steps used for run the application
      */
     protected $runSteps;
     
@@ -17,10 +17,10 @@ class RunTasks extends Subject
     /**
      * Constructor
      * 
-     * @param \stdClass[] $runSteps All step to call
+     * @param object[] $runSteps All step to call
      * @param string $notifyPrefix The prefix to use for task name
      */
-    public function __construct($runSteps, $notifyPrefix)
+    public function __construct(array $runSteps, string $notifyPrefix)
     {
         $this->runSteps     = $runSteps;
         $this->notifyPrefix = $notifyPrefix;
@@ -29,9 +29,9 @@ class RunTasks extends Subject
     /**
      * Getter to access to the run step array
      * 
-     * @return \stdClass[]
+     * @return object[]
      */
-    public function getRunSteps()
+    public function getRunSteps(): array
     {
         return $this->runSteps;
     }
@@ -39,11 +39,11 @@ class RunTasks extends Subject
     /**
      * Setter to re-define the run step array
      * 
-     * @param \stdClass[] $runSteps The new list of run steps
+     * @param object[] $runSteps The new list of run steps
      * 
      * @return $this
      */
-    public function setRunSteps($runSteps)
+    public function setRunSteps(array $runSteps): self
     {
         $this->runSteps = $runSteps;
         return $this;
@@ -57,9 +57,9 @@ class RunTasks extends Subject
      * 
      * @return $this
      */
-    public function addToRunSteps($name, $runStepsToAdd)
+    public function addToRunSteps(string $name, $runStepsToAdd): self
     {
-        $this->runSteps[(string) $name] = $runStepsToAdd;
+        $this->runSteps[$name] = $runStepsToAdd;
         return $this;
     }
     
@@ -68,7 +68,7 @@ class RunTasks extends Subject
      * 
      * @return string
      */
-    public function getNotifyPrefix()
+    public function getNotifyPrefix(): string
     {
         return $this->notifyPrefix;
     }
@@ -80,9 +80,9 @@ class RunTasks extends Subject
      * 
      * @return $this
      */
-    public function setNotifyPrefix($notifyPrefix)
+    public function setNotifyPrefix(string$notifyPrefix): self
     {
-        $this->notifyPrefix = (string) $notifyPrefix;
+        $this->notifyPrefix = $notifyPrefix;
         return $this;
     }
     
@@ -130,7 +130,7 @@ class RunTasks extends Subject
      * 
      * @return void
      */
-    public function sendNotify($action, $context = null)
+    public function sendNotify(string $action, $context = null)
     {
         \BFW\Application::getInstance()
             ->getMonolog()
@@ -147,6 +147,15 @@ class RunTasks extends Subject
         $this->addNotification($action, $context);
     }
     
+    /**
+     * Generate the anonymous class with the structure to use for each item
+     * 
+     * @param mixed $context The context to add to the notify
+     * @param callable|null $callback The callback to call when
+     *  the task is runned
+     * 
+     * @return object
+     */
     public static function generateStepItem($context = null, $callback = null)
     {
         return new class ($context, $callback) {

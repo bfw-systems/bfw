@@ -7,8 +7,8 @@ use \Exception;
 class Memcached extends AbstractSystem
 {
     /**
-     * @var \BFW\Memcache\MemcacheInterface|null $memcached The class used
-     * to connect to memcache(d) server.
+     * @var \BFW\Memcached|null $memcached The class used to connect to
+     * memcache(d) server.
      * The class name should be declared into config file.
      */
     protected $memcached;
@@ -24,7 +24,7 @@ class Memcached extends AbstractSystem
     /**
      * Getter accessor to property memcached
      * 
-     * @return \BFW\Memcache\MemcacheInterface|null
+     * @return \BFW\Memcached|null
      */
     public function getMemcached()
     {
@@ -44,9 +44,9 @@ class Memcached extends AbstractSystem
     /**
      * Connect to memcache(d) server with the class declared in config file
      * 
-     * @return Object
+     * @return void
      * 
-     * @throws Exception If memcached is enabled but no class is define. Or if
+     * @throws \Exception If memcached is enabled but no class is define. Or if
      *  The class declared into the config is not found.
      */
     protected function loadMemcached()

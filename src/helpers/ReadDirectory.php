@@ -35,7 +35,7 @@ class ReadDirectory
      * 
      * @param array &$listFiles : List of file(s) found
      */
-    public function __construct(&$listFiles)
+    public function __construct(array &$listFiles)
     {
         $this->calledClass = get_called_class();
         $this->list        = &$listFiles;
@@ -46,7 +46,7 @@ class ReadDirectory
      * 
      * @return string
      */
-    public function getCalledClass()
+    public function getCalledClass(): string
     {
         return $this->calledClass;
     }
@@ -56,7 +56,7 @@ class ReadDirectory
      * 
      * @return array
      */
-    public function getList()
+    public function getList(): array
     {
         return $this->list;
     }
@@ -66,7 +66,7 @@ class ReadDirectory
      * 
      * @return array
      */
-    public function getIgnore()
+    public function getIgnore(): array
     {
         return $this->ignore;
     }
@@ -78,7 +78,7 @@ class ReadDirectory
      * 
      * @return void
      */
-    public function run($path)
+    public function run(string $path)
     {
         $dir = opendir($path);
         if ($dir === false) {
@@ -117,7 +117,7 @@ class ReadDirectory
      * 
      * @return string
      */
-    protected function itemAction($fileName, $pathToFile)
+    protected function itemAction(string $fileName, string $pathToFile): string
     {
         if (in_array($fileName, $this->ignore)) {
             return 'continue';
@@ -132,7 +132,7 @@ class ReadDirectory
      * 
      * @param string $dirPath
      */
-    protected function dirAction($dirPath)
+    protected function dirAction(string $dirPath): string
     {
         $read = new $this->calledClass($this->list);
         $read->run($dirPath);

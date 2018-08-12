@@ -181,13 +181,6 @@ class Monolog extends atoum
     
     public function testCheckHandlerInfos()
     {
-        $this->assert('test Monolog::checkHandlerInfos with bad infos format')
-            ->exception(function() {
-                $this->mock->checkHandlerInfos('atoum');
-            })
-                ->hasCode(\BFW\Monolog::ERR_HANDLER_INFOS_FORMAT)
-        ;
-        
         $this->assert('test Monolog::checkHandlerInfos')
             ->given($this->calling($this->mock)->checkHandlerName = null)
             ->given($this->calling($this->mock)->checkHandlerArgs = null)

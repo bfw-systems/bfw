@@ -54,7 +54,7 @@ class Request
      * 
      * @return \BFW\Request
      */
-    public static function getInstance()
+    public static function getInstance(): Request
     {
         if (self::$instance === null) {
             $calledClass    = get_called_class(); //Autorize extends this class
@@ -69,7 +69,7 @@ class Request
      * 
      * @return string
      */
-    public function getIp()
+    public function getIp(): string
     {
         return $this->ip;
     }
@@ -79,7 +79,7 @@ class Request
      * 
      * @return string
      */
-    public function getLang()
+    public function getLang(): string
     {
         return $this->lang;
     }
@@ -89,7 +89,7 @@ class Request
      * 
      * @return string
      */
-    public function getReferer()
+    public function getReferer(): string
     {
         return $this->referer;
     }
@@ -99,7 +99,7 @@ class Request
      * 
      * @return string
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
@@ -107,7 +107,7 @@ class Request
     /**
      * Get information about if the request is ssl
      * 
-     * @return boolean
+     * @return boolean|null
      */
     public function getSsl()
     {
@@ -117,7 +117,7 @@ class Request
     /**
      * Get the current request
      * 
-     * @return \stdClass
+     * @return \stdClass|null
      */
     public function getRequest()
     {
@@ -134,7 +134,7 @@ class Request
      * 
      * @throws \Exception If the key not exist into $_SERVER
      */
-    public static function getServerValue($keyName)
+    public static function getServerValue(string $keyName): string
     {
         if (!isset($_SERVER[$keyName])) {
             throw new \Exception(
@@ -154,7 +154,7 @@ class Request
      * 
      * @return string
      */
-    protected function serverValue($keyName)
+    protected function serverValue(string $keyName): string
     {
         $calledClass = get_called_class(); //Autorize extends this class
         

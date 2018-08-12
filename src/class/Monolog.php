@@ -16,28 +16,22 @@ class Monolog
     const ERR_HANDLERS_LIST_FORMAT = 1108001;
     
     /**
-     * @const ERR_HANDLER_INFOS_FORMAT Exception code if the handler infos is
-     * not in a correct format
-     */
-    const ERR_HANDLER_INFOS_FORMAT = 1108002;
-    
-    /**
      * @const ERR_HANDLER_INFOS_MISSING_NAME Exception code if a handler not
      * have declared name
      */
-    const ERR_HANDLER_INFOS_MISSING_NAME = 1108003;
+    const ERR_HANDLER_INFOS_MISSING_NAME = 1108002;
     
     /**
      * @const ERR_HANDLER_NAME_NOT_A_STRING Exception code if a handler name
      * value is not a string
      */
-    const ERR_HANDLER_NAME_NOT_A_STRING = 1108004;
+    const ERR_HANDLER_NAME_NOT_A_STRING = 1108003;
     
     /**
      * @const ERR_HANDLER_CLASS_NOT_FOUND Exception code if a handler class
      * has not been found
      */
-    const ERR_HANDLER_CLASS_NOT_FOUND = 1108005;
+    const ERR_HANDLER_CLASS_NOT_FOUND = 1108004;
     
     /**
      * @var string $channelName The monolog channel name
@@ -66,9 +60,9 @@ class Monolog
      * @param string $channelName The monolog channel name
      * @param \BFW\Config $config The config object containing handlers list
      */
-    public function __construct($channelName, \BFW\Config $config)
+    public function __construct(string $channelName, \BFW\Config $config)
     {
-        $this->channelName = (string) $channelName;
+        $this->channelName = $channelName;
         $this->config      = $config;
         $this->logger      = new \Monolog\Logger($this->channelName);
     }
@@ -78,7 +72,7 @@ class Monolog
      * 
      * @return string
      */
-    public function getChannelName()
+    public function getChannelName(): string
     {
         return $this->channelName;
     }
@@ -88,7 +82,7 @@ class Monolog
      * 
      * @return \BFW\Config
      */
-    public function getConfig()
+    public function getConfig(): \BFW\Config
     {
         return $this->config;
     }
@@ -98,7 +92,7 @@ class Monolog
      * 
      * @return \Monolog\Logger
      */
-    public function getLogger()
+    public function getLogger(): \Monolog\Logger
     {
         return $this->logger;
     }
@@ -108,7 +102,7 @@ class Monolog
      * 
      * @return array
      */
-    public function getHandlers()
+    public function getHandlers(): array
     {
         return $this->handlers;
     }
@@ -125,8 +119,8 @@ class Monolog
      * @return void
      */
     public function addAllHandlers(
-        $configKeyName = 'handlers',
-        $configFileName = 'monolog.php'
+        string $configKeyName = 'handlers',
+        string $configFileName = 'monolog.php'
     ) {
         $handlers = $this->config->getValue($configKeyName, $configFileName);
         
@@ -149,13 +143,13 @@ class Monolog
     /**
      * Check and add a new handler to the logger
      * 
-     * @param \stdObject $handlerInfos Handler infos (name and args)
+     * @param array $handlerInfos Handler infos (name and args)
      * 
      * @throws \Exception
      * 
      * @return void
      */
-    public function addNewHandler($handlerInfos)
+    public function addNewHandler(array $handlerInfos)
     {
         $this->checkHandlerInfos($handlerInfos);
         
@@ -175,15 +169,8 @@ class Monolog
      * 
      * @return void
      */
-    protected function checkHandlerInfos($handlerInfos)
+    protected function checkHandlerInfos(array $handlerInfos)
     {
-        if (!is_array($handlerInfos)) {
-            throw new Exception(
-                'the handler infos should be an object.',
-                self::ERR_HANDLER_INFOS_FORMAT
-            );
-        }
-        
         $this->checkHandlerName($handlerInfos);
         $this->checkHandlerArgs($handlerInfos);
     }
@@ -197,7 +184,7 @@ class Monolog
      * 
      * @return void
      */
-    protected function checkHandlerName($handlerInfos)
+    protected function checkHandlerName(array $handlerInfos)
     {
         if (!array_key_exists('name', $handlerInfos)) {
             throw new Exception(
@@ -228,7 +215,7 @@ class Monolog
      * 
      * @return void
      */
-    protected function checkHandlerArgs(&$handlerInfos)
+    protected function checkHandlerArgs(array &$handlerInfos)
     {
         if (!array_key_exists('args', $handlerInfos)) {
             $handlerInfos['args'] = [];

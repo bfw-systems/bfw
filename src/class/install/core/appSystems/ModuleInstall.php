@@ -25,9 +25,9 @@ class ModuleInstall extends AbstractSystem
     /**
      * Getter accessor to property listToInstall
      * 
-     * @return type
+     * @return \BFW\Install\ModuleInstall[]
      */
-    public function getListToInstall()
+    public function getListToInstall(): array
     {
         return $this->listToInstall;
     }
@@ -43,7 +43,7 @@ class ModuleInstall extends AbstractSystem
     /**
      * {@inheritdoc}
      */
-    public function toRun()
+    public function toRun(): bool
     {
         return true;
     }
@@ -65,7 +65,7 @@ class ModuleInstall extends AbstractSystem
      * 
      * @return $this
      */
-    public function addToList(\BFW\Install\ModuleInstall $module)
+    public function addToList(\BFW\Install\ModuleInstall $module): self
     {
         $moduleName = $module->getName();
         
@@ -110,7 +110,7 @@ class ModuleInstall extends AbstractSystem
      * 
      * @return void
      */
-    protected function installModule($moduleName)
+    protected function installModule(string $moduleName)
     {
         if (!isset($this->listToInstall[$moduleName])) {
             return;

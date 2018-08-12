@@ -11,7 +11,7 @@ class Module extends \BFW\Module
      * {@inheritdoc}
      * Reset properties config and loadInfos to empty object
      */
-    public function __construct($pathName)
+    public function __construct(string $pathName)
     {
         parent::__construct($pathName);
         
@@ -57,12 +57,12 @@ class Module extends \BFW\Module
     /**
      * Set the status property to new value
      * 
-     * @param mixed $load The new value for load property into status object
-     * @param mixed $run The new value for run property into status object
+     * @param boolean $load The new value for load property into status object
+     * @param boolean $run The new value for run property into status object
      * 
      * @return void
      */
-    public function setStatus($load, $run)
+    public function setStatus(bool $load, bool $run)
     {
         $this->status->load = $load;
         $this->status->run  = $run;

@@ -12,16 +12,16 @@ class ErrorsDisplay
      * @param string   $errFile : File where the error/exception is triggered
      * @param integer  $errLine : Line where the error/exception is triggered
      * @param array    $backtrace : Error/exception backtrace
-     * @param int|null $exceptionCode : (default null) Exception code
+     * @param int|null $exceptionCode : Exception code
      * 
      * @return void
      */
     public static function defaultCliErrorRender(
-        $errType,
-        $errMsg,
-        $errFile,
-        $errLine,
-        $backtrace,
+        string $errType,
+        string $errMsg,
+        string $errFile,
+        int $errLine,
+        array $backtrace,
         $exceptionCode
     ) {
         if (!empty($exceptionCode)) {
@@ -51,16 +51,16 @@ class ErrorsDisplay
      * @param string   $errFile : File where the error/exception is triggered
      * @param integer  $errLine : Line where the error/exception is triggered
      * @param array    $backtrace : Error/exception backtrace
-     * @param int|null $exceptionCode : (default null) Exception code
+     * @param int|null $exceptionCode : Exception code
      * 
      * @return void
      */
     public static function defaultErrorRender(
-        $errType,
-        $errMsg,
-        $errFile,
-        $errLine,
-        $backtrace,
+        string $errType,
+        string $errMsg,
+        string $errFile,
+        int $errLine,
+        array $backtrace,
         $exceptionCode
     ) {
         http_response_code(500);

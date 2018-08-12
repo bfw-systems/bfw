@@ -33,7 +33,7 @@ class Secure
      * 
      * @return string
      */
-    public static function hash($val)
+    public static function hash(string $val): string
     {
         return hash('sha256', md5($val));
     }
@@ -46,9 +46,9 @@ class Secure
      * 
      * @return mixed
      * 
-     * @throws Exception If the type is unknown
+     * @throws \Exception If the type is unknown
      */
-    public static function securiseKnownTypes($data, $type)
+    public static function securiseKnownTypes($data, string $type)
     {
         $filterType = 'text';
 
@@ -79,9 +79,9 @@ class Secure
      * 
      * @return mixed
      * 
-     * @throws Exception If an error with a type of data
+     * @throws \Exception If an error with a type of data
      */
-    public static function securise($data, $type, $htmlentities)
+    public static function securise($data, string $type, bool $htmlentities)
     {
         $currentClass = get_called_class();
         
@@ -152,13 +152,13 @@ class Secure
      * 
      * @return mixed
      * 
-     * @throws Exception If the key not exist in array
+     * @throws \Exception If the key not exist in array
      */
     public static function getSecurisedKeyInArray(
-        &$array,
-        $key,
-        $type,
-        $htmlentities = false
+        array &$array,
+        string $key,
+        string $type,
+        bool $htmlentities = false
     ) {
         if (!isset($array[$key])) {
             throw new Exception(
@@ -190,13 +190,13 @@ class Secure
      * 
      * @return array
      * 
-     * @throws Exception If a key is not found and if $throwOnError is true
+     * @throws \Exception If a key is not found and if $throwOnError is true
      */
     public static function getSecurisedManyKeys(
-        &$arraySrc,
-        $keysList,
-        $throwOnError = true
-    ) {
+        array &$arraySrc,
+        array $keysList,
+        bool $throwOnError = true
+    ): array {
         $currentClass = get_called_class();
         $result       = [];
         

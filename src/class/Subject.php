@@ -23,7 +23,7 @@ class Subject implements SplSubject
     protected $observers = [];
     
     /**
-     * @var \stdClass[] $notifyHeap List of notify to send
+     * @var object[] $notifyHeap List of notify to send
      */
     protected $notifyHeap = [];
     
@@ -42,7 +42,7 @@ class Subject implements SplSubject
      * 
      * @return \SplObserver[]
      */
-    public function getObservers()
+    public function getObservers(): array
     {
         return $this->observers;
     }
@@ -50,9 +50,9 @@ class Subject implements SplSubject
     /**
      * Return list of all notify to send
      * 
-     * @return \stdClass[]
+     * @return object[]
      */
-    public function getNotifyHeap()
+    public function getNotifyHeap(): array
     {
         return $this->notifyHeap;
     }
@@ -62,7 +62,7 @@ class Subject implements SplSubject
      * 
      * @return string
      */
-    public function getAction()
+    public function getAction(): string
     {
         return $this->action;
     }
@@ -84,7 +84,7 @@ class Subject implements SplSubject
      * 
      * @return \BFW\Subject The current instance of this class
      */
-    public function attach(SplObserver $observer)
+    public function attach(SplObserver $observer): self
     {
         $this->observers[] = $observer;
 
@@ -98,7 +98,7 @@ class Subject implements SplSubject
      * 
      * @return \BFW\Subject The current instance of this class
      */
-    public function detach(SplObserver $observer)
+    public function detach(SplObserver $observer): self
     {
         $key = array_search($observer, $this->observers, true);
         
@@ -119,7 +119,7 @@ class Subject implements SplSubject
      * 
      * @return \BFW\Subject The current instance of this class
      */
-    public function notify()
+    public function notify(): self
     {
         \BFW\Application::getInstance()
             ->getMonolog()
@@ -141,7 +141,7 @@ class Subject implements SplSubject
      * 
      * @return $this
      */
-    public function readNotifyHeap()
+    public function readNotifyHeap(): self
     {
         foreach ($this->notifyHeap as $notifyIndex => $notifyDatas) {
             $this->action  = $notifyDatas->action;
@@ -168,11 +168,11 @@ class Subject implements SplSubject
      * current notification will be sent.
      * 
      * @param string $action The action to send
-     * @param notification $context (default null) The context to send
+     * @param mixed $context (default null) The context to send
      * 
      * @return \BFW\Subject The current instance of this class
      */
-    public function addNotification($action, $context = null)
+    public function addNotification(string $action, $context = null): self
     {
         $this->notifyHeap[] = new class($action, $context) {
             public $action;

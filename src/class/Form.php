@@ -4,7 +4,6 @@ namespace BFW;
 
 use \DateTime;
 use \Exception;
-use \stdClass;
 
 /**
  * Class to manage html forms
@@ -39,9 +38,9 @@ class Form
      * 
      * @param string $formId The form's id
      */
-    public function __construct($formId)
+    public function __construct(string $formId)
     {
-        $this->formId = (string) $formId;
+        $this->formId = $formId;
         
         if (empty($this->formId)) {
             throw new Exception('Form id is empty.', $this::ERR_FORM_ID_EMPTY);
@@ -53,7 +52,7 @@ class Form
      * 
      * @return string
      */
-    public function getFormId()
+    public function getFormId(): string
     {
         return $this->formId;
     }
@@ -61,7 +60,7 @@ class Form
     /**
      * Save the form's token
      * 
-     * @param \stdClass $saveInfos Infos about token (id and expire time)
+     * @param object $saveInfos Infos about token (id and expire time)
      * 
      * @return void
      */
@@ -76,7 +75,7 @@ class Form
      * 
      * @global array $_SESSION
      * 
-     * @param \stdClass $saveInfos Infos about token (id and expire time)
+     * @param object $saveInfos Infos about token (id and expire time)
      * 
      * @return void
      */
@@ -90,7 +89,7 @@ class Form
     /**
      * Get the token informations
      * 
-     * @return \stdClass
+     * @return object
      */
     protected function obtainToken()
     {
@@ -102,9 +101,9 @@ class Form
      * 
      * @global array $_SESSION
      * 
-     * @return \stdClass
+     * @return object
      * 
-     * @throws Exception If there are no token
+     * @throws \Exception If there are no token
      */
     protected function obtainTokenFromSession()
     {
@@ -129,9 +128,9 @@ class Form
      * 
      * @return string
      * 
-     * @throws Exception If the form id is undefined
+     * @throws \Exception If the form id is undefined
      */
-    public function createToken()
+    public function createToken(): string
     {
         $saveInfos = new class(uniqid(rand(), true)) {
             protected $token;
@@ -163,7 +162,7 @@ class Form
      * 
      * @return boolean
      */
-    public function checkToken($tokenToCheck, $timeExpire = 15)
+    public function checkToken(string $tokenToCheck, int $timeExpire = 15): bool
     {
         //Throw Exception
         $tokenInfos = $this->obtainToken();
@@ -176,7 +175,7 @@ class Form
         }
 
         $limitDate = new DateTime;
-        $limitDate->modify('-'.(int) $timeExpire.' minutes');
+        $limitDate->modify('-'.$timeExpire.' minutes');
         
         unset($_SESSION['formsTokens'][$this->formId]);
         
@@ -192,7 +191,7 @@ class Form
      * 
      * @return boolean
      */
-    public function hasToken()
+    public function hasToken(): bool
     {
         try {
             $this->obtainToken();

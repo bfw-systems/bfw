@@ -495,7 +495,7 @@ class Errors extends atoum
         ;
         
         $this->assert('test \Core\Errors::obtainErrorType with Unknown type')
-            ->string($this->mock->obtainErrorType('unitTest'))
+            ->string($this->mock->obtainErrorType(42))
                 ->isEqualTo('Unknown')
         ;
     }

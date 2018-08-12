@@ -22,7 +22,7 @@ class ObserverArray implements \SplObserver
      * 
      * @return array
      */
-    public function getActionReceived()
+    public function getActionReceived(): array
     {
         return $this->actionReceived;
     }
@@ -32,7 +32,7 @@ class ObserverArray implements \SplObserver
      * 
      * @return array
      */
-    public function getUpdateReceived()
+    public function getUpdateReceived(): array
     {
         return $this->updateReceived;
     }

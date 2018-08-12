@@ -12,7 +12,7 @@ class Options extends \BFW\Options
      * 
      * @return $this
      */
-    public function searchPaths()
+    public function searchPaths(): self
     {
         //Search root directory if is not declared
         if ($this->options['rootDir'] === null) {
@@ -32,7 +32,7 @@ class Options extends \BFW\Options
      * 
      * @return $this
      */
-    public function checkPaths()
+    public function checkPaths(): self
     {
         if (empty($this->options['rootDir'])) {
             $this->options['rootDir'] .= '/';
@@ -63,7 +63,7 @@ class Options extends \BFW\Options
      * 
      * @return string
      */
-    protected function searchVendorDir()
+    protected function searchVendorDir(): string
     {
         if (PHP_VERSION_ID >= 70000) {
             return dirname(__FILE__, 5).'/';
@@ -84,7 +84,7 @@ class Options extends \BFW\Options
      * 
      * @return string
      */
-    protected function searchRootDir()
+    protected function searchRootDir(): string
     {
         return dirname($this->searchVendorDir()).'/';
     }

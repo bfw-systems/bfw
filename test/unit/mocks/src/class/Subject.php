@@ -14,7 +14,7 @@ class Subject extends \BFW\Subject
      * 
      * @return $this
      */
-    public function setObservers(array $observers)
+    public function setObservers(array $observers): self
     {
         $this->observers = $observers;
         return $this;
@@ -27,7 +27,7 @@ class Subject extends \BFW\Subject
      * 
      * @return $this
      */
-    public function setNotifyHeap(array $notifyHeap)
+    public function setNotifyHeap(array $notifyHeap): self
     {
         $this->notifyHeap = $notifyHeap;
         return $this;
@@ -40,7 +40,7 @@ class Subject extends \BFW\Subject
      * 
      * @return $this
      */
-    public function setAction($action)
+    public function setAction(string $action): self
     {
         $this->action = $action;
         return $this;
@@ -53,7 +53,7 @@ class Subject extends \BFW\Subject
      * 
      * @return $this
      */
-    public function setContext($context)
+    public function setContext($context): self
     {
         $this->context = $context;
         return $this;
@@ -67,7 +67,7 @@ class Subject extends \BFW\Subject
      * 
      * @return void
      */
-    public function addNotifyHeap($action, $context)
+    public function addNotifyHeap(string $action, $context)
     {
         $this->notifyHeap[] = new class($action, $context) {
             public $action;

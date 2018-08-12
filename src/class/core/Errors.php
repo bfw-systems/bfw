@@ -46,7 +46,7 @@ class Errors
     /**
      * Find and create the handler for exceptions
      * 
-     * @return type
+     * @return void
      */
     protected function defineExceptionHandler()
     {
@@ -113,7 +113,7 @@ class Errors
      *  Boolean : false if is no enabled or if no render is defined
      *  Array : The render to use
      */
-    protected function defineRenderToUse($renderConfig)
+    protected function defineRenderToUse(array $renderConfig)
     {
         //Check enabled
         if ($renderConfig['enabled'] === false) {
@@ -136,11 +136,11 @@ class Errors
     /**
      * The default exception handler included in BFW
      * 
-     * @param \Exception $exception : Exception informations
+     * @param \Throwable $exception : Exception informations
      * 
      * @return void
      */
-    public function exceptionHandler($exception)
+    public function exceptionHandler(\Throwable $exception)
     {
         \BFW\Application::getInstance()
             ->getMonolog()
@@ -178,10 +178,10 @@ class Errors
      * @return void
      */
     public function errorHandler(
-        $errSeverity,
-        $errMsg,
-        $errFile,
-        $errLine
+        int $errSeverity,
+        string $errMsg,
+        string $errFile,
+        int $errLine
     ) {
         $errType     = $this->obtainErrorType($errSeverity);
         $errorRender = $this->obtainErrorRender();
@@ -225,12 +225,12 @@ class Errors
      * @return void
      */
     protected function callRender(
-        $renderInfos,
-        $errType,
-        $errMsg,
-        $errFile,
-        $errLine,
-        $backtrace,
+        array $renderInfos,
+        string $errType,
+        string $errMsg,
+        string $errFile,
+        int $errLine,
+        array $backtrace,
         $exceptionCode = null
     ) {
         $this->saveIntoPhpLog($errType, $errMsg, $errFile, $errLine);
@@ -274,10 +274,10 @@ class Errors
      * @return void
      */
     protected function saveIntoPhpLog(
-        $errType,
-        $errMsg,
-        $errFile,
-        $errLine
+        string $errType,
+        string $errMsg,
+        string $errFile,
+        int $errLine
     ) {
         error_log(
             'Error detected : '.$errType.' '.$errMsg
@@ -294,7 +294,7 @@ class Errors
      * 
      * @return string
      */
-    protected function obtainErrorType($errSeverity)
+    protected function obtainErrorType(int $errSeverity): string
     {
         $errorMap = [
             E_ERROR             => 'Fatal',

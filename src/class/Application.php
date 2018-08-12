@@ -72,7 +72,7 @@ class Application
      * 
      * @return \BFW\Application The current instance of this class
      */
-    public static function getInstance()
+    public static function getInstance(): Application
     {
         if (self::$instance === null) {
             $calledClass = get_called_class(); //Autorize extends this class
@@ -87,7 +87,7 @@ class Application
      * 
      * @return \BFW\Core\AppSystems\SystemInterface[]
      */
-    public function getCoreSystemList()
+    public function getCoreSystemList(): array
     {
         return $this->coreSystemList;
     }
@@ -97,7 +97,7 @@ class Application
      * 
      * @return array
      */
-    public function getDeclaredOptions()
+    public function getDeclaredOptions(): array
     {
         return $this->declaredOptions;
     }
@@ -129,7 +129,7 @@ class Application
      * @throws \Exception If the method is not allowed or if the property
      * not exist.
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
         $prefix = substr($name, 0, 3);
         
@@ -182,7 +182,7 @@ class Application
      * 
      * @return void
      */
-    public function initSystems($options)
+    public function initSystems(array $options)
     {
         $this->declaredOptions = $options;
         $this->runTasks        = new \BFW\RunTasks([], 'BfwApp');
@@ -216,7 +216,7 @@ class Application
      * 
      * @return void
      */
-    protected function initCoreSystem($name, SystemInterface $coreSystem)
+    protected function initCoreSystem(string $name, SystemInterface $coreSystem)
     {
         if ($coreSystem->isInit() === true) {
             return;

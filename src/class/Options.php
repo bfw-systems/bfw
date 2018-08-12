@@ -26,7 +26,7 @@ class Options
      * @param array $defaultOptions Default options
      * @param array $options Options from applications/users
      */
-    public function __construct($defaultOptions, $options)
+    public function __construct(array $defaultOptions, array $options)
     {
         $this->options = array_merge($defaultOptions, $options);
     }
@@ -36,7 +36,7 @@ class Options
      * 
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -48,9 +48,9 @@ class Options
      * 
      * @return mixed
      * 
-     * @throws Exception If the key not exists
+     * @throws \Exception If the key not exists
      */
-    public function getValue($optionKey)
+    public function getValue(string $optionKey)
     {
         if (!isset($this->options[$optionKey])) {
             throw new Exception(

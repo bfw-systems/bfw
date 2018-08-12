@@ -54,10 +54,10 @@ class Cli
      * @return void
      */
     public static function displayMsg(
-        $msg,
-        $colorTxt = 'white',
-        $style = 'normal',
-        $colorBg = 'black'
+        string $msg,
+        string $colorTxt = 'white',
+        string $style = 'normal',
+        string $colorBg = 'black'
     ) {
         $nbArgs = func_num_args();
         
@@ -103,14 +103,16 @@ class Cli
      * @return void
      */
     public static function displayMsgNL(
-        $msg,
-        $colorTxt = 'white',
-        $style = 'normal',
-        $colorBg = 'black'
+        string $msg,
+        string $colorTxt = 'white',
+        string $style = 'normal',
+        string $colorBg = 'black'
     ) {
         $nbArgs       = func_num_args();
         $currentClass = get_called_class();
         
+        //Because on displayMsg, we can just echo, or echo with color change.
+        //Not forget custom user shell color :)
         if ($nbArgs === 1) {
             $currentClass::displayMsg($msg."\n");
         } elseif ($nbArgs > 3) {
@@ -128,9 +130,9 @@ class Cli
      * 
      * @return integer
      * 
-     * @throws Exception If the color is not available
+     * @throws \Exception If the color is not available
      */
-    protected static function colorForShell($color, $type)
+    protected static function colorForShell(string $color, string $type): int
     {
         $colorList = [
             'black'   => 0,
@@ -166,9 +168,9 @@ class Cli
      * 
      * @return integer
      * 
-     * @throws Exception If the style is not available
+     * @throws \Exception If the style is not available
      */
-    protected static function styleForShell($style)
+    protected static function styleForShell(string $style): int
     {
         $styleList = [
             'normal'        => 0,

@@ -20,25 +20,27 @@ class Application extends \BFW\Application
         $this->coreSystemList['moduleList'] = new \BFW\Core\AppSystems\Test\Mock\ModuleList;
     }
     
-    public function setCoreSystemList($coreSystemList)
+    public function setCoreSystemList(array $coreSystemList): self
     {
         $this->coreSystemList = $coreSystemList;
         return $this;
     }
     
-    public function addToCoreSystemList($name, $system)
-    {
+    public function addToCoreSystemList(
+        string $name,
+        \BFW\Core\AppSystems\SystemInterface $system
+    ): self {
         $this->coreSystemList[$name] = $system;
         return $this;
     }
 
-    public function setDeclaredOptions($declaredOptions)
+    public function setDeclaredOptions(array $declaredOptions): self
     {
         $this->declaredOptions = $declaredOptions;
         return $this;
     }
 
-    public function setRunTasks(\BFW\RunTasks $runTasks)
+    public function setRunTasks(\BFW\RunTasks $runTasks): self
     {
         $this->runTasks = $runTasks;
         return $this;

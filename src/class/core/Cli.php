@@ -28,7 +28,7 @@ class Cli
      * 
      * @return string
      */
-    public function getExecutedFile()
+    public function getExecutedFile(): string
     {
         return $this->executedFile;
     }
@@ -41,7 +41,7 @@ class Cli
      * 
      * @throws \Exception If no file is declared to be executed
      */
-    public function obtainFileFromArg()
+    public function obtainFileFromArg(): string
     {
         $cliArgs = getopt('f:');
         if (!isset($cliArgs['f'])) {
@@ -61,7 +61,7 @@ class Cli
      * 
      * @return void
      */
-    public function run($file)
+    public function run(string $file)
     {
         $this->executedFile = $file;
         
@@ -75,9 +75,9 @@ class Cli
      * 
      * @return boolean
      * 
-     * @throws Exception
+     * @throws \Exception
      */
-    protected function checkFile()
+    protected function checkFile(): bool
     {
         if (!file_exists($this->executedFile)) {
             throw new Exception(

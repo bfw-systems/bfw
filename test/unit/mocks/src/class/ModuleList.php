@@ -26,7 +26,7 @@ class ModuleList extends \BFW\ModuleList
      * 
      * @return void
      */
-    public static function setModuleConfig($moduleName, $config)
+    public static function setModuleConfig(string $moduleName, $config)
     {
         self::$config[$moduleName] = $config;
     }
@@ -39,7 +39,7 @@ class ModuleList extends \BFW\ModuleList
      * 
      * @return void
      */
-    public static function setModuleLoadInfos($moduleName, $loadInfos)
+    public static function setModuleLoadInfos(string $moduleName, $loadInfos)
     {
         self::$loadInfos[$moduleName] = $loadInfos;
     }
@@ -47,7 +47,7 @@ class ModuleList extends \BFW\ModuleList
     /**
      * {@inheritdoc}
      */
-    public function addModule($moduleName)
+    public function addModule(string $moduleName)
     {
         $this->modules[$moduleName] = new \BFW\Test\Mock\Module($moduleName, false);
         

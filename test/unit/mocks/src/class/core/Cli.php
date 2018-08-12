@@ -29,7 +29,7 @@ Class Cli extends \BFW\Core\Cli
      * 
      * @return $this
      */
-    public function setExecutedFile($executedFile)
+    public function setExecutedFile(string $executedFile): self
     {
         $this->executedFile = $executedFile;
         return $this;
@@ -40,7 +40,7 @@ Class Cli extends \BFW\Core\Cli
      * 
      * @return string
      */
-    public function getFileInArg()
+    public function getFileInArg(): string 
     {
         return $this->fileInArg;
     }
@@ -50,7 +50,7 @@ Class Cli extends \BFW\Core\Cli
      * 
      * @return boolean
      */
-    public function getUseArgToObtainFile()
+    public function getUseArgToObtainFile(): bool
     {
         return $this->useArgToObtainFile;
     }
@@ -60,7 +60,7 @@ Class Cli extends \BFW\Core\Cli
      * 
      * @return boolean
      */
-    public function getIsExecuted()
+    public function getIsExecuted(): bool
     {
         return $this->isExecuted;
     }
@@ -72,7 +72,7 @@ Class Cli extends \BFW\Core\Cli
      * 
      * @return $this
      */
-    public function setFileInArg($fileInArg)
+    public function setFileInArg(string $fileInArg): self
     {
         $this->fileInArg = $fileInArg;
         return $this;
@@ -85,7 +85,7 @@ Class Cli extends \BFW\Core\Cli
      * 
      * @return $this
      */
-    public function setUseArgToObtainFile($useArgToObtainFile)
+    public function setUseArgToObtainFile(bool $useArgToObtainFile): self
     {
         $this->useArgToObtainFile = $useArgToObtainFile;
         return $this;
@@ -95,7 +95,7 @@ Class Cli extends \BFW\Core\Cli
      * {@inheritdoc}
      * Define isExecuted to false
      */
-    public function run($file)
+    public function run(string $file)
     {
         $this->isExecuted = false;
         
@@ -106,7 +106,7 @@ Class Cli extends \BFW\Core\Cli
      * {@inheritdoc}
      * Use the property fileInArg value if useArgToObtainFile is false
      */
-    public function obtainFileFromArg()
+    public function obtainFileFromArg(): string
     {
         if ($this->useArgToObtainFile === true) {
             return parent::obtainFileFromArg();
@@ -119,7 +119,7 @@ Class Cli extends \BFW\Core\Cli
      * {@inheritdoc}
      * Return true if the property useArgToObtainFile is false
      */
-    protected function checkFile()
+    protected function checkFile(): bool
     {
         if ($this->useArgToObtainFile === true) {
             return parent::checkFile();

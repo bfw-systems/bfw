@@ -59,7 +59,7 @@ class Dates extends DateTime
      * 
      * @return string[]
      */
-    public static function getHumanReadableI18n()
+    public static function getHumanReadableI18n(): array
     {
         return self::$humanReadableI18n;
     }
@@ -72,7 +72,7 @@ class Dates extends DateTime
      * 
      * @return void
      */
-    public static function setHumanReadableI18nKey($key, $value)
+    public static function setHumanReadableI18nKey(string $key, string $value)
     {
         self::$humanReadableI18n[$key] = $value;
     }
@@ -84,7 +84,7 @@ class Dates extends DateTime
      * 
      * @return void
      */
-    public static function setHumanReadableI18n($value)
+    public static function setHumanReadableI18n(array $value)
     {
         self::$humanReadableI18n = $value;
     }
@@ -94,7 +94,7 @@ class Dates extends DateTime
      * 
      * @return string[]
      */
-    public static function getHumanReadableFormats()
+    public static function getHumanReadableFormats(): array
     {
         return self::$humanReadableFormats;
     }
@@ -107,8 +107,10 @@ class Dates extends DateTime
      * 
      * @return void
      */
-    public static function setHumanReadableFormatsKey($key, $value)
-    {
+    public static function setHumanReadableFormatsKey(
+        string $key,
+        string $value
+    ) {
         self::$humanReadableFormats[$key] = $value;
     }
 
@@ -119,7 +121,7 @@ class Dates extends DateTime
      * 
      * @return void
      */
-    public static function setHumanReadableFormats($value)
+    public static function setHumanReadableFormats(array $value)
     {
         self::$humanReadableFormats = $value;
     }
@@ -129,7 +131,7 @@ class Dates extends DateTime
      * 
      * @return string[]
      */
-    public static function getModifyNewKeywords()
+    public static function getModifyNewKeywords(): array
     {
         return self::$modifyNewKeywords;
     }
@@ -141,7 +143,7 @@ class Dates extends DateTime
      * 
      * @return void
      */
-    public static function setModifyNewKeywords($value)
+    public static function setModifyNewKeywords(array $value)
     {
         self::$modifyNewKeywords = $value;
     }
@@ -151,7 +153,7 @@ class Dates extends DateTime
      * 
      * @return string
      */
-    public function getDate()
+    public function getDate(): string
     {
         return parent::format('Y-m-d H:i:sO');
     }
@@ -161,7 +163,7 @@ class Dates extends DateTime
      * 
      * @return int
      */
-    public function getYear()
+    public function getYear(): int
     {
         return (int) parent::format('Y');
     }
@@ -172,7 +174,7 @@ class Dates extends DateTime
      * 
      * @return int
      */
-    public function getMonth()
+    public function getMonth(): int
     {
         return (int) parent::format('m');
     }
@@ -183,7 +185,7 @@ class Dates extends DateTime
      * 
      * @return int
      */
-    public function getDay()
+    public function getDay(): int
     {
         return (int) parent::format('d');
     }
@@ -194,7 +196,7 @@ class Dates extends DateTime
      * 
      * @return int
      */
-    public function getHour()
+    public function getHour(): int
     {
         return (int) parent::format('H');
     }
@@ -205,7 +207,7 @@ class Dates extends DateTime
      * 
      * @return int
      */
-    public function getMinute()
+    public function getMinute(): int
     {
         return (int) parent::format('i');
     }
@@ -216,7 +218,7 @@ class Dates extends DateTime
      * 
      * @return int
      */
-    public function getSecond()
+    public function getSecond(): int
     {
         return (int) parent::format('s');
     }
@@ -227,7 +229,7 @@ class Dates extends DateTime
      * 
      * @return string
      */
-    public function getZone()
+    public function getZone(): string
     {
         return parent::format('P');
     }
@@ -242,8 +244,7 @@ class Dates extends DateTime
     public function modify($modify)
     {
         $originalDate = clone $this;
-        @parent::modify($modify); //Yeurk, but for personnal pattern, no choice
-        //Maybe with try/catch for PHP7, but for 5.6, no idea to avoid that.
+        @parent::modify($modify); //Try/catch on Throwable don't work T-T
 
         //If the keyword used is ok with DateTime::modify method
         if ($originalDate != $this) {
@@ -259,9 +260,9 @@ class Dates extends DateTime
      * Get DateTime equivalent keyword for a personal keyword declared into
      * the property modifyNewKeywords.
      * 
-     * @return \stdClass
+     * @return array
      */
-    protected function obtainNewKeywordsForModify()
+    protected function obtainNewKeywordsForModify(): array
     {
         $search  = [];
         $replace = [];
@@ -282,9 +283,11 @@ class Dates extends DateTime
      * 
      * @param string $modify A date/time string
      * 
-     * @throws Exception If bad pattern or unknown keyword
+     * @throws \Exception If bad pattern or unknown keyword
+     * 
+     * @return void
      */
-    protected function modifyWithOthersKeywords($modify)
+    protected function modifyWithOthersKeywords(string $modify)
     {
         $keywords = $this->obtainNewKeywordsForModify();
         $match    = [];
@@ -304,8 +307,7 @@ class Dates extends DateTime
         );
         
         $originalDate = clone $this;
-        //Yeurk, but I preferer sends an Exception, not an error.
-        //Maybe easier PHP7 (try/catch ?), but no idea for 5.6.
+        //Try/catch on Throwable don't work T-T
         @parent::modify($match[1].$match[2].' '.$keyword);
         
         //If no change on object, The keyword is unknown
@@ -327,8 +329,10 @@ class Dates extends DateTime
      * 
      * @return string[]|string
      */
-    public function getSqlFormat($returnArray = false, $withZone = false)
-    {
+    public function getSqlFormat(
+        bool $returnArray = false,
+        bool $withZone = false
+    ) {
         $date = $this->format('Y-m-d');
         $time = $this->format('H:i:s');
         
@@ -348,7 +352,7 @@ class Dates extends DateTime
      * 
      * @return string[]
      */
-    public function lstTimeZone()
+    public function lstTimeZone(): array
     {
         return parent::getTimezone()->listIdentifiers();
     }
@@ -358,7 +362,7 @@ class Dates extends DateTime
      * 
      * @return string[]
      */
-    public function lstTimeZoneContinent()
+    public function lstTimeZoneContinent(): array
     {
         return [
             'Africa',
@@ -382,7 +386,7 @@ class Dates extends DateTime
      * 
      * @return string[]
      */
-    public function lstTimeZoneCountries($continent)
+    public function lstTimeZoneCountries(string $continent): array
     {
         $allCountries = $this->lstTimeZone();
         $countries    = [];
@@ -404,7 +408,7 @@ class Dates extends DateTime
      * 
      * @return string
      */
-    public function humanReadable($returnDateAndTime = true)
+    public function humanReadable(bool $returnDateAndTime = true): string
     {
         $current = new Dates;
         $diff    = parent::diff($current);
@@ -441,7 +445,7 @@ class Dates extends DateTime
     /**
      * Format date to human readable when the date is now
      * 
-     * @param \stdClass $parsedTxt Texts returned by humanReadable method
+     * @param object $parsedTxt Texts returned by humanReadable method
      * 
      * @return void
      */
@@ -454,12 +458,12 @@ class Dates extends DateTime
     /**
      * Format date to human readable when date is today
      * 
-     * @param \stdClass $parsedTxt Texts returned by humanReadable method
+     * @param object $parsedTxt Texts returned by humanReadable method
      * @param \DateInterval $diff Interval between now and date to read
      * 
      * @return void
      */
-    protected function humanDateToday($parsedTxt, $diff)
+    protected function humanDateToday($parsedTxt, \DateInterval $diff)
     {
         $textKey = 'since';
         if ($diff->invert === 1) {
@@ -481,7 +485,7 @@ class Dates extends DateTime
     /**
      * Format date to human readable when date is yesterday
      * 
-     * @param \stdClass $parsedTxt Texts returned by humanReadable method
+     * @param object $parsedTxt Texts returned by humanReadable method
      * 
      * @return void
      */
@@ -499,7 +503,7 @@ class Dates extends DateTime
     /**
      * Format date to human readable when date is tomorrow
      * 
-     * @param \stdClass $parsedTxt Texts returned by humanReadable method
+     * @param object $parsedTxt Texts returned by humanReadable method
      * 
      * @return void
      */
@@ -517,12 +521,12 @@ class Dates extends DateTime
     /**
      * Format date to human readable when date is not now, today or yesterday
      * 
-     * @param \stdClass $parsedTxt Texts returned by humanReadable method
+     * @param object $parsedTxt Texts returned by humanReadable method
      * @param \DateTime $current DateTime object for now
      * 
      * @return void
      */
-    protected function humanDateOther($parsedTxt, $current)
+    protected function humanDateOther($parsedTxt, \DateTime $current)
     {
         $currentClass = get_called_class();
         

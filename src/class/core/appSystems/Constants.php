@@ -41,7 +41,7 @@ class Constants extends AbstractSystem
      * 
      * @return string
      */
-    protected function obtainRootDir()
+    protected function obtainRootDir(): string
     {
         return \BFW\Application::getInstance()
             ->getOptions()

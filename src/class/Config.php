@@ -34,16 +34,10 @@ class Config
     const ERR_KEY_NOT_FOUND = 1102004;
     
     /**
-     * @const ERR_VALUE_FORMAT Exception code if the value for a filename is
-     * not an array or an object.
-     */
-    const ERR_VALUE_FORMAT = 1102005;
-    
-    /**
      * @const ERR_KEY_NOT_ADDED Exception code if the key can not be added to
      * the config.
      */
-    const ERR_KEY_NOT_ADDED = 1102006;
+    const ERR_KEY_NOT_ADDED = 1102005;
     
     /**
      * @var string $configDirName Directory's name in config dir
@@ -71,7 +65,7 @@ class Config
      * 
      * @param string $configDirName Directory's name in config dir
      */
-    public function __construct($configDirName)
+    public function __construct(string $configDirName)
     {
         $this->configDirName = $configDirName;
         $this->configDir     = CONFIG_DIR.$this->configDirName;
@@ -82,7 +76,7 @@ class Config
      * 
      * @return string
      */
-    public function getConfigDirName()
+    public function getConfigDirName(): string
     {
         return $this->configDirName;
     }
@@ -92,7 +86,7 @@ class Config
      * 
      * @return string
      */
-    public function getConfigDir()
+    public function getConfigDir(): string
     {
         return $this->configDir;
     }
@@ -102,7 +96,7 @@ class Config
      * 
      * @return string[]
      */
-    public function getConfigFiles()
+    public function getConfigFiles(): array
     {
         return $this->configFiles;
     }
@@ -112,7 +106,7 @@ class Config
      * 
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
@@ -124,7 +118,7 @@ class Config
      * 
      * @return mixed
      */
-    public function getConfigByFilename($filename)
+    public function getConfigByFilename(string $filename)
     {
         if (!isset($this->config[$filename])) {
             throw new Exception(
@@ -161,8 +155,10 @@ class Config
      * 
      * @return void
      */
-    protected function searchAllConfigFiles($dirPath, $pathIntoFirstDir = '')
-    {
+    protected function searchAllConfigFiles(
+        string $dirPath,
+        string $pathIntoFirstDir = ''
+    ) {
         if (!file_exists($dirPath)) {
             return;
         }
@@ -202,7 +198,7 @@ class Config
      * 
      * @return void
      */
-    protected function loadConfigFile($fileKey, $filePath)
+    protected function loadConfigFile(string $fileKey, string $filePath)
     {
         $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
 
@@ -228,9 +224,9 @@ class Config
      * 
      * @return void
      * 
-     * @throws Exception If there is an error from the json parser
+     * @throws \Exception If there is an error from the json parser
      */
-    protected function loadJsonConfigFile($fileKey, $filePath)
+    protected function loadJsonConfigFile(string $fileKey, string $filePath)
     {
         $json   = file_get_contents($filePath);
         $config = json_decode($json);
@@ -254,7 +250,7 @@ class Config
      * 
      * @return void
      */
-    protected function loadPhpConfigFile($fileKey, $filePath)
+    protected function loadPhpConfigFile(string $fileKey, string $filePath)
     {
         $this->config[$fileKey] = require($filePath);
     }
@@ -269,10 +265,10 @@ class Config
      * 
      * @return mixed
      * 
-     * @throws Exception If file parameter is null and there are many files. Or
+     * @throws \Exception If file parameter is null and there are many files. Or
      *  if the file not exist. Or if the key not exist.
      */
-    public function getValue($key, $file = null)
+    public function getValue(string $key, string $file = null)
     {
         $nbConfigFile = count($this->config);
 
@@ -310,21 +306,14 @@ class Config
      * Setter to modify the all config value for a specific filename.
      * 
      * @param string $filename The filename config to modify
-     * @param array|\stdClass $config The new config value
+     * @param array $config The new config value
      * 
      * @return $this
      * 
      * @throws \Exception If the new value if not an array or an object.
      */
-    public function setConfigForFilename($filename, $config)
+    public function setConfigForFilename(string $filename, array $config): self
     {
-        if (!is_array($config) && !is_object($config)) {
-            throw new Exception(
-                'The config value shoud be an array or an object.',
-                $this::ERR_VALUE_FORMAT
-            );
-        }
-        
         if (!isset($this->configFiles[$filename])) {
             $this->configFiles[$filename] = $filename;
         }
@@ -345,10 +334,13 @@ class Config
      * 
      * @throws \Exception If the key has not been found
      */
-    public function setConfigKeyForFilename($filename, $configKey, $configValue)
-    {
+    public function setConfigKeyForFilename(
+        string $filename,
+        string $configKey,
+        $configValue
+    ): self {
         if (!isset($this->config[$filename])) {
-            $this->config[$filename] = new \stdClass;
+            $this->config[$filename] = [];
         }
         
         if (!isset($this->configFiles[$filename])) {
@@ -357,8 +349,6 @@ class Config
         
         if (is_array($this->config[$filename])) {
             $this->config[$filename][$configKey] = $configValue;
-        } elseif (is_object($this->config[$filename])) {
-            $this->config[$filename]->{$configKey} = $configValue;
         } else {
             throw new Exception(
                 'The config key '.$configKey.' can not be added.',

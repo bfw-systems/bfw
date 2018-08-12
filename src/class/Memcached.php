@@ -10,39 +10,21 @@ use \Exception;
 class Memcached extends \Memcached
 {
     /**
-     * @const ERR_SERVER_INFOS_FORMAT Exception code if server informations is
-     * not in a correct format.
-     */
-    const ERR_SERVER_INFOS_FORMAT = 1105001;
-    
-    /**
      * @const ERR_NO_SERVER_CONNECTED Exception code if no server is connected.
      */
-    const ERR_NO_SERVER_CONNECTED = 1105002;
+    const ERR_NO_SERVER_CONNECTED = 1105001;
     
     /**
      * @const ERR_A_SERVER_IS_NOT_CONNECTED Exception code if a server is not
      * connected.
      */
-    const ERR_A_SERVER_IS_NOT_CONNECTED = 1105003;
-    
-    /**
-     * @const ERR_IFEXISTS_PARAM_TYPE Exception code if a parameter type is not
-     * correct into the method ifExists().
-     */
-    const ERR_IFEXISTS_PARAM_TYPE = 1105004;
-    
-    /**
-     * @const ERR_UPDATEEXPIRE_PARAM_TYPE Exception code if a parameter type
-     * is not correct into the method updateExpire().
-     */
-    const ERR_UPDATEEXPIRE_PARAM_TYPE = 1105005;
+    const ERR_A_SERVER_IS_NOT_CONNECTED = 1105002;
     
     /**
      * @const ERR_KEY_NOT_EXIST Exception code if the asked key not exist.
      * Actually only used into the method updateExpire().
      */
-    const ERR_KEY_NOT_EXIST = 1105006;
+    const ERR_KEY_NOT_EXIST = 1105003;
 
     /**
      * @var array $config Config define into bfw config file for memcache(d)
@@ -74,7 +56,7 @@ class Memcached extends \Memcached
      * 
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
@@ -139,7 +121,7 @@ class Memcached extends \Memcached
      * 
      * @return string[]
      */
-    protected function generateServerList()
+    protected function generateServerList(): array
     {
         $serversList = $this->getServerList();
         $servers     = [];
@@ -159,15 +141,8 @@ class Memcached extends \Memcached
      * 
      * @throw \Exception If informations datas is not an array
      */
-    protected function completeServerInfos(&$infos)
+    protected function completeServerInfos(array &$infos)
     {
-        if (!is_array($infos)) {
-            throw new Exception(
-                'Memcache(d) server information is not an array.',
-                self::ERR_SERVER_INFOS_FORMAT
-            );
-        }
-        
         $infosKeyDefaultValues = [
             'host'       => null,
             'port'       => null,
@@ -193,7 +168,7 @@ class Memcached extends \Memcached
      * 
      * @return boolean
      */
-    protected function testConnect()
+    protected function testConnect(): bool
     {
         $stats = $this->getStats();
         
@@ -224,25 +199,10 @@ class Memcached extends \Memcached
      * 
      * @return boolean
      * 
-     * @throws Exception If the key is not a string
+     * @throws \Exception If the key is not a string
      */
-    public function ifExists($key)
+    public function ifExists(string $key): bool
     {
-        $verifParams = \BFW\Helpers\Datas::checkType([
-            [
-                'type' => 'string',
-                'data' => $key
-            ]
-        ]);
-        
-        if (!$verifParams) {
-            throw new Exception(
-                'The $key parameters must be a string.'
-                .' Currently the value is a/an '.gettype($key),
-                self::ERR_IFEXISTS_PARAM_TYPE
-            );
-        }
-
         if ($this->get($key) === false) {
             return false;
         }
@@ -258,22 +218,10 @@ class Memcached extends \Memcached
      * 
      * @return boolean
      * 
-     * @throws Exception
+     * @throws \Exception
      */
-    public function updateExpire($key, $expire)
+    public function updateExpire(string $key, int $expire): bool
     {
-        $verifParams = \BFW\Helpers\Datas::checkType([
-            ['type' => 'string', 'data' => $key],
-            ['type' => 'int', 'data' => $expire]
-        ]);
-
-        if (!$verifParams) {
-            throw new Exception(
-                'Once of parameters $key or $expire not have a correct type.',
-                self::ERR_UPDATEEXPIRE_PARAM_TYPE
-            );
-        }
-        
         if (!$this->ifExists($key)) {
             throw new Exception(
                 'The key '.$key.' not exist on memcache(d) server',

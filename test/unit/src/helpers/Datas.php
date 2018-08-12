@@ -13,13 +13,6 @@ class Datas extends atoum
 {
     public function testCheckType()
     {
-        $this->assert('test Helpers\Datas::checkType with bad argument')
-            ->exception(function() {
-                \BFW\Helpers\Datas::checkType(42);
-            })
-                ->hasCode(\BFW\Helpers\Datas::ERR_CHECKTYPE_ARG_TYPE)
-        ;
-        
         $this->assert('test Helpers\Datas::checkType with bad infos')
             ->exception(function() {
                 \BFW\Helpers\Datas::checkType([42]);

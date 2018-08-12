@@ -23,9 +23,9 @@ class Constants
      * 
      * @return void
      * 
-     * @throws Exception If the constant is already defined
+     * @throws \Exception If the constant is already defined
      */
-    public static function create($cstName, $cstValue)
+    public static function create(string $cstName, $cstValue)
     {
         if (defined($cstName)) {
             throw new Exception(

@@ -53,7 +53,7 @@ class Options extends AbstractSystem
      * 
      * @return array
      */
-    protected function obtainDefaultOptions()
+    protected function obtainDefaultOptions(): array
     {
         return [
             'rootDir'    => null,

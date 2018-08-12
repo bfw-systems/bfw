@@ -42,7 +42,7 @@ class Cli extends AbstractSystem
     /**
      * {@inheritdoc}
      */
-    public function toRun()
+    public function toRun(): bool
     {
         return true;
     }
@@ -61,7 +61,7 @@ class Cli extends AbstractSystem
      * 
      * @return void
      * 
-     * @throws Exception If no file is specified or if the file not exist.
+     * @throws \Exception If no file is specified or if the file not exist.
      */
     protected function runCliFile()
     {

@@ -12,7 +12,7 @@ namespace BFW\Test\Helpers;
  * 
  * @return string
  */
-function secureSqlMethod($value)
+function secureSqlMethod(string $value): string
 {
     return $value;
 }

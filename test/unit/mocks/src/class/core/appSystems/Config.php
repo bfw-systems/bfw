@@ -6,12 +6,12 @@ class Config extends \BFW\Core\AppSystems\Config
 {
     protected $mockedList = [];
     
-    public function getMockedList()
+    public function getMockedList(): array
     {
         return $this->mockedList;
     }
     
-    public function setMockedList($filename, $mockedValue)
+    public function setMockedList(string $filename, array $mockedValue): self
     {
         $this->mockedList[$filename] = $mockedValue;
         return $this;
@@ -45,7 +45,7 @@ class Config extends \BFW\Core\AppSystems\Config
         }
     }
     
-    protected function obtainVendorDir()
+    protected function obtainVendorDir(): string
     {
         return \BFW\Application::getInstance()
             ->getOptions()

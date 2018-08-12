@@ -11,7 +11,7 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
      * 
      * @return $this
      */
-    public function setProjectPath($projectPath)
+    public function setProjectPath(string $projectPath): self
     {
         $this->projectPath = $projectPath;
         return $this;
@@ -24,7 +24,7 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
      * 
      * @return $this
      */
-    public function setForceReinstall($forceReinstall)
+    public function setForceReinstall(bool $forceReinstall): self
     {
         $this->forceReinstall = $forceReinstall;
         return $this;
@@ -37,7 +37,7 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
      * 
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
         return $this;
@@ -50,7 +50,7 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
      * 
      * @return $this
      */
-    public function setSourcePath($sourcePath)
+    public function setSourcePath(string $sourcePath): self
     {
         $this->sourcePath = $sourcePath;
         return $this;
@@ -63,7 +63,7 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
      * 
      * @return $this
      */
-    public function setSourceSrcPath($sourceSrcPath)
+    public function setSourceSrcPath(string $sourceSrcPath): self
     {
         $this->sourceSrcPath = $sourceSrcPath;
         return $this;
@@ -76,7 +76,7 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
      * 
      * @return $this
      */
-    public function setSourceConfigPath($sourceConfigPath)
+    public function setSourceConfigPath(string $sourceConfigPath): self
     {
         $this->sourceConfigPath = $sourceConfigPath;
         return $this;
@@ -89,7 +89,7 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
      * 
      * @return $this
      */
-    public function setConfigFilesList($configFilesList)
+    public function setConfigFilesList(array $configFilesList): self
     {
         $this->configFilesList = $configFilesList;
         return $this;
@@ -102,7 +102,7 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
      * 
      * @return $this
      */
-    public function setSourceInstallScript($sourceInstallScript)
+    public function setSourceInstallScript($sourceInstallScript): self
     {
         $this->sourceInstallScript = $sourceInstallScript;
         return $this;
@@ -115,7 +115,7 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
      * 
      * @return $this
      */
-    public function setTargetSrcPath($targetSrcPath)
+    public function setTargetSrcPath(string $targetSrcPath): self
     {
         $this->targetSrcPath = $targetSrcPath;
         return $this;
@@ -128,7 +128,7 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
      * 
      * @return $this
      */
-    public function setTargetConfigPath($targetConfigPath)
+    public function setTargetConfigPath(string $targetConfigPath): self
     {
         $this->targetConfigPath = $targetConfigPath;
         return $this;
@@ -138,7 +138,7 @@ class ModuleInstall extends \BFW\Install\ModuleInstall
      * {@inheritdoc}
      * Use the method installInfos from mocked Module class.
      */
-    protected function obtainInfosFromModule()
+    protected function obtainInfosFromModule(): \stdClass
     {
         return \BFW\Test\Mock\Module::installInfos($this->sourcePath);
     }

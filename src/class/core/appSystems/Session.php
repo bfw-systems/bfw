@@ -41,7 +41,7 @@ class Session extends AbstractSystem
      * 
      * @return boolean
      */
-    protected function obtainRunSession()
+    protected function obtainRunSession(): bool
     {
         return \BFW\Application::getInstance()
             ->getOptions()

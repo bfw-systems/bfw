@@ -136,6 +136,8 @@ class Subject extends atoum
                 if ($mock->getAction() === 'add_new_notify') {
                     $mock->addNotifyHeap('hello', 'world !');
                 }
+                
+                return $mock;
             })
             ->and($this->mock->setNotifyHeap([
                 $this->newNotify('atoum', $this),
@@ -179,6 +181,8 @@ class Subject extends atoum
             ->given($nbCallToReadNotifyHeap = 0)
             ->if($this->calling($this->mock)->readNotifyHeap = function() use (&$nbCallToReadNotifyHeap) {
                 $nbCallToReadNotifyHeap++;
+                
+                return $this;
             })
             ->then
             ->object($this->mock->addNotification('atoum'))

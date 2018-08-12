@@ -35,7 +35,7 @@ class ModuleList
      * 
      * @return \BFW\Module[]
      */
-    public function getModules()
+    public function getModules(): array
     {
         return $this->modules;
     }
@@ -45,7 +45,7 @@ class ModuleList
      * 
      * @return array
      */
-    public function getLoadTree()
+    public function getLoadTree(): array
     {
         return $this->loadTree;
     }
@@ -58,7 +58,7 @@ class ModuleList
      * 
      * @return void
      */
-    public function addModule($moduleName)
+    public function addModule(string $moduleName)
     {
         $this->modules[$moduleName] = new \BFW\Module($moduleName);
         $this->modules[$moduleName]->loadModule();
@@ -71,9 +71,9 @@ class ModuleList
      * 
      * @return \BFW\Module
      * 
-     * @throws Exception If the module is not found
+     * @throws \Exception If the module is not found
      */
-    public function getModuleByName($moduleName)
+    public function getModuleByName(string $moduleName): \BFW\Module
     {
         if (!isset($this->modules[$moduleName])) {
             throw new Exception(

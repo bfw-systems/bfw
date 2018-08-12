@@ -103,13 +103,6 @@ class Config extends atoum
                 ->hasCode(\BFW\Config::ERR_FILE_NOT_FOUND)
         ;
         
-        $this->assert('test Config::setConfigForFilename with bad value')
-            ->exception(function() {
-                $this->mock->setConfigForFilename('test', 'unit');
-            })
-                ->hasCode(\BFW\Config::ERR_VALUE_FORMAT)
-        ;
-        
         $this->assert('test Config::setConfigForFilename with correct value')
             ->object($this->mock->setConfigForFilename('test', ['type' => 'unit']))
                 ->isIdenticalTo($this->mock)

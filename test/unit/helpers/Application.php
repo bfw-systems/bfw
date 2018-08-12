@@ -24,7 +24,7 @@ trait Application
      * 
      * @return $this
      */
-    public function setRootDir($rootDir)
+    public function setRootDir(string $rootDir): self
     {
         $this->rootDir = $rootDir;
         return $this;
@@ -72,7 +72,7 @@ trait Application
      * 
      * @return void
      */
-    protected function initApp($runSession = false)
+    protected function initApp(bool $runSession = false)
     {
         $this->app->initSystems([
             'rootDir'    => realpath($this->rootDir),

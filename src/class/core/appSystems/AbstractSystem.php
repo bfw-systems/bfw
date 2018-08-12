@@ -38,7 +38,7 @@ abstract class AbstractSystem implements SystemInterface
     /**
      * {@inheritdoc}
      */
-    public function isInit()
+    public function isInit(): bool
     {
         return $this->initStatus;
     }
@@ -46,7 +46,7 @@ abstract class AbstractSystem implements SystemInterface
     /**
      * {@inheritdoc}
      */
-    public function toRun()
+    public function toRun(): bool
     {
         return false;
     }
@@ -54,7 +54,7 @@ abstract class AbstractSystem implements SystemInterface
     /**
      * {@inheritdoc}
      */
-    public function isRun()
+    public function isRun(): bool
     {
         return $this->runStatus;
     }

@@ -49,7 +49,7 @@ class ComposerLoader extends AbstractSystem
      * 
      * @return string
      */
-    protected function obtainVendorDir()
+    protected function obtainVendorDir(): string
     {
         return \BFW\Application::getInstance()
             ->getOptions()

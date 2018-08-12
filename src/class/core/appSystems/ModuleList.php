@@ -42,7 +42,7 @@ class ModuleList extends AbstractSystem
     /**
      * {@inheritdoc}
      */
-    public function toRun()
+    public function toRun(): bool
     {
         return true;
     }
@@ -139,7 +139,7 @@ class ModuleList extends AbstractSystem
      * 
      * @return void
      */
-    protected function runModule($moduleName)
+    protected function runModule(string $moduleName)
     {
         $app = \BFW\Application::getInstance();
         

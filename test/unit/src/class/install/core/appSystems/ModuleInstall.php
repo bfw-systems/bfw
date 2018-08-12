@@ -166,7 +166,7 @@ class ModuleInstall extends atoum
     public function testInstallAllModulesWithoutModule()
     {
         $this->assert('test \Install\Application::installAllModules without module')
-            ->given($defineOutputBuffer = '')
+            ->given($lastFlushedMsg = '')
             ->and($this->defineOutputBuffer($lastFlushedMsg))
             ->then
             
@@ -186,7 +186,7 @@ class ModuleInstall extends atoum
     public function testInstallAllModulesWithAlreadyInstalledModule()
     {
         $this->assert('test \Install\Application::installAllModules with already installed module')
-            ->given($defineOutputBuffer = '')
+            ->given($lastFlushedMsg = '')
             ->and($this->defineOutputBuffer($lastFlushedMsg))
             ->then
             
@@ -221,7 +221,7 @@ class ModuleInstall extends atoum
     public function testInstallModuleWithoutInstallScript()
     {
         $this->assert('test \Install\Application::installModule without install script')
-            ->given($defineOutputBuffer = '')
+            ->given($lastFlushedMsg = '')
             ->and($this->defineOutputBuffer($lastFlushedMsg))
             ->then
             
@@ -258,7 +258,7 @@ class ModuleInstall extends atoum
     public function testInstallModuleWithOneInstallScript()
     {
         $this->assert('test \Install\Application::installModule with one install script')
-            ->given($defineOutputBuffer = '')
+            ->given($lastFlushedMsg = '')
             ->and($this->defineOutputBuffer($lastFlushedMsg))
             ->then
             
@@ -303,7 +303,7 @@ class ModuleInstall extends atoum
     public function testInstallModuleWithTwoInstallScript()
     {
         $this->assert('test \Install\Application::installModule with one install script')
-            ->given($defineOutputBuffer = '')
+            ->given($lastFlushedMsg = '')
             ->and($this->defineOutputBuffer($lastFlushedMsg))
             ->then
             

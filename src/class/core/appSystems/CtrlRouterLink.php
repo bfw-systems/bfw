@@ -5,7 +5,7 @@ namespace BFW\Core\AppSystems;
 class CtrlRouterLink extends AbstractSystem
 {
     /**
-     * @var \stdClass|null $ctrlRouterInfos Infos from router for controller
+     * @var object|null $ctrlRouterInfos Infos from router for controller
      * system
      */
     protected $ctrlRouterInfos;
@@ -13,7 +13,7 @@ class CtrlRouterLink extends AbstractSystem
     /**
      * {@inheritdoc}
      * 
-     * @return \stdClass|null
+     * @return object|null
      */
     public function __invoke()
     {
@@ -23,7 +23,7 @@ class CtrlRouterLink extends AbstractSystem
     /**
      * Getter accessor for property ctrlRouterInfos
      * 
-     * @return \stdClass|null
+     * @return object|null
      */
     public function getCtrlRouterInfos()
     {
@@ -65,7 +65,7 @@ class CtrlRouterLink extends AbstractSystem
      * 
      * @return array
      */
-    protected function obtainCtrlRouterLinkTasks()
+    protected function obtainCtrlRouterLinkTasks(): array
     {
         return [
             'searchRoute'     => \BFW\RunTasks::generateStepItem(
@@ -88,7 +88,7 @@ class CtrlRouterLink extends AbstractSystem
     /**
      * {@inheritdoc}
      */
-    public function toRun()
+    public function toRun(): bool
     {
         return true;
     }

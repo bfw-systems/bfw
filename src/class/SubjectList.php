@@ -27,7 +27,7 @@ class SubjectList
      * 
      * @return \SplSubject[]
      */
-    public function getSubjectList()
+    public function getSubjectList(): array
     {
         return $this->subjectList;
     }
@@ -39,9 +39,9 @@ class SubjectList
      * 
      * @return \SplSubject
      * 
-     * @throws Exception If the subject name not exist
+     * @throws \Exception If the subject name not exist
      */
-    public function getSubjectByName($subjectName)
+    public function getSubjectByName(string $subjectName): \SplSubject
     {
         if (!array_key_exists($subjectName, $this->subjectList)) {
             throw new Exception(
@@ -63,7 +63,7 @@ class SubjectList
      * 
      * @return $this
      */
-    public function addSubject(\SplSubject $subject, $subjectName = null)
+    public function addSubject(\SplSubject $subject, $subjectName = null): self
     {
         if ($subjectName === null) {
             $subjectName = get_class($subject);
@@ -81,9 +81,9 @@ class SubjectList
      * 
      * @return $this
      * 
-     * @throws Exception If the subject has not been found into the list
+     * @throws \Exception If the subject has not been found into the list
      */
-    public function removeSubject(\SplSubject $subject)
+    public function removeSubject(\SplSubject $subject): self
     {
         $key = array_search($subject, $this->subjectList, true);
         

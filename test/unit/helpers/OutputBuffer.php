@@ -14,7 +14,7 @@ trait OutputBuffer
      * 
      * @return void
      */
-    protected function defineOutputBuffer(&$lastFlushedMsg)
+    protected function defineOutputBuffer(string &$lastFlushedMsg)
     {
         $lastFlushedMsg = '';
         ob_start(function($buffer) use (&$lastFlushedMsg) {

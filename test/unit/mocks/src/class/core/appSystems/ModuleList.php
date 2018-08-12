@@ -14,7 +14,7 @@ class ModuleList extends \BFW\Core\AppSystems\ModuleList
      */
     protected $mockedList = [];
     
-    public function getMockedList()
+    public function getMockedList(): array
     {
         return $this->mockedList;
     }
@@ -34,8 +34,10 @@ class ModuleList extends \BFW\Core\AppSystems\ModuleList
      * 
      * @return $this
      */
-    public function addToMockedList($moduleName, \stdClass $mockedModulesInfos)
-    {
+    public function addToMockedList(
+        string $moduleName,
+        \stdClass $mockedModulesInfos
+    ): self {
         $this->mockedList[$moduleName] = $mockedModulesInfos;
         return $this;
     }

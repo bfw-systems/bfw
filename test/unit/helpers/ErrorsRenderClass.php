@@ -72,11 +72,11 @@ class ErrorsRenderClass
      * @return void
      */
     public static function render(
-        $errType,
-        $errMsg,
-        $errFile,
-        $errLine,
-        $backtrace
+        string $errType,
+        string $errMsg,
+        string $errFile,
+        int $errLine,
+        array $backtrace
     ) {
         $self = ErrorsRenderClass::getInstance();
         

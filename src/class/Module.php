@@ -3,7 +3,6 @@
 namespace BFW;
 
 use \Exception;
-use \stdClass;
 
 /**
  * Class to manage a module
@@ -32,17 +31,17 @@ class Module
     protected $pathName = '';
 
     /**
-     * @var \BFW\Config $config Config object for this module
+     * @var \BFW\Config|null $config Config object for this module
      */
     protected $config;
 
     /**
-     * @var \stdClass $loadInfos All informations about how to run the module
+     * @var \stdClass|null $loadInfos All informations about how to run the module
      */
     protected $loadInfos;
 
     /**
-     * @var \stdClass $status Load and run status
+     * @var object $status Load and run status
      */
     protected $status;
 
@@ -51,7 +50,7 @@ class Module
      * 
      * @param string $pathName Module name
      */
-    public function __construct($pathName)
+    public function __construct(string $pathName)
     {
         \BFW\Application::getInstance()
             ->getMonolog()
@@ -92,7 +91,7 @@ class Module
      * 
      * @return \stdClass
      */
-    public static function installInfos($sourceFiles)
+    public static function installInfos(string $sourceFiles): \stdClass
     {
         $currentClass = get_called_class(); //Allow extends
         return $currentClass::readJsonFile(
@@ -105,7 +104,7 @@ class Module
      * 
      * @return string
      */
-    public function getPathName()
+    public function getPathName(): string
     {
         return $this->pathName;
     }
@@ -113,7 +112,7 @@ class Module
     /**
      * Get the Config object which have config for this module
      * 
-     * @return \BFW\Config
+     * @return \BFW\Config|null
      */
     public function getConfig()
     {
@@ -123,7 +122,7 @@ class Module
     /**
      * Get the load informations
      * 
-     * @return \stdClass
+     * @return \stdClass|null
      */
     public function getLoadInfos()
     {
@@ -133,7 +132,7 @@ class Module
     /**
      * Get the status object for this module
      * 
-     * @return \stdClass
+     * @return object
      */
     public function getStatus()
     {
@@ -145,7 +144,7 @@ class Module
      * 
      * @return boolean
      */
-    public function isLoaded()
+    public function isLoaded(): bool
     {
         return $this->status->load;
     }
@@ -155,7 +154,7 @@ class Module
      * 
      * @return boolean
      */
-    public function isRun()
+    public function isRun(): bool
     {
         return $this->status->run;
     }
@@ -197,9 +196,9 @@ class Module
      * 
      * @return mixed Json parsed datas
      * 
-     * @throws Exception If the file is not found or for a json parser error
+     * @throws \Exception If the file is not found or for a json parser error
      */
-    protected static function readJsonFile($jsonFilePath)
+    protected static function readJsonFile(string $jsonFilePath)
     {
         if (!file_exists($jsonFilePath)) {
             throw new Exception(
@@ -227,7 +226,7 @@ class Module
      * 
      * @return $this
      */
-    public function addDependency($dependencyName)
+    public function addDependency(string $dependencyName): self
     {
         if (!property_exists($this->loadInfos, 'require')) {
             $this->loadInfos->require = [];
@@ -247,9 +246,9 @@ class Module
      * 
      * @return string
      * 
-     * @throws Exception If the file not exists
+     * @throws \Exception If the file not exists
      */
-    protected function obtainRunnerFile()
+    protected function obtainRunnerFile(): string
     {
         $moduleInfos = $this->loadInfos;
         $runnerFile  = '';
@@ -258,8 +257,8 @@ class Module
             $runnerFile = (string) $moduleInfos->runner;
         }
 
-        if ($runnerFile === '') {
-            return;
+        if (empty($runnerFile)) {
+            return '';
         }
 
         $runnerFile = MODULES_DIR.$this->pathName.'/'.$runnerFile;
@@ -286,7 +285,7 @@ class Module
         
         $runnerFile   = $this->obtainRunnerFile();
         $initFunction = function() use ($runnerFile) {
-            if ($runnerFile === null) {
+            if (empty($runnerFile)) {
                 return;
             }
             

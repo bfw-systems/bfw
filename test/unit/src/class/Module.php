@@ -345,14 +345,14 @@ class Module extends atoum
         $this->mock = new \mock\BFW\Test\Mock\Module('atoum');
         
         $this->assert('test Module::obtainRunnerFile without property "runner"')
-            ->variable($this->invoke($this->mock)->obtainRunnerFile())
-                ->isNull()
+            ->string($this->invoke($this->mock)->obtainRunnerFile())
+                ->isEmpty()
         ;
         
         $this->assert('test Module::obtainRunnerFile with empty property "runner"')
             ->given($this->mock->setLoadInfos((object) ['runner' => '']))
-            ->variable($this->invoke($this->mock)->obtainRunnerFile())
-                ->isNull()
+            ->string($this->invoke($this->mock)->obtainRunnerFile())
+                ->isEmpty()
         ;
         
         $this->assert('test Module::obtainRunnerFile without runner file')
@@ -383,7 +383,7 @@ class Module extends atoum
         
         $this->assert('test Module::runModule if the module is already runned')
             ->if($this->mock->setStatus(true, true))
-            ->and($this->calling($this->mock)->obtainRunnerFile = null)
+            ->and($this->calling($this->mock)->obtainRunnerFile = '')
             ->then
             ->variable($this->mock->runModule())
                 ->isNull()
@@ -396,9 +396,7 @@ class Module extends atoum
         
         $this->assert('test Module::runModule without file to run')
             ->if($this->mock->setStatus(true, false))
-            ->and($this->calling($this->mock)->obtainRunnerFile = function() {
-                return null;
-            })
+            ->and($this->calling($this->mock)->obtainRunnerFile = '')
             ->then
             ->variable($this->mock->runModule())
                 ->isNull()

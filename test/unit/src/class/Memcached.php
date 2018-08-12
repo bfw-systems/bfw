@@ -193,14 +193,6 @@ class Memcached extends atoum
     
     public function testCompleteServerInfos()
     {
-        $this->assert('test Memcached::completeServerInfos with not array arg')
-            ->exception(function() {
-                $infos = 'atoum';
-                $this->mock->completeServerInfos($infos);
-            })
-                ->hasCode(\BFW\Memcached::ERR_SERVER_INFOS_FORMAT)
-        ;
-        
         $this->assert('test Memcached::completeServerInfos with no infos')
             ->given($infos = [])
             ->variable($this->mock->completeServerInfos($infos))
@@ -342,13 +334,6 @@ class Memcached extends atoum
     
     public function testIfExists()
     {
-        $this->assert('test Memcached::ifExists with bad arg')
-            ->exception(function() {
-                $this->mock->ifExists([]);
-            })
-                ->hasCode(\BFW\Memcached::ERR_IFEXISTS_PARAM_TYPE)
-        ;
-        
         $this->assert('test Memcached::ifExists with not existing key')
             ->if($this->calling($this->mock)->get = false)
             ->then
@@ -366,15 +351,6 @@ class Memcached extends atoum
     
     public function testUpdateExpire()
     {
-        $this->assert('test Memcached::updateExpire with bad args')
-            ->exception(function() {
-                $this->mock->updateExpire([], 'test');
-            })
-                ->hasCode(\BFW\Memcached::ERR_UPDATEEXPIRE_PARAM_TYPE)
-            //Not check all case (1 good arg, 1 bad, etc) because we don't test
-            //the helper Datas here.
-        ;
-        
         $this->assert('test Memcached::updateExpire with not exist key')
             ->if($this->calling($this->mock)->ifExists = false)
             ->then

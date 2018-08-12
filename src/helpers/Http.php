@@ -13,7 +13,7 @@ class Http
      * 
      * @return string
      */
-    protected static function getSecureHelpersName()
+    protected static function getSecureHelpersName(): string
     {
         return '\BFW\Helpers\Secure';
     }
@@ -29,9 +29,9 @@ class Http
      * @return void
      */
     public static function redirect(
-        $page,
-        $permanent = false,
-        $callExit = false
+        string $page,
+        bool $permanent = false,
+        bool $callExit = false
     ) {
         $httpStatus = 302;
         if ($permanent === true) {
@@ -57,9 +57,9 @@ class Http
      * @return mixed
      */
     public static function obtainPostKey(
-        $key,
-        $type,
-        $htmlentities = false
+        string $key,
+        string $type,
+        bool $htmlentities = false
     ) {
         $currentClass = get_called_class();
         $secure       = $currentClass::getSecureHelpersName();
@@ -83,9 +83,9 @@ class Http
      * @return mixed
      */
     public static function obtainGetKey(
-        $key,
-        $type,
-        $htmlentities = false
+        string $key,
+        string $type,
+        bool $htmlentities = false
     ) {
         $currentClass = get_called_class();
         $secure       = $currentClass::getSecureHelpersName();
@@ -103,17 +103,18 @@ class Http
      * 
      * @see \BFW\Helpers\Secure::getSecurisedManyKeys
      * 
-     * @param array &$arraySrc The source array
      * @param array $keysList The key list to obtain.
      * @param boolean $throwOnError (defaut true) If a key not exist, throw an
      *  exception. If false, the value will be null into returned array
      * 
      * @return array
      * 
-     * @throws Exception If a key is not found and if $throwOnError is true
+     * @throws \Exception If a key is not found and if $throwOnError is true
      */
-    public static function obtainManyPostKeys($keysList, $throwOnError = true)
-    {
+    public static function obtainManyPostKeys(
+        array $keysList,
+        bool $throwOnError = true
+    ): array {
         $currentClass = get_called_class();
         $secure       = $currentClass::getSecureHelpersName();
         
@@ -131,10 +132,12 @@ class Http
      * 
      * @return array
      * 
-     * @throws Exception If a key is not found and if $throwOnError is true
+     * @throws \Exception If a key is not found and if $throwOnError is true
      */
-    public static function obtainManyGetKeys($keysList, $throwOnError = true)
-    {
+    public static function obtainManyGetKeys(
+        array $keysList,
+        bool $throwOnError = true
+    ): array {
         $currentClass = get_called_class();
         $secure       = $currentClass::getSecureHelpersName();
         
