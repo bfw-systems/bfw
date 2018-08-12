@@ -87,8 +87,8 @@ class Subject extends atoum
     public function testAttachAndDetach()
     {
         $this->assert('test Subject::attach')
-            ->object($this->mock->attach($this->observer))
-                ->isIdenticalTo($this->mock)
+            ->variable($this->mock->attach($this->observer))
+                ->isNull()
             ->array($observerList = $this->mock->getObservers())
                 ->size
                     ->isEqualTo(1)
@@ -97,8 +97,8 @@ class Subject extends atoum
         ;
         
         $this->assert('test Subject::detach')
-            ->object($this->mock->detach($this->observer))
-                ->isIdenticalTo($this->mock)
+            ->variable($this->mock->detach($this->observer))
+                ->isNull()
             ->array($observerList = $this->mock->getObservers())
                 ->isEmpty()
             ->exception(function() {
@@ -111,8 +111,8 @@ class Subject extends atoum
     public function testNotify()
     {
         $this->assert('test Subject::notify')
-            ->object($this->mock->notify())
-                ->isIdenticalTo($this->mock)
+            ->variable($this->mock->notify())
+                ->isNull()
             ->array($this->observer->getUpdateReceived())
                 ->size
                     ->isEqualTo(1)
@@ -136,8 +136,6 @@ class Subject extends atoum
                 if ($mock->getAction() === 'add_new_notify') {
                     $mock->addNotifyHeap('hello', 'world !');
                 }
-                
-                return $mock;
             })
             ->and($this->mock->setNotifyHeap([
                 $this->newNotify('atoum', $this),

@@ -102,7 +102,7 @@ class Secure
             return $currentClass::securiseKnownTypes($data, $type);
         } catch (Exception $ex) {
             if ($ex->getCode() !== self::ERR_SECURE_UNKNOWN_TYPE) {
-                throw new Exception($ex->getCode(), $ex->getMessage());
+                throw new Exception($ex->getMessage(), $ex->getCode());
             }
             //Else : Use securise text type
         }

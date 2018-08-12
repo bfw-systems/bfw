@@ -172,7 +172,7 @@ class Memcached extends \Memcached
     {
         $stats = $this->getStats();
         
-        if (!is_array($stats)) {
+        if (empty($stats)) {
             throw new Exception(
                 'No memcached server connected.',
                 self::ERR_NO_SERVER_CONNECTED

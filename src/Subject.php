@@ -82,13 +82,11 @@ class Subject implements SplSubject
      * 
      * @param \SplObserver $observer The new observer
      * 
-     * @return \BFW\Subject The current instance of this class
+     * @return void
      */
-    public function attach(SplObserver $observer): self
+    public function attach(SplObserver $observer)
     {
         $this->observers[] = $observer;
-
-        return $this;
     }
 
     /**
@@ -96,9 +94,9 @@ class Subject implements SplSubject
      * 
      * @param \SplObserver $observer The observer instance to detach
      * 
-     * @return \BFW\Subject The current instance of this class
+     * @return void
      */
-    public function detach(SplObserver $observer): self
+    public function detach(SplObserver $observer)
     {
         $key = array_search($observer, $this->observers, true);
         
@@ -110,16 +108,14 @@ class Subject implements SplSubject
         }
         
         unset($this->observers[$key]);
-
-        return $this;
     }
 
     /**
      * Send a notification to all observers
      * 
-     * @return \BFW\Subject The current instance of this class
+     * @return void
      */
-    public function notify(): self
+    public function notify()
     {
         \BFW\Application::getInstance()
             ->getMonolog()
@@ -132,8 +128,6 @@ class Subject implements SplSubject
         foreach ($this->observers as $observer) {
             $observer->update($this);
         }
-        
-        return $this;
     }
     
     /**
