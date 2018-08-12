@@ -11,7 +11,7 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
  */
 class ReadDirLoadModule extends atoum
 {
-    //use \BFW\Install\Test\Helpers\Application;
+    //use \BFW\Test\Helpers\Install\Application;
     
     protected $mock;
     protected $listFiles = [];

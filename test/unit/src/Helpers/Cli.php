@@ -35,46 +35,46 @@ class Cli extends atoum
     {
         $this->assert('test Helpers\Cli::colorForShell with not existing color')
             ->exception(function() {
-                \BFW\Helpers\Test\Mock\Cli::colorForShell('atoum', 'bg');
+                \BFW\Test\Mock\Helpers\Cli::colorForShell('atoum', 'bg');
             })
                 ->hasCode(\BFW\Helpers\Cli::ERR_COLOR_NOT_AVAILABLE)
         ;
         
         $this->assert('test Helpers\Cli::colorForShell for background color')
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('black', 'bg'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('black', 'bg'))
                 ->isEqualTo(40)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('red', 'bg'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('red', 'bg'))
                 ->isEqualTo(41)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('green', 'bg'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('green', 'bg'))
                 ->isEqualTo(42)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('yellow', 'bg'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('yellow', 'bg'))
                 ->isEqualTo(43)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('blue', 'bg'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('blue', 'bg'))
                 ->isEqualTo(44)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('magenta', 'bg'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('magenta', 'bg'))
                 ->isEqualTo(45)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('cyan', 'bg'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('cyan', 'bg'))
                 ->isEqualTo(46)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('white', 'bg'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('white', 'bg'))
                 ->isEqualTo(47)
         ;
         
         $this->assert('test Helpers\Cli::colorForShell for text color')
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('black', 'txt'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('black', 'txt'))
                 ->isEqualTo(30)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('red', 'txt'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('red', 'txt'))
                 ->isEqualTo(31)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('green', 'txt'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('green', 'txt'))
                 ->isEqualTo(32)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('yellow', 'txt'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('yellow', 'txt'))
                 ->isEqualTo(33)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('blue', 'txt'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('blue', 'txt'))
                 ->isEqualTo(34)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('magenta', 'txt'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('magenta', 'txt'))
                 ->isEqualTo(35)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('cyan', 'txt'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('cyan', 'txt'))
                 ->isEqualTo(36)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::colorForShell('white', 'txt'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::colorForShell('white', 'txt'))
                 ->isEqualTo(37)
         ;
     }
@@ -83,29 +83,29 @@ class Cli extends atoum
     {
         $this->assert('test Helpers\Cli::styleForShell with not existing style')
             ->exception(function() {
-                \BFW\Helpers\Test\Mock\Cli::styleForShell('atoum');
+                \BFW\Test\Mock\Helpers\Cli::styleForShell('atoum');
             })
                 ->hasCode(\BFW\Helpers\Cli::ERR_STYLE_NOT_AVAILABLE)
         ;
         
         $this->assert('test Helpers\Cli::styleForShell with existing style')
-            ->integer(\BFW\Helpers\Test\Mock\Cli::styleForShell('normal'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::styleForShell('normal'))
                 ->isEqualTo(0)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::styleForShell('bold'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::styleForShell('bold'))
                 ->isEqualTo(1)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::styleForShell('not-bold'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::styleForShell('not-bold'))
                 ->isEqualTo(21)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::styleForShell('underline'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::styleForShell('underline'))
                 ->isEqualTo(4)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::styleForShell('not-underline'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::styleForShell('not-underline'))
                 ->isEqualTo(24)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::styleForShell('blink'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::styleForShell('blink'))
                 ->isEqualTo(5)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::styleForShell('not-blink'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::styleForShell('not-blink'))
                 ->isEqualTo(25)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::styleForShell('reverse'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::styleForShell('reverse'))
                 ->isEqualTo(7)
-            ->integer(\BFW\Helpers\Test\Mock\Cli::styleForShell('not-reverse'))
+            ->integer(\BFW\Test\Mock\Helpers\Cli::styleForShell('not-reverse'))
                 ->isEqualTo(27)
         ;
     }

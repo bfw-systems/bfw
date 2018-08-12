@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\Core\Test\Mock;
+namespace BFW\Test\Mock\Core;
 
 Class Cli extends \BFW\Core\Cli
 {

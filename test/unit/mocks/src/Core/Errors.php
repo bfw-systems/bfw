@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\Core\Test\Mock;
+namespace BFW\Test\Mock\Core;
 
 /**
  * Define the Error class without the handler redefine.

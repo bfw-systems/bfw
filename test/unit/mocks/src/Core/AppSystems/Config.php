@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\Core\AppSystems\Test\Mock;
+namespace BFW\Test\Mock\Core\AppSystems;
 
 class Config extends \BFW\Core\AppSystems\Config
 {

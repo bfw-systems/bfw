@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\Install\Test\Mock;
+namespace BFW\Test\Mock\Install;
 
 //To be included by module who use it
 require_once(__DIR__.'/../ModuleList.php');
@@ -12,8 +12,8 @@ class Application extends \BFW\Install\Application
     {
         parent::defineCoreSystemList();
         
-        $this->coreSystemList['config']     = new \BFW\Core\AppSystems\Test\Mock\Config;
-        $this->coreSystemList['moduleList'] = new \BFW\Install\Core\AppSystems\Test\Mock\ModuleList;
+        $this->coreSystemList['config']     = new \BFW\Test\Mock\Core\AppSystems\Config;
+        $this->coreSystemList['moduleList'] = new \BFW\Test\Mock\Install\Core\AppSystems\ModuleList;
     }
     
     public function setCoreSystemList(array $coreSystemList): self

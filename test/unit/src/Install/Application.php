@@ -11,7 +11,7 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
  */
 class Application extends atoum
 {
-    use \BFW\Install\Test\Helpers\Application;
+    use \BFW\Test\Helpers\Install\Application;
     use \BFW\Test\Helpers\OutputBuffer;
     
     public function beforeTestMethod($testMethod)
@@ -32,9 +32,9 @@ class Application extends atoum
     public function testConstructAndGetInstance()
     {
         $this->assert('test Install\Application::__construct')
-            ->object($app = \BFW\Install\Test\Mock\Application::getInstance())
+            ->object($app = \BFW\Test\Mock\Install\Application::getInstance())
                 ->isInstanceOf('\BFW\Install\Application')
-            ->object(\BFW\Install\Test\Mock\Application::getInstance())
+            ->object(\BFW\Test\Mock\Install\Application::getInstance())
                 ->isIdenticalTo($app)
         ;
     }

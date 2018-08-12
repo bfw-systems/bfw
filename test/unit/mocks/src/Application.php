@@ -14,10 +14,10 @@ class Application extends \BFW\Application
     {
         parent::defineCoreSystemList();
         
-        $this->coreSystemList['cli']        = new \BFW\Core\AppSystems\Test\Mock\Cli;
-        $this->coreSystemList['config']     = new \BFW\Core\AppSystems\Test\Mock\Config;
-        $this->coreSystemList['errors']     = new \BFW\Core\AppSystems\Test\Mock\Errors;
-        $this->coreSystemList['moduleList'] = new \BFW\Core\AppSystems\Test\Mock\ModuleList;
+        $this->coreSystemList['cli']        = new \BFW\Test\Mock\Core\AppSystems\Cli;
+        $this->coreSystemList['config']     = new \BFW\Test\Mock\Core\AppSystems\Config;
+        $this->coreSystemList['errors']     = new \BFW\Test\Mock\Core\AppSystems\Errors;
+        $this->coreSystemList['moduleList'] = new \BFW\Test\Mock\Core\AppSystems\ModuleList;
     }
     
     public function setCoreSystemList(array $coreSystemList): self

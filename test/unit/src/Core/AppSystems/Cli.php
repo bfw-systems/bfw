@@ -25,7 +25,7 @@ class Cli extends atoum
             $testMethod === 'testRunCliFile' ||
             $testMethod === 'testRunCliFileWhenNotCli'
         ) {
-            $this->mock = new \mock\BFW\Core\AppSystems\Test\Mock\Cli;
+            $this->mock = new \mock\BFW\Test\Mock\Core\AppSystems\Cli;
             
             $this->setRootDir(__DIR__.'/../../../../..');
             $this->createApp();

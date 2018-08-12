@@ -11,7 +11,7 @@ require_once(__DIR__.'/../../../../vendor/autoload.php');
  */
 class ModuleInstall extends atoum
 {
-    use \BFW\Install\Test\Helpers\Application;
+    use \BFW\Test\Helpers\Install\Application;
     use \BFW\Test\Helpers\OutputBuffer;
     
     protected $mock;
@@ -36,10 +36,10 @@ class ModuleInstall extends atoum
             ->makeVisible('removeRecursiveDirectory')
             ->makeVisible('copyConfigFile')
             ->makeVisible('checkInstallScript')
-            ->generate('BFW\Install\Test\Mock\ModuleInstall')
+            ->generate('BFW\Test\Mock\Install\ModuleInstall')
         ;
         
-        $this->mock = new \mock\BFW\Install\Test\Mock\ModuleInstall(
+        $this->mock = new \mock\BFW\Test\Mock\Install\ModuleInstall(
             ROOT_DIR.'vendor/bulton-fr/unit-test-module'
         );
     }
@@ -70,7 +70,7 @@ class ModuleInstall extends atoum
     public function testConstruct()
     {
         $this->assert('test \Install\ModuleInstall::__construct')
-            ->object($this->mock = new \mock\BFW\Install\Test\Mock\ModuleInstall(
+            ->object($this->mock = new \mock\BFW\Test\Mock\Install\ModuleInstall(
                 ROOT_DIR.'vendor/bulton-fr/unit-test-module'
             ))
                 ->isInstanceOf('\BFW\Install\ModuleInstall')

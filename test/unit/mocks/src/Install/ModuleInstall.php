@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\Install\Test\Mock;
+namespace BFW\Test\Mock\Install;
 
 class ModuleInstall extends \BFW\Install\ModuleInstall
 {

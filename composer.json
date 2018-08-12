@@ -47,13 +47,7 @@
     "autoload-dev": {
         "psr-4": {
             "BFW\\Test\\Mock\\": "test/unit/mocks/src",
-            "BFW\\Test\\Helpers\\": "test/unit/helpers",
-            "BFW\\Install\\Test\\Mock\\": "test/unit/mocks/src/Install",
-            "BFW\\Install\\Core\\AppSystems\\Test\\Mock\\": "test/unit/mocks/src/Install/Core/AppSystems",
-            "BFW\\Install\\Test\\Helpers\\": "test/unit/helpers/Install",
-            "BFW\\Core\\Test\\Mock\\": "test/unit/mocks/src/Core",
-            "BFW\\Core\\AppSystems\\Test\\Mock\\": "test/unit/mocks/src/Core/AppSystems",
-            "BFW\\Helpers\\Test\\Mock\\": "test/unit/mocks/src/Helpers"
+            "BFW\\Test\\Helpers\\": "test/unit/helpers"
         }
     },
     "bin": [

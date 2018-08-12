@@ -32,7 +32,7 @@ class ModuleList extends atoum
             $testMethod === 'testRunAllAppModules' ||
             $testMethod === 'testRunModule'
         ) {
-            $this->mock = new \mock\BFW\Core\AppSystems\Test\Mock\ModuleList;
+            $this->mock = new \mock\BFW\Test\Mock\Core\AppSystems\ModuleList;
             
             $this->setRootDir(__DIR__.'/../../../../..');
             $this->createApp();

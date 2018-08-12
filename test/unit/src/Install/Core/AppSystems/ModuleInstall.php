@@ -11,7 +11,7 @@ require_once(__DIR__.'/../../../../../../vendor/autoload.php');
  */
 class ModuleInstall extends atoum
 {
-    use \BFW\Install\Test\Helpers\Application;
+    use \BFW\Test\Helpers\Install\Application;
     use \BFW\Test\Helpers\OutputBuffer;
     
     protected $mock;
@@ -71,7 +71,7 @@ class ModuleInstall extends atoum
         $this->assert('test Install\Core\AppSystems\ModuleInstall::addToList')
             ->if($this->initApp())
             ->then
-            ->given($module = new \mock\BFW\Install\Test\Mock\ModuleInstall('atoum'))
+            ->given($module = new \mock\BFW\Test\Mock\Install\ModuleInstall('atoum'))
             ->and($module->setName('atoum'))
             ->then
             ->object($this->mock->addToList($module))
@@ -194,7 +194,7 @@ class ModuleInstall extends atoum
             ->and($this->initApp())
             ->then
             
-            ->if($module = new \BFW\Install\Test\Mock\ModuleInstall('unitTest'))
+            ->if($module = new \BFW\Test\Mock\Install\ModuleInstall('unitTest'))
             ->and($module->setName('unitTest'))
             //->and($this->mock->addToList($module)) //Already installed
             ->and($this->app->getCoreSystemList()['moduleList']->addToMockedList(
@@ -229,7 +229,7 @@ class ModuleInstall extends atoum
             ->and($this->initApp())
             ->then
             
-            ->if($module = new \BFW\Install\Test\Mock\ModuleInstall('unitTest'))
+            ->if($module = new \BFW\Test\Mock\Install\ModuleInstall('unitTest'))
             ->and($module->setName('unitTest'))
             ->and($this->mock->addToList($module))
             ->and($this->app->getCoreSystemList()['moduleList']->addToMockedList(
@@ -267,7 +267,7 @@ class ModuleInstall extends atoum
             ->then
             
             ->given($listScripts = [])
-            ->if($module = new \mock\BFW\Install\Test\Mock\ModuleInstall('unitTest'))
+            ->if($module = new \mock\BFW\Test\Mock\Install\ModuleInstall('unitTest'))
             ->and($this->calling($module)->runInstallScript = function($scriptName) use (&$listScripts) {
                 $listScripts[] = $scriptName;
             })
@@ -312,7 +312,7 @@ class ModuleInstall extends atoum
             ->then
             
             ->given($listScripts = [])
-            ->if($module = new \mock\BFW\Install\Test\Mock\ModuleInstall('unitTest'))
+            ->if($module = new \mock\BFW\Test\Mock\Install\ModuleInstall('unitTest'))
             ->and($this->calling($module)->runInstallScript = function($scriptName) use (&$listScripts) {
                 $listScripts[] = $scriptName;
             })

@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\Core\AppSystems\Test\Mock;
+namespace BFW\Test\Mock\Core\AppSystems;
 
 //To be included by module who use it
 require_once(__DIR__.'/../../ModuleList.php');

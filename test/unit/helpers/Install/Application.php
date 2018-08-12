@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\Install\Test\Helpers;
+namespace BFW\Test\Helpers\Install;
 
 //To be included by module who use it
 require_once(__DIR__.'/../../mocks/src/Install/Application.php');
@@ -8,7 +8,7 @@ require_once(__DIR__.'/../../mocks/src/Install/Application.php');
 trait Application
 {
     /**
-     * @var \BFW\Install\Test\Mock\Application $app
+     * @var \BFW\Test\Mock\Install\Application $app
      */
     protected $app;
     
@@ -37,7 +37,7 @@ trait Application
      */
     protected function createApp()
     {
-        $this->app = \BFW\Install\Test\Mock\Application::getInstance();
+        $this->app = \BFW\Test\Mock\Install\Application::getInstance();
         $appConfig = $this->app->getCoreSystemList()['config'];
         
         $configFileList = [

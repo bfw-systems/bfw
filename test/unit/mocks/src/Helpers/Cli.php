@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW\Helpers\Test\Mock;
+namespace BFW\Test\Mock\Helpers;
 
 /**
  * Mock for Helpers\Cli class
