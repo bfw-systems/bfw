@@ -132,7 +132,7 @@ class ReadDirectory
      * 
      * @param string $dirPath
      */
-    protected function dirAction(string $dirPath): string
+    protected function dirAction(string $dirPath)
     {
         $read = new $this->calledClass($this->list);
         $read->run($dirPath);
