@@ -121,13 +121,13 @@ class ModuleInstall extends AbstractSystem
         $module         = $this->listToInstall[$moduleName];
         $installScripts = $module->getSourceInstallScript();
         
-        if ($installScripts === '') {
+        if (empty($installScripts) || $installScripts === false) {
             Cli::displayMsgNL(' >> No script to run.');
             return;
         }
         
-        if (is_string($installScripts)) {
-            $installScripts = (array) $installScripts;
+        if (!is_array($installScripts)) {
+            $installScripts = [$installScripts];
         }
         
         foreach ($installScripts as $scriptPath) {

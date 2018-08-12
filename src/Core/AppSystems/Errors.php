@@ -11,6 +11,8 @@ class Errors extends AbstractSystem
     
     /**
      * {@inheritdoc}
+     * 
+     * @return \BFW\Core\Errors|null
      */
     public function __invoke()
     {

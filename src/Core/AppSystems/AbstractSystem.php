@@ -24,7 +24,7 @@ abstract class AbstractSystem implements SystemInterface
      * 
      * @return mixed
      */
-    abstract function __invoke();
+    abstract public function __invoke();
     
     /**
      * {@inheritdoc}

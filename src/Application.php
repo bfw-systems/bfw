@@ -9,6 +9,20 @@ use \BFW\Core\AppSystems\SystemInterface;
  * Application class
  * Manage all BFW application
  * Load and init components, modules, ...
+ * 
+ * @method \BFW\Core\Cli getCli()
+ * @method \Composer\Autoload\ClassLoader getComposerLoader()
+ * @method \BFW\Config getConfig()
+ * @method null getConstants()
+ * @method object getCtrlRouterLink()
+ * @method \BFW\Core\Errors getErrors()
+ * @method \BFW\Memcached getMemcached()
+ * @method \BFW\ModuleList getModuleList()
+ * @method \BFW\Monolog getMonolog()
+ * @method \BFW\Core\Options getOptions()
+ * @method \BFW\Request getRequest()
+ * @method null getSession()
+ * @method \BFW\SubjectList getSubjectList()
  */
 class Application
 {
@@ -180,9 +194,9 @@ class Application
      * 
      * @param array $options Options passed to application
      * 
-     * @return void
+     * @return $this
      */
-    public function initSystems(array $options)
+    public function initSystems(array $options): self
     {
         $this->declaredOptions = $options;
         $this->runTasks        = new \BFW\RunTasks([], 'BfwApp');

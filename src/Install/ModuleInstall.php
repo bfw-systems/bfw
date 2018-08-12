@@ -102,8 +102,8 @@ class ModuleInstall
     protected $configFilesList = [];
     
     /**
-     * @var string|bool $sourceInstallScript : Script to run for a specific
-     *  install of the module
+     * @var bool|string|array $sourceInstallScript : Script to run for a
+     *  specific install of the module
      */
     protected $sourceInstallScript = '';
     
@@ -153,7 +153,7 @@ class ModuleInstall
     /**
      * Get accessor to the install script file or list
      * 
-     * @return string|array
+     * @return bool|string|array
      */
     public function getSourceInstallScript()
     {
@@ -521,7 +521,7 @@ class ModuleInstall
      */
     protected function removeRecursiveDirectory(string $dirPath): bool
     {
-        $fileList = array_diff(scandir($dirPath), ['.','..']);
+        $fileList = array_diff(scandir($dirPath), ['.', '..']);
         
         foreach ($fileList as $filePath) {
             if (is_dir($filePath)) {
@@ -595,7 +595,7 @@ class ModuleInstall
 
         //If no script to complete the install
         if (
-            $this->sourceInstallScript === ''
+            empty($this->sourceInstallScript)
             || $this->sourceInstallScript === false
         ) {
             Cli::displayMsg(' >> ');

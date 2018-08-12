@@ -15,6 +15,8 @@ class Memcached extends AbstractSystem
     
     /**
      * {@inheritdoc}
+     * 
+     * @return \BFW\Memcached|null
      */
     public function __invoke()
     {

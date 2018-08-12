@@ -205,7 +205,7 @@ class Request
          * End "en" (preference 0.4/1)
          **/
         
-        $acceptLanguage  = $this->serverValue('HTTP_ACCEPT_LANGUAGE');
+        $acceptLanguage = $this->serverValue('HTTP_ACCEPT_LANGUAGE');
         if (empty($acceptLanguage)) {
             $this->lang = '';
             return;
