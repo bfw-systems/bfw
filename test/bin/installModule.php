@@ -17,6 +17,7 @@ $expectedInstallBfwHelloWorld = "bfw-hello-world : Run install.\n"
     ." > Create symbolic link ... \033[1;32mDone\033[0m\n"
     ." > Copy config files :\n"
     ." >> Create config directory for this module ... \033[1;32mCreated.\033[0m\n"
+    ." >> Copy manifest.json ... \033[1;32mDone\033[0m\n"
     ." >> Copy hello-world.json ... \033[1;32mDone\033[0m\n"
     ." > Check install specific script :\n"
     ." >> \033[1;33mNo specific script declared. Pass\033[0m\n";
@@ -28,6 +29,7 @@ $expectedInstallBfwTestInstall = "bfw-test-install : Run install.\n"
     ." > Create symbolic link ... \033[1;32mDone\033[0m\n"
     ." > Copy config files :\n"
     ." >> Create config directory for this module ... \033[1;32mCreated.\033[0m\n"
+    ." >> Copy manifest.json ... \033[1;32mDone\033[0m\n"
     ." >> Copy test-install.json ... \033[1;32mDone\033[0m\n"
     ." > Check install specific script :\n"
     ." >> \033[1;33mScripts find. Add to list to execute.\033[0m\n";
@@ -83,10 +85,12 @@ echo "\033[1;32m[OK]\033[0m\n";
 echo 'Test structure :'."\n";
 
 testDirectoryOrFile($installDir, 'app/config/bfw-hello-world/hello-world.json');
+testDirectoryOrFile($installDir, 'app/config/bfw-hello-world/manifest.json');
 testDirectoryOrFile($installDir, 'app/modules/bfw-hello-world/helloWorld.php');
 testDirectoryOrFile($installDir, 'app/modules/bfw-hello-world/module.json');
 
 testDirectoryOrFile($installDir, 'app/config/bfw-test-install/test-install.json');
+testDirectoryOrFile($installDir, 'app/config/bfw-test-install/manifest.json');
 testDirectoryOrFile($installDir, 'app/modules/bfw-test-install/runner.php');
 testDirectoryOrFile($installDir, 'app/modules/bfw-test-install/module.json');
 testDirectoryOrFile($installDir, 'web/install_test.php');

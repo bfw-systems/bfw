@@ -63,6 +63,7 @@ $outputCreateFiles = "\n"
     ."> Copy skel/cli.php file to cli.php ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/app/config/bfw/errors.php file to app/config/bfw/errors.php ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/app/config/bfw/global.php file to app/config/bfw/global.php ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/app/config/bfw/manifest.json file to app/config/bfw/manifest.json ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/app/config/bfw/memcached.php file to app/config/bfw/memcached.php ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/app/config/bfw/modules.php file to app/config/bfw/modules.php ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/app/config/bfw/monolog.php file to app/config/bfw/monolog.php ...\033[1;32m Done\033[0m\n"
@@ -75,6 +76,7 @@ $outputExistsFiles = "\n"
     ."> Copy skel/cli.php file to cli.php ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/app/config/bfw/errors.php file to app/config/bfw/errors.php ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/app/config/bfw/global.php file to app/config/bfw/global.php ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/app/config/bfw/manifest.json file to app/config/bfw/manifest.json ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/app/config/bfw/memcached.php file to app/config/bfw/memcached.php ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/app/config/bfw/modules.php file to app/config/bfw/modules.php ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/app/config/bfw/monolog.php file to app/config/bfw/monolog.php ...\033[1;33m File exist\033[0m\n"
@@ -166,6 +168,7 @@ for ($installIndex = 0; $installIndex < 3; $installIndex++) {
 
     testDirectoryOrFile($installDir, 'app/config/bfw/errors.php');
     testDirectoryOrFile($installDir, 'app/config/bfw/global.php');
+    testDirectoryOrFile($installDir, 'app/config/bfw/manifest.json');
     testDirectoryOrFile($installDir, 'app/config/bfw/memcached.php');
     testDirectoryOrFile($installDir, 'app/config/bfw/modules.php');
     testDirectoryOrFile($installDir, 'app/config/bfw/monolog.php');

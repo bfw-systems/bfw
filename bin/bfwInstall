@@ -166,6 +166,7 @@ echo ''
 copyFile "skel/cli.php" "cli.php"
 copyFile "skel/app/config/bfw/errors.php" "app/config/bfw/errors.php"
 copyFile "skel/app/config/bfw/global.php" "app/config/bfw/global.php"
+copyFile "skel/app/config/bfw/manifest.json" "app/config/bfw/manifest.json"
 copyFile "skel/app/config/bfw/memcached.php" "app/config/bfw/memcached.php"
 copyFile "skel/app/config/bfw/modules.php" "app/config/bfw/modules.php"
 copyFile "skel/app/config/bfw/monolog.php" "app/config/bfw/monolog.php"

@@ -452,6 +452,9 @@ class ModuleInstall
 
         //Create the module directory into the config directory.
         $this->createConfigDirectory();
+        
+        //Copy manifest json file
+        $this->copyConfigFile('manifest.json');
 
         //Copy each config file declared
         foreach ($this->configFilesList as $configFileName) {
