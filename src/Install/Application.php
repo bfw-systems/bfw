@@ -4,6 +4,8 @@ namespace BFW\Install;
 
 /**
  * Application class for install module script
+ * 
+ * @method \BFW\Install\Core\AppSystems\ModuleInstall getModuleInstall()
  */
 class Application extends \BFW\Application
 {
