@@ -451,7 +451,10 @@ class ModuleInstall extends atoum
                 ->isEqualTo(' > Copy config files : '."\n")
             ->mock($this->mock)
                 ->call('copyConfigFile')
-                    ->once()
+                    ->withArguments('manifest.json')
+                        ->once()
+                    ->withArguments('mymodule.config.php')
+                        ->once()
         ;
     }
     
