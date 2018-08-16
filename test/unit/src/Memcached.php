@@ -199,64 +199,46 @@ class Memcached extends atoum
                 ->isNull()
             ->array($infos)
                 ->isEqualTo([
-                    'host'       => null,
-                    'port'       => null,
-                    'weight'     => 0,
-                    'timeout'    => null,
-                    'persistent' => false
+                    'host'   => null,
+                    'port'   => null,
+                    'weight' => 0
                 ])
         ;
         
         $this->assert('test Memcached::completeServerInfos with somes infos')
             ->given($infos = [
-                'port'    => 11211,
-                'timeout' => 50
+                'port' => 11211
             ])
             ->variable($this->mock->completeServerInfos($infos))
                 ->isNull()
             ->array($infos)
                 ->isEqualTo([
-                    'host'       => null,
-                    'port'       => 11211,
-                    'weight'     => 0,
-                    'timeout'    => 50,
-                    'persistent' => false
+                    'host'   => null,
+                    'port'   => 11211,
+                    'weight' => 0
                 ])
         ;
         
         $this->assert('test Memcached::completeServerInfos with all infos')
             ->given($infos = [
-                    'host'       => 'localhost',
-                    'port'       => 11211,
-                    'weight'     => 1,
-                    'timeout'    => 50,
-                    'persistent' => true
+                    'host'   => 'localhost',
+                    'port'   => 11211,
+                    'weight' => 1
             ])
             ->variable($this->mock->completeServerInfos($infos))
                 ->isNull()
             ->array($infos)
                 ->isEqualTo([
-                    'host'       => 'localhost',
-                    'port'       => 11211,
-                    'weight'     => 1,
-                    'timeout'    => 50,
-                    'persistent' => true
+                    'host'   => 'localhost',
+                    'port'   => 11211,
+                    'weight' => 1
                 ])
         ;
     }
     
     public function testTestConnect()
     {
-        $this->assert('test Memcached::testConnect without server');
-        
-        //No thanks to \Memcache ...
-        if (method_exists($this->mock, 'getExtendedStats')) {
-            $this
-                ->if($this->calling($this->mock)->getExtendedStats = false)
-            ;
-        }
-        
-        $this
+        $this->assert('test Memcached::testConnect without server')
             ->and($this->calling($this->mock)->getStats = false)
             ->then
             
@@ -266,23 +248,7 @@ class Memcached extends atoum
                 ->hasCode(\BFW\Memcached::ERR_NO_SERVER_CONNECTED)
         ;
         
-        $this->assert('test Memcached::testConnect with a not connected server');
-        
-        //No thanks to \Memcache ...
-        if (method_exists($this->mock, 'getExtendedStats')) {
-            $this
-                ->if($this->calling($this->mock)->getExtendedStats = function() {
-                    return [
-                        'unit'  => ['uptime' => 10],
-                        'test'  => ['uptime' => -1],
-                        'with'  => ['uptime' => 9],
-                        'atoum' => ['uptime' => 5],
-                    ];
-                })
-            ;
-        }
-        
-        $this
+        $this->assert('test Memcached::testConnect with a not connected server')
             ->and($this->calling($this->mock)->getStats = function() {
                 return [
                     'unit'  => ['uptime' => 10],
@@ -300,23 +266,7 @@ class Memcached extends atoum
                 ->hasCode($mock::ERR_A_SERVER_IS_NOT_CONNECTED)
         ;
         
-        $this->assert('test Memcached::testConnect with a not connected server');
-        
-        //No thanks to \Memcache ...
-        if (method_exists($this->mock, 'getExtendedStats')) {
-            $this
-                ->if($this->calling($this->mock)->getExtendedStats = function() {
-                    return [
-                        'unit'  => ['uptime' => 10],
-                        'test'  => ['uptime' => 1],
-                        'with'  => ['uptime' => 9],
-                        'atoum' => ['uptime' => 5],
-                    ];
-                })
-            ;
-        }
-        
-        $this
+        $this->assert('test Memcached::testConnect with a not connected server')
             ->and($this->calling($this->mock)->getStats = function() {
                 return [
                     'unit'  => ['uptime' => 10],
@@ -362,17 +312,13 @@ class Memcached extends atoum
         
         $this->assert('test Memcached::updateExpire with exist key')
             ->if($this->calling($this->mock)->ifExists = true)
-            ->and($this->calling($this->mock)->get = 'atoum')
-            ->and($this->calling($this->mock)->replace = true)
+            ->and($this->calling($this->mock)->touch = true)
             ->then
             ->boolean($this->mock->updateExpire('unit-test-lib', 42))
                 ->isTrue()
-        ;
-        
-        $this
             ->mock($this->mock)
-                ->call('replace')
-                    ->withArguments('unit-test-lib', 'atoum', 42)
+                ->call('touch')
+                    ->withArguments('unit-test-lib', 42)
                     ->once()
         ;
     }

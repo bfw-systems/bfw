@@ -144,11 +144,9 @@ class Memcached extends \Memcached
     protected function completeServerInfos(array &$infos)
     {
         $infosKeyDefaultValues = [
-            'host'       => null,
-            'port'       => null,
-            'weight'     => 0,
-            'timeout'    => null,
-            'persistent' => false
+            'host'   => null,
+            'port'   => null,
+            'weight' => 0
         ];
         
         foreach ($infosKeyDefaultValues as $infosKey => $defaultValue) {
@@ -228,11 +226,7 @@ class Memcached extends \Memcached
                 self::ERR_KEY_NOT_EXIST
             );
         }
-
-        //To change expire time, we need to re-set the value.
-        $value = $this->get($key); //Get the value
         
-        //Re-set the value with new expire time.
-        return $this->replace($key, $value, $expire); //We can use touch()
+        return $this->touch($key, $expire);
     }
 }

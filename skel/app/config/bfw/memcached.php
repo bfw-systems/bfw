@@ -39,12 +39,12 @@ return [
                 /**
                  * @var string host : Memcache(d) host
                  */
-                'host'       => '',
+                'host'   => '',
                 
                 /**
                  * @var int post : Memcache(d) port
                  */
-                'port'       => 0,
+                'port'   => 0,
                 
                 /**
                  * @var int weight : The weight of the server relative to the
@@ -52,26 +52,7 @@ return [
                  * 
                  * @see http://php.net/manual/en/memcached.addserver.php
                  */
-                'weight'     => 0,
-                
-                /**
-                 * @var int|null : Value in seconds which will be used for
-                 *  connecting to the daemon.
-                 * 
-                 * For memcache only
-                 * It's recommended to stay value at null.
-                 * 
-                 * @see http://php.net/manual/fr/memcache.connect.php
-                 */
-                'timeout'    => null,
-                
-                /**
-                 * @var boolean persistent : If the connection should be
-                 *  persistent
-                 * 
-                 * For memcache only
-                 */
-                'persistent' => false
+                'weight' => 0
             ]
         ]
     ]
