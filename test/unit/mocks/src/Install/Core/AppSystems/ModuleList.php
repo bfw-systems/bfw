@@ -3,7 +3,7 @@
 namespace BFW\Test\Mock\Install\Core\AppSystems;
 
 //To be included by module who use it
-require_once(__DIR__.'/../../../ModuleList.php');
+require_once(__DIR__.'/../../../Core/ModuleList.php');
 
 class ModuleList extends \BFW\Install\Core\AppSystems\ModuleList
 {
@@ -21,7 +21,7 @@ class ModuleList extends \BFW\Install\Core\AppSystems\ModuleList
     
     public function init()
     {
-        $this->moduleList = new \BFW\Test\Mock\ModuleList;
+        $this->moduleList = new \BFW\Test\Mock\Core\ModuleList;
         $this->initStatus = true;
     }
 

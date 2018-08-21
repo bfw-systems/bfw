@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW;
+namespace BFW\Helpers;
 
 use \DateTime;
 use \Exception;

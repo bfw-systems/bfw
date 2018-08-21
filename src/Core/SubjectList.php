@@ -1,6 +1,6 @@
 <?php
 
-namespace BFW;
+namespace BFW\Core;
 
 use \Exception;
 

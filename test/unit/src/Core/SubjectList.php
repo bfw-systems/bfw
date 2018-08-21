@@ -1,10 +1,10 @@
 <?php
 
-namespace BFW\test\unit;
+namespace BFW\Core\test\unit;
 
 use \atoum;
 
-require_once(__DIR__.'/../../../vendor/autoload.php');
+require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -20,12 +20,12 @@ class SubjectList extends atoum
         //$this->createApp();
         //$this->initApp();
         
-        $this->mock = new \mock\BFW\SubjectList;
+        $this->mock = new \mock\BFW\Core\SubjectList;
     }
     
     public function testGetSubjectList()
     {
-        $this->assert('test SubjectList::getSubjectList for default value')
+        $this->assert('test Core\SubjectList::getSubjectList for default value')
             ->array($this->mock->getSubjectList())
                 ->isEmpty()
         ;
@@ -33,14 +33,14 @@ class SubjectList extends atoum
     
     public function testGetSubjectByName()
     {
-        $this->assert('test SubjectList::getSubjectByName with not existing subject')
+        $this->assert('test Core\SubjectList::getSubjectByName with not existing subject')
             ->exception(function() {
                 $this->mock->getSubjectByName('UnitTest');
             })
-                ->hasCode(\BFW\SubjectList::ERR_SUBJECT_NAME_NOT_EXIST)
+                ->hasCode(\BFW\Core\SubjectList::ERR_SUBJECT_NAME_NOT_EXIST)
         ;
         
-        $this->assert('test SubjectList::getSubjectByName with existing subject')
+        $this->assert('test Core\SubjectList::getSubjectByName with existing subject')
             ->given($subject = new \BFW\Subject)
             ->if($this->mock->addSubject($subject, 'UnitTest'))
             ->then
@@ -52,7 +52,7 @@ class SubjectList extends atoum
     
     public function testAddSubject()
     {
-        $this->assert('test SubjectList::addSubject')
+        $this->assert('test Core\SubjectList::addSubject')
             ->given($subject = new \BFW\Subject)
             ->then
             
@@ -64,7 +64,7 @@ class SubjectList extends atoum
                 ->isIdenticalTo($subject)
         ;
         
-        $this->assert('test SubjectList::addSubject without name')
+        $this->assert('test Core\SubjectList::addSubject without name')
             ->object($this->mock->addSubject($subject))
                 ->isIdenticalTo($this->mock)
             ->array($subjectList = $this->mock->getSubjectList())
@@ -74,7 +74,7 @@ class SubjectList extends atoum
     
     public function testRemoveSubject()
     {
-        $this->assert('test SubjectList::removeSubject with existing subject')
+        $this->assert('test Core\SubjectList::removeSubject with existing subject')
             ->given($subject = new \BFW\Subject)
             ->if($this->mock->addSubject($subject, 'UnitTest'))
             //Fast check to adding
@@ -92,7 +92,7 @@ class SubjectList extends atoum
             ->exception(function() use ($subject) {
                 $this->mock->removeSubject($subject);
             })
-                ->hasCode(\BFW\SubjectList::ERR_SUBJECT_NOT_FOUND)
+                ->hasCode(\BFW\Core\SubjectList::ERR_SUBJECT_NOT_FOUND)
         ;
     }
 }

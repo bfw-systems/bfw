@@ -1,10 +1,10 @@
 <?php
 
-namespace BFW\test\unit;
+namespace BFW\Helpers\test\unit;
 
 use \atoum;
 
-require_once(__DIR__.'/../../../vendor/autoload.php');
+require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -18,7 +18,7 @@ class Form extends atoum
     
     public function beforeTestMethod($testMethod)
     {
-        $this->setRootDir(__DIR__.'/../../..');
+        $this->setRootDir(__DIR__.'/../../../..');
         $this->createApp();
         $this->initApp();
         
@@ -27,7 +27,7 @@ class Form extends atoum
             ->makeVisible('saveTokenInSession')
             ->makeVisible('obtainToken')
             ->makeVisible('obtainTokenFromSession')
-            ->generate('BFW\Form')
+            ->generate('BFW\Helpers\Form')
         ;
         
         $this->saveInfos = new class() {
@@ -52,28 +52,28 @@ class Form extends atoum
         };
         
         if ($testMethod !== 'testConstruct') {
-            $this->mock = new \mock\BFW\Form('atoum');
+            $this->mock = new \mock\BFW\Helpers\Form('atoum');
         }
     }
     
     public function testConstruct()
     {
-        $this->assert('test Form::__construct with a formId')
-            ->object($this->mock = new \mock\BFW\Form('atoum'))
-                ->isInstanceOf('\BFW\Form')
+        $this->assert('test Helpers\Form::__construct with a formId')
+            ->object($this->mock = new \mock\BFW\Helpers\Form('atoum'))
+                ->isInstanceOf('\BFW\Helpers\Form')
         ;
         
-        $this->assert('test Form::__construct with empty formId')
+        $this->assert('test Helpers\Form::__construct with empty formId')
             ->exception(function() {
-                new \mock\BFW\Form('');
+                new \mock\BFW\Helpers\Form('');
             })
-                ->hasCode(\BFW\Form::ERR_FORM_ID_EMPTY)
+                ->hasCode(\BFW\Helpers\Form::ERR_FORM_ID_EMPTY)
         ;
     }
     
     public function testGetFormId()
     {
-        $this->assert('test Form::getFormId')
+        $this->assert('test Helpers\Form::getFormId')
             ->string($this->mock->getFormId())
                 ->isEqualTo('atoum')
         ;
@@ -81,7 +81,7 @@ class Form extends atoum
     
     public function testSaveToken()
     {
-        $this->assert('test Form::saveToken')
+        $this->assert('test Helpers\Form::saveToken')
             ->given($saveInfos = $this->saveInfos->defineInfos('123'))
             ->if($this->calling($this->mock)->saveTokenInSession = true)
             ->then
@@ -97,7 +97,7 @@ class Form extends atoum
     {
         global $_SESSION;
         
-        $this->assert('test Form::saveTokenInSession')
+        $this->assert('test Helpers\Form::saveTokenInSession')
             ->given($saveInfos = $this->saveInfos->defineInfos('123'))
             ->then
             ->variable($this->invoke($this->mock)->saveTokenInSession($saveInfos))
@@ -111,7 +111,7 @@ class Form extends atoum
     
     public function testObtainToken()
     {
-        $this->assert('test Form::obtainToken')
+        $this->assert('test Helpers\Form::obtainToken')
             ->if($this->calling($this->mock)->obtainTokenFromSession = null)
             ->then
             ->variable($this->invoke($this->mock)->obtainToken())
@@ -126,22 +126,22 @@ class Form extends atoum
     {
         global $_SESSION;
         
-        $this->assert('test Form::obtainTokenFromSession without token at all')
+        $this->assert('test Helpers\Form::obtainTokenFromSession without token at all')
             ->exception(function() {
                 $this->invoke($this->mock)->obtainTokenFromSession();
             })
-                ->hasCode(\BFW\Form::ERR_NO_TOKEN)
+                ->hasCode(\BFW\Helpers\Form::ERR_NO_TOKEN)
         ;
         
-        $this->assert('test Form::obtainTokenFromSession without token for this form')
+        $this->assert('test Helpers\Form::obtainTokenFromSession without token for this form')
             ->if($_SESSION['formsTokens'] = [])
             ->exception(function() {
                 $this->invoke($this->mock)->obtainTokenFromSession();
             })
-                ->hasCode(\BFW\Form::ERR_NO_TOKEN_FOR_FORM_ID)
+                ->hasCode(\BFW\Helpers\Form::ERR_NO_TOKEN_FOR_FORM_ID)
         ;
         
-        $this->assert('test Form::obtainTokenFromSession with a token')
+        $this->assert('test Helpers\Form::obtainTokenFromSession with a token')
             ->given($tokenInfos = $this->saveInfos->defineInfos('123'))
             ->if($_SESSION['formsTokens']['atoum'] = $tokenInfos)
             ->object($this->invoke($this->mock)->obtainTokenFromSession())
@@ -151,7 +151,7 @@ class Form extends atoum
     
     public function testCreateToken()
     {
-        $this->assert('test Form::createToken')
+        $this->assert('test Helpers\Form::createToken')
             ->given($saveInfos = null)
             ->if($this->calling($this->mock)->saveToken = function ($saveToken) use (&$saveInfos) {
                 $saveInfos = $saveToken;
@@ -177,7 +177,7 @@ class Form extends atoum
     {
         global $_SESSION;
         
-        $this->assert('test Form::checkToken with a incorrect token')
+        $this->assert('test Helpers\Form::checkToken with a incorrect token')
             ->given($formId = $this->mock->getFormId())
             ->given($savedToken = $this->saveInfos->defineInfos('123'))
             ->then
@@ -191,7 +191,7 @@ class Form extends atoum
                 ->isTrue()
         ;
         
-        $this->assert('test Form::checkToken with an expired token')
+        $this->assert('test Helpers\Form::checkToken with an expired token')
             ->given($formId = $this->mock->getFormId())
             ->given($savedToken = $this->saveInfos->defineInfos('123'))
             ->then
@@ -206,7 +206,7 @@ class Form extends atoum
                 ->isFalse()
         ;
         
-        $this->assert('test Form::checkToken with a not expired token')
+        $this->assert('test Helpers\Form::checkToken with a not expired token')
             ->given($formId = $this->mock->getFormId())
             ->given($savedToken = $this->saveInfos->defineInfos('123'))
             ->then
@@ -224,16 +224,16 @@ class Form extends atoum
     
     public function testHasToken()
     {
-        $this->assert('test Form::hasToken if there is no token')
+        $this->assert('test Helpers\Form::hasToken if there is no token')
             ->if($this->calling($this->mock)->obtainToken = function() {
-                throw new \Exception('No token.', \BFW\Form::ERR_NO_TOKEN);
+                throw new \Exception('No token.', \BFW\Helpers\Form::ERR_NO_TOKEN);
             })
             ->then
             ->boolean($this->mock->hasToken())
                 ->isFalse()
         ;
         
-        $this->assert('test Form::hasToken with an existing token')
+        $this->assert('test Helpers\Form::hasToken with an existing token')
             ->if($this->calling($this->mock)->obtainToken = $this->saveInfos->defineInfos('123'))
             ->then
             ->boolean($this->mock->hasToken())

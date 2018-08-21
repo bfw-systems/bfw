@@ -3,7 +3,7 @@
 namespace BFW\Test\Mock\Install;
 
 //To be included by module who use it
-require_once(__DIR__.'/../ModuleList.php');
+require_once(__DIR__.'/Core/AppSystems/ModuleList.php');
 require_once(__DIR__.'/../Core/AppSystems/Config.php');
 
 class Application extends \BFW\Install\Application

@@ -1,10 +1,10 @@
 <?php
 
-namespace BFW\test\unit;
+namespace BFW\Core\test\unit;
 
 use \atoum;
 
-require_once(__DIR__.'/../../../vendor/autoload.php');
+require_once(__DIR__.'/../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -17,7 +17,7 @@ class ModuleList extends atoum
     
     public function beforeTestMethod($testMethod)
     {
-        $this->setRootDir(__DIR__.'/../../..');
+        $this->setRootDir(__DIR__.'/../../../..');
         $this->createApp();
         $this->initApp();
         
@@ -25,23 +25,23 @@ class ModuleList extends atoum
             return;
         }
         
-        $this->mock = new \mock\BFW\Test\Mock\ModuleList;
+        $this->mock = new \mock\BFW\Test\Mock\Core\ModuleList;
     }
     
     public function testGetModules()
     {
-        $this->assert('test Modules::getModules without module')
+        $this->assert('test Core\Modules::getModules without module')
             ->array($this->mock->getModules())
                 ->isEmpty()
         ;
         
-        //add with extended method, not test method \BFW\ModuleList::addModule().
-        $this->assert('test Modules::addModule')
+        //add with extended method, not test method \BFW\Core\ModuleList::addModule().
+        $this->assert('test Core\Modules::addModule')
             ->variable($this->mock->addModule('atoum'))
                 ->isNull()
         ;
         
-        $this->assert('test Modules::getModules with a module')
+        $this->assert('test Core\Modules::getModules with a module')
             ->array($modules = $this->mock->getModules())
                 ->isNotEmpty()
                 ->hasKey('atoum')
@@ -59,14 +59,14 @@ class ModuleList extends atoum
     
     public function testGetModuleByName()
     {
-        $this->assert('test Modules::getModuleByName with not existing module')
+        $this->assert('test Core\Modules::getModuleByName with not existing module')
             ->exception(function() {
                 $this->mock->getModuleByName('atoum');
             })
-                ->hasCode(\BFW\ModuleList::ERR_NOT_FOUND)
+                ->hasCode(\BFW\Core\ModuleList::ERR_NOT_FOUND)
         ;
         
-        $this->assert('test Modules::getModuleByName with an existing module')
+        $this->assert('test Core\Modules::getModuleByName with an existing module')
             ->if($this->mock->addModule('atoum'))
             ->then
             ->object($this->mock->getModuleByName('atoum'))
@@ -78,7 +78,7 @@ class ModuleList extends atoum
     {
         $mock = $this->mock;
         
-        $this->assert('test Modules::readNeedMeDependencies with a module which not have needMe property')
+        $this->assert('test Core\Modules::readNeedMeDependencies with a module which not have needMe property')
             ->if($mock::setModuleLoadInfos('atoum', new \stdClass))
             ->and($this->mock->addModule('atoum'))
             ->given($module = clone $this->mock->getModuleByName('atoum'))
@@ -89,7 +89,7 @@ class ModuleList extends atoum
                 ->isEqualTo($module)
         ;
         
-        $this->assert('test Modules::readNeedMeDependencies with a dependency')
+        $this->assert('test Core\Modules::readNeedMeDependencies with a dependency')
             ->if($mock::setModuleLoadInfos(
                 'hello-world',
                 (object) ['needMe' => 'atoum']
@@ -108,7 +108,7 @@ class ModuleList extends atoum
                 ->isEqualTo($moduleHelloWorld)
         ;
         
-        $this->assert('test Modules::readNeedMeDependencies with a not existing dependency')
+        $this->assert('test Core\Modules::readNeedMeDependencies with a not existing dependency')
             ->if($mock::setModuleLoadInfos(
                 'api',
                 (object) ['needMe' => 'auth']
@@ -118,25 +118,25 @@ class ModuleList extends atoum
             ->exception(function() {
                 $this->mock->readNeedMeDependencies();
             })
-                ->hasCode(\BFW\ModuleList::ERR_NEEDED_NOT_FOUND)
+                ->hasCode(\BFW\Core\ModuleList::ERR_NEEDED_NOT_FOUND)
         ;
     }
     
     public function testGenerateTreeAndGetLoadTree()
     {
-        $this->assert('test Modules::getLoadTree for default value')
+        $this->assert('test Core\Modules::getLoadTree for default value')
             ->array($this->mock->getLoadTree())
                 ->isEmpty()
         ;
         
-        $this->assert('test Modules::generateTree without module')
+        $this->assert('test Core\Modules::generateTree without module')
             ->variable($this->mock->generateTree())
                 ->isNull()
             ->array($this->mock->getLoadTree())
                 ->isEmpty()
         ;
         
-        $this->assert('test Modules::generateTree with some modules')
+        $this->assert('test Core\Modules::generateTree with some modules')
             ->given($mock = $this->mock)
             ->and($mock::setModuleLoadInfos('atoum', (object) [
                 'priority' => 1

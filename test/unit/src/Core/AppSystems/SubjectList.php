@@ -35,7 +35,7 @@ class SubjectList extends atoum
             ->variable($this->mock->init())
                 ->isNull()
             ->object($this->mock->getSubjectList())
-                ->isInstanceOf('\BFW\SubjectList')
+                ->isInstanceOf('\BFW\Core\SubjectList')
             ->boolean($this->mock->isInit())
                 ->isTrue()
         ;

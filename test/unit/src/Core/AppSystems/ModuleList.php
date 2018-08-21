@@ -53,7 +53,7 @@ class ModuleList extends atoum
             ->variable($this->mock->init())
                 ->isNull()
             ->object($this->mock->getModuleList())
-                ->isInstanceOf('\BFW\ModuleList')
+                ->isInstanceOf('\BFW\Core\ModuleList')
             ->boolean($this->mock->isInit())
                 ->isTrue()
         ;

@@ -1,11 +1,11 @@
 <?php
 
-namespace BFW\Test\Mock;
+namespace BFW\Test\Mock\Core;
 
 /**
  * Mock for ModuleList class
  */
-class ModuleList extends \BFW\ModuleList
+class ModuleList extends \BFW\Core\ModuleList
 {
     /**
      * @var array $config Config for each module to add (can be different)

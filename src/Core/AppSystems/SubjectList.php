@@ -5,14 +5,14 @@ namespace BFW\Core\AppSystems;
 class SubjectList extends AbstractSystem
 {
     /**
-     * @var \BFW\SubjectList|null $subjectList
+     * @var \BFW\Core\SubjectList|null $subjectList
      */
     protected $subjectList;
     
     /**
      * {@inheritdoc}
      * 
-     * @return \BFW\SubjectList|null
+     * @return \BFW\Core\SubjectList|null
      */
     public function __invoke()
     {
@@ -22,7 +22,7 @@ class SubjectList extends AbstractSystem
     /**
      * Getter accessor to property subjectList
      * 
-     * @return \BFW\SubjectList|null
+     * @return \BFW\Core\SubjectList|null
      */
     public function getSubjectList()
     {
@@ -35,7 +35,7 @@ class SubjectList extends AbstractSystem
      */
     public function init()
     {
-        $this->subjectList = new \BFW\SubjectList;
+        $this->subjectList = new \BFW\Core\SubjectList;
         $this->initStatus  = true;
     }
 }
