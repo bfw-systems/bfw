@@ -12,13 +12,13 @@ class ModuleList
     /**
      * @const ERR_NOT_FOUND Exception code if a module is not found
      */
-    const ERR_NOT_FOUND = 1107001;
+    const ERR_NOT_FOUND = 1204001;
     
     /**
      * @const ERR_NEEDED_NOT_FOUND Exception code if a needed dependency is
      * not found.
      */
-    const ERR_NEEDED_NOT_FOUND = 1107002;
+    const ERR_NEEDED_NOT_FOUND = 1204002;
     
     /**
      * @var \BFW\Module[] All module instance

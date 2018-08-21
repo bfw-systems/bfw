@@ -10,12 +10,12 @@ class SubjectList
      * @const ERR_SUBJECT_NAME_NOT_EXIST Exception code if a subject name is
      * not found.
      */
-    const ERR_SUBJECT_NAME_NOT_EXIST = 1113001;
+    const ERR_SUBJECT_NAME_NOT_EXIST = 1206001;
     
     /**
      * @const ERR_SUBJECT_NOT_FOUND Exception code if a subject is not found.
      */
-    const ERR_SUBJECT_NOT_FOUND = 1113002;
+    const ERR_SUBJECT_NOT_FOUND = 1206002;
     
     /**
      * @var \SplSubject[] $subjectList List of all subjects declared

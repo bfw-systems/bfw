@@ -12,19 +12,19 @@ class Memcached extends \Memcached
     /**
      * @const ERR_NO_SERVER_CONNECTED Exception code if no server is connected.
      */
-    const ERR_NO_SERVER_CONNECTED = 1105001;
+    const ERR_NO_SERVER_CONNECTED = 1103001;
     
     /**
      * @const ERR_A_SERVER_IS_NOT_CONNECTED Exception code if a server is not
      * connected.
      */
-    const ERR_A_SERVER_IS_NOT_CONNECTED = 1105002;
+    const ERR_A_SERVER_IS_NOT_CONNECTED = 1103002;
     
     /**
      * @const ERR_KEY_NOT_EXIST Exception code if the asked key not exist.
      * Actually only used into the method updateExpire().
      */
-    const ERR_KEY_NOT_EXIST = 1105003;
+    const ERR_KEY_NOT_EXIST = 1103003;
 
     /**
      * @var array $config Config define into bfw config file for memcache(d)

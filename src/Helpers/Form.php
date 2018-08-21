@@ -14,18 +14,18 @@ class Form
     /**
      * @const ERR_NO_TOKEN Exception code if there is no token declared
      */
-    const ERR_NO_TOKEN = 1104001;
+    const ERR_NO_TOKEN = 1606001;
     
     /**
      * @const ERR_NO_TOKEN_FOR_FORM_ID Exception code if there is no token for
      * the form id.
      */
-    const ERR_NO_TOKEN_FOR_FORM_ID = 1104002;
+    const ERR_NO_TOKEN_FOR_FORM_ID = 1606002;
     
     /**
      * @const ERR_FORM_ID_EMPTY Exception code if the form id is not declared.
      */
-    const ERR_FORM_ID_EMPTY = 1104003;
+    const ERR_FORM_ID_EMPTY = 1606003;
     
     /**
      * @var string $formId The form id 

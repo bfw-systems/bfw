@@ -12,7 +12,7 @@ class ReadDirectory
     /**
      * @const ERR_RUN_OPENDIR Exception code if opendir fail
      */
-    const ERR_RUN_OPENDIR = 1606001;
+    const ERR_RUN_OPENDIR = 1608001;
     
     /**
      * @var string $calledClass : Name of the current class.

@@ -12,7 +12,7 @@ class Request
      * @const ERR_KEY_NOT_EXIST Exception code if a key not exist into the
      * $_SERVER array.
      */
-    const ERR_KEY_NOT_EXIST = 1110001;
+    const ERR_KEY_NOT_EXIST = 1107001;
     
     /**
      * @var \BFW\Request $instance Instance for this class (singleton pattern)

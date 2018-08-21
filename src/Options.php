@@ -12,7 +12,7 @@ class Options
     /**
      * @const ERR_KEY_NOT_EXIST Exception code if a key not exist.
      */
-    const ERR_KEY_NOT_EXIST = 1109001;
+    const ERR_KEY_NOT_EXIST = 1106001;
     
     /**
      * @var array $option option's list
