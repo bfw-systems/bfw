@@ -126,20 +126,27 @@ class Form
     /**
      * Create a token for the form and return the token
      * 
+     * @param int $expire (default 15) time on minute during which the
+     *  token is valid
+     * 
      * @return string
      * 
      * @throws \Exception If the form id is undefined
      */
-    public function createToken(): string
+    public function createToken(int $expire = 15): string
     {
-        $saveInfos = new class(uniqid(rand(), true)) {
+        $token = uniqid(rand(), true);
+        
+        $saveInfos = new class($token, $expire) {
             protected $token;
             protected $date;
+            protected $expire;
             
-            public function __construct($token)
+            public function __construct($token, int $expire)
             {
-                $this->token = $token;
-                $this->date  = new DateTime;
+                $this->token  = $token;
+                $this->expire = $expire;
+                $this->date   = new DateTime;
             }
             
             public function __get($name) {
@@ -155,20 +162,19 @@ class Form
      * Check the token receive with the generated token
      * 
      * @param string $tokenToCheck The token receive from user
-     * @param int $timeExpire (default 15) time on minute during which the
-     *  token is valid
      * 
      * @throws \Exception If the token not exist
      * 
      * @return boolean
      */
-    public function checkToken(string $tokenToCheck, int $timeExpire = 15): bool
+    public function checkToken(string $tokenToCheck): bool
     {
         //Throw Exception
         $tokenInfos = $this->obtainToken();
 
         $token      = $tokenInfos->token;
         $dateCreate = $tokenInfos->date;
+        $timeExpire = $tokenInfos->expire;
 
         if ($token !== $tokenToCheck) {
             return false;

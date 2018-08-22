@@ -33,15 +33,17 @@ class Form extends atoum
         $this->saveInfos = new class() {
             protected $token;
             protected $date;
+            protected $expire;
             
-            public function defineInfos($token, $date = null)
+            public function defineInfos($token, $date = null, $expire = 15)
             {
                 if ($date === null) {
                     $date = new \DateTime;
                 }
                 
-                $this->token = $token;
-                $this->date  = $date;
+                $this->token  = $token;
+                $this->date   = $date;
+                $this->expire = $expire;
                 
                 return $this;
             }
@@ -166,10 +168,14 @@ class Form extends atoum
                 ->isTrue()
             ->boolean(property_exists($saveInfos, 'date'))
                 ->isTrue()
+            ->boolean(property_exists($saveInfos, 'expire'))
+                ->isTrue()
             ->string($saveInfos->token)
                 ->isEqualTo($token)
             ->object($saveInfos->date)
                 ->isInstanceOf('\DateTime')
+            ->integer($saveInfos->expire)
+                ->isEqualTo(15)
         ;
     }
     
