@@ -46,13 +46,6 @@ class Dates extends DateTime
         'dateDifferentYear' => 'Y-m-d',
         'time'              => 'H:i'
     ];
-    
-    /**
-     * @var string[] $modifyNewKeywords Add new keywords which can be used
-     *  with the modify method. The key is the new keyword and the value the
-     *  corresponding keyword into DateTime::modify method.
-     */
-    protected static $modifyNewKeywords = [];
 
     /**
      * Return the value of the humanReadableI18n property
@@ -124,28 +117,6 @@ class Dates extends DateTime
     public static function setHumanReadableFormats(array $value)
     {
         self::$humanReadableFormats = $value;
-    }
-    
-    /**
-     * Return the value of the modifyNewKeywords property
-     * 
-     * @return string[]
-     */
-    public static function getModifyNewKeywords(): array
-    {
-        return self::$modifyNewKeywords;
-    }
-    
-    /**
-     * Define a new value to the property modifyNewKeywords
-     * 
-     * @param string[] $value The new value for the property
-     * 
-     * @return void
-     */
-    public static function setModifyNewKeywords(array $value)
-    {
-        self::$modifyNewKeywords = $value;
     }
 
     /**
@@ -232,91 +203,6 @@ class Dates extends DateTime
     public function getZone(): string
     {
         return parent::format('P');
-    }
-
-    /**
-     * Override modify DateTime method to allow personal keywords
-     * 
-     * @param string $modify A date/time string
-     * 
-     * @return \BFW\Dates
-     */
-    public function modify($modify)
-    {
-        $originalDate = clone $this;
-        @parent::modify($modify); //Try/catch on Throwable don't work T-T
-
-        //If the keyword used is ok with DateTime::modify method
-        if ($originalDate != $this) {
-            return $this;
-        }
-
-        $this->modifyWithOthersKeywords($modify);
-
-        return $this;
-    }
-
-    /**
-     * Get DateTime equivalent keyword for a personal keyword declared into
-     * the property modifyNewKeywords.
-     * 
-     * @return array
-     */
-    protected function obtainNewKeywordsForModify(): array
-    {
-        $search  = [];
-        $replace = [];
-        
-        foreach (self::$modifyNewKeywords as $searchKey => $replaceKey) {
-            $search[]  = $searchKey;
-            $replace[] = $replaceKey;
-        }
-        
-        return [
-            'search'  => $search,
-            'replace' => $replace
-        ];
-    }
-    
-    /**
-     * Use personal keyword on modify method
-     * 
-     * @param string $modify A date/time string
-     * 
-     * @throws \Exception If bad pattern or unknown keyword
-     * 
-     * @return void
-     */
-    protected function modifyWithOthersKeywords(string $modify)
-    {
-        $keywords = $this->obtainNewKeywordsForModify();
-        $match    = [];
-        
-        //Regex on the $modify parameter to get the used keyword
-        if (preg_match('#(\+|\-)([0-9]+) ([a-z]+)#i', $modify, $match) !== 1) {
-            throw new Exception(
-                'Dates::modify pattern not match.',
-                $this::ERR_MODIFY_PATTERN_NOT_MATCH
-            );
-        }
-        
-        $keyword = str_replace(
-            $keywords['search'],
-            $keywords['replace'],
-            strtolower($match[3])
-        );
-        
-        $originalDate = clone $this;
-        //Try/catch on Throwable don't work T-T
-        @parent::modify($match[1].$match[2].' '.$keyword);
-        
-        //If no change on object, The keyword is unknown
-        if ($originalDate == $this) {
-            throw new Exception(
-                'Dates::modify Parameter '.$match[3].' is unknown.',
-                $this::ERR_MODIFY_UNKNOWN_MODIFIER
-            );
-        }
     }
     
     /**
