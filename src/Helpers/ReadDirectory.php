@@ -30,7 +30,7 @@ class ReadDirectory
      */
     protected $ignore = ['.', '..'];
 
-    /*
+    /**
      * Constructeur
      * 
      * @param array &$listFiles : List of file(s) found
@@ -131,6 +131,8 @@ class ReadDirectory
      * This is to avoid having the recursion error
      * 
      * @param string $dirPath
+     * 
+     * @return void
      */
     protected function dirAction(string $dirPath)
     {
