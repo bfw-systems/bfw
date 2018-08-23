@@ -81,6 +81,24 @@ class Secure extends atoum
         ;
     }
     
+    public function testSecuriseUnknownType()
+    {
+        $this->assert('test Helpers\Secure::securiseUnknownType')
+            ->string(\BFW\Helpers\Secure::securiseUnknownType('atoum', false))
+                ->isEqualTo('atoum')
+            ->string(\BFW\Helpers\Secure::securiseUnknownType(
+                '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+                false
+            ))
+                ->isEqualTo('<p>Il est recommandé d\\\'utiliser composer pour installer</p>')
+            ->string(\BFW\Helpers\Secure::securiseUnknownType(
+                '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+                true
+            ))
+                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;')
+        ;
+    }
+    
     public function testSecurise()
     {
         //We can not mock anything into :/

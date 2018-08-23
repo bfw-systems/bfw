@@ -68,6 +68,34 @@ class Secure
 
         return filter_var($data, $filterType);
     }
+    
+    /**
+     * Securise a mixed data type who are not managed by securiseKnownType.
+     * We work the data like if the type is a string.
+     * 
+     * @param mixed $data The variable to securise
+     * @param boolean $htmlentities If use htmlentities function
+     *  to a better security
+     * 
+     * @return mixed
+     */
+    public static function securiseUnknownType($data, bool $htmlentities)
+    {
+        $currentClass    = get_called_class();
+        $sqlSecureMethod = $currentClass::getSqlSecureMethod();
+        
+        if ($sqlSecureMethod !== false) {
+            $data = $sqlSecureMethod($data);
+        } else {
+            $data = addslashes($data);
+        }
+
+        if ($htmlentities === true) {
+            $data = htmlentities($data, ENT_COMPAT | ENT_HTML401);
+        }
+        
+        return $data;
+    }
 
     /**
      * Securise a variable
@@ -104,21 +132,10 @@ class Secure
             if ($ex->getCode() !== self::ERR_SECURE_UNKNOWN_TYPE) {
                 throw new Exception($ex->getMessage(), $ex->getCode());
             }
-            //Else : Use securise text type
+            //Else : Use securise like if it's a text type
         }
 
-        $sqlSecureMethod = $currentClass::getSqlSecureMethod();
-        if ($sqlSecureMethod !== false) {
-            $data = $sqlSecureMethod($data);
-        } else {
-            $data = addslashes($data);
-        }
-
-        if ($htmlentities === true) {
-            $data = htmlentities($data, ENT_COMPAT | ENT_HTML401);
-        }
-
-        return $data;
+        return $currentClass::securiseUnknownType($data, $htmlentities);
     }
 
     /**
