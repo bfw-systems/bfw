@@ -18,6 +18,12 @@ class SubjectList
     const ERR_SUBJECT_NOT_FOUND = 1206002;
     
     /**
+     * @const ERR_ADD_SUBJECT_ALREADY_EXIST Exception code if during the add of
+     * a new subject, a subject into the list already have the defined name.
+     */
+    const ERR_ADD_SUBJECT_ALREADY_EXIST = 1206003;
+    
+    /**
      * @var \SplSubject[] $subjectList List of all subjects declared
      */
     protected $subjectList = [];
@@ -67,6 +73,16 @@ class SubjectList
     {
         if ($subjectName === null) {
             $subjectName = get_class($subject);
+        }
+        
+        if (
+            array_key_exists($subjectName, $this->subjectList) &&
+            $this->subjectList[$subjectName] !== $subject
+        ) {
+            throw new \Exception(
+                'A subject with the name '.$subjectName.' already exist.',
+                self::ERR_ADD_SUBJECT_ALREADY_EXIST
+            );
         }
         
         $this->subjectList[$subjectName] = $subject;

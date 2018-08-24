@@ -33,6 +33,16 @@ class Application extends atoum
         }
     }
     
+    protected function removeExistingSubjects()
+    {
+        $listInstance = $this->app->getSubjectList();
+        $subjects     = $listInstance->getSubjectList();
+        
+        foreach ($subjects as $subject) {
+            $listInstance->removeSubject($subject);
+        }
+    }
+    
     /**
      * Test method for __constructor() and getInstance()
      * 
@@ -166,6 +176,8 @@ class Application extends atoum
         ;
         
         $this->assert('test Application::initCoreSystem with only init system')
+            ->if($this->removeExistingSubjects())
+            ->then
             ->if($this->calling($coreSystem)->isInit = false)
             ->then
             ->if($this->initApp())
@@ -178,6 +190,8 @@ class Application extends atoum
         ;
         
         $this->assert('test Application::initCoreSystem with init and run system')
+            ->if($this->removeExistingSubjects())
+            ->then
             ->if($this->calling($coreSystem)->isInit = false)
             ->and($this->calling($coreSystem)->toRun = true)
             ->then

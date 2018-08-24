@@ -70,6 +70,21 @@ class SubjectList extends atoum
             ->array($subjectList = $this->mock->getSubjectList())
                 ->hasKey('BFW\Subject')
         ;
+        
+        $this->assert('test Core\SubjectList::addSubject with existing name and same instance')
+            ->object($this->mock->addSubject($subject, 'UnitTest'))
+                ->isIdenticalTo($this->mock)
+            ->object($this->mock->getSubjectByName('UnitTest'))
+                ->isIdenticalTo($subject)
+        ;
+        
+        $this->assert('test Core\SubjectList::addSubject with existing name but not the same instance')
+            ->exception(function() {
+                $subject2 = new \BFW\Subject;
+                $this->mock->addSubject($subject2, 'UnitTest');
+            })
+                ->hasCode(\BFW\Core\SubjectList::ERR_ADD_SUBJECT_ALREADY_EXIST)
+        ;
     }
     
     public function testRemoveSubject()
