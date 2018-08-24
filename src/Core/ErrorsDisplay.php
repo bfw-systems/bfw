@@ -36,6 +36,7 @@ class ErrorsDisplay
         \BFW\Helpers\Cli::displayMsg(
             $msgError,
             'white',
+            'normal',
             'red'
         );
         
