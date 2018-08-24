@@ -40,6 +40,7 @@ class ErrorsDisplay
             'red'
         );
         
+        echo "\n";
         ob_flush();
         exit;
     }
@@ -83,7 +84,7 @@ class ErrorsDisplay
                     p.title {font-size:1.2em; background-color:#D0DCE9; padding:10px;}
                     p.info {padding:5px; margin-top:10px; margin-bottom:10px;}
                     fieldset {border:none; background-color: white;}
-                    pre {width:910px; line-height:1.5;}
+                    pre {width:910px; line-height:1.5; white-space:pre-line;}
                 </style>
             </head>
             <body>
