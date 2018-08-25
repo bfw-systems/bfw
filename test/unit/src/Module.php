@@ -53,10 +53,10 @@ class Module extends atoum
     
     public function testConstruct()
     {
-        $this->assert('test Module::__construct and getPathName')
+        $this->assert('test Module::__construct and getName')
             ->object($this->mock = new \mock\BFW\Module('atoum'))
                 ->isInstanceOf('\BFW\Module')
-            ->string($this->mock->getPathName())
+            ->string($this->mock->getName())
                 ->isEqualTo('atoum')
             ->object($status = $this->mock->getStatus())
                 ->string(get_class($status))
@@ -115,14 +115,6 @@ class Module extends atoum
         ;
     }
     
-    public function testGetPathName()
-    {
-        $this->assert('test Module::getPathName')
-            ->string($this->mock->getPathName())
-                ->isEqualTo('atoum')
-        ;
-    }
-    
     public function testLoadAndGetConfig()
     {
         $this->assert('test Module::getConfig without load')
@@ -166,7 +158,7 @@ class Module extends atoum
         $this->assert('test Module::loadInfos')
             //Can't mock directly a static method (like loadJsonFile) :'(
             ->given($this->mockLoadJsonFile(
-                MODULES_DIR.$this->mock->getPathName().'/module.json',
+                MODULES_DIR.$this->mock->getName().'/module.json',
                 '{
                     "runner": "mymodule.php",
                     "priority": 0,
@@ -368,7 +360,7 @@ class Module extends atoum
             ->given($this->mock->setLoadInfos((object) ['runner' => 'run_atoum.php']))
             ->and($this->function->file_exists = true)
             ->string($this->invoke($this->mock)->obtainRunnerFile())
-                ->isEqualTo(MODULES_DIR.$this->mock->getPathName().'/run_atoum.php')
+                ->isEqualTo(MODULES_DIR.$this->mock->getName().'/run_atoum.php')
         ;
     }
     

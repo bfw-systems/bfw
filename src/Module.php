@@ -26,9 +26,9 @@ class Module
     const ERR_RUNNER_FILE_NOT_FOUND = 1104003;
 
     /**
-     * @var string $pathName Module's name
+     * @var string $name Module's name
      */
-    protected $pathName = '';
+    protected $name = '';
 
     /**
      * @var \BFW\Config|null $config Config object for this module
@@ -48,18 +48,18 @@ class Module
     /**
      * Constructor
      * 
-     * @param string $pathName Module name
+     * @param string $name Module name
      */
-    public function __construct(string $pathName)
+    public function __construct(string $name)
     {
         \BFW\Application::getInstance()
             ->getMonolog()
             ->getLogger()
-            ->debug('New module declared', ['name' => $pathName])
+            ->debug('New module declared', ['name' => $name])
         ;
         
-        $this->pathName = $pathName;
-        $this->status   = new class {
+        $this->name   = $name;
+        $this->status = new class {
             public $load = false;
             public $run  = false;
         };
@@ -75,7 +75,7 @@ class Module
         \BFW\Application::getInstance()
             ->getMonolog()
             ->getLogger()
-            ->debug('Load module', ['name' => $this->pathName])
+            ->debug('Load module', ['name' => $this->name])
         ;
         
         $this->loadConfig();
@@ -104,9 +104,9 @@ class Module
      * 
      * @return string
      */
-    public function getPathName(): string
+    public function getName(): string
     {
-        return $this->pathName;
+        return $this->name;
     }
 
     /**
@@ -166,11 +166,11 @@ class Module
      */
     protected function loadConfig()
     {
-        if (!file_exists(CONFIG_DIR.$this->pathName)) {
+        if (!file_exists(CONFIG_DIR.$this->name)) {
             return;
         }
 
-        $this->config = new \BFW\Config($this->pathName);
+        $this->config = new \BFW\Config($this->name);
         $this->config->loadFiles();
     }
 
@@ -184,7 +184,7 @@ class Module
         $currentClass = get_called_class(); //Allow extends
         
         $this->loadInfos = $currentClass::readJsonFile(
-            MODULES_DIR.$this->pathName
+            MODULES_DIR.$this->name
             .'/module.json'
         );
     }
@@ -261,10 +261,10 @@ class Module
             return '';
         }
 
-        $runnerFile = MODULES_DIR.$this->pathName.'/'.$runnerFile;
+        $runnerFile = MODULES_DIR.$this->name.'/'.$runnerFile;
         if (!file_exists($runnerFile)) {
             throw new Exception(
-                'Runner file for module '.$this->pathName.' not found.',
+                'Runner file for module '.$this->name.' not found.',
                 $this::ERR_RUNNER_FILE_NOT_FOUND
             );
         }
