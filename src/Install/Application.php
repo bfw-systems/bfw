@@ -22,7 +22,8 @@ class Application extends \BFW\Application
             $this->coreSystemList['request'],
             $this->coreSystemList['session'],
             $this->coreSystemList['errors'],
-            $this->coreSystemList['cli']
+            $this->coreSystemList['cli'],
+            $this->coreSystemList['ctrlRouterLink']
         );
         
         //Change ModuleList class
