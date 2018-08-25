@@ -62,7 +62,17 @@ class Memcached extends AbstractSystem
             return;
         }
 
-        $this->memcached = new \BFW\Memcached;
-        $this->memcached->connectToServers();
+        try {
+            $this->memcached = new \BFW\Memcached;
+            $this->memcached->connectToServers();
+        } catch (Exception $e) {
+            $this->memcached = null;
+            
+            trigger_error(
+                'Memcached connexion error'
+                .' #'.$e->getCode().' : '.$e->getMessage(),
+                E_USER_WARNING
+            );
+        }
     }
 }

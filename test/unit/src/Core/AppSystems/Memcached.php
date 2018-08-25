@@ -97,5 +97,22 @@ class Memcached extends atoum
             ->array($this->mock->getMemcached()->getServerList())
                 ->isNotEmpty()
         ;
+        
+        $this->assert('test Core\AppSystems\Memcached::loadMemcached with a memcached error')
+            ->if($memcacheConfig['memcached']['enabled'] = true)
+            ->and($memcacheConfig['memcached']['servers'][0]['host'] = 'localhost')
+            ->and($memcacheConfig['memcached']['servers'][0]['port'] = 11212)
+            ->and($config->setConfigForFilename('memcached.php', $memcacheConfig))
+            ->then
+            ->when(function() {
+                $this->mock->loadMemcached();
+            })
+            ->error()
+                ->withType(E_USER_WARNING)
+                ->withMessage('Memcached connexion error #1103001 : No memcached server connected.')
+                ->exists()
+            ->variable($this->mock->getMemcached())
+                ->isNull()
+        ;
     }
 }
