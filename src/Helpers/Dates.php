@@ -295,7 +295,9 @@ class Dates extends DateTime
         if ($current == $this) {
             //Now
             $this->humanDateNow($parsedTxt);
-        } elseif ($diff->d === 1 && $diff->m === 0 && $diff->y === 0) {
+        } elseif (
+            $this->humanDateIsYesterdayOrTomorrow($diff, $current) === true
+        ) {
             if ($diff->invert === 0) {
                 $this->humanDateYesterday($parsedTxt); //Yesterday
             } else {
@@ -314,6 +316,45 @@ class Dates extends DateTime
         }
 
         return $txtReturned;
+    }
+    
+    protected function humanDateIsYesterdayOrTomorrow(
+        \DateInterval $diff,
+        \DateTime $current
+    ): bool {
+        //To check the range from 24h to 48h
+        if (($diff->d === 1 && $diff->m === 0 && $diff->y === 0) === false) {
+            return false;
+        }
+        
+        /**
+         * With $diff->d === 1, we know if we are in range from 24h to 48h.
+         * But yesterday or tomorrow day can finish into the range.
+         * 
+         * Example :
+         * 
+         *    [---03/10---][---04/10---][---05/10---]
+         * ---|----|-------|----|-------|----|------
+         *       -48h         -24h         $this
+         *         [ $diff->d=1 ]
+         * 
+         * Like we can see, the $diff->d=1 is not only on the 04/10, but also
+         * on 03/10 because the range is from 24h to 48h before the date.
+         * So we need a check to not display "yesterday" for the 03/10.
+         */
+        
+        $twoDays = clone $current;
+        if ($diff->invert === 0) {
+            $twoDays->modify('-2 days');
+        } else {
+            $twoDays->modify('+2 days');
+        }
+        
+        if ($this->format('d') === $twoDays->format('d')) {
+            return false;
+        }
+        
+        return true;
     }
     
     /**

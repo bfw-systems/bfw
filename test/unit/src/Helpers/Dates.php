@@ -29,6 +29,7 @@ class Dates extends atoum
             ->makeVisible('humanDateYesterday')
             ->makeVisible('humanDateTomorrow')
             ->makeVisible('humanDateOther')
+            ->makeVisible('humanDateIsYesterdayOrTomorrow')
             ->makeVisible('humanParseDateAndTimeText')
             ->generate('BFW\Helpers\Dates')
         ;
@@ -672,6 +673,67 @@ class Dates extends atoum
                 ->isEqualTo('the '.$this->mock->format('Y-m-d'))
             ->string($parsedTxt->time)
                 ->isEqualTo(' at '.$this->mock->format('H:i'))
+        ;
+    }
+    
+    public function testHumanDateIsYesterdayOrTomorrow()
+    {
+        $this->assert('test Helpers\Dates::humanDateIsYesterdayOrTomorrow - out of range')
+            ->given($current = new \DateTime)
+            ->and($this->mock->modify('+2 days'))
+            ->given($diff = $this->mock->diff($current))
+            ->then
+            
+            ->boolean($this->mock->humanDateIsYesterdayOrTomorrow($diff, $current))
+                ->isFalse()
+            
+            ->given($current = new \DateTime)
+            ->and($this->mock->modify('-4 days'))
+            ->given($diff = $this->mock->diff($current))
+            ->then
+            
+            ->boolean($this->mock->humanDateIsYesterdayOrTomorrow($diff, $current))
+                ->isFalse()
+        ;
+        
+        $this->assert('test Helpers\Dates::humanDateIsYesterdayOrTomorrow - yesterday')
+            ->given($this->mock = new \mock\BFW\Helpers\Dates('2018-10-31 10:10:23+0200'))
+            ->given($current = new \DateTime('2018-11-01 12:10:23+0200'))
+            ->given($diff = $this->mock->diff($current))
+            ->then
+            
+            ->boolean($this->mock->humanDateIsYesterdayOrTomorrow($diff, $current))
+                ->isTrue()
+        ;
+        
+        $this->assert('test Helpers\Dates::humanDateIsYesterdayOrTomorrow - tomorrow')
+            ->given($this->mock = new \mock\BFW\Helpers\Dates('2018-11-02 14:10:23+0200'))
+            ->given($current = new \DateTime('2018-11-01 12:10:23+0200'))
+            ->given($diff = $this->mock->diff($current))
+            ->then
+            
+            ->boolean($this->mock->humanDateIsYesterdayOrTomorrow($diff, $current))
+                ->isTrue()
+        ;
+        
+        $this->assert('test Helpers\Dates::humanDateIsYesterdayOrTomorrow - in the range but no more yesterday')
+            ->given($this->mock = new \mock\BFW\Helpers\Dates('2018-10-30 14:10:23+0200'))
+            ->given($current = new \DateTime('2018-11-01 12:10:23+0200'))
+            ->given($diff = $this->mock->diff($current))
+            ->then
+            
+            ->boolean($this->mock->humanDateIsYesterdayOrTomorrow($diff, $current))
+                ->isFalse()
+        ;
+        
+        $this->assert('test Helpers\Dates::humanDateIsYesterdayOrTomorrow - in the range but no more tomorrow')
+            ->given($this->mock = new \mock\BFW\Helpers\Dates('2018-11-03 10:10:23+0200'))
+            ->given($current = new \DateTime('2018-11-01 12:10:23+0200'))
+            ->given($diff = $this->mock->diff($current))
+            ->then
+            
+            ->boolean($this->mock->humanDateIsYesterdayOrTomorrow($diff, $current))
+                ->isFalse()
         ;
     }
     
