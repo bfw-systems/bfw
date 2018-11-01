@@ -318,6 +318,17 @@ class Dates extends DateTime
         return $txtReturned;
     }
     
+    /**
+     * Check if the date to read for humanReadable is yesterday or tomorrow.
+     * 
+     * We cannot only check the property "d" of DateInterval because it's a
+     * range of +/- 24 to 48 hours. If we are at 48h before, it's not ok.
+     * 
+     * @param \DateInterval $diff Interval between now and date to read
+     * @param DateTime $current DateTime object for now
+     * 
+     * @return bool
+     */
     protected function humanDateIsYesterdayOrTomorrow(
         \DateInterval $diff,
         \DateTime $current
