@@ -147,8 +147,8 @@ class Secure extends atoum
     public function testGetSqlSecureMethod()
     {
         $this->assert('test Helpers\Secure::getSqlSecureMethod without method configured')
-            ->boolean(\BFW\Helpers\Secure::getSqlSecureMethod())
-                ->isFalse()
+            ->variable(\BFW\Helpers\Secure::getSqlSecureMethod())
+                ->isNull()
         ;
         
         $this->assert('test Helpers\Secure::getSqlSecureMethod with a callable function configured')

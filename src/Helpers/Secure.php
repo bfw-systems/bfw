@@ -82,7 +82,7 @@ class Secure
         $currentClass    = get_called_class();
         $sqlSecureMethod = $currentClass::getSqlSecureMethod();
         
-        if ($sqlSecureMethod !== false) {
+        if ($sqlSecureMethod !== null) {
             $data = $sqlSecureMethod($data);
         } else {
             $data = addslashes($data);
@@ -139,7 +139,7 @@ class Secure
     /**
      * Get the sqlSecure function declared in bfw config file
      * 
-     * @return boolean|string
+     * @return null|string
      */
     public static function getSqlSecureMethod()
     {
@@ -150,7 +150,7 @@ class Secure
         );
 
         if (!is_callable($secureFct, false)) {
-            return false;
+            return null;
         }
 
         return $secureFct;
