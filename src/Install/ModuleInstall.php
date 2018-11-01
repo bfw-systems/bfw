@@ -636,7 +636,7 @@ class ModuleInstall
         Cli::displayMsg(' >> ');
         Cli::displayMsgNL('Execute script '.$scriptName, 'yellow', 'bold');
         
-        require_once($this->sourcePath.'/'.$this->sourceInstallScript);
+        require_once($this->sourcePath.'/'.$scriptName);
         Cli::displayMsgNL('');
     }
 }
