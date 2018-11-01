@@ -29,6 +29,7 @@ class Dates extends atoum
             ->makeVisible('humanDateYesterday')
             ->makeVisible('humanDateTomorrow')
             ->makeVisible('humanDateOther')
+            ->makeVisible('humanParseDateAndTimeText')
             ->generate('BFW\Helpers\Dates')
         ;
         
@@ -56,36 +57,36 @@ class Dates extends atoum
         $this->assert('test Helpers\Dates::getHumanReadableI18n for default Values')
             ->array(\BFW\Helpers\Dates::getHumanReadableI18n())
                 ->isEqualTo([
-                    'now'       => 'now',
-                    'since'     => 'since',
-                    'in'        => 'in',
-                    'yesterday' => 'yesterday',
-                    'tomorrow'  => 'tomorrow',
-                    'the'       => 'the',
-                    'at'        => 'at'
+                    'now'          => 'now',
+                    'today_past'   => '{time} ago',
+                    'today_future' => 'in {time}',
+                    'yesterday'    => 'yesterday',
+                    'tomorrow'     => 'tomorrow',
+                    'others'       => 'the {date}',
+                    'time_part'    => ' at {time}'
                 ])
         ;
         
         $this->assert('test Helpers\Dates::setHumanReadableI18n')
             ->variable(\BFW\Helpers\Dates::setHumanReadableI18n([
-                'now'       => 'maintenant',
-                'since'     => 'depuis',
-                'in'        => 'dans',
-                'yesterday' => 'hier',
-                'tomorrow'  => 'demain',
-                'the'       => 'le',
-                'at'        => 'à'
+                'now'          => 'maintenant',
+                'today_past'   => 'il y a {time}',
+                'today_future' => 'dans {time}',
+                'yesterday'    => 'hier',
+                'tomorrow'     => 'demain',
+                'others'       => 'le {date}',
+                'time_part'    => ' à {time}'
             ]))
                 ->isNull()
             ->array(\BFW\Helpers\Dates::getHumanReadableI18n())
                 ->isEqualTo([
-                    'now'       => 'maintenant',
-                    'since'     => 'depuis',
-                    'in'        => 'dans',
-                    'yesterday' => 'hier',
-                    'tomorrow'  => 'demain',
-                    'the'       => 'le',
-                    'at'        => 'à'
+                    'now'          => 'maintenant',
+                    'today_past'   => 'il y a {time}',
+                    'today_future' => 'dans {time}',
+                    'yesterday'    => 'hier',
+                    'tomorrow'     => 'demain',
+                    'others'       => 'le {date}',
+                    'time_part'    => ' à {time}'
                 ])
         ;
     }
@@ -93,17 +94,17 @@ class Dates extends atoum
     public function testSetHumanReadableI18nKey()
     {
         $this->assert('test Helpers\Dates::setHumanReadableI18nKey')
-            ->variable(\BFW\Helpers\Dates::setHumanReadableI18nKey('since', 'depuis'))
+            ->variable(\BFW\Helpers\Dates::setHumanReadableI18nKey('today_past', 'il y a {time}'))
                 ->isNull()
             ->array(\BFW\Helpers\Dates::getHumanReadableI18n())
                 ->isEqualTo([
-                    'now'       => 'now',
-                    'since'     => 'depuis',
-                    'in'        => 'in',
-                    'yesterday' => 'yesterday',
-                    'tomorrow'  => 'tomorrow',
-                    'the'       => 'the',
-                    'at'        => 'at'
+                    'now'          => 'now',
+                    'today_past'   => 'il y a {time}',
+                    'today_future' => 'in {time}',
+                    'yesterday'    => 'yesterday',
+                    'tomorrow'     => 'tomorrow',
+                    'others'       => 'the {date}',
+                    'time_part'    => ' at {time}'
                 ])
         ;
     }
@@ -316,7 +317,7 @@ class Dates extends atoum
             ->then
             
             ->string($this->mock->humanReadable())
-                ->isEqualTo('dateYesterday timeYesterday')
+                ->isEqualTo('dateYesterdaytimeYesterday')
             ->mock($this->mock)->call('humanDateNow')->never()
             ->mock($this->mock)->call('humanDateYesterday')->once()
             ->mock($this->mock)->call('humanDateTomorrow')->never()
@@ -344,7 +345,7 @@ class Dates extends atoum
             ->and($this->mock->modify('+25 hours'))
             ->then
             ->string($this->mock->humanReadable())
-                ->isEqualTo('dateTomorrow timeTomorrow')
+                ->isEqualTo('dateTomorrowtimeTomorrow')
             ->mock($this->mock)->call('humanDateNow')->never()
             ->mock($this->mock)->call('humanDateYesterday')->never()
             ->mock($this->mock)->call('humanDateTomorrow')->once()
@@ -372,7 +373,7 @@ class Dates extends atoum
             ->and($this->mock->modify('-20 hours'))
             ->then
             ->string($this->mock->humanReadable())
-                ->isEqualTo('dateToday timeToday')
+                ->isEqualTo('dateTodaytimeToday')
             ->mock($this->mock)->call('humanDateNow')->never()
             ->mock($this->mock)->call('humanDateYesterday')->never()
             ->mock($this->mock)->call('humanDateTomorrow')->never()
@@ -386,7 +387,7 @@ class Dates extends atoum
             ->and($this->mock->modify('-50 hours'))
             ->then
             ->string($this->mock->humanReadable())
-                ->isEqualTo('dateOther timeOther')
+                ->isEqualTo('dateOthertimeOther')
             ->mock($this->mock)->call('humanDateNow')->never()
             ->mock($this->mock)->call('humanDateYesterday')->never()
             ->mock($this->mock)->call('humanDateTomorrow')->never()
@@ -400,7 +401,7 @@ class Dates extends atoum
             ->and($this->mock->modify('+50 hours'))
             ->then
             ->string($this->mock->humanReadable())
-                ->isEqualTo('dateOther timeOther')
+                ->isEqualTo('dateOthertimeOther')
             ->mock($this->mock)->call('humanDateNow')->never()
             ->mock($this->mock)->call('humanDateYesterday')->never()
             ->mock($this->mock)->call('humanDateTomorrow')->never()
@@ -414,7 +415,7 @@ class Dates extends atoum
             ->and($this->mock->modify('-1 month'))
             ->then
             ->string($this->mock->humanReadable())
-                ->isEqualTo('dateOther timeOther')
+                ->isEqualTo('dateOthertimeOther')
             ->mock($this->mock)->call('humanDateNow')->never()
             ->mock($this->mock)->call('humanDateYesterday')->never()
             ->mock($this->mock)->call('humanDateTomorrow')->never()
@@ -428,7 +429,7 @@ class Dates extends atoum
             ->and($this->mock->modify('-1 year'))
             ->then
             ->string($this->mock->humanReadable())
-                ->isEqualTo('dateOther timeOther')
+                ->isEqualTo('dateOthertimeOther')
             ->mock($this->mock)->call('humanDateNow')->never()
             ->mock($this->mock)->call('humanDateYesterday')->never()
             ->mock($this->mock)->call('humanDateTomorrow')->never()
@@ -446,9 +447,9 @@ class Dates extends atoum
             ->then
             
             ->string($this->mock->humanReadable())
-                ->isEqualTo('dateYesterday timeYesterday')
+                ->isEqualTo('dateYesterdaytimeYesterday')
             ->string($this->mock->humanReadable(true))
-                ->isEqualTo('dateYesterday timeYesterday')
+                ->isEqualTo('dateYesterdaytimeYesterday')
             ->string($this->mock->humanReadable(false))
                 ->isEqualTo('dateYesterday')
         ;
@@ -471,7 +472,7 @@ class Dates extends atoum
             //\DateTime::diff use same TimeZone to compare. So it's the same
             //day and not yesterday :)
             ->string($this->mock->humanReadable())
-                ->isEqualTo('dateToday timeToday')
+                ->isEqualTo('dateTodaytimeToday')
         ;
     }
     
@@ -510,7 +511,7 @@ class Dates extends atoum
             ->variable($this->invoke($this->mock)->humanDateToday($parsedTxt, $diff))
                 ->isNull()
             ->string($parsedTxt->date)
-                ->isEqualTo(\BFW\Helpers\Dates::getHumanReadableI18n()['since'].' 5s')
+                ->isEqualTo('5s ago')
             ->string($parsedTxt->time)
                 ->isEmpty()
         ;
@@ -523,7 +524,7 @@ class Dates extends atoum
             ->variable($this->invoke($this->mock)->humanDateToday($parsedTxt, $diff))
                 ->isNull()
             ->string($parsedTxt->date)
-                ->isEqualTo(\BFW\Helpers\Dates::getHumanReadableI18n()['since'].' 10min')
+                ->isEqualTo('10min ago')
             ->string($parsedTxt->time)
                 ->isEmpty()
         ;
@@ -536,7 +537,7 @@ class Dates extends atoum
             ->variable($this->invoke($this->mock)->humanDateToday($parsedTxt, $diff))
                 ->isNull()
             ->string($parsedTxt->date)
-                ->isEqualTo(\BFW\Helpers\Dates::getHumanReadableI18n()['since'].' 2h')
+                ->isEqualTo('2h ago')
             ->string($parsedTxt->time)
                 ->isEmpty()
         ;
@@ -553,7 +554,7 @@ class Dates extends atoum
             ->variable($this->invoke($this->mock)->humanDateToday($parsedTxt, $diff))
                 ->isNull()
             ->string($parsedTxt->date)
-                ->isEqualTo(\BFW\Helpers\Dates::getHumanReadableI18n()['in'].' 5s')
+                ->isEqualTo('in 5s')
             ->string($parsedTxt->time)
                 ->isEmpty()
         ;
@@ -566,7 +567,7 @@ class Dates extends atoum
             ->variable($this->invoke($this->mock)->humanDateToday($parsedTxt, $diff))
                 ->isNull()
             ->string($parsedTxt->date)
-                ->isEqualTo(\BFW\Helpers\Dates::getHumanReadableI18n()['in'].' 10min')
+                ->isEqualTo('in 10min')
             ->string($parsedTxt->time)
                 ->isEmpty()
         ;
@@ -579,7 +580,7 @@ class Dates extends atoum
             ->variable($this->invoke($this->mock)->humanDateToday($parsedTxt, $diff))
                 ->isNull()
             ->string($parsedTxt->date)
-                ->isEqualTo(\BFW\Helpers\Dates::getHumanReadableI18n()['in'].' 2h')
+                ->isEqualTo('in 2h')
             ->string($parsedTxt->time)
                 ->isEmpty()
         ;
@@ -599,7 +600,7 @@ class Dates extends atoum
             ->string($parsedTxt->date)
                 ->isEqualTo($i18n['yesterday'])
             ->string($parsedTxt->time)
-                ->isEqualTo($i18n['at'].' '.$this->mock->format('H:i'))
+                ->isEqualTo(' at '.$this->mock->format('H:i'))
         ;
     }
     
@@ -617,7 +618,7 @@ class Dates extends atoum
             ->string($parsedTxt->date)
                 ->isEqualTo($i18n['tomorrow'])
             ->string($parsedTxt->time)
-                ->isEqualTo($i18n['at'].' '.$this->mock->format('H:i'))
+                ->isEqualTo(' at '.$this->mock->format('H:i'))
         ;
     }
     
@@ -634,12 +635,12 @@ class Dates extends atoum
             ->variable($this->invoke($this->mock)->humanDateOther($parsedTxt, $current))
                 ->isNull()
             ->string($parsedTxt->date)
-                ->isEqualTo($i18n['the'].' '.$this->mock->format('m-d'))
+                ->isEqualTo('the '.$this->mock->format('m-d'))
             ->string($parsedTxt->time)
-                ->isEqualTo($i18n['at'].' '.$this->mock->format('H:i'))
+                ->isEqualTo(' at '.$this->mock->format('H:i'))
         ;
         
-        $this->assert('test Helpers\Dates::humanDateOther - different year')
+        $this->assert('test Helpers\Dates::humanDateOther - different year before')
             ->given($current = new \mock\BFW\Helpers\Dates)
             ->given($parsedTxt = new class {
                 public $date = '';
@@ -651,9 +652,55 @@ class Dates extends atoum
             ->variable($this->invoke($this->mock)->humanDateOther($parsedTxt, $current))
                 ->isNull()
             ->string($parsedTxt->date)
-                ->isEqualTo($i18n['the'].' '.$this->mock->format('Y-m-d'))
+                ->isEqualTo('the '.$this->mock->format('Y-m-d'))
             ->string($parsedTxt->time)
-                ->isEqualTo($i18n['at'].' '.$this->mock->format('H:i'))
+                ->isEqualTo(' at '.$this->mock->format('H:i'))
+        ;
+        
+        $this->assert('test Helpers\Dates::humanDateOther - different year after')
+            ->given($current = new \mock\BFW\Helpers\Dates)
+            ->given($parsedTxt = new class {
+                public $date = '';
+                public $time = '';
+            })
+            ->given($i18n = \BFW\Helpers\Dates::getHumanReadableI18n())
+            ->if($this->mock->modify('+2 year'))
+            ->then
+            ->variable($this->invoke($this->mock)->humanDateOther($parsedTxt, $current))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo('the '.$this->mock->format('Y-m-d'))
+            ->string($parsedTxt->time)
+                ->isEqualTo(' at '.$this->mock->format('H:i'))
+        ;
+    }
+    
+    public function testHumanParseDateAndTimeText()
+    {
+        $this->assert('test Helpers\Dates::humanParseDateAndTimeText - without item to parse')
+            ->given($parsedTxt = new class {
+                public $date = 'test';
+                public $time = 'test';
+            })
+            ->variable($this->mock->humanParseDateAndTimeText($parsedTxt, '2018-10-31', '17:13'))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo('test')
+            ->string($parsedTxt->time)
+                ->isEqualTo('test')
+        ;
+        
+        $this->assert('test Helpers\Dates::humanParseDateAndTimeText - with item to parse')
+            ->given($parsedTxt = new class {
+                public $date = 'the {date}';
+                public $time = ' at {time}';
+            })
+            ->variable($this->mock->humanParseDateAndTimeText($parsedTxt, '2018-10-31', '17:13'))
+                ->isNull()
+            ->string($parsedTxt->date)
+                ->isEqualTo('the 2018-10-31')
+            ->string($parsedTxt->time)
+                ->isEqualTo(' at 17:13')
         ;
     }
 }

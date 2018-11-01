@@ -16,13 +16,13 @@ class Dates extends DateTime
      *  date difference to human readable.
      */
     protected static $humanReadableI18n = [
-        'now'       => 'now',
-        'since'     => 'since',
-        'in'        => 'in',
-        'yesterday' => 'yesterday',
-        'tomorrow'  => 'tomorrow',
-        'the'       => 'the',
-        'at'        => 'at'
+        'now'          => 'now',
+        'today_past'   => '{time} ago',
+        'today_future' => 'in {time}',
+        'yesterday'    => 'yesterday',
+        'tomorrow'     => 'tomorrow',
+        'others'       => 'the {date}',
+        'time_part'    => ' at {time}'
     ];
 
     /**
@@ -310,7 +310,7 @@ class Dates extends DateTime
 
         $txtReturned = $parsedTxt->date;
         if ($returnDateAndTime === true && $parsedTxt->time !== '') {
-            $txtReturned .= ' '.$parsedTxt->time;
+            $txtReturned .= $parsedTxt->time;
         }
 
         return $txtReturned;
@@ -339,21 +339,24 @@ class Dates extends DateTime
      */
     protected function humanDateToday($parsedTxt, \DateInterval $diff)
     {
-        $textKey = 'since';
+        $textKey = 'today_past';
         if ($diff->invert === 1) {
-            $textKey = 'in';
+            $textKey = 'today_future';
+        }
+        
+        $time = '';
+        if ($diff->h === 0 && $diff->i === 0) {
+            $time .= $diff->s.'s';
+        } elseif ($diff->h === 0) {
+            $time .= $diff->i.'min';
+        } else {
+            $time .= $diff->h.'h';
         }
         
         $currentClass    = get_called_class();
-        $parsedTxt->date = $currentClass::$humanReadableI18n[$textKey].' ';
-
-        if ($diff->h === 0 && $diff->i === 0) {
-            $parsedTxt->date .= $diff->s.'s';
-        } elseif ($diff->h === 0) {
-            $parsedTxt->date .= $diff->i.'min';
-        } else {
-            $parsedTxt->date .= $diff->h.'h';
-        }
+        $parsedTxt->date = $currentClass::$humanReadableI18n[$textKey];
+        
+        $this->humanParseDateAndTimeText($parsedTxt, '', $time);
     }
     
     /**
@@ -367,11 +370,11 @@ class Dates extends DateTime
     {
         $currentClass    = get_called_class();
         $parsedTxt->date = $currentClass::$humanReadableI18n['yesterday'];
-        $parsedTxt->time = $currentClass::$humanReadableI18n['at']
-            .' '
-            .$this->format(
-                $currentClass::$humanReadableFormats['time']
-            );
+        $parsedTxt->time = $currentClass::$humanReadableI18n['time_part'];
+        
+        $time = $this->format($currentClass::$humanReadableFormats['time']);
+        
+        $this->humanParseDateAndTimeText($parsedTxt, '', $time);
     }
     
     /**
@@ -385,11 +388,11 @@ class Dates extends DateTime
     {
         $currentClass    = get_called_class();
         $parsedTxt->date = $currentClass::$humanReadableI18n['tomorrow'];
-        $parsedTxt->time = $currentClass::$humanReadableI18n['at']
-            .' '
-            .$this->format(
-                $currentClass::$humanReadableFormats['time']
-            );
+        $parsedTxt->time = $currentClass::$humanReadableI18n['time_part'];
+        
+        $time = $this->format($currentClass::$humanReadableFormats['time']);
+        
+        $this->humanParseDateAndTimeText($parsedTxt, '', $time);
     }
     
     /**
@@ -408,15 +411,36 @@ class Dates extends DateTime
         if ($current->format('Y') === $this->format('Y')) {
             $dateFormat = $currentClass::$humanReadableFormats['dateSameYear'];
         }
-
-        $parsedTxt->date = $currentClass::$humanReadableI18n['the']
-            .' '
-            .$this->format($dateFormat);
-
-        $parsedTxt->time = $currentClass::$humanReadableI18n['at']
-            .' '
-            .$this->format(
-                $currentClass::$humanReadableFormats['time']
-            );
+        
+        $parsedTxt->date = $currentClass::$humanReadableI18n['others'];
+        $parsedTxt->time = $currentClass::$humanReadableI18n['time_part'];
+        
+        $date = $this->format($dateFormat);
+        $time = $this->format($currentClass::$humanReadableFormats['time']);
+        
+        $this->humanParseDateAndTimeText($parsedTxt, $date, $time);
+    }
+    
+    /**
+     * Replace the expression "{date}" by the $date value and the expression
+     * "{time}" by the $time value into properties "date" and "time" of the
+     * $parsedTxt object.
+     * 
+     * @param object $parsedTxt Texts returned by humanReadable method
+     * @param string $date The date value used to replace "{date}" into texts
+     * @param string $time The time value used to replace "{time}" into texts
+     * 
+     * @return void
+     */
+    protected function humanParseDateAndTimeText(
+        $parsedTxt,
+        string $date,
+        string $time
+    ) {
+        $parsedTxt->date = str_replace('{date}', $date, $parsedTxt->date);
+        $parsedTxt->date = str_replace('{time}', $time, $parsedTxt->date);
+        
+        $parsedTxt->time = str_replace('{date}', $date, $parsedTxt->time);
+        $parsedTxt->time = str_replace('{time}', $time, $parsedTxt->time);
     }
 }
