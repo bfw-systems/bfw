@@ -74,7 +74,7 @@ class Memcached extends \Memcached
         $addServers  = [];
         
         //Get all server already connected (persistent)
-        $serversList = $this->generateServerList();
+        $serversList = $this->obtainConnectedServerList();
         
         //Loop on server declared into config
         foreach ($this->config['servers'] as $server) {
@@ -121,7 +121,7 @@ class Memcached extends \Memcached
      * 
      * @return string[]
      */
-    protected function generateServerList(): array
+    protected function obtainConnectedServerList(): array
     {
         $serversList = $this->getServerList();
         $servers     = [];

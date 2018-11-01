@@ -21,7 +21,7 @@ class Memcached extends atoum
         $this->mockGenerator
             ->makeVisible('completeServerInfos')
             ->makeVisible('testConnect')
-            ->makeVisible('generateServerList')
+            ->makeVisible('obtainConnectedServerList')
             ->generate('BFW\Memcached')
         ;
         
@@ -54,7 +54,7 @@ class Memcached extends atoum
     {
         $this
             ->given($that = $this)
-            ->if($this->calling($this->mock)->generateServerList = [])
+            ->if($this->calling($this->mock)->obtainConnectedServerList = [])
             ->and($this->calling($this->mock)->completeServerInfos = function ($infos) {
                 return $infos;
             })
@@ -128,7 +128,7 @@ class Memcached extends atoum
             
             ->given($this->mock = new \mock\BFW\Memcached)
             ->if($this->mockMethodsUsedByConnectToServer())
-            ->and($this->calling($this->mock)->generateServerList = function() {
+            ->and($this->calling($this->mock)->obtainConnectedServerList = function() {
                 return [
                     'localhost:11212'
                 ];
@@ -156,18 +156,18 @@ class Memcached extends atoum
         ;
     }
     
-    public function testGenerateServerList()
+    public function testObtainConnectedServerList()
     {
-        $this->assert('test Memcached::generateServerList without server')
+        $this->assert('test Memcached::obtainConnectedServerList without server')
             ->if($this->calling($this->mock)->getServerList = function() {
                 return [];
             })
             ->then
-            ->array($this->mock->generateServerList())
+            ->array($this->mock->obtainConnectedServerList())
                 ->isEmpty()
         ;
             
-        $this->assert('test Memcached::generateServerList with servers')
+        $this->assert('test Memcached::obtainConnectedServerList with servers')
             ->if($this->calling($this->mock)->getServerList = function() {
                 return [
                     [
@@ -183,7 +183,7 @@ class Memcached extends atoum
                 ];
             })
             ->then
-            ->array($this->mock->generateServerList())
+            ->array($this->mock->obtainConnectedServerList())
                 ->isEqualTo([
                     'mc1.localhost.com:11211',
                     'mc2.localhost.com:11212',
