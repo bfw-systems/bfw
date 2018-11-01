@@ -10,21 +10,16 @@ use \Exception;
 class Secure
 {
     /**
-     * @const ERR_SECURE_UNKNOWN_TYPE Exception code if the data into the
-     * method secure() is not a predefined type.
+     * @const ERR_SECURE_KNOWN_TYPE_FILTER_NOT_MANAGED Exception code if the
+     * data type into the method secureKnownTypes() is not managed.
      */
-    const ERR_SECURE_UNKNOWN_TYPE = 1609001;
+    const ERR_SECURE_KNOWN_TYPE_FILTER_NOT_MANAGED = 1609001;
     
     /**
      * @const ERR_SECURE_ARRAY_KEY_NOT_EXIST If the asked key not exist into
      * the array to secure.
      */
     const ERR_SECURE_ARRAY_KEY_NOT_EXIST = 1609002;
-    
-    /**
-     * @const ERR_OBTAIN_KEY Exception code if the key asked not exist
-     */
-    const ERR_OBTAIN_KEY = 1609003;
     
     /**
      * Hash a string
@@ -48,7 +43,7 @@ class Secure
      * 
      * @throws \Exception If the type is unknown
      */
-    public static function securiseKnownTypes($data, string $type)
+    public static function secureKnownType($data, string $type)
     {
         $filterType = 'text';
 
@@ -63,7 +58,10 @@ class Secure
         }
 
         if ($filterType === 'text') {
-            throw new Exception('Unknown type', self::ERR_SECURE_UNKNOWN_TYPE);
+            throw new Exception(
+                'Cannot secure the type',
+                self::ERR_SECURE_KNOWN_TYPE_FILTER_NOT_MANAGED
+            );
         }
 
         return filter_var($data, $filterType);
@@ -79,7 +77,7 @@ class Secure
      * 
      * @return mixed
      */
-    public static function securiseUnknownType($data, bool $htmlentities)
+    public static function secureUnknownType($data, bool $htmlentities)
     {
         $currentClass    = get_called_class();
         $sqlSecureMethod = $currentClass::getSqlSecureMethod();
@@ -109,7 +107,7 @@ class Secure
      * 
      * @throws \Exception If an error with a type of data
      */
-    public static function securise($data, string $type, bool $htmlentities)
+    public static function secureData($data, string $type, bool $htmlentities)
     {
         $currentClass = get_called_class();
         
@@ -117,8 +115,8 @@ class Secure
             foreach ($data as $key => $val) {
                 unset($data[$key]);
 
-                $key = $currentClass::securise($key, gettype($key), true);
-                $val = $currentClass::securise($val, $type, $htmlentities);
+                $key = $currentClass::secureData($key, gettype($key), true);
+                $val = $currentClass::secureData($val, $type, $htmlentities);
 
                 $data[$key] = $val;
             }
@@ -127,15 +125,15 @@ class Secure
         }
 
         try {
-            return $currentClass::securiseKnownTypes($data, $type);
+            return $currentClass::secureKnownType($data, $type);
         } catch (Exception $ex) {
-            if ($ex->getCode() !== self::ERR_SECURE_UNKNOWN_TYPE) {
+            if ($ex->getCode() !== self::ERR_SECURE_KNOWN_TYPE_FILTER_NOT_MANAGED) {
                 throw new Exception($ex->getMessage(), $ex->getCode());
             }
             //Else : Use securise like if it's a text type
         }
 
-        return $currentClass::securiseUnknownType($data, $htmlentities);
+        return $currentClass::secureUnknownType($data, $htmlentities);
     }
 
     /**
@@ -171,7 +169,7 @@ class Secure
      * 
      * @throws \Exception If the key not exist in array
      */
-    public static function getSecurisedKeyInArray(
+    public static function getSecureKeyInArray(
         array &$array,
         string $key,
         string $type,
@@ -185,7 +183,7 @@ class Secure
         }
 
         $currentClass = get_called_class();
-        return $currentClass::securise(
+        return $currentClass::secureData(
             trim($array[$key]),
             $type,
             $htmlentities
@@ -209,7 +207,7 @@ class Secure
      * 
      * @throws \Exception If a key is not found and if $throwOnError is true
      */
-    public static function getSecurisedManyKeys(
+    public static function getManySecureKeys(
         array &$arraySrc,
         array $keysList,
         bool $throwOnError = true
@@ -226,7 +224,7 @@ class Secure
             }
             
             try {
-                $result[$keyName] = $currentClass::getSecurisedKeyInArray(
+                $result[$keyName] = $currentClass::getSecureKeyInArray(
                     $arraySrc,
                     $keyName,
                     $infos['type'],
@@ -236,7 +234,7 @@ class Secure
                 if ($throwOnError === true) {
                     throw new Exception(
                         'Error to obtain the key '.$keyName,
-                        self::ERR_OBTAIN_KEY,
+                        self::ERR_SECURE_ARRAY_KEY_NOT_EXIST,
                         $ex
                     );
                 } else {

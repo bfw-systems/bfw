@@ -29,25 +29,25 @@ class Secure extends atoum
         ;
     }
     
-    protected function assertSecuriseKnownTypes(
+    protected function assertSecureKnownType(
         &$filterType,
         $dataToTest,
         $filter,
         $expectedData,
         $expectedFilter
     ) {
-        $this->assert('test Helpers\Secure::securiseKnownTypes with '.$filter.' types')
+        $this->assert('test Helpers\Secure::secureKnownType with '.$filter.' types')
             ->given($filterType = null)
-            ->variable(\BFW\Helpers\Secure::securiseKnownTypes($dataToTest, $filter))
+            ->variable(\BFW\Helpers\Secure::secureKnownType($dataToTest, $filter))
                 ->isIdenticalTo($expectedData)
             ->variable($filterType)
                 ->isIdenticalTo($expectedFilter)
         ;
     }
     
-    public function testSecuriseKnownTypes()
+    public function testSecureKnownType()
     {
-        $this->assert('test Helpers\Secure::securiseKnownTypes - prepare')
+        $this->assert('test Helpers\Secure::secureKnownType - prepare')
             ->given($filterType = null)
             ->given($this->function->filter_var = function($variable, $filter) use (&$filterType) {
                 $filterType = $filter;
@@ -56,16 +56,16 @@ class Secure extends atoum
             })
         ;
         
-        $this->assertSecuriseKnownTypes($filterType, 42, 'int', 42, FILTER_VALIDATE_INT);
-        $this->assertSecuriseKnownTypes($filterType, '42', 'integer', 42, FILTER_VALIDATE_INT);
+        $this->assertSecureKnownType($filterType, 42, 'int', 42, FILTER_VALIDATE_INT);
+        $this->assertSecureKnownType($filterType, '42', 'integer', 42, FILTER_VALIDATE_INT);
         
-        $this->assertSecuriseKnownTypes($filterType, 15.3, 'float', 15.3, FILTER_VALIDATE_FLOAT);
-        $this->assertSecuriseKnownTypes($filterType, '15.3', 'double', 15.3, FILTER_VALIDATE_FLOAT);
+        $this->assertSecureKnownType($filterType, 15.3, 'float', 15.3, FILTER_VALIDATE_FLOAT);
+        $this->assertSecureKnownType($filterType, '15.3', 'double', 15.3, FILTER_VALIDATE_FLOAT);
         
-        $this->assertSecuriseKnownTypes($filterType, true, 'bool', true, FILTER_VALIDATE_BOOLEAN);
-        $this->assertSecuriseKnownTypes($filterType, false, 'bool', false, FILTER_VALIDATE_BOOLEAN);
+        $this->assertSecureKnownType($filterType, true, 'bool', true, FILTER_VALIDATE_BOOLEAN);
+        $this->assertSecureKnownType($filterType, false, 'bool', false, FILTER_VALIDATE_BOOLEAN);
         
-        $this->assertSecuriseKnownTypes(
+        $this->assertSecureKnownType(
             $filterType,
             'myemail@mywebsite.com',
             'email',
@@ -73,25 +73,25 @@ class Secure extends atoum
             FILTER_VALIDATE_EMAIL
         );
         
-        $this->assert('test Helpers\Secure::securiseKnownTypes with an unknown types')
+        $this->assert('test Helpers\Secure::secureKnownType with an unknown types')
             ->exception(function() {
-                \BFW\Helpers\Secure::securiseKnownTypes('atoum', 'string');
+                \BFW\Helpers\Secure::secureKnownType('atoum', 'string');
             })
-                ->hasCode(\BFW\Helpers\Secure::ERR_SECURE_UNKNOWN_TYPE)
+                ->hasCode(\BFW\Helpers\Secure::ERR_SECURE_KNOWN_TYPE_FILTER_NOT_MANAGED)
         ;
     }
     
-    public function testSecuriseUnknownType()
+    public function testSecureUnknownType()
     {
-        $this->assert('test Helpers\Secure::securiseUnknownType')
-            ->string(\BFW\Helpers\Secure::securiseUnknownType('atoum', false))
+        $this->assert('test Helpers\Secure::secureUnknownType')
+            ->string(\BFW\Helpers\Secure::secureUnknownType('atoum', false))
                 ->isEqualTo('atoum')
-            ->string(\BFW\Helpers\Secure::securiseUnknownType(
+            ->string(\BFW\Helpers\Secure::secureUnknownType(
                 '<p>Il est recommandé d\'utiliser composer pour installer</p>',
                 false
             ))
                 ->isEqualTo('<p>Il est recommandé d\\\'utiliser composer pour installer</p>')
-            ->string(\BFW\Helpers\Secure::securiseUnknownType(
+            ->string(\BFW\Helpers\Secure::secureUnknownType(
                 '<p>Il est recommandé d\'utiliser composer pour installer</p>',
                 true
             ))
@@ -99,26 +99,26 @@ class Secure extends atoum
         ;
     }
     
-    public function testSecurise()
+    public function testSecureData()
     {
         //We can not mock anything into :/
         //So we test only the return and not the args passed to called method inside
         
-        $this->assert('test Helpers\Secure::securise with an integer value')
-            ->integer(\BFW\Helpers\Secure::securise(42, 'integer', false))
+        $this->assert('test Helpers\Secure::secureData with an integer value')
+            ->integer(\BFW\Helpers\Secure::secureData(42, 'integer', false))
                 ->isEqualTo(42)
         ;
         
-        $this->assert('test Helpers\Secure::securise with a string value')
-            ->string(\BFW\Helpers\Secure::securise('atoum', 'string', false))
+        $this->assert('test Helpers\Secure::secureData with a string value')
+            ->string(\BFW\Helpers\Secure::secureData('atoum', 'string', false))
                 ->isEqualTo('atoum')
-            ->string(\BFW\Helpers\Secure::securise(
+            ->string(\BFW\Helpers\Secure::secureData(
                 '<p>Il est recommandé d\'utiliser composer pour installer</p>',
                 'string',
                 false
             ))
                 ->isEqualTo('<p>Il est recommandé d\\\'utiliser composer pour installer</p>')
-            ->string(\BFW\Helpers\Secure::securise(
+            ->string(\BFW\Helpers\Secure::secureData(
                 '<p>Il est recommandé d\'utiliser composer pour installer</p>',
                 'string',
                 true
@@ -126,8 +126,8 @@ class Secure extends atoum
                 ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;')
         ;
         
-        $this->assert('test Helpers\Secure::securise with an array value')
-            ->array(\BFW\Helpers\Secure::securise(
+        $this->assert('test Helpers\Secure::secureData with an array value')
+            ->array(\BFW\Helpers\Secure::secureData(
                 [
                     'id'      => 42,
                     'titre'   => 'install',
@@ -162,16 +162,16 @@ class Secure extends atoum
         ;
     }
     
-    public function testGetSecurisedKeyInArray()
+    public function testGetSecureKeyInArray()
     {
         //We can not mock anything into :/
         //So we test only the return and not the args passed to called method inside
         
-        $this->assert('test Helpers\Secure::getSecurisedKeyInArray with not existing key')
+        $this->assert('test Helpers\Secure::getSecureKeyInArray with not existing key')
             ->exception(function() {
                 $array = [];
                 
-                \BFW\Helpers\Secure::getSecurisedKeyInArray(
+                \BFW\Helpers\Secure::getSecureKeyInArray(
                     $array,
                     'libs',
                     'string'
@@ -180,13 +180,13 @@ class Secure extends atoum
                 ->hasCode(\BFW\Helpers\Secure::ERR_SECURE_ARRAY_KEY_NOT_EXIST)
         ;
         
-        $this->assert('test Helpers\Secure::getSecurisedKeyInArray with a existing key')
+        $this->assert('test Helpers\Secure::getSecureKeyInArray with a existing key')
             ->given($array = [
                 'id'      => 42,
                 'titre'   => 'install',
                 'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
             ])
-            ->string(\BFW\Helpers\Secure::getSecurisedKeyInArray(
+            ->string(\BFW\Helpers\Secure::getSecureKeyInArray(
                     $array,
                     'content',
                     'string',
@@ -196,7 +196,7 @@ class Secure extends atoum
         ;
     }
     
-    public function testObtainManyKeys()
+    public function testGetManySecureKeys()
     {
         //We can not mock anything into :/
         //So we test only the return and not the args passed to called method inside
@@ -207,8 +207,8 @@ class Secure extends atoum
             'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
         ]);
         
-        $this->assert('test Helpers\Secure::getSecurisedManyKeys with all existing keys')
-            ->array(\BFW\Helpers\Secure::getSecurisedManyKeys(
+        $this->assert('test Helpers\Secure::getManySecureKeys with all existing keys')
+            ->array(\BFW\Helpers\Secure::getManySecureKeys(
                 $testedArray,
                 [
                     'titre'   => 'string',
@@ -224,8 +224,8 @@ class Secure extends atoum
                 ])
         ;
         
-        $this->assert('test Helpers\Secure::getSecurisedManyKeys with a not existing key and not exception')
-            ->array(\BFW\Helpers\Secure::getSecurisedManyKeys(
+        $this->assert('test Helpers\Secure::getManySecureKeys with a not existing key and not exception')
+            ->array(\BFW\Helpers\Secure::getManySecureKeys(
                 $testedArray,
                 [
                     'titre'  => 'string',
@@ -239,9 +239,9 @@ class Secure extends atoum
                 ])
         ;
         
-        $this->assert('test Helpers\Secure::getSecurisedManyKeys with a not existing key and with exception')
+        $this->assert('test Helpers\Secure::getManySecureKeys with a not existing key and with exception')
             ->exception(function() use (&$testedArray) {
-                \BFW\Helpers\Secure::getSecurisedManyKeys(
+                \BFW\Helpers\Secure::getManySecureKeys(
                     $testedArray,
                     [
                         'titre'  => 'string',
@@ -250,7 +250,7 @@ class Secure extends atoum
                     true
                 );
             })
-                ->hasCode(\BFW\Helpers\Secure::ERR_OBTAIN_KEY)
+                ->hasCode(\BFW\Helpers\Secure::ERR_SECURE_ARRAY_KEY_NOT_EXIST)
         ;
     }
 }

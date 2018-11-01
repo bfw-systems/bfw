@@ -64,7 +64,7 @@ class Http
         $currentClass = get_called_class();
         $secure       = $currentClass::getSecureHelpersName();
         
-        return $secure::getSecurisedKeyInArray(
+        return $secure::getSecureKeyInArray(
             $_POST,
             $key,
             $type,
@@ -90,7 +90,7 @@ class Http
         $currentClass = get_called_class();
         $secure       = $currentClass::getSecureHelpersName();
         
-        return $secure::getSecurisedKeyInArray(
+        return $secure::getSecureKeyInArray(
             $_GET,
             $key,
             $type,
@@ -118,7 +118,7 @@ class Http
         $currentClass = get_called_class();
         $secure       = $currentClass::getSecureHelpersName();
         
-        return $secure::getSecurisedManyKeys($_POST, $keysList, $throwOnError);
+        return $secure::getManySecureKeys($_POST, $keysList, $throwOnError);
     }
     
     /**
@@ -141,6 +141,6 @@ class Http
         $currentClass = get_called_class();
         $secure       = $currentClass::getSecureHelpersName();
         
-        return $secure::getSecurisedManyKeys($_GET, $keysList, $throwOnError);
+        return $secure::getManySecureKeys($_GET, $keysList, $throwOnError);
     }
 }

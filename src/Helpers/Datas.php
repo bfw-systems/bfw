@@ -73,7 +73,7 @@ class Datas
      */
     public static function checkMail(string $mail): bool
     {
-        $securisedMail = Secure::securise($mail, 'email', false);
+        $securisedMail = Secure::secureData($mail, 'email', false);
         
         if ($securisedMail === false) {
             return false;
