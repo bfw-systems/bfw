@@ -7,7 +7,7 @@ BFW : Framework PHP 7.x
 
 __Useful links :__
 
-Wiki : http://bfw.bulton.fr/wiki/
+Wiki : See the [docs](./docs/en) folder
 
 Bug Tracker : https://github.com/bulton-fr/bfw/issues
 
