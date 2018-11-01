@@ -12,18 +12,6 @@ use \Exception;
 class Dates extends DateTime
 {
     /**
-     * @const ERR_MODIFY_PATTERN_NOT_MATCH Exception code if the pattern used
-     * into the method modify() not match with the regex.
-     */
-    const ERR_MODIFY_PATTERN_NOT_MATCH = 1605001;
-    
-    /**
-     * @const ERR_MODIFY_UNKNOWN_MODIFIER Exception code if the modifier used
-     * into the method modify() is unknown.
-     */
-    const ERR_MODIFY_UNKNOWN_MODIFIER = 1605002;
-    
-    /**
      * @var string[] $humanReadableI18n Words used in method to transform
      *  date difference to human readable.
      */
