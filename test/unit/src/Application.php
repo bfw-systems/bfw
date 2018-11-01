@@ -33,16 +33,6 @@ class Application extends atoum
         }
     }
     
-    protected function removeExistingSubjects()
-    {
-        $listInstance = $this->app->getSubjectList();
-        $subjects     = $listInstance->getSubjectList();
-        
-        foreach ($subjects as $subject) {
-            $listInstance->removeSubject($subject);
-        }
-    }
-    
     /**
      * Test method for __constructor() and getInstance()
      * 
@@ -57,8 +47,6 @@ class Application extends atoum
                 ->isIdenticalTo($app)
             ->string(ini_get('default_charset'))
                 ->isEqualTo('UTF-8')
-            ->array($app->getCoreSystemList())
-                ->isNotEmpty()
             ;
         ;
     }
@@ -82,42 +70,42 @@ class Application extends atoum
         $this->assert('test Application::__call when known method')
             ->object($this->app->getConfig())
                 ->isInstanceOf('\BFW\Config')
-                ->isIdenticalTo($this->app->getCoreSystemList()['config']->getConfig())
+                ->isIdenticalTo($this->app->getAppSystemList()['config']->getConfig())
         ;
     }
     
-    public function testDefineCoreSystemList()
+    public function testObtainAppSystemList()
     {
-        $this->assert('test Application::defineCoreSystemList')
-            ->array($list = $this->app->getCoreSystemList())
+        $this->assert('test Application::obtainAppSystemList')
+            ->array($list = $this->app->obtainParentAppSystemList())
                 ->size
                     ->isEqualTo(13)
-            ->object($list['cli'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Cli')
-            ->object($list['composerLoader'])
-                ->isInstanceOf('\BFW\Core\AppSystems\ComposerLoader')
-            ->object($list['config'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Config')
-            ->object($list['constants'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Constants')
-            ->object($list['ctrlRouterLink'])
-                ->isInstanceOf('\BFW\Core\AppSystems\CtrlRouterLink')
-            ->object($list['errors'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Errors')
-            ->object($list['memcached'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Memcached')
-            ->object($list['moduleList'])
-                ->isInstanceOf('\BFW\Core\AppSystems\ModuleList')
-            ->object($list['monolog'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Monolog')
-            ->object($list['options'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Options')
-            ->object($list['request'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Request')
-            ->object($list['session'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Session')
-            ->object($list['subjectList'])
-                ->isInstanceOf('\BFW\Core\AppSystems\SubjectList')
+            ->string($list['cli'])
+                ->isEqualTo('\BFW\Core\AppSystems\Cli')
+            ->string($list['composerLoader'])
+                ->isEqualTo('\BFW\Core\AppSystems\ComposerLoader')
+            ->string($list['config'])
+                ->isEqualTo('\BFW\Core\AppSystems\Config')
+            ->string($list['constants'])
+                ->isEqualTo('\BFW\Core\AppSystems\Constants')
+            ->string($list['ctrlRouterLink'])
+                ->isEqualTo('\BFW\Core\AppSystems\CtrlRouterLink')
+            ->string($list['errors'])
+                ->isEqualTo('\BFW\Core\AppSystems\Errors')
+            ->string($list['memcached'])
+                ->isEqualTo('\BFW\Core\AppSystems\Memcached')
+            ->string($list['moduleList'])
+                ->isEqualTo('\BFW\Core\AppSystems\ModuleList')
+            ->string($list['monolog'])
+                ->isEqualTo('\BFW\Core\AppSystems\Monolog')
+            ->string($list['options'])
+                ->isEqualTo('\BFW\Core\AppSystems\Options')
+            ->string($list['request'])
+                ->isEqualTo('\BFW\Core\AppSystems\Request')
+            ->string($list['session'])
+                ->isEqualTo('\BFW\Core\AppSystems\Session')
+            ->string($list['subjectList'])
+                ->isEqualTo('\BFW\Core\AppSystems\SubjectList')
         ;
     }
     
@@ -155,53 +143,79 @@ class Application extends atoum
          */
     }
     
-    public function testInitCoreSystem()
+    public function testInitAppSystemWithNonExistingClass()
     {
-        $this->assert('test Application::initCoreSystem - prepare')
-            ->given($coreSystem = new \mock\BFW\Core\AppSystems\AbstractSystem)
-            ->and($this->calling($coreSystem)->isInit = true)
-            ->then
-            ->if($this->app->addToCoreSystemList('mock', $coreSystem))
-            ->then
+        $this->assert('test Application::initAppSystem - prepare')
+            ->given($list = $this->app->obtainAppSystemDefaultList())
+            ->and($this->app->setAppSystemToInstantiate($list))
         ;
         
-        $this->assert('test Application::initCoreSystem with already init system')
-            ->if($this->initApp())
+        $this->assert('test Application::initAppSystem with an unknown class')
+            ->if($this->app->addToAppSystemToInstantiate('mock', 'unknownClass'))
             ->then
-            ->mock($coreSystem)
-                ->call('init')
-                    ->never()
-            ->array($this->app->getRunTasks()->getRunSteps())
-                ->notHasKey('mock')
+            ->exception(function() {
+                $this->initApp();
+            })
+                ->hasCode(\BFW\Application::ERR_APP_SYSTEM_CLASS_NOT_EXIST)
+        ;
+    }
+    
+    public function testInitAppSystemWithClassNotImplementInterface()
+    {
+        $this->assert('test Application::initAppSystem - prepare')
+            ->given($list = $this->app->obtainAppSystemDefaultList())
+            ->and($this->app->setAppSystemToInstantiate($list))
         ;
         
-        $this->assert('test Application::initCoreSystem with only init system')
-            ->if($this->removeExistingSubjects())
+        $this->assert('test Application::initAppSystem with a class which not implement the interface')
+            ->if($this->app->addToAppSystemToInstantiate('mock', '\BFW\Helpers\Dates'))
             ->then
-            ->if($this->calling($coreSystem)->isInit = false)
-            ->then
-            ->if($this->initApp())
-            ->then
-            ->mock($coreSystem)
-                ->call('init')
-                    ->once()
-            ->array($this->app->getRunTasks()->getRunSteps())
-                ->notHasKey('mock')
+            ->exception(function() {
+                $this->initApp();
+            })
+                ->hasCode(\BFW\Application::ERR_APP_SYSTEM_NOT_IMPLEMENT_INTERFACE)
+        ;
+    }
+    
+    public function testInitAppSystemWithoutRun()
+    {
+        $this->assert('test Application::initAppSystem - prepare')
+            ->given($list = $this->app->obtainAppSystemDefaultList())
+            ->and($this->app->setAppSystemToInstantiate($list))
         ;
         
-        $this->assert('test Application::initCoreSystem with init and run system')
-            ->if($this->removeExistingSubjects())
-            ->then
-            ->if($this->calling($coreSystem)->isInit = false)
-            ->and($this->calling($coreSystem)->toRun = true)
+        $this->assert('test Application::initAppSystem without run system')
+            ->if($this->app->addToAppSystemToInstantiate('mock', '\mock\BFW\Core\AppSystems\AbstractSystem'))
             ->then
             ->if($this->initApp())
             ->then
-            ->mock($coreSystem)
-                ->call('init')
-                    ->once()
-            ->array($this->app->getRunTasks()->getRunSteps())
+            ->array($this->app->getAppSystemList())
                 ->hasKey('mock')
+            ->object($this->app->getAppSystemList()['mock'])
+                ->isInstanceOf('\mock\BFW\Core\AppSystems\AbstractSystem')
+            ->array($this->app->getRunTasks()->getRunSteps())
+                ->notHasKey('mock')
+        ;
+    }
+    
+    public function testInitAppSystemWithRun()
+    {
+        $this->assert('test Application::initAppSystem - prepare')
+            ->given($list = $this->app->obtainAppSystemDefaultList())
+            ->and($this->app->setAppSystemToInstantiate($list))
+        ;
+        
+        $this->assert('test Application::initAppSystem with run system')
+            ->if($this->app->addToAppSystemToInstantiate('mock_moduleList', '\mock\BFW\Core\AppSystems\ModuleList'))
+            ->then
+            ->if($this->initApp())
+            ->then
+            ->array($this->app->getAppSystemList())
+                ->hasKey('mock_moduleList')
+            ->object($this->app->getAppSystemList()['mock_moduleList'])
+                ->isInstanceOf('\mock\BFW\Core\AppSystems\ModuleList')
+            ->array($this->app->getRunTasks()->getRunSteps())
+                ->hasKey('mock_moduleList')
         ;
     }
     

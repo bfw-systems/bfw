@@ -17,35 +17,30 @@ class Errors extends atoum
     
     public function beforeTestMethod($testMethod)
     {
-        $this->mock = new \mock\BFW\Core\AppSystems\Errors;
-        
         $this->setRootDir(__DIR__.'/../../../../..');
         $this->createApp();
         $this->initApp();
+        
+        if ($testMethod === 'testConstructor') {
+            return;
+        }
+        
+        $this->mock = new \mock\BFW\Core\AppSystems\Errors;
     }
     
     public function testInit()
     {
-        $this->assert('test Core\AppSystems\Errors::isInit before init')
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-        ;
-        
-        $this->assert('test Core\AppSystems\Errors::init and isInit after')
-            ->variable($this->mock->init())
-                ->isNull()
+        $this->assert('test Core\AppSystems\Errors::__construct')
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\Errors)
+            ->then
             ->object($this->mock->getErrors())
                 ->isInstanceOf('\BFW\Core\Errors')
-            ->boolean($this->mock->isInit())
-                ->isTrue()
         ;
     }
     
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\Errors::__invoke')
-            ->if($this->mock->init())
-            ->then
             ->object($this->mock->__invoke())
                 ->isIdenticalTo($this->mock->getErrors())
         ;

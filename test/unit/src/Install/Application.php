@@ -18,10 +18,7 @@ class Application extends atoum
     {
         $this->setRootDir(__DIR__.'/../../../..');
         $this->createApp();
-        
-        if ($testMethod === 'testRun') {
-            $this->initApp();
-        }
+        $this->initApp();
     }
     
     /**
@@ -39,30 +36,30 @@ class Application extends atoum
         ;
     }
     
-    public function testDefineCoreSystemList()
+    public function testObtainAppSystemList()
     {
-        $this->assert('test Install\Application::defineCoreSystemList')
-            ->array($list = $this->app->getCoreSystemList())
+        $this->assert('test Install\Application::obtainAppSystemList')
+            ->array($list = $this->app->obtainParentAppSystemList())
                 ->size
                     ->isEqualTo(9)
-            ->object($list['composerLoader'])
-                ->isInstanceOf('\BFW\Core\AppSystems\ComposerLoader')
-            ->object($list['config'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Config')
-            ->object($list['constants'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Constants')
-            ->object($list['memcached'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Memcached')
-            ->object($list['moduleInstall'])
-                ->isInstanceOf('\BFW\Install\Core\AppSystems\ModuleInstall')
-            ->object($list['moduleList'])
-                ->isInstanceOf('\BFW\Install\Core\AppSystems\ModuleList')
-            ->object($list['monolog'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Monolog')
-            ->object($list['options'])
-                ->isInstanceOf('\BFW\Core\AppSystems\Options')
-            ->object($list['subjectList'])
-                ->isInstanceOf('\BFW\Core\AppSystems\SubjectList')
+            ->string($list['composerLoader'])
+                ->isEqualTo('\BFW\Core\AppSystems\ComposerLoader')
+            ->string($list['config'])
+                ->isEqualTo('\BFW\Core\AppSystems\Config')
+            ->string($list['constants'])
+                ->isEqualTo('\BFW\Core\AppSystems\Constants')
+            ->string($list['memcached'])
+                ->isEqualTo('\BFW\Core\AppSystems\Memcached')
+            ->string($list['moduleInstall'])
+                ->isEqualTo('\BFW\Install\Core\AppSystems\ModuleInstall')
+            ->string($list['moduleList'])
+                ->isEqualTo('\BFW\Install\Core\AppSystems\ModuleList')
+            ->string($list['monolog'])
+                ->isEqualTo('\BFW\Core\AppSystems\Monolog')
+            ->string($list['options'])
+                ->isEqualTo('\BFW\Core\AppSystems\Options')
+            ->string($list['subjectList'])
+                ->isEqualTo('\BFW\Core\AppSystems\SubjectList')
         ;
     }
     

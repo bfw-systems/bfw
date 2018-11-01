@@ -23,34 +23,15 @@ class ModuleInstall extends atoum
             ->makeVisible('installModule')
         ;
         
+        $this->setRootDir(__DIR__.'/../../../../../..');
+        $this->createApp();
+
+        $appSystemList = $this->app->obtainAppSystemDefaultList();
+        unset($appSystemList['moduleInstall']);
+        $this->app->setAppSystemToInstantiate($appSystemList);
+        
+        $this->initApp();
         $this->mock = new \mock\BFW\Install\Core\AppSystems\ModuleInstall;
-        
-        if (
-            strpos($testMethod, 'testInstall') === 0 ||
-            $testMethod === 'testGetListToInstallAndAddToList'
-        ) {
-            $this->setRootDir(__DIR__.'/../../../../../..');
-            $this->createApp();
-            
-            $coreSystemList = $this->app->getCoreSystemList();
-            unset($coreSystemList['moduleInstall']);
-            $this->app->setCoreSystemList($coreSystemList);
-        }
-    }
-    
-    public function testInit()
-    {
-        $this->assert('test Install\Core\AppSystems\ModuleInstall::isInit before init')
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-        ;
-        
-        $this->assert('test Install\Core\AppSystems\ModuleInstall::init and isInit after')
-            ->variable($this->mock->init())
-                ->isNull()
-            ->boolean($this->mock->isInit())
-                ->isTrue()
-        ;
     }
     
     public function testInvoke()
@@ -69,8 +50,6 @@ class ModuleInstall extends atoum
         ;
         
         $this->assert('test Install\Core\AppSystems\ModuleInstall::addToList')
-            ->if($this->initApp())
-            ->then
             ->given($module = new \mock\BFW\Test\Mock\Install\ModuleInstall('atoum'))
             ->and($module->setName('atoum'))
             ->then
@@ -99,7 +78,6 @@ class ModuleInstall extends atoum
         ;
         
         $this->assert('test Install\Core\AppSystems\ModuleInstall::run and isRun after')
-            ->if($this->mock->init())
             ->and($this->calling($this->mock)->installAllModules = null)
             ->variable($this->mock->run())
                 ->isNull()
@@ -171,7 +149,6 @@ class ModuleInstall extends atoum
             ->then
             
             //->if($this->moduleMockNativeFunctions())
-            ->and($this->initApp())
             ->and($this->mock->installAllModules())
             ->then
             
@@ -191,13 +168,12 @@ class ModuleInstall extends atoum
             ->then
             
             ->if($this->moduleMockNativeFunctions('unitTest'))
-            ->and($this->initApp())
             ->then
             
             ->if($module = new \BFW\Test\Mock\Install\ModuleInstall('unitTest'))
             ->and($module->setName('unitTest'))
             //->and($this->mock->addToList($module)) //Already installed
-            ->and($this->app->getCoreSystemList()['moduleList']->addToMockedList(
+            ->and($this->app->getAppSystemList()['moduleList']->addToMockedList(
                 'unitTest',
                 (object) [
                     'config'    => null,
@@ -206,7 +182,7 @@ class ModuleInstall extends atoum
             ))
             
             ->then
-            ->if($this->app->getCoreSystemList()['moduleList']->run())
+            ->if($this->app->getAppSystemList()['moduleList']->run())
             ->and($this->mock->installAllModules())
             ->then
             
@@ -226,13 +202,12 @@ class ModuleInstall extends atoum
             ->then
             
             ->if($this->moduleMockNativeFunctions('unitTest'))
-            ->and($this->initApp())
             ->then
             
             ->if($module = new \BFW\Test\Mock\Install\ModuleInstall('unitTest'))
             ->and($module->setName('unitTest'))
             ->and($this->mock->addToList($module))
-            ->and($this->app->getCoreSystemList()['moduleList']->addToMockedList(
+            ->and($this->app->getAppSystemList()['moduleList']->addToMockedList(
                 'unitTest',
                 (object) [
                     'config'    => null,
@@ -241,7 +216,7 @@ class ModuleInstall extends atoum
             ))
             
             ->then
-            ->if($this->app->getCoreSystemList()['moduleList']->run())
+            ->if($this->app->getAppSystemList()['moduleList']->run())
             ->and($this->mock->installAllModules())
             ->then
             
@@ -263,7 +238,6 @@ class ModuleInstall extends atoum
             ->then
             
             ->if($this->moduleMockNativeFunctions('unitTest'))
-            ->and($this->initApp())
             ->then
             
             ->given($listScripts = [])
@@ -274,7 +248,7 @@ class ModuleInstall extends atoum
             ->and($module->setName('unitTest'))
             ->and($module->setSourceInstallScript('install.php'))
             ->and($this->mock->addToList($module))
-            ->and($this->app->getCoreSystemList()['moduleList']->addToMockedList(
+            ->and($this->app->getAppSystemList()['moduleList']->addToMockedList(
                 'unitTest',
                 (object) [
                     'config'    => null,
@@ -283,7 +257,7 @@ class ModuleInstall extends atoum
             ))
             
             ->then
-            ->if($this->app->getCoreSystemList()['moduleList']->run())
+            ->if($this->app->getAppSystemList()['moduleList']->run())
             ->and($this->mock->installAllModules())
             ->then
             
@@ -308,7 +282,6 @@ class ModuleInstall extends atoum
             ->then
             
             ->if($this->moduleMockNativeFunctions('unitTest'))
-            ->and($this->initApp())
             ->then
             
             ->given($listScripts = [])
@@ -322,7 +295,7 @@ class ModuleInstall extends atoum
                 'checkInstall.php'
             ]))
             ->and($this->mock->addToList($module))
-            ->and($this->app->getCoreSystemList()['moduleList']->addToMockedList(
+            ->and($this->app->getAppSystemList()['moduleList']->addToMockedList(
                 'unitTest',
                 (object) [
                     'config'    => null,
@@ -331,7 +304,7 @@ class ModuleInstall extends atoum
             ))
             
             ->then
-            ->if($this->app->getCoreSystemList()['moduleList']->run())
+            ->if($this->app->getAppSystemList()['moduleList']->run())
             ->and($this->mock->installAllModules())
             ->then
             

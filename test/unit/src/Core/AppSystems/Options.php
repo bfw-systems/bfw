@@ -21,27 +21,24 @@ class Options extends atoum
             ->makeVisible('obtainDefaultOptions')
         ;
         
-        $this->mock = new \mock\BFW\Core\AppSystems\Options;
-        
         $this->setRootDir(__DIR__.'/../../../../..');
         $this->createApp();
         $this->initApp();
+        
+        if ($testMethod === 'testConstructor') {
+            return;
+        }
+        
+        $this->mock = new \mock\BFW\Core\AppSystems\Options;
     }
     
-    public function testInit()
+    public function testConstructor()
     {
-        $this->assert('test Core\AppSystems\Options::isInit before init')
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-        ;
-        
-        $this->assert('test Core\AppSystems\Options::init and isInit after')
-            ->variable($this->mock->init())
-                ->isNull()
+        $this->assert('test Core\AppSystems\Options::__construct')
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\Options)
+            ->then
             ->object($this->mock->getOptions())
                 ->isInstanceOf('\BFW\Core\Options')
-            ->boolean($this->mock->isInit())
-                ->isTrue()
             ->string($this->mock->getOptions()->getValue('rootDir'))
                 ->isNotEmpty()
             ->string($this->mock->getOptions()->getValue('vendorDir'))
@@ -52,8 +49,6 @@ class Options extends atoum
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\Options::__invoke')
-            ->if($this->mock->init())
-            ->then
             ->object($this->mock->__invoke())
                 ->isIdenticalTo($this->mock->getOptions())
         ;

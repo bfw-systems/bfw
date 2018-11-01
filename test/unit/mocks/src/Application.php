@@ -10,19 +10,54 @@ require_once(__DIR__.'/Core/AppSystems/ModuleList.php');
 
 class Application extends \BFW\Application
 {
-    protected function defineCoreSystemList()
+    protected $appSystemToInstantiate = [];
+    
+    public function getAppSystemToInstantiate()
     {
-        parent::defineCoreSystemList();
-        
-        $this->coreSystemList['cli']        = new \BFW\Test\Mock\Core\AppSystems\Cli;
-        $this->coreSystemList['config']     = new \BFW\Test\Mock\Core\AppSystems\Config;
-        $this->coreSystemList['errors']     = new \BFW\Test\Mock\Core\AppSystems\Errors;
-        $this->coreSystemList['moduleList'] = new \BFW\Test\Mock\Core\AppSystems\ModuleList;
+        return $this->appSystemToInstantiate;
+    }
+
+    public function setAppSystemToInstantiate(array $appSystemToInstantiate)
+    {
+        $this->appSystemToInstantiate = $appSystemToInstantiate;
+        return $this;
+    }
+
+    public function addToAppSystemToInstantiate(string $name, string $class)
+    {
+        $this->appSystemToInstantiate[$name] = $class;
+        return $this;
     }
     
-    public function setCoreSystemList(array $coreSystemList): self
+    protected function obtainAppSystemList(): array
     {
-        $this->coreSystemList = $coreSystemList;
+        if ($this->appSystemToInstantiate !== []) {
+            return $this->appSystemToInstantiate;
+        }
+        
+        return $this->obtainAppSystemDefaultList();
+    }
+    
+    public function obtainAppSystemDefaultList(): array
+    {
+        $list = parent::obtainAppSystemList();
+        
+        $list['cli']        = '\BFW\Test\Mock\Core\AppSystems\Cli';
+        $list['config']     = '\BFW\Test\Mock\Core\AppSystems\Config';
+        $list['errors']     = '\BFW\Test\Mock\Core\AppSystems\Errors';
+        $list['moduleList'] = '\BFW\Test\Mock\Core\AppSystems\ModuleList';
+        
+        return $list;
+    }
+    
+    public function obtainParentAppSystemList(): array
+    {
+        return parent::obtainAppSystemList();
+    }
+    
+    public function setAppSystemList(array $appSystemList): self
+    {
+        $this->appSystemList = $appSystemList;
         return $this;
     }
     
@@ -30,7 +65,7 @@ class Application extends \BFW\Application
         string $name,
         \BFW\Core\AppSystems\SystemInterface $system
     ): self {
-        $this->coreSystemList[$name] = $system;
+        $this->appSystemList[$name] = $system;
         return $this;
     }
 

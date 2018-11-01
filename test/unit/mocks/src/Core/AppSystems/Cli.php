@@ -7,9 +7,8 @@ require_once(__DIR__.'/../Cli.php');
 
 class Cli extends \BFW\Core\AppSystems\Cli
 {
-    public function init()
+    public function __construct()
     {
-        $this->cli        = new \BFW\Test\Mock\Core\Cli;
-        $this->initStatus = true;
+        $this->cli = new \BFW\Test\Mock\Core\Cli;
     }
 }

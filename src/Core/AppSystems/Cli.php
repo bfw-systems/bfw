@@ -5,14 +5,22 @@ namespace BFW\Core\AppSystems;
 class Cli extends AbstractSystem
 {
     /**
-     * @var \BFW\Core\Cli|null $cli
+     * @var \BFW\Core\Cli $cli
      */
     protected $cli;
     
     /**
+     * Define the cli property
+     */
+    public function __construct()
+    {
+        $this->cli = new \BFW\Core\Cli;
+    }
+    
+    /**
      * {@inheritdoc}
      * 
-     * @return \BFW\Core\Cli|null
+     * @return \BFW\Core\Cli
      */
     public function __invoke()
     {
@@ -22,21 +30,11 @@ class Cli extends AbstractSystem
     /**
      * Getter accessor to cli property
      * 
-     * @return \BFW\Core\Cli|null
+     * @return \BFW\Core\Cli
      */
     public function getCli()
     {
         return $this->cli;
-    }
-    
-    /**
-     * {@inheritdoc}
-     * Define the cli property
-     */
-    public function init()
-    {
-        $this->cli        = new \BFW\Core\Cli;
-        $this->initStatus = true;
     }
     
     /**

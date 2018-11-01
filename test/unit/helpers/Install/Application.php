@@ -2,6 +2,8 @@
 
 namespace BFW\Test\Helpers\Install;
 
+use \BFW\Test\Mock\Core\AppSystems\Config;
+
 //To be included by module who use it
 require_once(__DIR__.'/../../mocks/src/Install/Application.php');
 
@@ -38,7 +40,6 @@ trait Application
     protected function createApp()
     {
         $this->app = \BFW\Test\Mock\Install\Application::getInstance();
-        $appConfig = $this->app->getCoreSystemList()['config'];
         
         $configFileList = [
             'errors.php',
@@ -61,7 +62,7 @@ trait Application
                 ];
             }
             
-            $appConfig->setMockedList($filename, $configValue);
+            Config::setMockedList($filename, $configValue);
         }
     }
     

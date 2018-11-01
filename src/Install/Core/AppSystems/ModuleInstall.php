@@ -35,14 +35,6 @@ class ModuleInstall extends AbstractSystem
     /**
      * {@inheritdoc}
      */
-    public function init()
-    {
-        $this->initStatus = true;
-    }
-    
-    /**
-     * {@inheritdoc}
-     */
     public function toRun(): bool
     {
         return true;

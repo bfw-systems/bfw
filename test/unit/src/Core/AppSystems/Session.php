@@ -21,40 +21,42 @@ class Session extends atoum
             ->makeVisible('obtainRunSession')
         ;
         
-        $this->mock = new \mock\BFW\Core\AppSystems\Session;
-        
         $this->setRootDir(__DIR__.'/../../../../..');
         $this->createApp();
         
         //Remove from the list used by initApp() to not run session_start etc
-        $coreSystemList = $this->app->getCoreSystemList();
-        unset($coreSystemList['session']);
-        $this->app->setCoreSystemList($coreSystemList);
+        $appSystemList = $this->app->obtainAppSystemDefaultList();
+        unset($appSystemList['session']);
+        $this->app->setAppSystemToInstantiate($appSystemList);
         
         if (
-            $testMethod === 'testObtainRunSessionWhenIsFalse' ||
-            $testMethod === 'testObtainRunSessionWhenIsTrue'
+            $testMethod === 'testConstructorWithouRunSession' ||
+            $testMethod === 'testObtainRunSessionWhenIsFalse'
+        ) {
+            $this->initApp(false);
+        } else {
+            $this->initApp(true);
+        }
+        
+        if (
+            $testMethod === 'testConstructorWithRunSession' ||
+            $testMethod === 'testConstructorWithouRunSession'
         ) {
             return;
         }
         
-        $this->initApp(true);
+        $this->mock = new \mock\BFW\Core\AppSystems\Session;
     }
     
-    public function testInitWithRunSession()
+    public function testConstructorWithRunSession()
     {
         $this->assert('test Core\AppSystems\Session::init with runSession')
-            ->if($this->calling($this->mock)->obtainRunSession = true)
             ->and($this->function->session_set_cookie_params = null)
             ->and($this->function->session_start = null)
             ->then
             
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-            ->variable($this->mock->init())
-                ->isNull()
-            ->boolean($this->mock->isInit())
-                ->isTrue()
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\Session)
+            ->then
             ->function('session_set_cookie_params')
                 ->wasCalledWithArguments(0)
                     ->once()
@@ -64,20 +66,15 @@ class Session extends atoum
         ;
     }
     
-    public function testInitWithouRunSession()
+    public function testConstructorWithouRunSession()
     {
         $this->assert('test Core\AppSystems\Session::init without runSession')
-            ->if($this->calling($this->mock)->obtainRunSession = false)
             ->and($this->function->session_set_cookie_params = null)
             ->and($this->function->session_start = null)
             ->then
             
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-            ->variable($this->mock->init())
-                ->isNull()
-            ->boolean($this->mock->isInit())
-                ->isTrue()
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\Session)
+            ->then
             ->function('session_set_cookie_params')
                 ->wasCalled()
                     ->never()
@@ -90,8 +87,6 @@ class Session extends atoum
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\Session::__invoke')
-            ->if($this->mock->init())
-            ->then
             ->variable($this->mock->__invoke())
                 ->isNull()
         ;
@@ -108,8 +103,6 @@ class Session extends atoum
     public function testObtainRunSessionWhenIsFalse()
     {
         $this->assert('test Core\AppSystems\Session::obtainRunSession when is false')
-            ->if($this->initApp(false))
-            ->then
             ->boolean($this->mock->obtainRunSession())
                 ->isFalse()
         ;
@@ -118,8 +111,6 @@ class Session extends atoum
     public function testObtainRunSessionWhenIsTrue()
     {
         $this->assert('test Core\AppSystems\Session::obtainRunSession when is true')
-            ->if($this->initApp(true))
-            ->then
             ->boolean($this->mock->obtainRunSession())
                 ->isTrue()
         ;

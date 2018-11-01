@@ -39,15 +39,28 @@ class Application
     const ERR_CALL_UNKNOWN_PROPERTY = 1101002;
     
     /**
+     * @const ERR_APP_SYSTEM_CLASS_NOT_EXIST Exception code if an appSystem
+     * class not exist.
+     */
+    const ERR_APP_SYSTEM_CLASS_NOT_EXIST = 1101003;
+    
+    /**
+     * @const ERR_APP_SYSTEM_NOT_IMPLEMENT_INTERFACE Exception code if an
+     * AppSystem not implement \BFW\Core\AppSystems\SystemInterface.
+     */
+    const ERR_APP_SYSTEM_NOT_IMPLEMENT_INTERFACE = 1101004;
+    
+    
+    /**
      * @var \BFW\Application|null $instance Application instance (Singleton)
      */
     protected static $instance = null;
     
     /**
-     * @var \BFW\Core\AppSystems\SystemInterface[] $coreSystemList A list of
-     * all core system to init and run
+     * @var \BFW\Core\AppSystems\SystemInterface[] $appSystemList A list of
+     * all appSystem
      */
-    protected $coreSystemList = [];
+    protected $appSystemList = [];
     
     /**
      * @var array $declaredOptions All options passed to initSystems method
@@ -71,8 +84,6 @@ class Application
     {
         //Start the output buffering
         ob_start();
-        
-        $this->defineCoreSystemList();
 
         //Defaut http header. Define here add possiblity to override him
         header('Content-Type: text/html; charset=utf-8');
@@ -97,13 +108,13 @@ class Application
     }
     
     /**
-     * Getter accessor to property coreSystemList
+     * Getter accessor to property appSystemList
      * 
      * @return \BFW\Core\AppSystems\SystemInterface[]
      */
-    public function getCoreSystemList(): array
+    public function getAppSystemList(): array
     {
-        return $this->coreSystemList;
+        return $this->appSystemList;
     }
     
     /**
@@ -155,37 +166,39 @@ class Application
         }
         
         $property = lcfirst(substr($name, 3));
-        if (!array_key_exists($property, $this->coreSystemList)) {
+        if (!array_key_exists($property, $this->appSystemList)) {
             throw new Exception(
                 'Unknown property '.$property,
                 self::ERR_CALL_UNKNOWN_PROPERTY
             );
         }
         
-        return $this->coreSystemList[$property](...$arguments);
+        return $this->appSystemList[$property](...$arguments);
     }
     
     /**
      * Define the list of coreSystem to init and/or run.
      * 
-     * @return void
+     * @return string[]
      */
-    protected function defineCoreSystemList()
+    protected function obtainAppSystemList(): array
     {
-        $this->coreSystemList = [
-            'options'        => new Core\AppSystems\Options,
-            'constants'      => new Core\AppSystems\Constants,
-            'composerLoader' => new Core\AppSystems\ComposerLoader,
-            'subjectList'    => new Core\AppSystems\SubjectList,
-            'config'         => new Core\AppSystems\Config,
-            'monolog'        => new Core\AppSystems\Monolog,
-            'request'        => new Core\AppSystems\Request,
-            'session'        => new Core\AppSystems\Session,
-            'errors'         => new Core\AppSystems\Errors,
-            'memcached'      => new Core\AppSystems\Memcached,
-            'moduleList'     => new Core\AppSystems\ModuleList,
-            'cli'            => new Core\AppSystems\Cli,
-            'ctrlRouterLink' => new Core\AppSystems\CtrlRouterLink
+        $appSystemNS = '\BFW\Core\AppSystems\\';
+        
+        return [
+            'options'        => $appSystemNS.'Options',
+            'constants'      => $appSystemNS.'Constants',
+            'composerLoader' => $appSystemNS.'ComposerLoader',
+            'subjectList'    => $appSystemNS.'SubjectList',
+            'config'         => $appSystemNS.'Config',
+            'monolog'        => $appSystemNS.'Monolog',
+            'request'        => $appSystemNS.'Request',
+            'session'        => $appSystemNS.'Session',
+            'errors'         => $appSystemNS.'Errors',
+            'memcached'      => $appSystemNS.'Memcached',
+            'moduleList'     => $appSystemNS.'ModuleList',
+            'cli'            => $appSystemNS.'Cli',
+            'ctrlRouterLink' => $appSystemNS.'CtrlRouterLink'
         ];
     }
     
@@ -198,11 +211,12 @@ class Application
      */
     public function initSystems(array $options): self
     {
+        $appSystemList         = $this->obtainAppSystemList();
         $this->declaredOptions = $options;
         $this->runTasks        = new \BFW\RunTasks([], 'BfwApp');
         
-        foreach ($this->coreSystemList as $name => $coreSystem) {
-            $this->initCoreSystem($name, $coreSystem);
+        foreach ($appSystemList as $name => $className) {
+            $this->initAppSystem($name, $className);
             
             if ($name === 'subjectList') {
                 $this->getSubjectList()->addSubject(
@@ -221,27 +235,38 @@ class Application
     }
     
     /**
-     * Init all core system declared, only if they have not been already init.
+     * Instantiate the appSystem declared, only if they implement the interface.
      * If the system should be run, we add him to the runTasks object.
      * 
      * @param string $name The core system name
-     * @param \BFW\Core\AppSystems\SystemInterface $coreSystem The core system
+     * @param string $className The core system class name
      * instance.
      * 
      * @return void
      */
-    protected function initCoreSystem(string $name, SystemInterface $coreSystem)
+    protected function initAppSystem(string $name, string $className)
     {
-        if ($coreSystem->isInit() === true) {
-            return;
+        if (!class_exists($className)) {
+            throw new Exception(
+                'The appSystem class '.$className.' not exist.',
+                self::ERR_APP_SYSTEM_CLASS_NOT_EXIST
+            );
         }
-
-        $coreSystem->init();
         
-        if ($coreSystem->toRun() === true) {
+        $appSystem = new $className;
+        if ($appSystem instanceof SystemInterface === false) {
+            throw new Exception(
+                'The appSystem '.$className.' not implement the interface.',
+                self::ERR_APP_SYSTEM_NOT_IMPLEMENT_INTERFACE
+            );
+        }
+        
+        $this->appSystemList[$name] = $appSystem;
+        
+        if ($appSystem->toRun() === true) {
             $this->runTasks->addToRunSteps(
                 $name,
-                \BFW\RunTasks::generateStepItem(null, [$coreSystem, 'run'])
+                \BFW\RunTasks::generateStepItem(null, [$appSystem, 'run'])
             );
         }
     }

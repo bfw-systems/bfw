@@ -8,25 +8,54 @@ require_once(__DIR__.'/../Core/AppSystems/Config.php');
 
 class Application extends \BFW\Install\Application
 {
-    protected function defineCoreSystemList()
+    protected $appSystemToInstantiate = [];
+    
+    public function getAppSystemToInstantiate()
     {
-        parent::defineCoreSystemList();
-        
-        $this->coreSystemList['config']     = new \BFW\Test\Mock\Core\AppSystems\Config;
-        $this->coreSystemList['moduleList'] = new \BFW\Test\Mock\Install\Core\AppSystems\ModuleList;
+        return $this->appSystemToInstantiate;
+    }
+
+    public function setAppSystemToInstantiate(array $appSystemToInstantiate)
+    {
+        $this->appSystemToInstantiate = $appSystemToInstantiate;
+        return $this;
     }
     
-    public function setCoreSystemList(array $coreSystemList): self
+    protected function obtainAppSystemList(): array
     {
-        $this->coreSystemList = $coreSystemList;
+        if ($this->appSystemToInstantiate !== []) {
+            return $this->appSystemToInstantiate;
+        }
+        
+        return $this->obtainAppSystemDefaultList();
+    }
+    
+    public function obtainAppSystemDefaultList(): array
+    {
+        $list = parent::obtainAppSystemList();
+        
+        $list['config']     = '\BFW\Test\Mock\Core\AppSystems\Config';
+        $list['moduleList'] = '\BFW\Test\Mock\Install\Core\AppSystems\ModuleList';
+        
+        return $list;
+    }
+    
+    public function obtainParentAppSystemList(): array
+    {
+        return parent::obtainAppSystemList();
+    }
+    
+    public function setAppSystemList(array $appSystemList): self
+    {
+        $this->appSystemList = $appSystemList;
         return $this;
     }
     
     public function addToCoreSystemList(
-        name $name,
+        string $name,
         \BFW\Core\AppSystems\SystemInterface $system
     ): self {
-        $this->coreSystemList[$name] = $system;
+        $this->appSystemList[$name] = $system;
         return $this;
     }
 

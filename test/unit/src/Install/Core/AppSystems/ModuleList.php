@@ -35,7 +35,6 @@ class ModuleList extends atoum
         ;
         
         $this->assert('test Install\Core\AppSystems\ModuleList::run and isRun after')
-            ->if($this->mock->init())
             ->and($this->calling($this->mock)->loadAllModules = null)
             ->and($this->calling($this->mock)->runAllCoreModules = null)
             ->and($this->calling($this->mock)->runAllAppModules = null)

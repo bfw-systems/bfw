@@ -5,35 +5,14 @@ namespace BFW\Core\AppSystems;
 class Options extends AbstractSystem
 {
     /**
-     * @var \BFW\Core\Options|null $options
+     * @var \BFW\Core\Options $options
      */
     protected $options;
     
     /**
-     * {@inheritdoc}
-     * 
-     * @return \BFW\Core\Options|null
-     */
-    public function __invoke()
-    {
-        return $this->options;
-    }
-    
-    /**
-     * Getter accessor to property options
-     * 
-     * @return \BFW\Core\Options|null
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-    
-    /**
-     * {@inheritdoc}
      * Initialize option system with parameter passed to Application
      */
-    public function init()
+    public function __construct()
     {
         $this->options = new \BFW\Core\Options(
             $this->obtainDefaultOptions(),
@@ -44,8 +23,26 @@ class Options extends AbstractSystem
             ->searchPaths()
             ->checkPaths()
         ;
-        
-        $this->initStatus = true;
+    }
+    
+    /**
+     * {@inheritdoc}
+     * 
+     * @return \BFW\Core\Options
+     */
+    public function __invoke()
+    {
+        return $this->options;
+    }
+    
+    /**
+     * Getter accessor to property options
+     * 
+     * @return \BFW\Core\Options
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
     
     /**

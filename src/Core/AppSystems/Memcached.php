@@ -7,16 +7,24 @@ use \Exception;
 class Memcached extends AbstractSystem
 {
     /**
-     * @var \BFW\Memcached|null $memcached The class used to connect to
+     * @var \BFW\Memcached $memcached The class used to connect to
      * memcache(d) server.
      * The class name should be declared into config file.
      */
     protected $memcached;
     
     /**
+     * Load and initialize le memcached object
+     */
+    public function __construct()
+    {
+        $this->loadMemcached();
+    }
+    
+    /**
      * {@inheritdoc}
      * 
-     * @return \BFW\Memcached|null
+     * @return \BFW\Memcached
      */
     public function __invoke()
     {
@@ -26,21 +34,11 @@ class Memcached extends AbstractSystem
     /**
      * Getter accessor to property memcached
      * 
-     * @return \BFW\Memcached|null
+     * @return \BFW\Memcached
      */
     public function getMemcached()
     {
         return $this->memcached;
-    }
-    
-    /**
-     * {@inheritdoc}
-     * Load and initialize le memcached object
-     */
-    public function init()
-    {
-        $this->loadMemcached();
-        $this->initStatus = true;
     }
     
     /**

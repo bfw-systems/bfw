@@ -17,35 +17,29 @@ class Config extends atoum
     
     public function beforeTestMethod($testMethod)
     {
-        $this->mock = new \mock\BFW\Core\AppSystems\Config;
-        
         $this->setRootDir(__DIR__.'/../../../../..');
         $this->createApp();
         $this->initApp();
+        
+        if ($testMethod === 'testConstructor') {
+            return;
+        }
+        
+        $this->mock = new \mock\BFW\Core\AppSystems\Config;
     }
     
-    public function testInit()
+    public function testConstructor()
     {
-        $this->assert('test Core\AppSystems\Config::isInit before init')
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-        ;
-        
-        $this->assert('test Core\AppSystems\Config::init and isInit after')
-            ->variable($this->mock->init())
-                ->isNull()
+        $this->assert('test Core\AppSystems\Config::__construct')
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\Config)
             ->object($this->mock->getConfig())
                 ->isInstanceOf('\BFW\Config')
-            ->boolean($this->mock->isInit())
-                ->isTrue()
         ;
     }
     
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\Config::__invoke')
-            ->if($this->mock->init())
-            ->then
             ->object($this->mock->__invoke())
                 ->isIdenticalTo($this->mock->getConfig())
         ;

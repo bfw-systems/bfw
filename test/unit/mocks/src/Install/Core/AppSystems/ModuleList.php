@@ -12,17 +12,16 @@ class ModuleList extends \BFW\Install\Core\AppSystems\ModuleList
      * value is an object with properties "config" and "loadInfos" used to
      * declare the fake module.
      */
-    protected $mockedList = [];
+    protected static $mockedList = [];
     
-    public function getMockedList(): array
+    public static function getMockedList(): array
     {
-        return $this->mockedList;
+        return self::$mockedList;
     }
     
-    public function init()
+    public function __construct()
     {
         $this->moduleList = new \BFW\Test\Mock\Core\ModuleList;
-        $this->initStatus = true;
     }
 
     /**
@@ -34,12 +33,11 @@ class ModuleList extends \BFW\Install\Core\AppSystems\ModuleList
      * 
      * @return $this
      */
-    public function addToMockedList(
+    public static function addToMockedList(
         string $moduleName,
         \stdClass $mockedModulesInfos
-    ): self {
-        $this->mockedList[$moduleName] = $mockedModulesInfos;
-        return $this;
+    ) {
+        self::$mockedList[$moduleName] = $mockedModulesInfos;
     }
     
     /**
@@ -50,7 +48,7 @@ class ModuleList extends \BFW\Install\Core\AppSystems\ModuleList
     protected function loadAllModules()
     {
         $moduleList = $this->moduleList;
-        foreach($this->mockedList as $moduleName => $module) {
+        foreach(self::$mockedList as $moduleName => $module) {
             $moduleList::setModuleConfig($moduleName, $module->config);
             $moduleList::setModuleLoadInfos($moduleName, $module->loadInfos);
         }

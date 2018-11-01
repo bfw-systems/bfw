@@ -5,14 +5,22 @@ namespace BFW\Core\AppSystems;
 class Errors extends AbstractSystem
 {
     /**
-     * @var \BFW\Core\Errors|null $errors The error object
+     * @var \BFW\Core\Errors $errors The error object
      */
     protected $errors;
     
     /**
+     * Initialize the errors property
+     */
+    public function __construct()
+    {
+        $this->errors = new \BFW\Core\Errors;
+    }
+    
+    /**
      * {@inheritdoc}
      * 
-     * @return \BFW\Core\Errors|null
+     * @return \BFW\Core\Errors
      */
     public function __invoke()
     {
@@ -22,20 +30,10 @@ class Errors extends AbstractSystem
     /**
      * Getter accessor to property errors
      * 
-     * @return \BFW\Core\Errors|null
+     * @return \BFW\Core\Errors
      */
     public function getErrors()
     {
         return $this->errors;
-    }
-    
-    /**
-     * {@inheritdoc}
-     * Initialize the errors property
-     */
-    public function init()
-    {
-        $this->errors     = new \BFW\Core\Errors;
-        $this->initStatus = true;
     }
 }

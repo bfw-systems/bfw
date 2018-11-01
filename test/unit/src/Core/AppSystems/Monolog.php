@@ -17,35 +17,30 @@ class Monolog extends atoum
     
     public function beforeTestMethod($testMethod)
     {
-        $this->mock = new \mock\BFW\Core\AppSystems\Monolog;
-        
         $this->setRootDir(__DIR__.'/../../../../..');
         $this->createApp();
         $this->initApp();
+        
+        if ($testMethod === 'testConstructor') {
+            return;
+        }
+        
+        $this->mock = new \mock\BFW\Core\AppSystems\Monolog;
     }
     
-    public function testInit()
+    public function testConstructor()
     {
-        $this->assert('test Core\AppSystems\Monolog::isInit before init')
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-        ;
-        
-        $this->assert('test Core\AppSystems\Monolog::init and isInit after')
-            ->variable($this->mock->init())
-                ->isNull()
+        $this->assert('test Core\AppSystems\Monolog::__construct')
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\Monolog)
+            ->then
             ->object($this->mock->getMonolog())
                 ->isInstanceOf('\BFW\Monolog')
-            ->boolean($this->mock->isInit())
-                ->isTrue()
         ;
     }
     
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\Monolog::__invoke')
-            ->if($this->mock->init())
-            ->then
             ->object($this->mock->__invoke())
                 ->isIdenticalTo($this->mock->getMonolog())
         ;

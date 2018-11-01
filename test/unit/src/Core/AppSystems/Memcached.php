@@ -21,28 +21,24 @@ class Memcached extends atoum
             ->makeVisible('loadMemcached')
         ;
         
-        $this->mock = new \mock\BFW\Core\AppSystems\Memcached;
-        
         $this->setRootDir(__DIR__.'/../../../../..');
         $this->createApp();
         $this->initApp();
+        
+        if ($testMethod === 'testConstructor') {
+            return;
+        }
+        
+        $this->mock = new \mock\BFW\Core\AppSystems\Memcached;
     }
     
-    public function testInit()
+    public function testConstructor()
     {
-        $this->assert('test Core\AppSystems\Memcached::isInit before init')
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-        ;
-        
-        $this->assert('test Core\AppSystems\Memcached::init and isInit after')
+        $this->assert('test Core\AppSystems\Memcached::__construct')
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\Memcached)
             ->if($this->calling($this->mock)->loadMemcached = null)
-            ->variable($this->mock->init())
-                ->isNull()
             ->variable($this->mock->getMemcached())
                 ->isNull()
-            ->boolean($this->mock->isInit())
-                ->isTrue()
             ->mock($this->mock)
                 ->call('loadMemcached')
                     ->once()
@@ -52,8 +48,6 @@ class Memcached extends atoum
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\Memcached::__invoke')
-            ->if($this->mock->init())
-            ->then
             ->variable($this->mock->__invoke())
                 ->isNull() //default value because memcached disabled
         ;

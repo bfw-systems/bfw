@@ -18,21 +18,6 @@ class AbstractSystem extends atoum
         $this->mock = new \mock\BFW\Core\AppSystems\AbstractSystem;
     }
     
-    public function testInitAndIsInit()
-    {
-        $this->assert('test Core\AppSystems\AbstractSystem::isInit before init')
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-        ;
-        
-        $this->assert('test Core\AppSystems\AbstractSystem::init and isInit after')
-            ->variable($this->mock->init())
-                ->isNull()
-            ->boolean($this->mock->isInit())
-                ->isTrue()
-        ;
-    }
-    
     public function testToRun()
     {
         $this->assert('test Core\AppSystems\AbstractSystem::toRun')

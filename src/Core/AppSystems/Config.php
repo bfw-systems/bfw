@@ -5,14 +5,23 @@ namespace BFW\Core\AppSystems;
 class Config extends AbstractSystem
 {
     /**
-     * @var \BFW\Config|null $config The config object for BFW framework
+     * @var \BFW\Config $config The config object for BFW framework
      */
     protected $config;
     
     /**
+     * Define config object and load all config file used by the framework
+     */
+    public function __construct()
+    {
+        $this->config = new \BFW\Config('bfw');
+        $this->config->loadFiles();
+    }
+    
+    /**
      * {@inheritdoc}
      * 
-     * @return \BFW\Config|null
+     * @return \BFW\Config
      */
     public function __invoke()
     {
@@ -22,22 +31,10 @@ class Config extends AbstractSystem
     /**
      * Getter accessor to the property config
      * 
-     * @return \BFW\Config|null
+     * @return \BFW\Config
      */
     public function getConfig()
     {
         return $this->config;
-    }
-    
-    /**
-     * {@inheritdoc}
-     * Define config object and load all config file used by the framework
-     */
-    public function init()
-    {
-        $this->config = new \BFW\Config('bfw');
-        $this->config->loadFiles();
-        
-        $this->initStatus = true;
     }
 }

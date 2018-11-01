@@ -5,14 +5,22 @@ namespace BFW\Core\AppSystems;
 class ModuleList extends AbstractSystem
 {
     /**
-     * @var \BFW\Core\ModuleList|null $moduleList
+     * @var \BFW\Core\ModuleList $moduleList
      */
     protected $moduleList;
     
     /**
+     * Initialize the ModuleList system
+     */
+    public function __construct()
+    {
+        $this->moduleList = new \BFW\Core\ModuleList;
+    }
+    
+    /**
      * {@inheritdoc}
      * 
-     * @return \BFW\Core\ModuleList|null
+     * @return \BFW\Core\ModuleList
      */
     public function __invoke()
     {
@@ -22,21 +30,11 @@ class ModuleList extends AbstractSystem
     /**
      * Getter accessor to property moduleList
      * 
-     * @return \BFW\Core\ModuleList|null
+     * @return \BFW\Core\ModuleList
      */
     public function getModuleList()
     {
         return $this->moduleList;
-    }
-    
-    /**
-     * {@inheritdoc}
-     * Initialize the ModuleList system
-     */
-    public function init()
-    {
-        $this->moduleList = new \BFW\Core\ModuleList;
-        $this->initStatus = true;
     }
     
     /**

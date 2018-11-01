@@ -5,38 +5,17 @@ namespace BFW\Core\AppSystems;
 class CtrlRouterLink extends AbstractSystem
 {
     /**
-     * @var object|null $ctrlRouterInfos Infos from router for controller
+     * @var object $ctrlRouterInfos Infos from router for controller
      * system
      */
     protected $ctrlRouterInfos;
     
     /**
-     * {@inheritdoc}
-     * 
-     * @return object|null
-     */
-    public function __invoke()
-    {
-        return $this->ctrlRouterInfos;
-    }
-    
-    /**
-     * Getter accessor for property ctrlRouterInfos
-     * 
-     * @return object|null
-     */
-    public function getCtrlRouterInfos()
-    {
-        return $this->ctrlRouterInfos;
-    }
-    
-    /**
-     * {@inheritdoc}
      * Initialize the ctrlRouterInfos property
      * Create the new runTasks ctrlRouterLink, add him to subjectList and send
      * the notify to inform the adding.
      */
-    public function init()
+    public function __construct()
     {
         //Others properties can be dynamically added by modules
         $this->ctrlRouterInfos = new class {
@@ -56,8 +35,26 @@ class CtrlRouterLink extends AbstractSystem
         
         $runTasks = $subjectList->getSubjectByName('ApplicationTasks');
         $runTasks->sendNotify('bfw_ctrlRouterLink_subject_added');
-        
-        $this->initStatus = true;
+    }
+    
+    /**
+     * {@inheritdoc}
+     * 
+     * @return object
+     */
+    public function __invoke()
+    {
+        return $this->ctrlRouterInfos;
+    }
+    
+    /**
+     * Getter accessor for property ctrlRouterInfos
+     * 
+     * @return object
+     */
+    public function getCtrlRouterInfos()
+    {
+        return $this->ctrlRouterInfos;
     }
     
     /**

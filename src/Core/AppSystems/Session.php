@@ -5,25 +5,14 @@ namespace BFW\Core\AppSystems;
 class Session extends AbstractSystem
 {
     /**
-     * {@inheritdoc}
-     * 
-     * @return null
-     */
-    public function __invoke()
-    {
-        return null;
-    }
-
-    /**
      * Initialize sessions system
      * Automaticaly destroy cookie if browser quit and start sessions
      * 
      * @return void
      */
-    public function init()
+    public function __construct()
     {
         if ($this->obtainRunSession() === false) {
-            $this->initStatus = true;
             return;
         }
 
@@ -32,8 +21,16 @@ class Session extends AbstractSystem
 
         //Run session
         session_start();
-        
-        $this->initStatus = true;
+    }
+    
+    /**
+     * {@inheritdoc}
+     * 
+     * @return null
+     */
+    public function __invoke()
+    {
+        return null;
     }
     
     /**

@@ -17,33 +17,30 @@ class Request extends atoum
     
     public function beforeTestMethod($testMethod)
     {
-        $this->mock = new \mock\BFW\Core\AppSystems\Request;
-        
         $this->setRootDir(__DIR__.'/../../../../..');
         $this->createApp();
         
         //Remove from the list used by initApp() because request is singleton.
-        $coreSystemList = $this->app->getCoreSystemList();
-        unset($coreSystemList['request']);
-        $this->app->setCoreSystemList($coreSystemList);
+        $appSystemList = $this->app->obtainAppSystemDefaultList();
+        unset($appSystemList['request']);
+        $this->app->setAppSystemToInstantiate($appSystemList);
         
         $this->initApp();
+        
+        if ($testMethod === 'testConstructor') {
+            return;
+        }
+        
+        $this->mock = new \mock\BFW\Core\AppSystems\Request;
     }
     
-    public function testInit()
+    public function testConstructor()
     {
-        $this->assert('test Core\AppSystems\Request::isInit before init')
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-        ;
-        
-        $this->assert('test Core\AppSystems\Request::init and isInit after')
-            ->variable($this->mock->init())
-                ->isNull()
+        $this->assert('test Core\AppSystems\Request::__construct')
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\Request)
+            ->then
             ->object($this->mock->getRequest())
                 ->isInstanceOf('\BFW\Request')
-            ->boolean($this->mock->isInit())
-                ->isTrue()
             ->variable($this->mock->getRequest()->getIp())
                 ->isNotNull() //runDetect has been executed
         ;
@@ -52,8 +49,6 @@ class Request extends atoum
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\Request::__invoke')
-            ->if($this->mock->init())
-            ->then
             ->object($this->mock->__invoke())
                 ->isIdenticalTo($this->mock->getRequest())
         ;

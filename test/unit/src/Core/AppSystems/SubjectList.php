@@ -17,35 +17,30 @@ class SubjectList extends atoum
     
     public function beforeTestMethod($testMethod)
     {
-        $this->mock = new \mock\BFW\Core\AppSystems\SubjectList;
-        
         $this->setRootDir(__DIR__.'/../../../../..');
         $this->createApp();
         $this->initApp();
+        
+        if ($testMethod === 'testConstructor') {
+            return;
+        }
+        
+        $this->mock = new \mock\BFW\Core\AppSystems\SubjectList;
     }
     
-    public function testInit()
+    public function testConstructor()
     {
-        $this->assert('test Core\AppSystems\SubjectList::isInit before init')
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-        ;
-        
-        $this->assert('test Core\AppSystems\SubjectList::init and isInit after')
-            ->variable($this->mock->init())
-                ->isNull()
+        $this->assert('test Core\AppSystems\SubjectList::__construct')
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\SubjectList)
+            ->then
             ->object($this->mock->getSubjectList())
                 ->isInstanceOf('\BFW\Core\SubjectList')
-            ->boolean($this->mock->isInit())
-                ->isTrue()
         ;
     }
     
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\SubjectList::__invoke')
-            ->if($this->mock->init())
-            ->then
             ->object($this->mock->__invoke())
                 ->isIdenticalTo($this->mock->getSubjectList())
         ;

@@ -5,19 +5,9 @@ namespace BFW\Core\AppSystems;
 class Constants extends AbstractSystem
 {
     /**
-     * {@inheritdoc}
-     * @return null
-     */
-    public function __invoke()
-    {
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
      * Define all constants
      */
-    public function init()
+    public function __construct()
     {
         \BFW\Helpers\Constants::create('ROOT_DIR', $this->obtainRootDir());
 
@@ -32,8 +22,15 @@ class Constants extends AbstractSystem
         \BFW\Helpers\Constants::create('CTRL_DIR', SRC_DIR.'controllers/');
         \BFW\Helpers\Constants::create('MODELES_DIR', SRC_DIR.'modeles/');
         \BFW\Helpers\Constants::create('VIEW_DIR', SRC_DIR.'view/');
-        
-        $this->initStatus = true;
+    }
+    
+    /**
+     * {@inheritdoc}
+     * @return null
+     */
+    public function __invoke()
+    {
+        return null;
     }
     
     /**

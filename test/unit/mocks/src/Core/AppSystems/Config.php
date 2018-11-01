@@ -4,22 +4,21 @@ namespace BFW\Test\Mock\Core\AppSystems;
 
 class Config extends \BFW\Core\AppSystems\Config
 {
-    protected $mockedList = [];
+    protected static $mockedList = [];
     
-    public function getMockedList(): array
+    public static function getMockedList(): array
     {
-        return $this->mockedList;
+        return self::$mockedList;
     }
     
-    public function setMockedList(string $filename, array $mockedValue): self
+    public static function setMockedList(string $filename, array $mockedValue)
     {
-        $this->mockedList[$filename] = $mockedValue;
-        return $this;
+        self::$mockedList[$filename] = $mockedValue;
     }
 
-    public function init()
+    public function __construct()
     {
-        if ($this->mockedList === null) {
+        if (self::$mockedList === null) {
             $configList = [
                 'errors.php',
                 'global.php',
@@ -29,7 +28,7 @@ class Config extends \BFW\Core\AppSystems\Config
             ];
             
             foreach ($configList as $configFilename) {
-                $this->mockedList[$configFilename] = require(
+                self::$mockedList[$configFilename] = require(
                     $this->obtainVendorDir()
                     .'/bulton-fr/bfw/skel/app/config/bfw/'.$configFilename
                 );
@@ -37,7 +36,7 @@ class Config extends \BFW\Core\AppSystems\Config
         }
         
         $this->config = new \BFW\Config('bfw');
-        foreach ($this->mockedList as $configFilename => $configValues) {
+        foreach (self::$mockedList as $configFilename => $configValues) {
             $this->config->setConfigForFilename(
                 $configFilename,
                 $configValues

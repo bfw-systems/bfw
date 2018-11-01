@@ -21,6 +21,10 @@ class Cli extends atoum
             ->makeVisible('runCliFile')
         ;
         
+        if ($testMethod === 'testConstructor') {
+            return;
+        }
+        
         if (
             $testMethod === 'testRunCliFile' ||
             $testMethod === 'testRunCliFileWhenNotCli'
@@ -35,28 +39,18 @@ class Cli extends atoum
         }
     }
     
-    public function testInit()
+    public function testConstructor()
     {
-        $this->assert('test Core\AppSystems\Cli::isInit before init')
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-        ;
-        
-        $this->assert('test Core\AppSystems\Cli::init and isInit after')
-            ->variable($this->mock->init())
-                ->isNull()
+        $this->assert('test Core\AppSystems\Cli::__construct')
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\Cli)
             ->object($this->mock->getCli())
                 ->isInstanceOf('\BFW\Core\Cli')
-            ->boolean($this->mock->isInit())
-                ->isTrue()
         ;
     }
     
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\Cli::__invoke')
-            ->if($this->mock->init())
-            ->then
             ->object($this->mock->__invoke())
                 ->isIdenticalTo($this->mock->getCli())
         ;
@@ -78,7 +72,6 @@ class Cli extends atoum
         ;
         
         $this->assert('test Core\AppSystems\Cli::run and isRun after')
-            ->if($this->mock->init())
             ->and($this->calling($this->mock)->runCliFile = null)
             ->variable($this->mock->run())
                 ->isNull()
@@ -93,9 +86,6 @@ class Cli extends atoum
     public function testRunCliFile()
     {
         $this->assert('test Core\AppSystems\Cli::runCliFile')
-            ->if($this->mock->init())
-            ->then
-            
             ->given($observer = new \BFW\Test\Helpers\ObserverArray)
             ->and(
                 \BFW\Application::getInstance()
@@ -123,9 +113,6 @@ class Cli extends atoum
     {
         $this->assert('test Core\AppSystems\Cli::runCliFile')
             ->if($this->constant->PHP_SAPI = 'www')
-            ->then
-            
-            ->if($this->mock->init())
             ->then
             
             ->given($observer = new \BFW\Test\Helpers\ObserverArray)

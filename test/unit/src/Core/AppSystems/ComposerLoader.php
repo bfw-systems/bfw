@@ -22,35 +22,29 @@ class ComposerLoader extends atoum
             ->makeVisible('addComposerNamespaces')
         ;
         
-        $this->mock = new \mock\BFW\Core\AppSystems\ComposerLoader;
-        
         $this->setRootDir(__DIR__.'/../../../../..');
         $this->createApp();
         $this->initApp();
+        
+        if ($testMethod === 'testConstructor') {
+            return;
+        }
+        
+        $this->mock = new \mock\BFW\Core\AppSystems\ComposerLoader;
     }
     
-    public function testInit()
+    public function testConstructor()
     {
-        $this->assert('test Core\AppSystems\ComposerLoader::isInit before init')
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-        ;
-        
-        $this->assert('test Core\AppSystems\ComposerLoader::init and isInit after')
-            ->variable($this->mock->init())
-                ->isNull()
+        $this->assert('test Core\AppSystems\ComposerLoader::__construct')
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\ComposerLoader)
             ->object($this->mock->getLoader())
                 ->isInstanceOf('\Composer\Autoload\ClassLoader')
-            ->boolean($this->mock->isInit())
-                ->isTrue()
         ;
     }
     
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\ComposerLoader::__invoke')
-            ->if($this->mock->init())
-            ->then
             ->object($this->mock->__invoke())
                 ->isIdenticalTo($this->mock->getLoader())
         ;
@@ -76,8 +70,6 @@ class ComposerLoader extends atoum
     public function testAddComposerNamespaces()
     {
         $this->assert('test Core\AppSystems\ComposerLoader::addComposerNamespaces')
-            ->if($this->mock->init())
-            ->then
             ->array($prefixes = $this->mock->getLoader()->getPrefixesPsr4())
                 ->hasKeys(['Controller\\', 'Modeles\\', 'Modules\\'])
             //All size is equal to 2 because we call initApp before

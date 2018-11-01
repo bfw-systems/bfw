@@ -4,6 +4,8 @@ namespace BFW\Core\AppSystems\test\unit;
 
 use \atoum;
 
+use \BFW\Test\Mock\Core\AppSystems\ModuleList as MockModuleList;
+
 require_once(__DIR__.'/../../../../../vendor/autoload.php');
 
 /**
@@ -24,6 +26,10 @@ class ModuleList extends atoum
             ->makeVisible('runModule')
         ;
         
+        if ($testMethod === 'testConstructor') {
+            return;
+        }
+        
         if (
             $testMethod === 'testLoadAllModulesWithoutModules' ||
             $testMethod === 'testLoadAllModulesWithoutFailedModule' ||
@@ -32,11 +38,11 @@ class ModuleList extends atoum
             $testMethod === 'testRunAllAppModules' ||
             $testMethod === 'testRunModule'
         ) {
-            $this->mock = new \mock\BFW\Test\Mock\Core\AppSystems\ModuleList;
-            
             $this->setRootDir(__DIR__.'/../../../../..');
             $this->createApp();
             $this->initApp();
+            
+            $this->mock = new \mock\BFW\Test\Mock\Core\AppSystems\ModuleList;
         } else {
             $this->mock = new \mock\BFW\Core\AppSystems\ModuleList;
         }
@@ -44,26 +50,17 @@ class ModuleList extends atoum
     
     public function testInit()
     {
-        $this->assert('test Core\AppSystems\ModuleList::isInit before init')
-            ->boolean($this->mock->isInit())
-                ->isFalse()
-        ;
-        
-        $this->assert('test Core\AppSystems\ModuleList::init and isInit after')
-            ->variable($this->mock->init())
-                ->isNull()
+        $this->assert('test Core\AppSystems\ModuleList::__construct')
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\ModuleList)
+            ->then
             ->object($this->mock->getModuleList())
                 ->isInstanceOf('\BFW\Core\ModuleList')
-            ->boolean($this->mock->isInit())
-                ->isTrue()
         ;
     }
     
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\ModuleList::__invoke')
-            ->if($this->mock->init())
-            ->then
             ->object($this->mock->__invoke())
                 ->isIdenticalTo($this->mock->getModuleList())
         ;
@@ -85,7 +82,6 @@ class ModuleList extends atoum
         ;
         
         $this->assert('test Core\AppSystems\ModuleList::run and isRun after')
-            ->if($this->mock->init())
             ->and($this->calling($this->mock)->loadAllModules = null)
             ->and($this->calling($this->mock)->runAllCoreModules = null)
             ->and($this->calling($this->mock)->runAllAppModules = null)
@@ -107,7 +103,7 @@ class ModuleList extends atoum
     {
         $this
             //Add the module to the mocked list
-            ->if($this->mock->addToMockedList(
+            ->if(MockModuleList::addToMockedList(
                 $moduleName,
                 (object) [
                     'config'    => (object) [],
@@ -161,7 +157,6 @@ class ModuleList extends atoum
     {
         $this->assert('test Core\AppSystems\ModuleList::loadAllModules without modules')
             ->if($this->moduleMockNativeFunctions())
-            ->and($this->mock->init())
             ->then
             ->variable($this->mock->loadAllModules())
                 ->isNull()
@@ -179,7 +174,6 @@ class ModuleList extends atoum
     {
         $this->assert('test Core\AppSystems\ModuleList::loadAllModules with one module')
             ->given($this->addModule('test1'))
-            ->and($this->mock->init())
             ->then
             
             ->variable($this->mock->loadAllModules())
@@ -201,7 +195,6 @@ class ModuleList extends atoum
     {
         $this->assert('test Core\AppSystems\ModuleList::loadAllModules with one module')
             ->given($this->addModule('test1'))
-            ->and($this->mock->init())
             ->and($this->function->is_dir = false) //<--- Not a dir. => Fail
             ->then
             
@@ -216,7 +209,6 @@ class ModuleList extends atoum
     {
         $this->assert('test Core\AppSystems\ModuleList::runAllCoreModules')
             ->given($this->addModule('test1', true))
-            ->and($this->mock->init())
             ->and($this->mock->loadAllModules())
             ->then
             
@@ -235,7 +227,6 @@ class ModuleList extends atoum
     {
         $this->assert('test Core\AppSystems\ModuleList::runAllAppModules')
             ->given($this->addModule('test1'))
-            ->and($this->mock->init())
             ->and($this->mock->loadAllModules())
             ->then
             
@@ -254,7 +245,6 @@ class ModuleList extends atoum
     {
         $this->assert('test Core\AppSystems\ModuleList::runModule')
             ->given($this->addModule('test1'))
-            ->and($this->mock->init())
             ->and($this->mock->loadAllModules())
             ->then
             

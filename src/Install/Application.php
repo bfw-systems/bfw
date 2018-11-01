@@ -13,24 +13,28 @@ class Application extends \BFW\Application
      * {@inheritdoc}
      * Remove not used systems, and add new system used by installer
      */
-    protected function defineCoreSystemList()
+    protected function obtainAppSystemList(): array
     {
-        parent::defineCoreSystemList();
+        $appSystemList = parent::obtainAppSystemList();
         
         //Remove not used systems
         unset(
-            $this->coreSystemList['request'],
-            $this->coreSystemList['session'],
-            $this->coreSystemList['errors'],
-            $this->coreSystemList['cli'],
-            $this->coreSystemList['ctrlRouterLink']
+            $appSystemList['request'],
+            $appSystemList['session'],
+            $appSystemList['errors'],
+            $appSystemList['cli'],
+            $appSystemList['ctrlRouterLink']
         );
         
+        $appSystemNS = '\BFW\Install\Core\AppSystems\\';
+        
         //Change ModuleList class
-        $this->coreSystemList['moduleList'] = new Core\AppSystems\ModuleList;
+        $appSystemList['moduleList'] = $appSystemNS.'ModuleList';
         
         //Add new system : module installation system
-        $this->coreSystemList['moduleInstall'] = new Core\AppSystems\ModuleInstall;
+        $appSystemList['moduleInstall'] = $appSystemNS.'ModuleInstall';
+        
+        return $appSystemList;
     }
 
     /**
