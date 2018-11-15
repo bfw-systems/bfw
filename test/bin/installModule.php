@@ -1,6 +1,7 @@
 <?php
 
 require_once(__DIR__.'/functions.php');
+require_once(__DIR__.'/ExpectedModuleInstall.php');
 
 $installDir = realpath(__DIR__.'/../install');
 
@@ -9,59 +10,56 @@ echo "\033[0;33mCheck hello-world module install\033[0m\n";
 $moduleInstallOutput = [];
 exec('cd '.$installDir.' && ./vendor/bin/bfwInstallModules', $moduleInstallOutput);
 
-$moduleInstallOutput = implode("\n", $moduleInstallOutput);
+$moduleInstallOutput = implode("\n", $moduleInstallOutput)."\n";
 
-$exceptedRunInstallScript = "Read all modules to run install script :\n";
+$bfwHelloWorld = new \BFW\Test\Bin\ExpectedModuleInstall(
+    'bfw-hello-world',
+    ['hello-world.json']
+);
+$bfwTestInstall = new \BFW\Test\Bin\ExpectedModuleInstall(
+    'bfw-test-install',
+    ['test-install.json'],
+    [
+        'install.php' => "  \033[1;33mCreate install_test.php file into web directory\033[0m\n"
+    ]
+);
 
-$expectedInstallBfwHelloWorld = "bfw-hello-world : Run install.\n"
-    ." > Create symbolic link ... \033[1;32mDone\033[0m\n"
-    ." > Copy config files :\n"
-    ." >> Create config directory for this module ... \033[1;32mCreated.\033[0m\n"
-    ." >> Copy manifest.json ... \033[1;32mDone\033[0m\n"
-    ." >> Copy hello-world.json ... \033[1;32mDone\033[0m\n"
-    ." > Check install specific script :\n"
-    ." >> \033[1;33mNo specific script declared. Pass\033[0m\n";
-
-$expectedScriptBfwHelloWorld = " > Read for module bfw-hello-world\n"
-    ." >> No script to run.\n";
-
-$expectedInstallBfwTestInstall = "bfw-test-install : Run install.\n"
-    ." > Create symbolic link ... \033[1;32mDone\033[0m\n"
-    ." > Copy config files :\n"
-    ." >> Create config directory for this module ... \033[1;32mCreated.\033[0m\n"
-    ." >> Copy manifest.json ... \033[1;32mDone\033[0m\n"
-    ." >> Copy test-install.json ... \033[1;32mDone\033[0m\n"
-    ." > Check install specific script :\n"
-    ." >> \033[1;33mScripts find. Add to list to execute.\033[0m\n";
-
-$expectedScriptBfwHelloWorld = " > Read for module bfw-test-install\n"
-    ." >> \033[1;33mExecute script install.php\033[0m\n"
-    ."  \033[1;33mCreate install_test.php file into web directory\033[0m\n";
+$expectedStart     = "\033[0;33mRun BFW Modules Install\033[0m\n";
+$expectedRunScript = "Read all modules to run install script...\n";
+$expectedEndScript = "All modules have been read.\n";
 
 $expectedModuleOutput = [
-    $expectedInstallBfwHelloWorld
-    .$expectedInstallBfwTestInstall
-    .$exceptedRunInstallScript
-    .$expectedScriptBfwHelloWorld
-    .$expectedInstallBfwTestInstall,
+    $expectedStart
+    .$bfwHelloWorld->generateInstallOutput()
+    .$bfwTestInstall->generateInstallOutput()
+    .$expectedRunScript
+    .$bfwHelloWorld->generateScriptOutput()
+    .$bfwTestInstall->generateScriptOutput()
+    .$expectedEndScript,
     
-    $expectedInstallBfwTestInstall
-    .$expectedInstallBfwHelloWorld
-    .$exceptedRunInstallScript
-    .$expectedInstallBfwTestInstall
-    .$expectedScriptBfwHelloWorld,
+    $expectedStart
+    .$bfwTestInstall->generateInstallOutput()
+    .$bfwHelloWorld->generateInstallOutput()
+    .$expectedRunScript
+    .$bfwHelloWorld->generateScriptOutput()
+    .$bfwTestInstall->generateScriptOutput()
+    .$expectedEndScript,
     
-    $expectedInstallBfwHelloWorld
-    .$expectedInstallBfwTestInstall
-    .$exceptedRunInstallScript
-    .$expectedInstallBfwTestInstall
-    .$expectedScriptBfwHelloWorld,
+    $expectedStart
+    .$bfwHelloWorld->generateInstallOutput()
+    .$bfwTestInstall->generateInstallOutput()
+    .$expectedRunScript
+    .$bfwTestInstall->generateScriptOutput()
+    .$bfwHelloWorld->generateScriptOutput()
+    .$expectedEndScript,
     
-    $expectedInstallBfwTestInstall
-    .$expectedInstallBfwHelloWorld
-    .$exceptedRunInstallScript
-    .$expectedScriptBfwHelloWorld
-    .$expectedInstallBfwTestInstall,
+    $expectedStart
+    .$bfwTestInstall->generateInstallOutput()
+    .$bfwHelloWorld->generateInstallOutput()
+    .$expectedRunScript
+    .$bfwTestInstall->generateScriptOutput()
+    .$bfwHelloWorld->generateScriptOutput()
+    .$expectedEndScript,
 ];
 
 echo 'Test output returned by script : ';
@@ -74,7 +72,15 @@ print_r($expectedModuleOutput);
 echo "\n--------------------------\n";
 */
 
-if (in_array($moduleInstallOutput, $expectedModuleOutput)) {
+$expectedIsFound = false;
+foreach ($expectedModuleOutput as $expectedOutput) {
+    if ($expectedOutput === $moduleInstallOutput) {
+        $expectedIsFound = true;
+        break;
+    }
+}
+
+if ($expectedIsFound === false) {
     echo "\033[1;31m[Fail]\033[0m\n";
     fwrite(STDERR, 'Text returned is not equal to expected text.');
     exit(1);
