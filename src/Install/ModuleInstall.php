@@ -524,13 +524,15 @@ class ModuleInstall
      */
     protected function removeRecursiveDirectory(string $dirPath): bool
     {
-        $fileList = array_diff(scandir($dirPath), ['.', '..']);
+        $itemList = array_diff(scandir($dirPath), ['.', '..']);
         
-        foreach ($fileList as $filePath) {
-            if (is_dir($filePath)) {
-                $this->removeRecursiveDirectory($filePath);
+        foreach ($itemList as $itemName) {
+            $itemPath = $dirPath.'/'.$itemName;
+            
+            if (is_dir($itemPath)) {
+                $this->removeRecursiveDirectory($itemPath);
             } else {
-                unlink($filePath);
+                unlink($itemPath);
             }
         }
         

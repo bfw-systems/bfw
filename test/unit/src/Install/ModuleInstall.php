@@ -576,10 +576,15 @@ class ModuleInstall extends atoum
                 ->isTrue()
             ->mock($this->mock)
                 ->call('removeRecursiveDirectory')
-                    ->once()
+                    ->withArguments(MODULES_DIR.'unit-test-module')
+                        ->once()
             ->function('unlink')
                 ->wasCalled()
                     ->twice()
+                ->wasCalledWithArguments(MODULES_DIR.'unit-test-module/test.php')
+                    ->once()
+                ->wasCalledWithArguments(MODULES_DIR.'unit-test-module/src.php')
+                    ->once()
         ;
         
         $this->assert('test \Install\ModuleInstall::removeRecursiveDirectory with file and directory')
@@ -591,7 +596,7 @@ class ModuleInstall extends atoum
                 return ['.', '..'];
             })
             ->and($this->function->is_dir = function($path) {
-                if ($path === 'src') {
+                if ($path === MODULES_DIR.'unit-test-module/src') {
                     return true;
                 }
                 
@@ -605,10 +610,17 @@ class ModuleInstall extends atoum
                 ->isTrue()
             ->mock($this->mock)
                 ->call('removeRecursiveDirectory')
-                    ->twice()
+                    ->withArguments(MODULES_DIR.'unit-test-module/src')
+                        ->once()
+                    ->withArguments(MODULES_DIR.'unit-test-module')
+                        ->once()
             ->function('unlink')
                 ->wasCalled()
                     ->twice()
+                ->wasCalledWithArguments(MODULES_DIR.'unit-test-module/test.php')
+                    ->once()
+                ->wasCalledWithArguments(MODULES_DIR.'unit-test-module/config.php')
+                    ->once()
         ;
     }
     
