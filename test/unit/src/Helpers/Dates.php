@@ -502,7 +502,7 @@ class Dates extends atoum
                 public $time = '';
             })
             ->given($now = new \DateTime)
-            ->given($toDiff = new \DateTime)
+            ->given($toDiff = clone $now)
             ->then
             
             ->if($toDiff->modify('-5 seconds'))
@@ -545,7 +545,7 @@ class Dates extends atoum
         
         $this->assert('test Helpers\Dates::humanDateToday - 5 seconds after')
             ->given($now = new \DateTime)
-            ->given($toDiff = new \DateTime)
+            ->given($toDiff = clone $now)
             ->then
             
             ->if($toDiff->modify('+5 seconds'))
