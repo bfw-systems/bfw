@@ -20,6 +20,21 @@ class ExpectedModuleInstall
         $this->scriptFiles = $scriptFiles;
     }
     
+    public function getModuleName()
+    {
+        return $this->moduleName;
+    }
+    
+    public function getConfigFiles()
+    {
+        return $this->configFiles;
+    }
+    
+    public function getScriptFiles()
+    {
+        return $this->scriptFiles;
+    }
+        
     public function generateInstallOutput(bool $reinstall = false): string
     {
         $output = $this->moduleName." : Run install.\n"

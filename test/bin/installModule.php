@@ -5,18 +5,12 @@ require_once(__DIR__.'/ExpectedModuleInstall.php');
 
 $installDir = realpath(__DIR__.'/../install');
 
-echo "\033[0;33mCheck hello-world module install\033[0m\n";
-
-$moduleInstallOutput = [];
-exec('cd '.$installDir.' && ./vendor/bin/bfwInstallModules', $moduleInstallOutput);
-
-$moduleInstallOutput = implode("\n", $moduleInstallOutput)."\n";
-
-$bfwHelloWorld = new \BFW\Test\Bin\ExpectedModuleInstall(
+$moduleToInstall   = [];
+$moduleToInstall[] = new \BFW\Test\Bin\ExpectedModuleInstall(
     'bfw-hello-world',
     ['hello-world.json']
 );
-$bfwTestInstall = new \BFW\Test\Bin\ExpectedModuleInstall(
+$moduleToInstall[] = new \BFW\Test\Bin\ExpectedModuleInstall(
     'bfw-test-install',
     ['test-install.json'],
     [
@@ -24,43 +18,42 @@ $bfwTestInstall = new \BFW\Test\Bin\ExpectedModuleInstall(
     ]
 );
 
+echo "\033[0;33mCheck hello-world module install\033[0m\n";
+
+$moduleInstallOutput = [];
+exec('cd '.$installDir.' && ./vendor/bin/bfwInstallModules', $moduleInstallOutput);
+
+$moduleInstallOutput = implode("\n", $moduleInstallOutput)."\n";
+
 $expectedStart     = "\033[0;33mRun BFW Modules Install\033[0m\n";
 $expectedRunScript = "Read all modules to run install script...\n";
 $expectedEndScript = "All modules have been read.\n";
 
-$expectedModuleOutput = [
-    $expectedStart
-    .$bfwHelloWorld->generateInstallOutput()
-    .$bfwTestInstall->generateInstallOutput()
-    .$expectedRunScript
-    .$bfwHelloWorld->generateScriptOutput()
-    .$bfwTestInstall->generateScriptOutput()
-    .$expectedEndScript,
-    
-    $expectedStart
-    .$bfwTestInstall->generateInstallOutput()
-    .$bfwHelloWorld->generateInstallOutput()
-    .$expectedRunScript
-    .$bfwHelloWorld->generateScriptOutput()
-    .$bfwTestInstall->generateScriptOutput()
-    .$expectedEndScript,
-    
-    $expectedStart
-    .$bfwHelloWorld->generateInstallOutput()
-    .$bfwTestInstall->generateInstallOutput()
-    .$expectedRunScript
-    .$bfwTestInstall->generateScriptOutput()
-    .$bfwHelloWorld->generateScriptOutput()
-    .$expectedEndScript,
-    
-    $expectedStart
-    .$bfwTestInstall->generateInstallOutput()
-    .$bfwHelloWorld->generateInstallOutput()
-    .$expectedRunScript
-    .$bfwTestInstall->generateScriptOutput()
-    .$bfwHelloWorld->generateScriptOutput()
-    .$expectedEndScript,
-];
+$matrix = [];
+foreach ($moduleToInstall as $mod1) {
+	foreach ($moduleToInstall as $mod2) {
+		if ($mod1 === $mod2) {
+			continue;
+		}
+		
+		$matrix[] = [$mod1, $mod2];
+	}
+}
+
+$expectedModuleOutput = [];
+
+foreach ($matrix as $modComb1) {
+    foreach ($matrix as $modComb2) {
+        $expectedModuleOutput[] = $expectedStart
+            .$modComb1[0]->generateInstallOutput()
+            .$modComb1[1]->generateInstallOutput()
+            .$expectedRunScript
+            .$modComb2[0]->generateScriptOutput()
+            .$modComb2[1]->generateScriptOutput()
+            .$expectedEndScript
+        ;
+    }
+}
 
 echo 'Test output returned by script : ';
 
