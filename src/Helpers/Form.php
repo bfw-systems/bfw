@@ -137,22 +137,11 @@ class Form
     {
         $token = uniqid(rand(), true);
         
-        $saveInfos = new class($token, $expire) {
-            protected $token;
-            protected $date;
-            protected $expire;
-            
-            public function __construct($token, int $expire)
-            {
-                $this->token  = $token;
-                $this->expire = $expire;
-                $this->date   = new DateTime;
-            }
-            
-            public function __get($name) {
-                return $this->{$name};
-            }
-        };
+        $saveInfos = (object) [
+            'token' => $token,
+            'date'  => new DateTime,
+            'expire' => $expire
+        ];
 
         $this->saveToken($saveInfos);
         return $saveInfos->token;
