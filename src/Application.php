@@ -17,12 +17,12 @@ use \BFW\Core\AppSystems\SystemInterface;
  * @method object getCtrlRouterLink()
  * @method \BFW\Core\Errors getErrors()
  * @method \BFW\Memcached getMemcached()
- * @method \BFW\ModuleList getModuleList()
+ * @method \BFW\Core\ModuleList getModuleList()
  * @method \BFW\Monolog getMonolog()
  * @method \BFW\Core\Options getOptions()
  * @method \BFW\Request getRequest()
  * @method null getSession()
- * @method \BFW\SubjectList getSubjectList()
+ * @method \BFW\Core\SubjectList getSubjectList()
  */
 class Application
 {
