@@ -22,41 +22,36 @@
         "source": "https://github.com/bulton-fr/bfw"
     },
     "require": {
-        "php": ">=5.6.0",
-        "bulton-fr/dependency-tree": "@stable"
+        "php": "^7.0.0",
+        "bulton-fr/dependency-tree": "@stable",
+        "monolog/monolog": "~1.0"
     },
     "require-dev": {
-        "atoum/atoum": "~2.5"
+        "atoum/atoum": "~3.1",
+        "atoum/visibility-extension": "~1.3"
     },
     "suggest": {
-        "ext-memcache": "*",
-        "lib-memcache": "*",
-        "bulton-fr/bfw-controller": "@stable",
-        "bulton-fr/bfw-sql": "@stable"
+        "ext-memcached": "To save datas into your memory and be faster to access it",
+        "bulton-fr/bfw-api": "API module for the framework",
+        "bulton-fr/bfw-controller": "Controller module for the framework",
+        "bulton-fr/bfw-fastroute": "Router module for the framework who use fastroute lib",
+        "bulton-fr/bfw-fenom": "Template module for the framework who use fenom",
+        "bulton-fr/bfw-sql": "Queries systems module for the framework"
     },
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "BFW\\": "src/class",
-            "BFW\\Core\\": "src/class/core",
-            "BFW\\Helpers\\": "src/helpers",
-            "BFW\\Install\\": "install/class/",
-            "BFW\\Memcache\\": "src/class/memcache",
-            "BFW\\Traits\\": "src/traits"
+            "BFW\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "BFW\\test\\unit\\mocks\\": "test/unit/mocks/src/class",
-            "BFW\\test\\helpers\\": "test/unit/helpers",
-            "BFW\\Core\\test\\unit\\mocks\\": "test/unit/mocks/src/class/core",
-            "BFW\\Memcache\\test\\unit\\mocks\\": "test/unit/mocks/src/class/memcache",
-            "BFW\\Install\\test\\unit\\mocks\\": "test/unit/mocks/install",
-            "BFW\\Helpers\\test\\unit\\mocks\\": "test/unit/mocks/src/helpers"
+            "BFW\\Test\\Mock\\": "test/unit/mocks/src",
+            "BFW\\Test\\Helpers\\": "test/unit/helpers"
         }
     },
     "bin": [
-        "bin/bfw_install",
-        "bin/bfw_installModules"
+        "bin/bfwInstall",
+        "bin/bfwInstallModules"
     ]
 }

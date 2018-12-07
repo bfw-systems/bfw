@@ -5,16 +5,18 @@ language: php
 php:
   # using major version aliases
 
-  # aliased to a recent 5.6.x version
-  - 5.6
   # aliased to a recent 7.0.x version
   - 7.0
+  # aliased to a recent 7.1.x version
+  - 7.1
+  # aliased to a recent 7.2.x version
+  - 7.2
 
 services:
   - memcached
 
 before_install:
-  - if [ $(phpenv version-name) = "5.6" ]; then yes | pecl install memcache; fi
+  - composer config -g github-oauth.github.com $GH_TOKEN
   - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 # execute any number of scripts before the test run, custom env's are available as variables
@@ -22,14 +24,13 @@ before_script:
 #   - wget http://downloads.atoum.org/nightly/mageekguy.atoum.phar;
   - composer install
   # Ensure the memcache extension is available
-  - if [ $(phpenv version-name) = "5.6" ]; then composer show --platform ext-memcache; fi
   - composer show --platform ext-memcached
   - chmod +x ./test/bin/installFwk.php
   - chmod +x ./test/bin/installModule.php
 
 script:
-#  - ./vendor/bin/atoum -c .atoum.php -d test/unit/install test/unit/src +verbose
-  - ./vendor/bin/atoum -c .atoum.php -d test/unit/install test/unit/src -utr
+  - ./vendor/bin/atoum -c .atoum.php -d test/unit/src +verbose
+#  - ./vendor/bin/atoum -c .atoum.php -d test/unit/src -utr
   - php ./test/bin/installFwk.php
   - php ./test/bin/installModule.php
 

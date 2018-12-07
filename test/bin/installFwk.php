@@ -2,7 +2,7 @@
 
 require_once(__DIR__.'/functions.php');
 
-$installDir  = realpath(__DIR__.'/../install');
+$installDir = realpath(__DIR__.'/../install');
 
 $composerBin     = 'composer';
 $composerWhereIs = `whereis composer`;
@@ -15,77 +15,137 @@ if ($composerWhereIs === 'composer:'."\n") {
     $composerBin = 'php composer.phar';
 }
 
-`cd $installDir && $composerBin install`;
+`cd $installDir && $composerBin install -n --prefer-dist`;
 echo "\n";
 
-$outputFirstInstall = "\033[0;33mBFW Installation :\033[0m\n"
-    ."  > Create app directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create app/config directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create app/config/bfw directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create app/modules directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create src directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create src/cli directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create src/controllers directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create src/modeles directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create src/view directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create web directory ...\033[1;32m Done\033[0m\n"
-    ."  > Search skeleton directory path ...\033[1;32m Done\033[0m\n"
-    ."  > Copy .htaccess file ...\033[1;32m Done\033[0m\n"
-    ."  > Copy config file ...\033[1;32m Done\033[0m\n"
-    ."  > Copy example index file into web directory ...\033[1;32m Done\033[0m\n"
-    ."  > Copy cli.php file to root project directory ...\033[1;32m Done\033[0m\n"
-    ."  > Copy example cli file into app/cli directory ...\033[1;32m Done\033[0m\n"
-    ."\n"
-    ."\033[0;33mBFW installation status : \033[1;32msuccess\033[0m"
+$bfwVendorPath = realpath($installDir.'/vendor/bulton-fr/bfw/');
+
+$outputTitle = "\033[0;33mRun BFW Install\033[0m\n";
+
+$outputForceReInstall = "\n"
+    ."\033[0;33mForce option : Create directory reinstallBackup\033[0m ... "
+    ."\033[1;32mDone\033[0m\n"
+    ."\033[0;33mForce option : Copy current config directory to reinstallBackup/config\033[0m ... "
+    ."\033[1;32mDone\033[0m\n"
+    ."\033[0;33mForce option : Remove bfw directories\033[0m ... "
+    ."\033[1;32mDone\033[0m\n"
 ;
 
-$outputSecondInstall = "\033[0;33mBFW Installation :\033[0m\n"
-    ."  > Create app directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create app/config directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create app/config/bfw directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create app/modules directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create src directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create src/cli directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create src/controllers directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create src/modeles directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create src/view directory ...\033[1;32m Done\033[0m\n"
-    ."  > Create web directory ...\033[1;32m Done\033[0m\n"
-    ."  > Search skeleton directory path ...\033[1;32m Done\033[0m\n"
-    ."  > Copy .htaccess file ...\033[1;32m Done\033[0m\n"
-    ."  > Copy config file ...\033[1;32m Done\033[0m\n"
-    ."  > Copy example index file into web directory ...\033[1;32m Done\033[0m\n"
-    ."  > Copy cli.php file to root project directory ...\033[1;32m Done\033[0m\n"
-    ."  > Copy example cli file into app/cli directory ...\033[1;32m Done\033[0m\n"
-    ."\n"
-    ."\033[0;33mBFW installation status : \033[1;32msuccess\033[0m"
+$outputCreateDirectories = "\n"
+    ."> Create app directory ...\033[1;32m Done\033[0m\n"
+    ."> Create app/config directory ...\033[1;32m Done\033[0m\n"
+    ."> Create app/config/bfw directory ...\033[1;32m Done\033[0m\n"
+    ."> Create app/modules directory ...\033[1;32m Done\033[0m\n"
+    ."> Create src directory ...\033[1;32m Done\033[0m\n"
+    ."> Create src/cli directory ...\033[1;32m Done\033[0m\n"
+    ."> Create src/controllers directory ...\033[1;32m Done\033[0m\n"
+    ."> Create src/modeles directory ...\033[1;32m Done\033[0m\n"
+    ."> Create src/view directory ...\033[1;32m Done\033[0m\n"
+    ."> Create web directory ...\033[1;32m Done\033[0m\n";
+
+$outputExistsDirectories = "\n"
+    ."> Create app directory ...\033[1;33m Directory exist\033[0m\n"
+    ."> Create app/config directory ...\033[1;33m Directory exist\033[0m\n"
+    ."> Create app/config/bfw directory ...\033[1;33m Directory exist\033[0m\n"
+    ."> Create app/modules directory ...\033[1;33m Directory exist\033[0m\n"
+    ."> Create src directory ...\033[1;33m Directory exist\033[0m\n"
+    ."> Create src/cli directory ...\033[1;33m Directory exist\033[0m\n"
+    ."> Create src/controllers directory ...\033[1;33m Directory exist\033[0m\n"
+    ."> Create src/modeles directory ...\033[1;33m Directory exist\033[0m\n"
+    ."> Create src/view directory ...\033[1;33m Directory exist\033[0m\n"
+    ."> Create web directory ...\033[1;33m Directory exist\033[0m\n";
+
+$outputSearchPath = "\n"
+    ."> Search BFW vendor directory path ...\033[1;32m Found\033[0m\n"
+    ."\033[0;33mBFW path : ".$bfwVendorPath."\033[0m\n";
+
+$outputCreateFiles = "\n"
+    ."> Copy skel/cli.php file to cli.php ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/app/config/bfw/errors.php file to app/config/bfw/errors.php ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/app/config/bfw/global.php file to app/config/bfw/global.php ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/app/config/bfw/manifest.json file to app/config/bfw/manifest.json ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/app/config/bfw/memcached.php file to app/config/bfw/memcached.php ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/app/config/bfw/modules.php file to app/config/bfw/modules.php ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/app/config/bfw/monolog.php file to app/config/bfw/monolog.php ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/src/cli/exemple.php file to src/cli/exemple.php ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/web/.htaccess file to web/.htaccess ...\033[1;32m Done\033[0m\n"
+    ."> Copy skel/web/index.php file to web/index.php ...\033[1;32m Done\033[0m\n"
+;
+
+$outputExistsFiles = "\n"
+    ."> Copy skel/cli.php file to cli.php ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/app/config/bfw/errors.php file to app/config/bfw/errors.php ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/app/config/bfw/global.php file to app/config/bfw/global.php ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/app/config/bfw/manifest.json file to app/config/bfw/manifest.json ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/app/config/bfw/memcached.php file to app/config/bfw/memcached.php ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/app/config/bfw/modules.php file to app/config/bfw/modules.php ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/app/config/bfw/monolog.php file to app/config/bfw/monolog.php ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/src/cli/exemple.php file to src/cli/exemple.php ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/web/.htaccess file to web/.htaccess ...\033[1;33m File exist\033[0m\n"
+    ."> Copy skel/web/index.php file to web/index.php ...\033[1;33m File exist\033[0m\n"
+;
+    
+$outputInstallStatus = "\n\033[0;33mBFW install status : \033[1;32mSuccess\033[0m";
+
+$outputFirstInstall = ""
+    .$outputTitle
+    .$outputCreateDirectories
+    .$outputSearchPath
+    .$outputCreateFiles
+    .$outputInstallStatus
+;
+
+$outputSecondInstall = ""
+    .$outputTitle
+    .$outputExistsDirectories
+    .$outputSearchPath
+    .$outputExistsFiles
+    .$outputInstallStatus
+;
+
+$outputThirdInstall = ""
+    .$outputTitle
+    .$outputForceReInstall
+    .$outputCreateDirectories
+    .$outputSearchPath
+    .$outputCreateFiles
+    .$outputInstallStatus
 ;
 
 $expectedOutput = [
     $outputFirstInstall,
-    $outputSecondInstall
+    $outputSecondInstall,
+    $outputThirdInstall
 ];
 
-for ($installIndex = 0; $installIndex < 2; $installIndex++) {
+for ($installIndex = 0; $installIndex < 3; $installIndex++) {
     
     if ($installIndex === 0) {
         echo "\033[0;33mCheck first install\033[0m\n";
-    } else {
-        echo "\n\n\033[0;33mCheck re-install\033[0m\n";
+    } elseif ($installIndex === 1) {
+        echo "\n\n\033[0;33mCheck re-install without force option\033[0m\n";
+    } elseif ($installIndex === 2) {
+        echo "\n\n\033[0;33mCheck re-install with force option\033[0m\n";
+    }
+    
+    $installCmd = './vendor/bin/bfwInstall';
+    if ($installIndex === 2) {
+        $installCmd .= ' -f';
     }
     
     $installOutput = [];
-    exec('cd '.$installDir.' && ./vendor/bin/bfw_install', $installOutput);
+    exec('cd '.$installDir.' && '.$installCmd, $installOutput);
     $installOutput = implode("\n", $installOutput);
     
     echo $installOutput;
     
-    //echo "\n";
+    echo "\n";
     //echo `cd $installDir && ls -al *`;
     
     echo 'Test output returned by script : ';
     if ($installOutput !== $expectedOutput[$installIndex]) {
         echo "\033[1;31m[Fail]\033[0m\n";
-        fwrite(STDERR, 'Text returned is not equal to expected text.');
+        fwrite(STDERR, "Text returned is not equal to expected text.\n");
         exit(1);
     }
 
@@ -106,7 +166,12 @@ for ($installIndex = 0; $installIndex < 2; $installIndex++) {
 
     testDirectoryOrFile($installDir, 'web');
 
-    testDirectoryOrFile($installDir, 'app/config/bfw/config.php');
+    testDirectoryOrFile($installDir, 'app/config/bfw/errors.php');
+    testDirectoryOrFile($installDir, 'app/config/bfw/global.php');
+    testDirectoryOrFile($installDir, 'app/config/bfw/manifest.json');
+    testDirectoryOrFile($installDir, 'app/config/bfw/memcached.php');
+    testDirectoryOrFile($installDir, 'app/config/bfw/modules.php');
+    testDirectoryOrFile($installDir, 'app/config/bfw/monolog.php');
     testDirectoryOrFile($installDir, 'src/cli/exemple.php');
     testDirectoryOrFile($installDir, 'web/index.php');
     testDirectoryOrFile($installDir, 'web/.htaccess');
