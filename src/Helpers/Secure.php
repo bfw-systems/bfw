@@ -72,27 +72,23 @@ class Secure
      * We work the data like if the type is a string.
      * 
      * @param mixed $data The variable to securise
+     * @param string $type The type of datas
      * @param boolean $htmlentities If use htmlentities function
      *  to a better security
      * 
      * @return mixed
      */
-    public static function secureUnknownType($data, bool $htmlentities)
+    public static function secureUnknownType($data, string $type, bool $htmlentities)
     {
-        $currentClass    = get_called_class();
-        $sqlSecureMethod = $currentClass::getSqlSecureMethod();
-        
-        if ($sqlSecureMethod !== null) {
-            $data = $sqlSecureMethod($data);
-        } else {
-            $data = addslashes($data);
-        }
-
-        if ($htmlentities === true) {
-            $data = htmlentities($data, ENT_COMPAT | ENT_HTML401);
+        if ($type !== 'html') {
+            $data = strip_tags($data);
         }
         
-        return $data;
+        if ($type === 'html' || $htmlentities === true) {
+            return htmlentities($data, ENT_QUOTES | ENT_HTML401);
+        }
+        
+        return addslashes($data);
     }
 
     /**
@@ -133,7 +129,7 @@ class Secure
             //Else : Use securise like if it's a text type
         }
 
-        return $currentClass::secureUnknownType($data, $htmlentities);
+        return $currentClass::secureUnknownType($data, $type, $htmlentities);
     }
 
     /**
@@ -148,7 +144,7 @@ class Secure
             'sqlSecureMethod',
             'global.php'
         );
-
+        
         if (!is_callable($secureFct, false)) {
             return null;
         }
@@ -164,6 +160,7 @@ class Secure
      * @param string $type The type of data
      * @param boolean $htmlentities (default: false) If use htmlentities
      *  function to a better security
+     * @param boolean $inline (default: true) If array data are inline
      * 
      * @return mixed
      * 
@@ -173,7 +170,8 @@ class Secure
         array &$array,
         string $key,
         string $type,
-        bool $htmlentities = false
+        bool $htmlentities = false,
+        bool $inline = true
     ) {
         if (!isset($array[$key])) {
             throw new Exception(
@@ -183,8 +181,15 @@ class Secure
         }
 
         $currentClass = get_called_class();
+        
+        if (!$inline) {
+            $data = trim($array[$key], ' \0\x0B');
+        } else {
+            $data = trim($array[$key]);
+        }
+        
         return $currentClass::secureData(
-            trim($array[$key]),
+            $data,
             $type,
             $htmlentities
         );
@@ -197,9 +202,10 @@ class Secure
      * @param array $keysList The key list to obtain.
      *  For each item, the key is the name of the key in source array; And the
      *  value the type of the value. The value can also be an object. In this
-     *  case, the properties "type" contain the value type, and the "htmlenties"
+     *  case, the properties "type" contain the value type, the "htmlenties"
      *  property contain the boolean who indicate if secure system 
-     *  will use htmlentities.
+     *  will use htmlentities, and the "inline" property contain the boolean who 
+     *  indicate if data are inline
      * @param boolean $throwOnError (defaut true) If a key not exist, throw an
      *  exception. If false, the value will be null into returned array
      * 
@@ -219,7 +225,8 @@ class Secure
             if (!is_array($infos)) {
                 $infos = [
                     'type'         => $infos,
-                    'htmlentities' => false
+                    'htmlentities' => false,
+                    'inline'       => true
                 ];
             }
             
@@ -228,7 +235,8 @@ class Secure
                     $arraySrc,
                     $keyName,
                     $infos['type'],
-                    $infos['htmlentities']
+                    $infos['htmlentities'],
+                    $infos['inline']
                 );
             } catch (Exception $ex) {
                 if ($throwOnError === true) {
