@@ -53,13 +53,15 @@ class Http
      * @param string $type The type of data
      * @param boolean $htmlentities (default: false) If use htmlentities
      *  function to a better security
+     * @param boolean $inline (default: true) If array data are inline
      * 
      * @return mixed
      */
     public static function obtainPostKey(
         string $key,
         string $type,
-        bool $htmlentities = false
+        bool $htmlentities = false,
+        bool $inline = true
     ) {
         $currentClass = get_called_class();
         $secure       = $currentClass::getSecureHelpersName();
@@ -68,7 +70,8 @@ class Http
             $_POST,
             $key,
             $type,
-            $htmlentities
+            $htmlentities,
+            $inline
         );
     }
 
@@ -79,13 +82,15 @@ class Http
      * @param string $type The type of data
      * @param boolean $htmlentities (default: false) If use htmlentities
      *  function to a better security
+     * @param boolean $inline (default: true) If array data are inline
      * 
      * @return mixed
      */
     public static function obtainGetKey(
         string $key,
         string $type,
-        bool $htmlentities = false
+        bool $htmlentities = false,
+        bool $inline = true
     ) {
         $currentClass = get_called_class();
         $secure       = $currentClass::getSecureHelpersName();
@@ -94,7 +99,8 @@ class Http
             $_GET,
             $key,
             $type,
-            $htmlentities
+            $htmlentities,
+            $inline
         );
     }
     

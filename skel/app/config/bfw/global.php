@@ -11,10 +11,5 @@ return [
     /**
      * @var boolean debug : Debug mode
      */
-    'debug'           => false,
-    
-    /**
-     * @var null|callable sqlSecureMethod : SQL Method used for securise datas
-     */
-    'sqlSecureMethod' => null
+    'debug'           => false
 ];
