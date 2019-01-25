@@ -83,19 +83,38 @@ class Secure extends atoum
     
     public function testSecureUnknownType()
     {
-        $this->assert('test Helpers\Secure::secureUnknownType')
-            ->string(\BFW\Helpers\Secure::secureUnknownType('atoum', false))
+        $this->assert('test Helpers\Secure::secureUnknownType (not declared as html)')
+            ->string(\BFW\Helpers\Secure::secureUnknownType('atoum', 'string', false))
                 ->isEqualTo('atoum')
             ->string(\BFW\Helpers\Secure::secureUnknownType(
                 '<p>Il est recommandé d\'utiliser composer pour installer</p>',
-                false
+                'string',
+                false //htmlentities
             ))
-                ->isEqualTo('<p>Il est recommandé d\\\'utiliser composer pour installer</p>')
+                ->isEqualTo('Il est recommandé d\\\'utiliser composer pour installer')
             ->string(\BFW\Helpers\Secure::secureUnknownType(
                 '<p>Il est recommandé d\'utiliser composer pour installer</p>',
-                true
+                'string',
+                true //htmlentities
             ))
-                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;')
+                ->isEqualTo('Il est recommand&eacute; d&#039;utiliser composer pour installer')
+        ;
+        
+        $this->assert('test Helpers\Secure::secureUnknownType (declared as html)')
+            ->string(\BFW\Helpers\Secure::secureUnknownType('atoum', 'html', false))
+                ->isEqualTo('atoum')
+            ->string(\BFW\Helpers\Secure::secureUnknownType(
+                '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+                'html',
+                false //htmlentities
+            ))
+                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;')
+            ->string(\BFW\Helpers\Secure::secureUnknownType(
+                '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+                'html',
+                true //htmlentities
+            ))
+                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;')
         ;
     }
     
@@ -109,24 +128,41 @@ class Secure extends atoum
                 ->isEqualTo(42)
         ;
         
-        $this->assert('test Helpers\Secure::secureData with a string value')
+        $this->assert('test Helpers\Secure::secureData with a string value (not declared as html)')
             ->string(\BFW\Helpers\Secure::secureData('atoum', 'string', false))
                 ->isEqualTo('atoum')
             ->string(\BFW\Helpers\Secure::secureData(
                 '<p>Il est recommandé d\'utiliser composer pour installer</p>',
                 'string',
-                false
+                false //htmlentities
             ))
-                ->isEqualTo('<p>Il est recommandé d\\\'utiliser composer pour installer</p>')
+                ->isEqualTo('Il est recommandé d\\\'utiliser composer pour installer')
             ->string(\BFW\Helpers\Secure::secureData(
                 '<p>Il est recommandé d\'utiliser composer pour installer</p>',
                 'string',
-                true
+                true //htmlentities
             ))
-                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;')
+                ->isEqualTo('Il est recommand&eacute; d&#039;utiliser composer pour installer')
         ;
         
-        $this->assert('test Helpers\Secure::secureData with an array value')
+        $this->assert('test Helpers\Secure::secureData with a string value (declared as html)')
+            ->string(\BFW\Helpers\Secure::secureData('atoum', 'html', false))
+                ->isEqualTo('atoum')
+            ->string(\BFW\Helpers\Secure::secureData(
+                '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+                'html',
+                false //htmlentities
+            ))
+                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;')
+            ->string(\BFW\Helpers\Secure::secureData(
+                '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+                'html',
+                true //htmlentities
+            ))
+                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;')
+        ;
+        
+        $this->assert('test Helpers\Secure::secureData with an array value (not declared as html)')
             ->array(\BFW\Helpers\Secure::secureData(
                 [
                     'id'      => 42,
@@ -134,31 +170,30 @@ class Secure extends atoum
                     'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
                 ],
                 'string',
-                true
+                true //htmlentities
             ))
                 ->isEqualTo([
                     'id'      => '42',
                     'titre'   => 'install',
-                    'content' => '&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;',
+                    'content' => 'Il est recommand&eacute; d&#039;utiliser composer pour installer',
                 ])
         ;
-    }
-    
-    public function testGetSqlSecureMethod()
-    {
-        $this->assert('test Helpers\Secure::getSqlSecureMethod without method configured')
-            ->variable(\BFW\Helpers\Secure::getSqlSecureMethod())
-                ->isNull()
-        ;
         
-        $this->assert('test Helpers\Secure::getSqlSecureMethod with a callable function configured')
-            ->if($this->app->getConfig()->setConfigKeyForFilename(
-                'global.php',
-                'sqlSecureMethod',
-                '\BFW\Test\Helpers\secureSqlMethod'
+        $this->assert('test Helpers\Secure::secureData with an array value (declared as html)')
+            ->array(\BFW\Helpers\Secure::secureData(
+                [
+                    'id'      => 42,
+                    'titre'   => 'install',
+                    'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+                ],
+                'html',
+                true //htmlentities
             ))
-            ->string(\BFW\Helpers\Secure::getSqlSecureMethod())
-                ->isEqualTo('\BFW\Test\Helpers\secureSqlMethod')
+                ->isEqualTo([
+                    'id'      => '42',
+                    'titre'   => 'install',
+                    'content' => '&lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;',
+                ])
         ;
     }
     
@@ -181,18 +216,47 @@ class Secure extends atoum
         ;
         
         $this->assert('test Helpers\Secure::getSecureKeyInArray with a existing key')
-            ->given($array = [
+            ->given($arrayText = [
                 'id'      => 42,
                 'titre'   => 'install',
-                'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+                'content' => " \n\t\n".' <p>Il est recommandé d\'utiliser composer pour installer</p>',
             ])
             ->string(\BFW\Helpers\Secure::getSecureKeyInArray(
-                    $array,
+                    $arrayText,
                     'content',
                     'string',
-                    true
+                    true, //htmlentities
+                    true //inline
             ))
-                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;')
+                ->isEqualTo('Il est recommand&eacute; d&#039;utiliser composer pour installer')
+            ->then
+            ->given($arrayHtml = [
+                'id'      => 42,
+                'titre'   => 'install',
+                'content' => " \n\t\n".' <p>Il est recommandé d\'utiliser composer pour installer</p>',
+            ])
+            ->string(\BFW\Helpers\Secure::getSecureKeyInArray(
+                    $arrayHtml,
+                    'content',
+                    'html',
+                    true, //htmlentities
+                    true //inline
+            ))
+                ->isEqualTo('&lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;')
+            ->then
+            ->given($arrayHtml = [
+                'id'      => 42,
+                'titre'   => 'install',
+                'content' => " \n\t\n".' <p>Il est recommandé d\'utiliser composer pour installer</p>',
+            ])
+            ->string(\BFW\Helpers\Secure::getSecureKeyInArray(
+                    $arrayHtml,
+                    'content',
+                    'html',
+                    true, //htmlentities
+                    false //inline
+            ))
+                ->isEqualTo("\n\t\n".' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;')
         ;
     }
     
@@ -204,23 +268,60 @@ class Secure extends atoum
         $this->given($testedArray = [
             'id'      => 42,
             'titre'   => 'install',
-            'content' => '<p>Il est recommandé d\'utiliser composer pour installer</p>',
+            'content' => " \n\t\n".' <p>Il est recommandé d\'utiliser composer pour installer</p>',
         ]);
         
-        $this->assert('test Helpers\Secure::getManySecureKeys with all existing keys')
+        $this->assert('test Helpers\Secure::getManySecureKeys with all existing keys (not inline, not html)')
             ->array(\BFW\Helpers\Secure::getManySecureKeys(
                 $testedArray,
                 [
                     'titre'   => 'string',
                     'content' => [
                         'type'         => 'string',
-                        'htmlentities' => true
+                        'htmlentities' => true,
+                        'inline'       => false
                     ]
                 ]
             ))
                 ->isEqualTo([
                     'titre'   => 'install',
-                    'content' => '&lt;p&gt;Il est recommand&eacute; d\\\'utiliser composer pour installer&lt;/p&gt;'
+                    'content' => "\n\t\n".' Il est recommand&eacute; d&#039;utiliser composer pour installer'
+                ])
+        ;
+        
+        $this->assert('test Helpers\Secure::getManySecureKeys with all existing keys (not inline, but html)')
+            ->array(\BFW\Helpers\Secure::getManySecureKeys(
+                $testedArray,
+                [
+                    'titre'   => 'string',
+                    'content' => [
+                        'type'         => 'html',
+                        'htmlentities' => true,
+                        'inline'       => false
+                    ]
+                ]
+            ))
+                ->isEqualTo([
+                    'titre'   => 'install',
+                    'content' => "\n\t\n".' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;'
+                ])
+        ;
+        
+        $this->assert('test Helpers\Secure::getManySecureKeys with all existing keys (inline, not html)')
+            ->array(\BFW\Helpers\Secure::getManySecureKeys(
+                $testedArray,
+                [
+                    'titre'   => 'string',
+                    'content' => [
+                        'type'         => 'string',
+                        'htmlentities' => true,
+                        'inline'       => true
+                    ]
+                ]
+            ))
+                ->isEqualTo([
+                    'titre'   => 'install',
+                    'content' => 'Il est recommand&eacute; d&#039;utiliser composer pour installer'
                 ])
         ;
         

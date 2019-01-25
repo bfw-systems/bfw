@@ -78,8 +78,11 @@ class Secure
      * 
      * @return mixed
      */
-    public static function secureUnknownType($data, string $type, bool $htmlentities)
-    {
+    public static function secureUnknownType(
+            $data, 
+            string $type,
+            bool $htmlentities
+    ): string {
         if ($type !== 'html') {
             $data = strip_tags($data);
         }
@@ -133,26 +136,6 @@ class Secure
     }
 
     /**
-     * Get the sqlSecure function declared in bfw config file
-     * 
-     * @return null|string
-     */
-    public static function getSqlSecureMethod()
-    {
-        $app       = \BFW\Application::getInstance();
-        $secureFct = $app->getConfig()->getValue(
-            'sqlSecureMethod',
-            'global.php'
-        );
-        
-        if (!is_callable($secureFct, false)) {
-            return null;
-        }
-
-        return $secureFct;
-    }
-
-    /**
      * Securise the value of an array key for a declared type.
      * 
      * @param array &$array The array where is the key
@@ -183,6 +166,7 @@ class Secure
         $currentClass = get_called_class();
         
         if (!$inline) {
+            //Only space, NUL-byte, and vertical tab.
             $data = trim($array[$key], ' \0\x0B');
         } else {
             $data = trim($array[$key]);
