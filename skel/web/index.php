@@ -3,9 +3,6 @@
  * Run application in www (apache/nginx/...) mode
  */
 
-//Define cliMode to false (http(s) mode)
-define('CLI_MODE', false);
-
 //Get path of root and vendor directories
 $rootDir   = realpath(__DIR__.'/../');
 $vendorDir = realpath($rootDir.'/vendor');

@@ -1,12 +1,11 @@
 # How it works ?
 
-With files `cli.php` or `web/index.php`, the operation stay the same.
-We initialise the class `\BFW\Application`, who initialise many subsystems and run them.
+Into the file `web/index.php`, we initialise the class `\BFW\Application`, who initialise many subsystems and run them.
 
 The class `Application` use the [design pattern Singleton](https://en.wikipedia.org/wiki/Singleton_pattern),
 so you can get the instance from anywhere into your application.
 
-At the beginning, in front files (`cli.php` and `web/index.php`), we create the instance and we run the main initialisation.
+At the beginning, in front files (`web/index.php`), we create the instance and we run the main initialisation.
 ```php
 //Initialise BFW application
 $app = \BFW\Application::getInstance();
@@ -50,7 +49,6 @@ and detect many things about the current HTTP request.
 * Errors : Initialise the system to display personal error page instead of blank pages if the config into `errors.php` allow it.
 * Memcached : Connect to all memcache(d) servers defined into config file `memcached.php`.
 * ModuleList : Initialise the class who will list all modules, run the search for all modules and initialise each module (not run it).
-* Cli : Instantiate the class `\BFW\Core\Cli`. This object will be used later during framework run to detect and run cli files.
 * CtrlRouterLink : Define the object which will be used to communicate between controller and router modules.
 And instantiate an `\BFW\RunTasks` object which will have all tasks to run when the controller system will have to be executed.
 
@@ -65,11 +63,10 @@ That will run all subsystems which has declared the need to be run.
 
 In the order, it's :
 * ModuleList : Generate the dependency tree of all modules and run modules in the order defined by the tree
-* Cli : Only if in a cli mode, detect the cli file to execute (parameter `-f`) and execute it
-* CtrlRouterLink : Only if not in a cli mode, execute the `\BFW\RunTasks` object (defines during this init) with the method `run`.
+* CtrlRouterLink : Only if it's not from cli, execute the `\BFW\RunTasks` object (defines during this init) with the method `run`.
 That will notify all events needed by router and controller systems to be executed.
 
-And it's all. At this time, your cli file or your controller has ended to be executed.
+And it's all. At this time, your controller has ended to be executed.
 
 Because Monolog is integrated, all step is logged.
 It's handlers define into `monolog.php` config file who receive messages and log it.
@@ -105,8 +102,6 @@ $ cat app/logs/bfw/bfw.log
 [2018-08-21 23:16:20] bfw.DEBUG: RunTask notify {"prefix":"BfwApp","action":"BfwApp_run_module_bfw-fastroute"} []
 [2018-08-21 23:16:20] bfw.DEBUG: Subject notify event {"action":"BfwApp_run_module_bfw-fastroute"} []
 [2018-08-21 23:16:20] bfw.DEBUG: Subject notify event {"action":"BfwApp_done_moduleList"} []
-[2018-08-21 23:16:20] bfw.DEBUG: Subject notify event {"action":"BfwApp_run_cli"} []
-[2018-08-21 23:16:20] bfw.DEBUG: Subject notify event {"action":"BfwApp_done_cli"} []
 [2018-08-21 23:16:20] bfw.DEBUG: Subject notify event {"action":"BfwApp_run_ctrlRouterLink"} []
 [2018-08-21 23:16:20] bfw.DEBUG: Subject notify event {"action":"ctrlRouterLink_start_run_tasks"} []
 [2018-08-21 23:16:20] bfw.DEBUG: Subject notify event {"action":"ctrlRouterLink_exec_searchRoute"} []

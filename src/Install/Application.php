@@ -22,7 +22,6 @@ class Application extends \BFW\Application
             $appSystemList['request'],
             $appSystemList['session'],
             $appSystemList['errors'],
-            $appSystemList['cli'],
             $appSystemList['ctrlRouterLink']
         );
         

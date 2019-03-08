@@ -51,16 +51,6 @@ Can be used by a debug bar module for example.
 
 Without module, the only utility is to enable personal errors pages (defined into `errors.php` config files).
 
-#### sqlSecureMethod
-
-Used by Secure helper. You can define a function to secure data against SQL injections.
-If no function is defined, the helper will use the function [addslashes](http://php.net/manual/en/function.addslashes.php).
-
-For example, with the method [PDO::quote](http://php.net/manual/en/pdo.quote.php),
-you should define this config to `'sqlSecureMethod' => ['\PDO', 'quote']`.
-
-The choice is free because you can add a module who integrate other functions to do this.
-
 ### memcached.php
 
 To use a memcache(d) server.
@@ -92,6 +82,10 @@ You not need to have all modules defined (It's your choice not to use MVC patter
 However, router and controller modules can be helpful for a web application :)
 
 For each module, `name` is the module name and `enabled` this status (enabled or not).
+
+#### cli
+
+Used for the module who manages cli files
 
 #### db
 

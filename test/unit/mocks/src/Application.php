@@ -3,7 +3,6 @@
 namespace BFW\Test\Mock;
 
 //To be included by module who use it
-require_once(__DIR__.'/Core/AppSystems/Cli.php');
 require_once(__DIR__.'/Core/AppSystems/Config.php');
 require_once(__DIR__.'/Core/AppSystems/Errors.php');
 require_once(__DIR__.'/Core/AppSystems/ModuleList.php');
@@ -42,7 +41,6 @@ class Application extends \BFW\Application
     {
         $list = parent::obtainAppSystemList();
         
-        $list['cli']        = '\BFW\Test\Mock\Core\AppSystems\Cli';
         $list['config']     = '\BFW\Test\Mock\Core\AppSystems\Config';
         $list['errors']     = '\BFW\Test\Mock\Core\AppSystems\Errors';
         $list['moduleList'] = '\BFW\Test\Mock\Core\AppSystems\ModuleList';

@@ -39,6 +39,7 @@ if (isset($cliArgs['bfw-path'])) {
 } elseif (isset($cliArgs['p'])) {
     $bfwPath = realpath($cliArgs['p']);
 }
+//echo "\033[0;33mBFW path : $bfwPath\033[0m\n";
 
 $vendorPath = $bfwPath.'/vendor';
 if (isset($cliArgs['vendor-path'])) {
@@ -46,6 +47,7 @@ if (isset($cliArgs['vendor-path'])) {
 } elseif (isset($cliArgs['v'])) {
     $vendorPath = realpath($cliArgs['v']);
 }
+//echo "\033[0;33mVendor path : $vendorPath\033[0m\n";
 
 $reinstall = false;
 if (isset($cliArgs['reinstall']) || isset($cliArgs['r'])) {

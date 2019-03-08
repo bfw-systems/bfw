@@ -42,33 +42,6 @@ This method is used by `Application` class for direct access to AppSystem.
 For example, when you doing `\BFW\Application::getInstance()->getModuleList()`,
 this will call the method `__invoke` of the `ModuleList` AppSystem.
 
-## Cli
-
-More details about `\BFW\Core\Cli` on his [dedicated page](./Cli.md).
-
-### Property
-
-__`protected \BFW\Core\Cli $cli;`__
-
-### Methods
-
-__`self public __construct()`__
-
-Instantiate the class `\BFW\Core\Cli` and keep it into the property `$cli`.
-
-__`\BFW\Core\Cli public __invoke()`__<br>
-__`\BFW\Core\Cli public getCli()`__
-
-Return the value of the property `$cli`.
-
-__`void public run()`__
-
-Call the method `runCliFile()`.
-
-__`void protected runCliFile()`__
-
-Check if we are in the cli mode. If it's true, search the cli file into arguments and execute it.
-
 ## ComposerLoader
 
 ### Property

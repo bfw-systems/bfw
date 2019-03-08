@@ -3,10 +3,11 @@
 namespace BFW\Install\Core\AppSystems;
 
 use \BFW\Core\AppSystems\AbstractSystem;
-use \BFW\Helpers\Cli;
 
 class ModuleInstall extends AbstractSystem
 {
+    use \BFW\Traits\BasicCliMsg;
+    
     /**
      * @var \BFW\Install\ModuleInstall[] $listToInstall
      */
@@ -73,7 +74,7 @@ class ModuleInstall extends AbstractSystem
      */
     protected function installAllModules()
     {
-        Cli::displayMsgNL('Read all modules to run install script...');
+        $this->displayMsgNLInCli('Read all modules to run install script...');
         
         $tree = \BFW\Install\Application::getInstance()
             ->getModuleList()
@@ -92,7 +93,7 @@ class ModuleInstall extends AbstractSystem
             }
         }
         
-        Cli::displayMsgNL('All modules have been read.');
+        $this->displayMsgNLInCli('All modules have been read.');
     }
     
     /**
@@ -108,13 +109,13 @@ class ModuleInstall extends AbstractSystem
             return;
         }
         
-        Cli::displayMsgNL(' > Read for module '.$moduleName);
+        $this->displayMsgNLInCli(' > Read for module '.$moduleName);
         
         $module         = $this->listToInstall[$moduleName];
         $installScripts = $module->getSourceInstallScript();
         
         if (empty($installScripts) || $installScripts === false) {
-            Cli::displayMsgNL(' >> No script to run.');
+            $this->displayMsgNLInCli(' >> No script to run.');
             return;
         }
         

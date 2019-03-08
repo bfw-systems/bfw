@@ -18,7 +18,7 @@ The backtrace is not displayed.
 
 #### Example
 
-For example, I have edited the file `src/cli/exemple.php` and add the line `throw new \Exception('Test');`.
+For example, I have install the bfw-cli module, edit the file `src/cli/exemple.php` and add the line `throw new \Exception('Test');`.
 
 Note : The line "Error detected..." is the line which is normally written in the php log.
 It's my local config of php which write the line in the output.

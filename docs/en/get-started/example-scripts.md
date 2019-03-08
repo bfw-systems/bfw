@@ -2,46 +2,7 @@
 
 ## Cli script
 
-There is a script called `cli.php` into the root directory of your application.
-This file will execute cli script with the framework loaded.
-
-When you use it, you should indicate the parameter `-f` to say what file (into directory `src/cli/`) to execute.
-The argument value must never have the script extension. The `.php` extension is added by the system.
-
-There is an example cli file provided.
-```
-$ ls src/cli/
-exemple.php
-```
-
-To play the script, you should do :
-```
-$ php cli.php -f=exemple
-CLI Exemple file
-```
-
-Note : We use the function [getopt()](http://php.net/manual/en/function.getopt.php), so take the time to understand how to pass parameters values.
-
-The parameters `-f` is mandatory for `/cli.php` script, but all cli script executed by him can also have their own parameters.
-
-For example :
-```
-$ php cli.php -f=exemple -h
-CLI Exemple file
-
-Helping Informations : Parameters script
-* -v --version : Version of test script
-* -p --parameters : Display args array
-* -h --help : View this message
-
-$ php cli.php -f=exemple -p
-CLI Exemple file
-Array
-(
-    [f] => exemple
-    [p] => 
-)
-```
+Please refer to doc of the cli module you will use.
 
 ## Web script
 

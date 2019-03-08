@@ -3,13 +3,14 @@
 namespace BFW\Install;
 
 use \Exception;
-use \BFW\Helpers\Cli;
 
 /**
  * Class to get module install informations and run install of the module
  */
 class ModuleInstall
 {
+    use \BFW\Traits\BasicCliMsg;
+    
     /**
      * @const ERR_LOAD_NO_PROPERTY_SRCPATH Exception code if the property
      * "srcPath" is not present into the bfwModulesInfos.json file.
@@ -354,7 +355,7 @@ class ModuleInstall
                 ['name' => $this->name]
             );
         
-        Cli::displayMsgNL($this->name.' : Run install.');
+        $this->displayMsgNLInCli($this->name.' : Run install.');
         
         try {
             $this->createSymbolicLink();
@@ -385,18 +386,18 @@ class ModuleInstall
      */
     protected function createSymbolicLink()
     {
-        Cli::displayMsg(' > Create symbolic link ... ');
+        $this->displayMsgInCli(' > Create symbolic link ... ');
 
         $alreadyCreated = file_exists($this->targetSrcPath);
 
         //If symlink already exist and it's a reinstall mode
         if ($alreadyCreated && $this->forceReinstall === true) {
-            Cli::displayMsg('[Force Reinstall: Remove symlink] ');
+            $this->displayMsgInCli('[Force Reinstall: Remove symlink] ');
             $alreadyCreated = false;
 
             //Error with remove symlink
             if (!unlink($this->targetSrcPath)) {
-                Cli::displayMsgNL('Symbolic link remove fail.', 'red', 'bold');
+                $this->displayMsgNLInCli('Symbolic link remove fail.', 'red', 'bold');
                 
                 throw new Exception(
                     'Reinstall fail. Symlink remove error',
@@ -407,7 +408,7 @@ class ModuleInstall
 
         //If module already exist in "modules" directory
         if ($alreadyCreated) {
-            Cli::displayMsgNL(
+            $this->displayMsgNLInCli(
                 'Not created. Module already exist in \'modules\' directory.',
                 'yellow',
                 'bold'
@@ -417,7 +418,7 @@ class ModuleInstall
 
         //If the creation of the symbolic link has failed.
         if (!symlink($this->sourceSrcPath, $this->targetSrcPath)) {
-            Cli::displayMsgNL('Symbolic link creation fail.', 'red', 'bold');
+            $this->displayMsgNLInCli('Symbolic link creation fail.', 'red', 'bold');
             
             throw new Exception(
                 'Symbolic link creation fail.',
@@ -425,7 +426,7 @@ class ModuleInstall
             );
         }
 
-        Cli::displayMsgNL('Done', 'green', 'bold');
+        $this->displayMsgNLInCli('Done', 'green', 'bold');
     }
 
     /**
@@ -436,12 +437,12 @@ class ModuleInstall
      */
     protected function copyConfigFiles()
     {
-        Cli::displayMsgNL(' > Copy config files : ');
+        $this->displayMsgNLInCli(' > Copy config files : ');
 
         //No file to copy
         if ($this->configFilesList === []) {
-            Cli::displayMsg(' >> ');
-            Cli::displayMsgNL(
+            $this->displayMsgInCli(' >> ');
+            $this->displayMsgNLInCli(
                 'No config file declared. Pass',
                 'yellow',
                 'bold'
@@ -471,17 +472,17 @@ class ModuleInstall
      */
     protected function createConfigDirectory()
     {
-        Cli::displayMsg(' >> Create config directory for this module ... ');
+        $this->displayMsgInCli(' >> Create config directory for this module ... ');
         
         $alreadyExist = file_exists($this->targetConfigPath);
         
         //If the directory already exist and if it's a reinstall
         if ($alreadyExist && $this->forceReinstall === true) {
-            Cli::displayMsg('[Force Reinstall: Remove directory] ');
+            $this->displayMsgInCli('[Force Reinstall: Remove directory] ');
             
             $alreadyExist = false;
             if (!$this->removeRecursiveDirectory($this->targetConfigPath)) {
-                Cli::displayMsgNL(
+                $this->displayMsgNLInCli(
                     'Remove the module config directory have fail',
                     'red',
                     'bold'
@@ -496,13 +497,13 @@ class ModuleInstall
         
         //If the directory already exist, nothing to do
         if ($alreadyExist) {
-            Cli::displayMsgNL('Already exist', 'yellow', 'bold');
+            $this->displayMsgNLInCli('Already exist', 'yellow', 'bold');
             return;
         }
         
         //Create the directory
         if (!mkdir($this->targetConfigPath, 0755)) {
-            Cli::displayMsgNL('Fail', 'red', 'bold');
+            $this->displayMsgNLInCli('Fail', 'red', 'bold');
             
             throw new Exception(
                 'Error to create the config directory.',
@@ -510,7 +511,7 @@ class ModuleInstall
             );
         }
 
-        Cli::displayMsgNL('Done', 'green', 'bold');
+        $this->displayMsgNLInCli('Done', 'green', 'bold');
     }
     
     /**
@@ -550,7 +551,7 @@ class ModuleInstall
      */
     protected function copyConfigFile(string $configFileName)
     {
-        Cli::displayMsg(' >> Copy '.$configFileName.' ... ');
+        $this->displayMsgInCli(' >> Copy '.$configFileName.' ... ');
 
         //Define paths to the config file
         $sourceFile = realpath($this->sourceConfigPath.'/'.$configFileName);
@@ -558,13 +559,13 @@ class ModuleInstall
 
         //Check if config file already exist
         if (file_exists($targetFile)) {
-            Cli::displayMsgNL('Already exist', 'yellow', 'bold');
+            $this->displayMsgNLInCli('Already exist', 'yellow', 'bold');
             return;
         }
 
         //If source file not exist
         if (!file_exists($sourceFile)) {
-            Cli::displayMsgNL(
+            $this->displayMsgNLInCli(
                 'Config file not exist in module source.',
                 'red',
                 'bold'
@@ -578,14 +579,14 @@ class ModuleInstall
 
         //Alors on copie le fichier vers le dossier /configs/[monModule]/
         if (!copy($sourceFile, $targetFile)) {
-            Cli::displayMsgNL('Fail', 'red', 'bold');
+            $this->displayMsgNLInCli('Fail', 'red', 'bold');
             throw new Exception(
                 'Copy fail',
                 $this::ERR_COPY_CONFIG_FAIL
             );
         }
 
-        Cli::displayMsgNL('Done', 'green', 'bold');
+        $this->displayMsgNLInCli('Done', 'green', 'bold');
     }
 
     /**
@@ -596,15 +597,15 @@ class ModuleInstall
      */
     protected function checkInstallScript()
     {
-        Cli::displayMsgNL(' > Check install specific script :');
+        $this->displayMsgNLInCli(' > Check install specific script :');
 
         //If no script to complete the install
         if (
             empty($this->sourceInstallScript)
             || $this->sourceInstallScript === false
         ) {
-            Cli::displayMsg(' >> ');
-            Cli::displayMsgNL(
+            $this->displayMsgInCli(' >> ');
+            $this->displayMsgNLInCli(
                 'No specific script declared. Pass',
                 'yellow',
                 'bold'
@@ -619,8 +620,8 @@ class ModuleInstall
             $this->sourceInstallScript = 'runInstallModule.php';
         }
         
-        Cli::displayMsg(' >> ');
-        Cli::displayMsgNL(
+        $this->displayMsgInCli(' >> ');
+        $this->displayMsgNLInCli(
             'Scripts find. Add to list to execute.',
             'yellow',
             'bold'
@@ -635,10 +636,10 @@ class ModuleInstall
      * @return void
      */
     public function runInstallScript(string $scriptName) {
-        Cli::displayMsg(' >> ');
-        Cli::displayMsgNL('Execute script '.$scriptName, 'yellow', 'bold');
+        $this->displayMsgInCli(' >> ');
+        $this->displayMsgNLInCli('Execute script '.$scriptName, 'yellow', 'bold');
         
         require_once($this->sourcePath.'/'.$scriptName);
-        Cli::displayMsgNL('');
+        $this->displayMsgNLInCli('');
     }
 }

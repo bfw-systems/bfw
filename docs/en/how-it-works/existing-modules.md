@@ -2,6 +2,10 @@
 
 ## Core
 
+### Cli
+
+*   [bulton-fr/bfw-cli](https://github.com/bulton-fr/bfw-cli)
+
 ### Database
 
 *   [bulton-fr/bfw-sql](https://github.com/bulton-fr/bfw-sql)

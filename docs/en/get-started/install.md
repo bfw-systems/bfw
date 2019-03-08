@@ -22,20 +22,17 @@ Run BFW Install
 > Create app/config/bfw directory ... Done
 > Create app/modules directory ... Done
 > Create src directory ... Done
-> Create src/view directory ... Done
 > Create web directory ... Done
 
 > Search BFW vendor directory path ... Found
 BFW path : /opt/dev/bfw/test/vendor/bulton-fr/bfw
 
-> Copy skel/cli.php file to cli.php ... Done
 > Copy skel/app/config/bfw/errors.php file to app/config/bfw/errors.php ... Done
 > Copy skel/app/config/bfw/global.php file to app/config/bfw/global.php ... Done
 > Copy skel/app/config/bfw/manifest.json file to app/config/bfw/manifest.json ... Done
 > Copy skel/app/config/bfw/memcached.php file to app/config/bfw/memcached.php ... Done
 > Copy skel/app/config/bfw/modules.php file to app/config/bfw/modules.php ... Done
 > Copy skel/app/config/bfw/monolog.php file to app/config/bfw/monolog.php ... Done
-> Copy skel/src/cli/exemple.php file to src/cli/exemple.php ... Done
 > Copy skel/web/.htaccess file to web/.htaccess ... Done
 > Copy skel/web/index.php file to web/index.php ... Done
 

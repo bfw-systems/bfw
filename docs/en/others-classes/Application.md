@@ -89,7 +89,6 @@ If the asked AppSystem not exist in the list (on property `$appSystemList`), an 
 the exception code will be the constant `\BFW\Application::ERR_CALL_UNKNOWN_PROPERTY`.
 
 By default, the dynamic methods list is :
-* `\BFW\Core\Cli getCli()`  
 * `\Composer\Autoload\ClassLoader getComposerLoader()`  
 * `\BFW\Config getConfig()`  
 * `null getConstants()`  

@@ -10,7 +10,6 @@ use \BFW\Core\AppSystems\SystemInterface;
  * Manage all BFW application
  * Load and init components, modules, ...
  * 
- * @method \BFW\Core\Cli getCli()
  * @method \Composer\Autoload\ClassLoader getComposerLoader()
  * @method \BFW\Config getConfig()
  * @method null getConstants()
@@ -61,6 +60,11 @@ class Application
      * all appSystem
      */
     protected $appSystemList = [];
+    
+    /**
+     * @var string[] $appSystemsFromMods AppSystems added from modules
+     */
+    protected $appSystemsFromMods = [];
     
     /**
      * @var array $declaredOptions All options passed to initSystems method
@@ -117,6 +121,31 @@ class Application
         return $this->appSystemList;
     }
     
+    /**
+     * Getter accessor to property appSystemsFromMods
+     * 
+     * @return string[]
+     */
+    public function getAppSystemsFromMods(): array
+    {
+        return $this->appSystemsFromMods;
+    }
+    
+    /**
+     * Getter accessor to property appSystemsFromMods
+     * 
+     * @param string $name The appSystem name
+     * @param string $className The appSystem class (with namespace)
+     * 
+     * @return \BFW\Application
+     */
+    public function addAppSystemsFromMods($name, $className): Application
+    {
+        $this->appSystemsFromMods[$name] = $className;
+        
+        return $this;
+    }
+        
     /**
      * Getter accessor to property declaredOptions
      * 
@@ -197,7 +226,6 @@ class Application
             'errors'         => $appSystemNS.'Errors',
             'memcached'      => $appSystemNS.'Memcached',
             'moduleList'     => $appSystemNS.'ModuleList',
-            'cli'            => $appSystemNS.'Cli',
             'ctrlRouterLink' => $appSystemNS.'CtrlRouterLink'
         ];
     }
@@ -216,6 +244,10 @@ class Application
         $this->runTasks        = new \BFW\RunTasks([], 'BfwApp');
         
         foreach ($appSystemList as $name => $className) {
+            if ($name === 'ctrlRouterLink') {
+                continue;
+            }
+            
             $this->initAppSystem($name, $className);
             
             if ($name === 'subjectList') {
@@ -224,6 +256,18 @@ class Application
                     'ApplicationTasks'
                 );
             }
+        }
+        
+        foreach ($this->appSystemsFromMods as $name => $className) {
+            $this->initAppSystem($name, $className);
+        }
+        
+        //Because the appSystemList can be overrided
+        if (array_key_exists('ctrlRouterLink', $appSystemList)) {
+            $this->initAppSystem(
+                'ctrlRouterLink',
+                $appSystemList['ctrlRouterLink']
+            );
         }
         
         $this->getMonolog()

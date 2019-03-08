@@ -218,7 +218,7 @@ And the expression `{time}` will be replaced by the `$time` value.
 
 ### Example
 
-I create a cli script (so into `/src/cli/`) for example.
+I create a cli script (with bfw-cli module, and into `/src/cli/`) for example.
 I add into comments the output.
 
 ```php

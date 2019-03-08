@@ -37,7 +37,6 @@ $outputCreateDirectories = "\n"
     ."> Create app/config/bfw directory ...\033[1;32m Done\033[0m\n"
     ."> Create app/modules directory ...\033[1;32m Done\033[0m\n"
     ."> Create src directory ...\033[1;32m Done\033[0m\n"
-    ."> Create src/cli directory ...\033[1;32m Done\033[0m\n"
     ."> Create web directory ...\033[1;32m Done\033[0m\n";
 
 $outputExistsDirectories = "\n"
@@ -46,7 +45,6 @@ $outputExistsDirectories = "\n"
     ."> Create app/config/bfw directory ...\033[1;33m Directory exist\033[0m\n"
     ."> Create app/modules directory ...\033[1;33m Directory exist\033[0m\n"
     ."> Create src directory ...\033[1;33m Directory exist\033[0m\n"
-    ."> Create src/cli directory ...\033[1;33m Directory exist\033[0m\n"
     ."> Create web directory ...\033[1;33m Directory exist\033[0m\n";
 
 $outputSearchPath = "\n"
@@ -54,27 +52,23 @@ $outputSearchPath = "\n"
     ."\033[0;33mBFW path : ".$bfwVendorPath."\033[0m\n";
 
 $outputCreateFiles = "\n"
-    ."> Copy skel/cli.php file to cli.php ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/app/config/bfw/errors.php file to app/config/bfw/errors.php ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/app/config/bfw/global.php file to app/config/bfw/global.php ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/app/config/bfw/manifest.json file to app/config/bfw/manifest.json ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/app/config/bfw/memcached.php file to app/config/bfw/memcached.php ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/app/config/bfw/modules.php file to app/config/bfw/modules.php ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/app/config/bfw/monolog.php file to app/config/bfw/monolog.php ...\033[1;32m Done\033[0m\n"
-    ."> Copy skel/src/cli/exemple.php file to src/cli/exemple.php ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/web/.htaccess file to web/.htaccess ...\033[1;32m Done\033[0m\n"
     ."> Copy skel/web/index.php file to web/index.php ...\033[1;32m Done\033[0m\n"
 ;
 
 $outputExistsFiles = "\n"
-    ."> Copy skel/cli.php file to cli.php ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/app/config/bfw/errors.php file to app/config/bfw/errors.php ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/app/config/bfw/global.php file to app/config/bfw/global.php ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/app/config/bfw/manifest.json file to app/config/bfw/manifest.json ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/app/config/bfw/memcached.php file to app/config/bfw/memcached.php ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/app/config/bfw/modules.php file to app/config/bfw/modules.php ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/app/config/bfw/monolog.php file to app/config/bfw/monolog.php ...\033[1;33m File exist\033[0m\n"
-    ."> Copy skel/src/cli/exemple.php file to src/cli/exemple.php ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/web/.htaccess file to web/.htaccess ...\033[1;33m File exist\033[0m\n"
     ."> Copy skel/web/index.php file to web/index.php ...\033[1;33m File exist\033[0m\n"
 ;
@@ -153,7 +147,6 @@ for ($installIndex = 0; $installIndex < 3; $installIndex++) {
     testDirectoryOrFile($installDir, 'app/modules');
 
     testDirectoryOrFile($installDir, 'src');
-    testDirectoryOrFile($installDir, 'src/cli');
 
     testDirectoryOrFile($installDir, 'web');
 
@@ -163,8 +156,6 @@ for ($installIndex = 0; $installIndex < 3; $installIndex++) {
     testDirectoryOrFile($installDir, 'app/config/bfw/memcached.php');
     testDirectoryOrFile($installDir, 'app/config/bfw/modules.php');
     testDirectoryOrFile($installDir, 'app/config/bfw/monolog.php');
-    testDirectoryOrFile($installDir, 'src/cli/exemple.php');
     testDirectoryOrFile($installDir, 'web/index.php');
     testDirectoryOrFile($installDir, 'web/.htaccess');
-    testDirectoryOrFile($installDir, 'cli.php');
 }

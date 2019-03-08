@@ -148,32 +148,4 @@ class CtrlRouterLink extends atoum
                 ])
         ;
     }
-    
-    public function testCallbackCheckRouteFound()
-    {
-        $this->assert('test Core\AppSystems\Cli::runCliFile - prepare')
-            ->if($this->constant->PHP_SAPI = 'www')
-            ->then
-        ;
-        
-        $this->assert('test Core\AppSystems\Cli::runCliFile if no route found')
-            ->if(http_response_code(200))
-            ->and($this->mock->getCtrlRouterInfos()->isFound = false)
-            ->and($this->mock->run())
-            ->then
-            
-            ->integer(http_response_code())
-                ->isEqualTo(404)
-        ;
-        
-        $this->assert('test Core\AppSystems\Cli::runCliFile if route is found')
-            ->if(http_response_code(200))
-            ->and($this->mock->getCtrlRouterInfos()->isFound = true)
-            ->and($this->mock->run())
-            ->then
-            
-            ->integer(http_response_code())
-                ->isEqualTo(200)
-        ;
-    }
 }

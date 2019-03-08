@@ -14,6 +14,20 @@ return [
     'modules' => [
         
         /**
+         * @var array cli : The module who manage cli files
+         */
+        'cli'         => [
+            /**
+             * @var string name : Module's name
+             */
+            'name'    => '',
+            /**
+             * @var boolean enabled : If the module is enable or not
+             */
+            'enabled' => false
+        ],
+        
+        /**
          * @var array db : The module who create the link with the database
          */
         'db'         => [

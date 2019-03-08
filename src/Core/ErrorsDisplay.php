@@ -32,15 +32,7 @@ class ErrorsDisplay
         $msgError = $errType.' Error : '.$errMsg.
             ' in '.$errFile.' at line '.$errLine;
         
-        //Display the message with displayMsg function
-        \BFW\Helpers\Cli::displayMsg(
-            $msgError,
-            'white',
-            'normal',
-            'red'
-        );
-        
-        echo "\n";
+        echo "\033[0;37;41m".$msgError."\033[0m\n";
         ob_flush();
         exit;
     }

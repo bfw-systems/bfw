@@ -79,9 +79,7 @@ class Application extends atoum
         $this->assert('test Application::obtainAppSystemList')
             ->array($list = $this->app->obtainParentAppSystemList())
                 ->size
-                    ->isEqualTo(13)
-            ->string($list['cli'])
-                ->isEqualTo('\BFW\Core\AppSystems\Cli')
+                    ->isEqualTo(12)
             ->string($list['composerLoader'])
                 ->isEqualTo('\BFW\Core\AppSystems\ComposerLoader')
             ->string($list['config'])
