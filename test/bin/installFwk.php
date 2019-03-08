@@ -38,9 +38,6 @@ $outputCreateDirectories = "\n"
     ."> Create app/modules directory ...\033[1;32m Done\033[0m\n"
     ."> Create src directory ...\033[1;32m Done\033[0m\n"
     ."> Create src/cli directory ...\033[1;32m Done\033[0m\n"
-    ."> Create src/controllers directory ...\033[1;32m Done\033[0m\n"
-    ."> Create src/modeles directory ...\033[1;32m Done\033[0m\n"
-    ."> Create src/view directory ...\033[1;32m Done\033[0m\n"
     ."> Create web directory ...\033[1;32m Done\033[0m\n";
 
 $outputExistsDirectories = "\n"
@@ -50,9 +47,6 @@ $outputExistsDirectories = "\n"
     ."> Create app/modules directory ...\033[1;33m Directory exist\033[0m\n"
     ."> Create src directory ...\033[1;33m Directory exist\033[0m\n"
     ."> Create src/cli directory ...\033[1;33m Directory exist\033[0m\n"
-    ."> Create src/controllers directory ...\033[1;33m Directory exist\033[0m\n"
-    ."> Create src/modeles directory ...\033[1;33m Directory exist\033[0m\n"
-    ."> Create src/view directory ...\033[1;33m Directory exist\033[0m\n"
     ."> Create web directory ...\033[1;33m Directory exist\033[0m\n";
 
 $outputSearchPath = "\n"
@@ -160,9 +154,6 @@ for ($installIndex = 0; $installIndex < 3; $installIndex++) {
 
     testDirectoryOrFile($installDir, 'src');
     testDirectoryOrFile($installDir, 'src/cli');
-    testDirectoryOrFile($installDir, 'src/controllers');
-    testDirectoryOrFile($installDir, 'src/modeles');
-    testDirectoryOrFile($installDir, 'src/view');
 
     testDirectoryOrFile($installDir, 'web');
 

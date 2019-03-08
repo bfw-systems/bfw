@@ -17,8 +17,6 @@ class ComposerLoader extends AbstractSystem
         $this->loader = require(
             $this->obtainVendorDir().'autoload.php'
         );
-        
-        $this->addComposerNamespaces();
     }
     
     /**
@@ -52,17 +50,5 @@ class ComposerLoader extends AbstractSystem
             ->getOptions()
             ->getValue('vendorDir')
         ;
-    }
-
-    /**
-     * Add namespaces used by a BFW Application to composer
-     * 
-     * @return void
-     */
-    protected function addComposerNamespaces()
-    {
-        $this->loader->addPsr4('Controller\\', CTRL_DIR);
-        $this->loader->addPsr4('Modules\\', MODULES_DIR);
-        $this->loader->addPsr4('Modeles\\', MODELES_DIR);
     }
 }

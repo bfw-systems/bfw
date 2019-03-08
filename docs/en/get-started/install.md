@@ -22,9 +22,6 @@ Run BFW Install
 > Create app/config/bfw directory ... Done
 > Create app/modules directory ... Done
 > Create src directory ... Done
-> Create src/cli directory ... Done
-> Create src/controllers directory ... Done
-> Create src/modeles directory ... Done
 > Create src/view directory ... Done
 > Create web directory ... Done
 

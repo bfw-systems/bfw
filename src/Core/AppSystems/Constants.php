@@ -19,9 +19,6 @@ class Constants extends AbstractSystem
         \BFW\Helpers\Constants::create('MODULES_DIR', APP_DIR.'modules/');
 
         \BFW\Helpers\Constants::create('CLI_DIR', SRC_DIR.'cli/');
-        \BFW\Helpers\Constants::create('CTRL_DIR', SRC_DIR.'controllers/');
-        \BFW\Helpers\Constants::create('MODELES_DIR', SRC_DIR.'modeles/');
-        \BFW\Helpers\Constants::create('VIEW_DIR', SRC_DIR.'view/');
     }
     
     /**

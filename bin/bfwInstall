@@ -150,9 +150,6 @@ createDirectory "app/modules"
 ## src Directories
 createDirectory "src"
 createDirectory "src/cli"
-createDirectory "src/controllers"
-createDirectory "src/modeles"
-createDirectory "src/view"
 
 ## web Directory
 createDirectory "web"

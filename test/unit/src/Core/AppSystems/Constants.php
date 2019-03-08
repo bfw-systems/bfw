@@ -73,15 +73,6 @@ class Constants extends atoum
             
             ->boolean(defined('CLI_DIR'))->isTrue()
             ->string(CLI_DIR)->isEqualTo($rootDir.'src/cli/')
-            
-            ->boolean(defined('CTRL_DIR'))->isTrue()
-            ->string(CTRL_DIR)->isEqualTo($rootDir.'src/controllers/')
-            
-            ->boolean(defined('MODELES_DIR'))->isTrue()
-            ->string(MODELES_DIR)->isEqualTo($rootDir.'src/modeles/')
-            
-            ->boolean(defined('VIEW_DIR'))->isTrue()
-            ->string(VIEW_DIR)->isEqualTo($rootDir.'src/view/')
         ;
     }
     
