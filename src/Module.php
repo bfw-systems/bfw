@@ -24,6 +24,12 @@ class Module
      * execute is not found.
      */
     const ERR_RUNNER_FILE_NOT_FOUND = 1104003;
+    
+    /**
+     * @const ERR_METHOD_NOT_EXIST Exception code if the use call an unexisting
+     * method.
+     */
+    const ERR_METHOD_NOT_EXIST = 1104004;
 
     /**
      * @var string $name Module's name
@@ -63,6 +69,32 @@ class Module
             public $load = false;
             public $run  = false;
         };
+    }
+    
+    /**
+     * PHP Magic method, called when we call an unexisting method
+     * This method allow the module to add dynamic method on fly (issue #88)
+     * 
+     * @param string $name The method name
+     * @param array $arguments The argument passed to the method
+     * 
+     * @return mixed
+     */
+    public function __call(string $name, array $arguments)
+    {
+        if (
+            property_exists($this, $name) === true &&
+            is_callable($this->$name) === true
+        ) {
+            //Temp var because $this->$name(...$arguments) create ininite loop
+            $fct = $this->$name;
+            return $fct(...$arguments);
+        }
+        
+        throw new Exception(
+            'The method '.$name.' not exist in module class for '.$this->name,
+            self::ERR_METHOD_NOT_EXIST
+        );
     }
     
     /**

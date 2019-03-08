@@ -72,6 +72,32 @@ class Module extends atoum
         ;
     }
     
+    public function testCall()
+    {
+        $this->assert('test Module::__call - prepare')
+            ->given($module = new \BFW\Module('atoum'))
+        ;
+        
+        $this->assert('test Module::__call if the method not exist')
+            ->exception(function() use ($module) {
+                $module->test();
+            })
+                ->hasCode(\BFW\Module::ERR_METHOD_NOT_EXIST)
+        ;
+        
+        $this->assert('test Module::__call if the method exist')
+            ->given($args = [])
+            ->if($module->test = function($test) use (&$args) {
+                $args[] = $test;
+                return 'atoum';
+            })
+            ->string($module->test('unit'))
+                ->isEqualTo('atoum')
+            ->array($args)
+                ->isEqualTo(['unit'])
+        ;
+    }
+    
     public function testLoadModule()
     {
         $this->assert('test Module::loadModule')
