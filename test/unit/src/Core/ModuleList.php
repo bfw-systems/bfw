@@ -49,6 +49,21 @@ class ModuleList extends atoum
                 ->isInstanceOf('\BFW\Module')
         ;
     }
+
+    public function testHasModule()
+    {
+        $this->assert('test Core\Modules::hasModule with not existing module')
+            ->boolean($this->mock->hasModule('atoum'))
+                ->isFalse()
+        ;
+        
+        $this->assert('test Core\Modules::hasModule with an existing module')
+            ->if($this->mock->addModule('atoum'))
+            ->then
+            ->boolean($this->mock->hasModule('atoum'))
+                ->isTrue()
+        ;
+    }
     
     public function testAddModule()
     {

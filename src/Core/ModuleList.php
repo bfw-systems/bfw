@@ -65,6 +65,18 @@ class ModuleList
     }
 
     /**
+     * Check if a module exist in the list
+     *
+     * @param string $moduleName The module's name
+     *
+     * @return boolean
+     */
+    public function hasModule(string $moduleName)
+    {
+        return array_key_exists($moduleName, $this->modules);
+    }
+
+    /**
      * Get the \BFW\Module instance for a module
      * 
      * @param string $moduleName The module's name
@@ -75,7 +87,7 @@ class ModuleList
      */
     public function getModuleByName(string $moduleName): \BFW\Module
     {
-        if (!isset($this->modules[$moduleName])) {
+        if ($this->hasModule($moduleName) === false) {
             throw new Exception(
                 'The Module '.$moduleName.' has not been found.',
                 $this::ERR_NOT_FOUND
