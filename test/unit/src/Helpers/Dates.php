@@ -280,6 +280,16 @@ class Dates extends atoum
     
     protected function prepareHumanReadable()
     {
+        //For yesterday tests, we do a -25h, so we need to no be between
+        //minigth and 1am
+        //and for tomorrow, not between 11pm and minight
+        $currentHour = (int) $this->mock->getHour();
+        if ($currentHour < 1) {
+            $this->mock->modify('+1 hour');
+        } elseif ($currentHour >= 23) {
+            $this->mock->modify('-1 hour');
+        }
+        
         $this
             ->and($this->calling($this->mock)->humanDateNow = function($parsedTxt) {
                 $parsedTxt->date = 'dateNow';
