@@ -2,10 +2,12 @@
 
 namespace BFW\Install;
 
+use bultonFr\Utils\Files\ReadDirectory;
+
 /**
  * Class use to detect modules in a directory and sub-directories
  */
-class ReadDirLoadModule extends \BFW\Helpers\ReadDirectory
+class ReadDirLoadModule extends ReadDirectory
 {
     /**
      * {@inheritdoc}

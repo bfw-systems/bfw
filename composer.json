@@ -24,7 +24,8 @@
     "require": {
         "php": "^7.0.0",
         "bulton-fr/dependency-tree": "@stable",
-        "monolog/monolog": "~1.0"
+        "monolog/monolog": "~1.0",
+        "bulton-fr/utils": "~1.0"
     },
     "require-dev": {
         "atoum/atoum": "~3.1",
