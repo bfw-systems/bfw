@@ -1,2 +1,6 @@
 vendor
 composer.lock
+test/unit/report/coverage/*
+!test/unit/report/coverage/.gitkeep
+test/unit/report/treemap/*
+!test/unit/report/treemap/.gitkeep
