@@ -3,12 +3,9 @@ language: php
 
 # list any PHP version you want to test against
 php:
-  # using major version aliases
-
-  # aliased to a recent 7.1.x version
   - 7.1
-  # aliased to a recent 7.2.x version
   - 7.2
+  - 7.3
 
 services:
   - memcached
