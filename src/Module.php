@@ -123,7 +123,7 @@ class Module
      * 
      * @return \stdClass
      */
-    public static function installInfos(string $sourceFiles): \stdClass
+    public static function installInfo(string $sourceFiles): \stdClass
     {
         $currentClass = get_called_class(); //Allow extends
         return $currentClass::readJsonFile(

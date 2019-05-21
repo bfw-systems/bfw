@@ -17,6 +17,9 @@ class Constants extends AbstractSystem
 
         \BFW\Helpers\Constants::create('CONFIG_DIR', APP_DIR.'config/');
         \BFW\Helpers\Constants::create('MODULES_DIR', APP_DIR.'modules/');
+        
+        \BFW\Helpers\Constants::create('MODULES_AVAILABLE_DIR', MODULES_DIR.'available/');
+        \BFW\Helpers\Constants::create('MODULES_ENABLED_DIR', MODULES_DIR.'enabled/');
     }
     
     /**

@@ -50,8 +50,8 @@ class Application extends atoum
                 ->isEqualTo('\BFW\Core\AppSystems\Constants')
             ->string($list['memcached'])
                 ->isEqualTo('\BFW\Core\AppSystems\Memcached')
-            ->string($list['moduleInstall'])
-                ->isEqualTo('\BFW\Install\Core\AppSystems\ModuleInstall')
+            ->string($list['moduleManager'])
+                ->isEqualTo('\BFW\Install\Core\AppSystems\ModuleManager')
             ->string($list['moduleList'])
                 ->isEqualTo('\BFW\Install\Core\AppSystems\ModuleList')
             ->string($list['monolog'])
@@ -76,7 +76,7 @@ class Application extends atoum
                 ->call('run')
                     ->once()
                 ->call('sendNotify')
-                    ->withArguments('bfw_modules_install_done')
+                    ->withArguments('bfw_install_done')
                         ->once()
             ->then
             
@@ -91,7 +91,7 @@ class Application extends atoum
             ->string($records[2]['message'])
                 ->isEqualTo('running framework install')
             ->string($records[6]['context']['action'])
-                ->isEqualTo('bfw_modules_install_done')
+                ->isEqualTo('bfw_install_done')
         ;
         
         /*
@@ -100,8 +100,8 @@ class Application extends atoum
          * [2018-08-25 21:18:54] bfw.DEBUG: running framework install [] []
          * [2018-08-25 21:18:54] bfw.DEBUG: Subject notify event {"action":"ApplicationTasks_start_run_tasks"} []
          * [2018-08-25 21:18:54] bfw.DEBUG: Subject notify event {"action":"ApplicationTasks_end_run_tasks"} []
-         * [2018-08-25 21:18:54] bfw.DEBUG: RunTask notify {"prefix":"ApplicationTasks","action":"bfw_modules_install_done"} []
-         * [2018-08-25 21:18:54] bfw.DEBUG: Subject notify event {"action":"bfw_modules_install_done"} []
+         * [2018-08-25 21:18:54] bfw.DEBUG: RunTask notify {"prefix":"ApplicationTasks","action":"bfw_install_done"} []
+         * [2018-08-25 21:18:54] bfw.DEBUG: Subject notify event {"action":"bfw_install_done"} []
          */
     }
 }

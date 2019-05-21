@@ -95,7 +95,7 @@ and after that, kept on the property `$loadInfos`.
 
 __`\stdClass public static installInfos(string $sourceFiles)`__
 
-Obtain data declared on the file `bfwModuleInfos.json` and parse them
+Obtain data declared on the file `bfwModulesInfos.json` and parse them
 with the function [json_decode](http://php.net/manual/en/function.json-decode.php)
 before returning them.
 

@@ -17,36 +17,21 @@ Only call methods `loadAllModules` before update the run status.
 
 All run methods are not called. **So no module is executed when the system install other modules.**
 
-## ModuleInstall
-
+## ModuleManager
 
 ### Property
 
-__`protected \BFW\Install\ModuleInstall[] $listToInstall;`__
+__`protected \BFW\Install\ModuleManager $manager;`__
 
-List of all modules to install.
+Instance of the module manager which run action for modules.
 
 ### Methods
 
-__`self public __invoke()`__<br>
-__`\BFW\Install\ModuleInstall[] public getListToInstall()`__
+__`\BFW\Install\ModuleManager public __invoke()`__  
+__`\BFW\Install\ModuleManager public getManager()`__
 
-Return the value of the property `$listToInstall`.
-
-__`self public addToList(\BFW\Install\ModuleInstall $module)`__
-
-Add a new module in the list on the property `$listToInstall`.
+Return the value of the property `$manager`.
 
 __`void public run()`__
 
-Call the method `installAllModules` to run the complementary install of all modules in the list and update the run status.
-
-`void protected installAllModules()`
-
-Obtain the dependency tree of all modules and read it.
-If the module read is also in the list on the property `$listToInstall`, so call the method `installModule` for him.
-
-`void protected installModule(string $moduleName)`
-
-Call the method `runInstallScript` from `\BFW\Install\ModuleInstall` for the module `$moduleName`
-to execute the personalised install script for this module.
+Call the method `doAction` on `$manager` to run the action asked from binaries files. If no action has been asked, nothing will be done.

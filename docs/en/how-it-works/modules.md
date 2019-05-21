@@ -6,9 +6,38 @@ It's a set of code that can be used to instantiate library or integrate business
 
 All the code executed by a module has its own scope (the `\BFW\Module` class instance associates to this module).
 
-## Installation
+## Add a module to the application
 
-For that, please refer to the page [Add a module](../get-started/add-a-module.md).
+Like seeing in the page [Add a module](../get-started/add-a-module.md), there are some commands for that.
+
+All command presented here have a help if you use `-h` or `--help` options. Please refer to it.  
+You can do an action for all modules or only for once if you want.  
+If you have an issue with the application or vendor path which is not detected, please use options `-b` or `-V` (refer to help for detail).
+
+### Add it
+
+If it's an external module, you can use the command `./vendor/bin/bfwAddMod` (see page [Add a module](../get-started/add-a-module.md) for more details).  
+Config directory and files will be copied (if not already exists) at this time.
+
+If it's an internal module, just add it into the directory `/app/modules/available`.
+
+### Enable it
+
+A module into the `available` directory is not loaded by the framework, you need to have it into the directory `enabled` for that.
+
+Please use the command `./vendor/bin/bfwEnMod` for that.
+
+### Disable it
+
+This will delete the module from the `enabled` directory. So it will not be loaded by the framework.
+
+Please use the command `./vendor/bin/bfwDisMod` for that.
+
+### Delete it
+
+This will delete the module from the `available` directory. This will also delete config directory and files dedicated to this module.
+
+Please use the command `./vendor/bin/bfwDelMod` for that.
 
 ## Access to a module
 
@@ -26,20 +55,11 @@ Package operations: 1 install, 0 updates, 0 removals
   - Installing bulton-fr/bfw-hello-world (1.0.1) Downloading: 100%         
 Writing lock file
 Generating autoload files
-$ ./vendor/bin/bfwInstallModules 
-Run BFW Modules Install
-bfw-hello-world : Run install.
- > Create symbolic link ... Done
- > Copy config files : 
- >> Create config directory for this module ... Done
- >> Copy manifest.json ... Done
- >> Copy hello-world.json ... Done
- > Check install specific script :
- >> No specific script declared. Pass
-Read all modules to run install script...
- > Read for module bfw-hello-world
- >> No script to run.
-All modules have been read.
+$ ./vendor/bin/bfwAddMod -- bfw-hello-world
+> Add module bfw-hello-world ... Done
+> Execute install script for bfw-hello-world ... No script, pass.
+$ ./vendor/bin/bfwEnMod -- bfw-hello-world
+> Enable module bfw-hello-world ... Done
 ```
 
 Now, if I want to access to the module bfw-hello-world, I need to get the instance of `\BFW\Module` associate to this module.

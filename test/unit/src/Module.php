@@ -111,13 +111,13 @@ class Module extends atoum
         ;
     }
     
-    public function testInstallInfos()
+    public function testInstallInfo()
     {
-        $this->assert('test Module::installInfos')
+        $this->assert('test Module::installInfo')
             ->given($mock = $this->mock)
         /* Can't mock static method :'(
-            ->given($moduleInfos = new \stdClass)
-            ->if($this->calling($this->mock)->loadJsonFile = $moduleInfos)
+            ->given($moduleInfo = new \stdClass)
+            ->if($this->calling($this->mock)->loadJsonFile = $moduleInfo)
         */
             ->given($this->mockLoadJsonFile(
                 ROOT_DIR.'vendor/unknown/mymodule/bfwModulesInfos.json',
@@ -131,7 +131,7 @@ class Module extends atoum
                 }'
             ))
             ->then
-            ->object($mock::installInfos(ROOT_DIR.'vendor/unknown/mymodule'))
+            ->object($mock::installInfo(ROOT_DIR.'vendor/unknown/mymodule'))
                 ->isEqualTo((object) [
                     'srcPath'       => 'src/',
                     'configPath'    => 'config/',

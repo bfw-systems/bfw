@@ -22,26 +22,25 @@ Writing lock file
 Generating autoload files
 ```
 
-Install it
+Install it :
+The installation creates a symbolic link between the source into vendor (`/vendor/bulton-fr/bfw-hello-world`) to the module installed path (`/app/modules/available/bfw-hello-world`).
 
 ```
-$ ./vendor/bin/bfwInstallModules 
-Run BFW Modules Install
-bfw-hello-world : Run install.
- > Create symbolic link ... Done
- > Copy config files : 
- >> Create config directory for this module ... Done
- >> Copy manifest.json ... Done
- >> Copy hello-world.json ... Done
- > Check install specific script :
- >> No specific script declared. Pass
-Read all modules to run install script...
- > Read for module bfw-hello-world
- >> No script to run.
-All modules have been read.
+$ ./vendor/bin/bfwAddMod -- bfw-hello-world
+> Add module bfw-hello-world ... Done
+> Execute install script for bfw-hello-world ... No script, pass.
 ```
 
-It's done, the module is installed and will by automatically loaded by the framework.
+Enable it
+The enabling create a symbolic link between the directory into available (`/app/modules/available/bfw-hello-world`) to the module enabled path (`/app/modules/enabled/bfw-hello-world`).
+
+```
+$ ./vendor/bin/bfwEnMod -- bfw-hello-world
+> Enable module bfw-hello-world ... Done
+```
+
+It's done, the module is installed and enabled, so it will by automatically loaded by the framework.  
+If the module is only installed but not enabled, it will not by loaded by the framework.
 
 If some things should be done after install (like filling config files), this will be written into module doc.
 
@@ -49,5 +48,6 @@ If some things should be done after install (like filling config files), this wi
 
 I will not explain here, there is a dedicated page [create a module](../how-it-works/create-module.md) for that : 
 
-To summarise the idea, create a directory into `app/modules` with your module name.
-Next create the file `module.json` into it. This file will say to the framework how to load your module.
+To summarise the idea, create a directory into `app/modules/available` with your module name.
+Next create the file `module.json` into it. This file will say to the framework how to load your module.  
+And enable the module with the command `./vendor/bin/bfwEnMod` (like an external module).

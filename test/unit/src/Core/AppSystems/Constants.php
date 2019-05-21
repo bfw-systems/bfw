@@ -70,6 +70,12 @@ class Constants extends atoum
             
             ->boolean(defined('MODULES_DIR'))->isTrue()
             ->string(MODULES_DIR)->isEqualTo($rootDir.'app/modules/')
+            
+            ->boolean(defined('MODULES_AVAILABLE_DIR'))->isTrue()
+            ->string(MODULES_AVAILABLE_DIR)->isEqualTo($rootDir.'app/modules/available/')
+            
+            ->boolean(defined('MODULES_ENABLED_DIR'))->isTrue()
+            ->string(MODULES_ENABLED_DIR)->isEqualTo($rootDir.'app/modules/enabled/')
         ;
     }
     

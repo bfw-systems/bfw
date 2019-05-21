@@ -29,7 +29,8 @@
     },
     "require-dev": {
         "atoum/atoum": "~3.1",
-        "atoum/visibility-extension": "~1.3"
+        "atoum/visibility-extension": "~1.3",
+        "pulse00/monolog-parser": "0.0.3"
     },
     "suggest": {
         "ext-memcached": "To save datas into your memory and be faster to access it",
@@ -47,12 +48,16 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "BFW\\Test\\Bin\\": "test/bin",
             "BFW\\Test\\Mock\\": "test/unit/mocks/src",
             "BFW\\Test\\Helpers\\": "test/unit/helpers"
         }
     },
     "bin": [
         "bin/bfwInstall",
-        "bin/bfwInstallModules"
+        "bin/bfwAddMod",
+        "bin/bfwDelMod",
+        "bin/bfwDisMod",
+        "bin/bfwEnMod"
     ]
 }

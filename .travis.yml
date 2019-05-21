@@ -26,13 +26,13 @@ before_script:
   # Ensure the memcache extension is available
   - composer show --platform ext-memcached
   - chmod +x ./test/bin/installFwk.php
-  - chmod +x ./test/bin/installModule.php
+  - chmod +x ./test/bin/moduleManager.php
 
 script:
   - ./vendor/bin/atoum -c .atoum.php -d test/unit/src +verbose
 #  - ./vendor/bin/atoum -c .atoum.php -d test/unit/src -utr
   - php ./test/bin/installFwk.php
-  - php ./test/bin/installModule.php
+  - php ./test/bin/moduleManager.php
 
 after_script:
  ## Scrutinizer

@@ -69,7 +69,7 @@ class ModuleList extends AbstractSystem
      */
     protected function loadAllModules()
     {
-        $listModules = array_diff(scandir(MODULES_DIR), ['.', '..']);
+        $listModules = array_diff(scandir(MODULES_ENABLED_DIR), ['.', '..']);
 
         foreach ($listModules as $moduleName) {
             $modulePath = realpath(MODULES_DIR.$moduleName); //Symlink

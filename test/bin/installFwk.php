@@ -36,6 +36,8 @@ $outputCreateDirectories = "\n"
     ."> Create app/config directory ...\033[1;32m Done\033[0m\n"
     ."> Create app/config/bfw directory ...\033[1;32m Done\033[0m\n"
     ."> Create app/modules directory ...\033[1;32m Done\033[0m\n"
+    ."> Create app/modules/available directory ...\033[1;32m Done\033[0m\n"
+    ."> Create app/modules/enabled directory ...\033[1;32m Done\033[0m\n"
     ."> Create src directory ...\033[1;32m Done\033[0m\n"
     ."> Create web directory ...\033[1;32m Done\033[0m\n";
 
@@ -44,6 +46,8 @@ $outputExistsDirectories = "\n"
     ."> Create app/config directory ...\033[1;33m Directory exist\033[0m\n"
     ."> Create app/config/bfw directory ...\033[1;33m Directory exist\033[0m\n"
     ."> Create app/modules directory ...\033[1;33m Directory exist\033[0m\n"
+    ."> Create app/modules/available directory ...\033[1;33m Directory exist\033[0m\n"
+    ."> Create app/modules/enabled directory ...\033[1;33m Directory exist\033[0m\n"
     ."> Create src directory ...\033[1;33m Directory exist\033[0m\n"
     ."> Create web directory ...\033[1;33m Directory exist\033[0m\n";
 
@@ -107,7 +111,6 @@ $expectedOutput = [
 ];
 
 for ($installIndex = 0; $installIndex < 3; $installIndex++) {
-    
     if ($installIndex === 0) {
         echo "\033[0;33mCheck first install\033[0m\n";
     } elseif ($installIndex === 1) {
@@ -129,7 +132,7 @@ for ($installIndex = 0; $installIndex < 3; $installIndex++) {
     
     echo "\n";
     //echo `cd $installDir && ls -al *`;
-    
+
     echo 'Test output returned by script : ';
     if ($installOutput !== $expectedOutput[$installIndex]) {
         echo "\033[1;31m[Fail]\033[0m\n";
@@ -145,6 +148,8 @@ for ($installIndex = 0; $installIndex < 3; $installIndex++) {
     testDirectoryOrFile($installDir, 'app/config');
     testDirectoryOrFile($installDir, 'app/config/bfw');
     testDirectoryOrFile($installDir, 'app/modules');
+    testDirectoryOrFile($installDir, 'app/modules/available');
+    testDirectoryOrFile($installDir, 'app/modules/enabled');
 
     testDirectoryOrFile($installDir, 'src');
 

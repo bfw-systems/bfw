@@ -17,7 +17,7 @@ The new subsystems list is :
 * `\BFW\Core\AppSystems\Monolog`
 * `\BFW\Core\AppSystems\Memcached`
 * `\BFW\Install\Core\AppSystems\ModuleList`
-* `\BFW\Install\Core\AppSystems\ModuleInstall`
+* `\BFW\Install\Core\AppSystems\ModuleManager`
 
 __`void public run()`__
 
@@ -25,4 +25,4 @@ To change the Monolog message and the ending event name.
 
 Changes are :
 * Monolog message : `running framework install` instead of `running framework`
-* Ending event name : `bfw_modules_install_done` instead of `bfw_run_done`
+* Ending event name : `bfw_install_done` instead of `bfw_run_done`

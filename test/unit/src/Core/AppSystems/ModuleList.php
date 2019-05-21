@@ -162,7 +162,11 @@ class ModuleList extends atoum
                 ->isNull()
             ->array($this->mock->getModuleList()->getLoadTree())
                 ->size
-                    ->isEqualTo(0);
+                    ->isEqualTo(0)
+            ->function('scandir')
+                ->wasCalledWithArguments(MODULES_ENABLED_DIR)
+                    ->once()
+        ;
     }
     
     /**
@@ -183,6 +187,9 @@ class ModuleList extends atoum
                     ->isGreaterThan(0)
             ->object($this->mock->getModuleList()->getModuleByName('test1'))
                 //Not an exception because unknown module :)
+            ->function('scandir')
+            ->wasCalledWithArguments(MODULES_ENABLED_DIR)
+                ->once()
         ;
     }
     
@@ -202,7 +209,11 @@ class ModuleList extends atoum
                 ->isNull()
             ->array($this->mock->getModuleList()->getLoadTree())
                 ->size
-                    ->isEqualTo(0);
+                    ->isEqualTo(0)
+            ->function('scandir')
+                ->wasCalledWithArguments(MODULES_ENABLED_DIR)
+                    ->once()
+        ;
     }
     
     public function testRunAllCoreModules()

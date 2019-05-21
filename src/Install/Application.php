@@ -5,7 +5,7 @@ namespace BFW\Install;
 /**
  * Application class for install module script
  * 
- * @method \BFW\Install\Core\AppSystems\ModuleInstall getModuleInstall()
+ * @method \BFW\Install\Core\AppSystems\ModuleManager getModuleManager()
  */
 class Application extends \BFW\Application
 {
@@ -31,7 +31,7 @@ class Application extends \BFW\Application
         $appSystemList['moduleList'] = $appSystemNS.'ModuleList';
         
         //Add new system : module installation system
-        $appSystemList['moduleInstall'] = $appSystemNS.'ModuleInstall';
+        $appSystemList['moduleManager'] = $appSystemNS.'ModuleManager';
         
         return $appSystemList;
     }
@@ -47,6 +47,6 @@ class Application extends \BFW\Application
         ;
         
         $this->runTasks->run();
-        $this->runTasks->sendNotify('bfw_modules_install_done');
+        $this->runTasks->sendNotify('bfw_install_done');
     }
 }

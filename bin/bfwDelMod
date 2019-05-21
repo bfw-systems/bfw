@@ -1,0 +1,22 @@
+#!/bin/bash
+# BFW module manager - delete module script
+#
+# version : 3.0.0
+# author : bulton-fr <bulton.fr@gmail.com>
+
+commandName="$( basename $0 )"
+commandDesc='Delete a module from /app/modules/available'
+hasReinstall=false
+action='delete'
+
+# Determine path to src/privateBinaries
+# Thanks to https://stackoverflow.com/a/246128
+currentDir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+currentFile="$currentDir/$( basename $0 )"
+
+if [ -L $currentFile ]; then
+    currentFile="$( readlink -f "$currentFile")"
+    currentDir=$( cd -P "$( dirname "${currentFile}" )" && pwd )
+fi
+
+source "$currentDir/../src/PrivateBinaries/moduleManagerCmd.bash"

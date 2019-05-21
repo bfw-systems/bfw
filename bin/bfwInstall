@@ -146,6 +146,8 @@ createDirectory "app"
 createDirectory "app/config"
 createDirectory "app/config/bfw"
 createDirectory "app/modules"
+createDirectory "app/modules/available"
+createDirectory "app/modules/enabled"
 
 ## src Directories
 createDirectory "src"
