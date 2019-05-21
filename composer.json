@@ -6,7 +6,7 @@
         "framework",
         "php"
     ],
-    "homepage": "https://github.com/bulton-fr/bfw",
+    "homepage": "https://github.com/bfw-systems/bfw",
     "time": "2016-05-29",
     "license": "LGPL-3.0",
     "authors": [
@@ -18,8 +18,8 @@
     ],
     "support": {
         "email": "support@bulton.fr",
-        "issues": "https://github.com/bulton-fr/bfw/issues",
-        "source": "https://github.com/bulton-fr/bfw"
+        "issues": "https://github.com/bfw-systems/bfw/issues",
+        "source": "https://github.com/bfw-systems/bfw"
     },
     "require": {
         "php": "^7.0.0",
