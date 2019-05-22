@@ -43,8 +43,8 @@ class EnableOne extends AbstractModuleManagerTests
         BasicMsg::displayMsg('> Check bfw logs : ', 'yellow');
 
         $this->logRecords = $this->obtainMonologRecords($this->logFilePath);
-        if (count($this->logRecords) !== 2) {
-            BasicMsg::displayMsgNL('Fail : Number of line not equal to 2', 'red', 'bold');
+        if (count($this->logRecords) !== 3) {
+            BasicMsg::displayMsgNL('Fail : Number of line not equal to 3', 'red', 'bold');
             return false;
         }
 
@@ -62,6 +62,12 @@ class EnableOne extends AbstractModuleManagerTests
             $this->checkLogLineContextKeys($lineNb, ['linkTarget', 'linkFile']);
             $this->checkLogLineContextKeyContain($lineNb, 'linkTarget', '/test/install/app/modules/available/bfw-test-install/src/');
             $this->checkLogLineContextKeyContain($lineNb, 'linkFile', '/test/install/app/modules/enabled/bfw-test-install');
+
+            //Line 3 [2019-05-22 22:33:19] bfw.DEBUG: FileManager - Create symlink - Use relative path {"target":"../available/bfw-test-install/src/"} []
+            $lineNb++;
+            $this->checkLogLineMsg($lineNb, 'FileManager - Create symlink - Use relative path');
+            $this->checkLogLineContextKeys($lineNb, ['target']);
+            $this->checkLogLineContextKeyContain($lineNb, 'target', '../available/bfw-test-install/src/');
         } catch (Exception $e) {
             BasicMsg::displayMsgNL('Fail : '.$e->getMessage(), 'red', 'bold');
             return false;

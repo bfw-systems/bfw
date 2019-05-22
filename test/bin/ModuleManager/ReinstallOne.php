@@ -47,8 +47,8 @@ class ReinstallOne extends AbstractModuleManagerTests
         BasicMsg::displayMsg('> Check bfw logs : ', 'yellow');
 
         $this->logRecords = $this->obtainMonologRecords($this->logFilePath);
-        if (count($this->logRecords) !== 11) {
-            BasicMsg::displayMsgNL('Fail : Number of line not equal to 11', 'red', 'bold');
+        if (count($this->logRecords) !== 12) {
+            BasicMsg::displayMsgNL('Fail : Number of line not equal to 12', 'red', 'bold');
             return false;
         }
 
@@ -93,7 +93,13 @@ class ReinstallOne extends AbstractModuleManagerTests
             $this->checkLogLineContextKeyContain($lineNb, 'linkTarget', '/test/install/vendor//bulton-fr/bfw-test-install');
             $this->checkLogLineContextKeyContain($lineNb, 'linkFile', '/test/install/app/modules/available/bfw-test-install');
 
-            //Line 6 [2019-05-17 09:00:49] bfw.DEBUG: Module - Copy config files {"name":"bfw-test-install","configPath":"/opt/Projects/bfw/bfw/test/install/app/config/bfw-test-install","sourceConfigPath":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install/config/","configFiles":["test-install.json"]} []
+            //Line 6 [2019-05-22 22:26:23] bfw.DEBUG: FileManager - Create symlink - Use relative path {"target":"../../../vendor//bulton-fr/bfw-test-install"} []
+            $lineNb++;
+            $this->checkLogLineMsg($lineNb, 'FileManager - Create symlink - Use relative path');
+            $this->checkLogLineContextKeys($lineNb, ['target']);
+            $this->checkLogLineContextKeyContain($lineNb, 'target', '../../../vendor//bulton-fr/bfw-test-install');
+
+            //Line 7 [2019-05-17 09:00:49] bfw.DEBUG: Module - Copy config files {"name":"bfw-test-install","configPath":"/opt/Projects/bfw/bfw/test/install/app/config/bfw-test-install","sourceConfigPath":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install/config/","configFiles":["test-install.json"]} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'Module - Copy config files');
             $this->checkLogLineContextKeys($lineNb, ['name', 'configPath', 'sourceConfigPath', 'configFiles']);
@@ -102,27 +108,27 @@ class ReinstallOne extends AbstractModuleManagerTests
             $this->checkLogLineContextKeyContain($lineNb, 'sourceConfigPath', '/test/install/app/modules/available/bfw-test-install/config/');
             $this->checkLogLineContextKeyEqual($lineNb, 'configFiles', ["test-install.json"]);
 
-            //Line 7 [2019-05-17 09:00:49] bfw.DEBUG: FileManager - Create directory {"path":"/opt/Projects/bfw/bfw/test/install/app/config/bfw-test-install"} []
+            //Line 8 [2019-05-17 09:00:49] bfw.DEBUG: FileManager - Create directory {"path":"/opt/Projects/bfw/bfw/test/install/app/config/bfw-test-install"} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'FileManager - Create directory');
             $this->checkLogLineContextKeys($lineNb, ['path']);
             $this->checkLogLineContextKeyContain($lineNb, 'path', '/test/install/app/config/bfw-test-install');
 
-            //Line 8 [2019-05-17 09:00:49] bfw.DEBUG: FileManager - Copy file {"source":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install/config/manifest.json","target":"/opt/Projects/bfw/bfw/test/install/app/config/bfw-test-install/manifest.json"} []
+            //Line 9 [2019-05-17 09:00:49] bfw.DEBUG: FileManager - Copy file {"source":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install/config/manifest.json","target":"/opt/Projects/bfw/bfw/test/install/app/config/bfw-test-install/manifest.json"} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'FileManager - Copy file');
             $this->checkLogLineContextKeys($lineNb, ['source', 'target']);
             $this->checkLogLineContextKeyContain($lineNb, 'source', '/test/install/app/modules/available/bfw-test-install/config/manifest.json');
             $this->checkLogLineContextKeyContain($lineNb, 'target', '/test/install/app/config/bfw-test-install/manifest.json');
 
-            //Line 9 [2019-05-17 09:00:49] bfw.DEBUG: FileManager - Copy file {"source":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install/config/test-install.json","target":"/opt/Projects/bfw/bfw/test/install/app/config/bfw-test-install/test-install.json"} []
+            //Line 10 [2019-05-17 09:00:49] bfw.DEBUG: FileManager - Copy file {"source":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install/config/test-install.json","target":"/opt/Projects/bfw/bfw/test/install/app/config/bfw-test-install/test-install.json"} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'FileManager - Copy file');
             $this->checkLogLineContextKeys($lineNb, ['source', 'target']);
             $this->checkLogLineContextKeyContain($lineNb, 'source', '/test/install/app/modules/available/bfw-test-install/config/test-install.json');
             $this->checkLogLineContextKeyContain($lineNb, 'target', '/test/install/app/config/bfw-test-install/test-install.json');
 
-            //Line 10 [2019-05-17 09:00:49] bfw.DEBUG: Module - Run install script {"name":"bfw-test-install","installScript":"install.php"} []
+            //Line 11 [2019-05-17 09:00:49] bfw.DEBUG: Module - Run install script {"name":"bfw-test-install","installScript":"install.php"} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'Module - Run install script');
             $this->checkLogLineContextKeys($lineNb, ['name', 'installScript']);
