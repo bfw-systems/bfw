@@ -50,16 +50,18 @@ class EnableOne extends AbstractModuleManagerTests
 
         try {
             //Line 0 [2019-05-17 10:03:03] bfw.DEBUG: Module - Read module info {"name":"bfw-test-install","path":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install"} []
-            $this->checkLogLineMsg(0, 'Module - Read module info');
-            $this->checkLogLineContextKeys(0, ['name', 'path']);
-            $this->checkLogLineContextKeyEqual(0, 'name', 'bfw-test-install');
-            $this->checkLogLineContextKeyContain(0, 'path', '/test/install/app/modules/available/bfw-test-install');
+            $lineNb = 0;
+            $this->checkLogLineMsg($lineNb, 'Module - Read module info');
+            $this->checkLogLineContextKeys($lineNb, ['name', 'path']);
+            $this->checkLogLineContextKeyEqual($lineNb, 'name', 'bfw-test-install');
+            $this->checkLogLineContextKeyContain($lineNb, 'path', '/test/install/app/modules/available/bfw-test-install');
 
             //Line 1 [2019-05-17 10:03:03] bfw.DEBUG: FileManager - Create symlink {"linkTarget":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install/src/","linkFile":"/opt/Projects/bfw/bfw/test/install/app/modules/enabled/bfw-test-install"} []
-            $this->checkLogLineMsg(1, 'FileManager - Create symlink');
-            $this->checkLogLineContextKeys(1, ['linkTarget', 'linkFile']);
-            $this->checkLogLineContextKeyContain(1, 'linkTarget', '/test/install/app/modules/available/bfw-test-install/src/');
-            $this->checkLogLineContextKeyContain(1, 'linkFile', '/test/install/app/modules/enabled/bfw-test-install');
+            $lineNb++;
+            $this->checkLogLineMsg($lineNb, 'FileManager - Create symlink');
+            $this->checkLogLineContextKeys($lineNb, ['linkTarget', 'linkFile']);
+            $this->checkLogLineContextKeyContain($lineNb, 'linkTarget', '/test/install/app/modules/available/bfw-test-install/src/');
+            $this->checkLogLineContextKeyContain($lineNb, 'linkFile', '/test/install/app/modules/enabled/bfw-test-install');
         } catch (Exception $e) {
             BasicMsg::displayMsgNL('Fail : '.$e->getMessage(), 'red', 'bold');
             return false;
