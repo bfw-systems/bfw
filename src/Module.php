@@ -216,7 +216,7 @@ class Module
         $currentClass = get_called_class(); //Allow extends
         
         $this->loadInfos = $currentClass::readJsonFile(
-            MODULES_DIR.$this->name
+            MODULES_ENABLED_DIR.$this->name
             .'/module.json'
         );
     }
@@ -293,7 +293,7 @@ class Module
             return '';
         }
 
-        $runnerFile = MODULES_DIR.$this->name.'/'.$runnerFile;
+        $runnerFile = MODULES_ENABLED_DIR.$this->name.'/'.$runnerFile;
         if (!file_exists($runnerFile)) {
             throw new Exception(
                 'Runner file for module '.$this->name.' not found.',

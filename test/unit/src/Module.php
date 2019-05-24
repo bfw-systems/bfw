@@ -184,7 +184,7 @@ class Module extends atoum
         $this->assert('test Module::loadInfos')
             //Can't mock directly a static method (like loadJsonFile) :'(
             ->given($this->mockLoadJsonFile(
-                MODULES_DIR.$this->mock->getName().'/module.json',
+                MODULES_ENABLED_DIR.$this->mock->getName().'/module.json',
                 '{
                     "runner": "mymodule.php",
                     "priority": 0,
@@ -279,7 +279,7 @@ class Module extends atoum
             ->if($this->function->file_exists = false)
             ->then
             ->exception(function() {
-                $this->mock->callReadJsonFile(MODULES_DIR.'atoum/module.json');
+                $this->mock->callReadJsonFile(MODULES_ENABLED_DIR.'atoum/module.json');
             })
                 ->hasCode(\BFW\Module::ERR_FILE_NOT_FOUND)
         ;
@@ -289,7 +289,7 @@ class Module extends atoum
             ->and($this->function->file_get_contents = '{"runner": "helloWorld.php",')
             ->then
             ->exception(function() {
-                $this->mock->callReadJsonFile(MODULES_DIR.'atoum/module.json');
+                $this->mock->callReadJsonFile(MODULES_ENABLED_DIR.'atoum/module.json');
             })
                 ->hasCode(\BFW\Module::ERR_JSON_PARSE)
                 ->message
@@ -305,7 +305,7 @@ class Module extends atoum
                 }'
             )
             ->then
-            ->object($this->mock->callReadJsonFile(MODULES_DIR.'atoum/module.json'))
+            ->object($this->mock->callReadJsonFile(MODULES_ENABLED_DIR.'atoum/module.json'))
                 ->isEqualTo((object) [
                     'runner'   => 'mymodule.php',
                     'priority' => 0,
@@ -386,7 +386,7 @@ class Module extends atoum
             ->given($this->mock->setLoadInfos((object) ['runner' => 'run_atoum.php']))
             ->and($this->function->file_exists = true)
             ->string($this->invoke($this->mock)->obtainRunnerFile())
-                ->isEqualTo(MODULES_DIR.$this->mock->getName().'/run_atoum.php')
+                ->isEqualTo(MODULES_ENABLED_DIR.$this->mock->getName().'/run_atoum.php')
         ;
     }
     

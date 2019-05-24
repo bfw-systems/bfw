@@ -72,7 +72,7 @@ class ModuleList extends AbstractSystem
         $listModules = array_diff(scandir(MODULES_ENABLED_DIR), ['.', '..']);
 
         foreach ($listModules as $moduleName) {
-            $modulePath = realpath(MODULES_DIR.$moduleName); //Symlink
+            $modulePath = realpath(MODULES_ENABLED_DIR.$moduleName); //Symlink
 
             if (!is_dir($modulePath)) {
                 continue;

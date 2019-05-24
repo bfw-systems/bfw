@@ -16,6 +16,10 @@ trait LogLineTesterTrait
         $startMMLog = false;
 
         foreach ($logReader as $logLine) {
+            if (empty($logLine)) {
+                continue;
+            }
+
             if ($logLine['context'] === ['action' => 'BfwApp_run_moduleManager']) {
                 $startMMLog = true;
                 continue;
