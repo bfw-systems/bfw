@@ -19,6 +19,7 @@ class ComposerLoader extends atoum
     {
         $this->mockGenerator
             ->makeVisible('obtainVendorDir')
+            ->makeVisible('addComposerNamespaces')
         ;
         
         $this->setRootDir(__DIR__.'/../../../../..');
@@ -63,6 +64,17 @@ class ComposerLoader extends atoum
             ->string($this->mock->obtainVendorDir())
                 ->isNotEmpty()
                 ->isEqualTo(realpath($this->rootDir.'/vendor').'/')
+        ;
+    }
+    
+    public function testAddComposerNamespaces()
+    {
+        $this->assert('test Core\AppSystems\ComposerLoader::addComposerNamespaces')
+            ->array($prefixes = $this->mock->getLoader()->getPrefixesPsr4())
+                ->hasKeys(['Modules\\'])
+            //All size is equal to 2 because we call initApp before
+            ->array($prefixes['Modules\\'])
+                ->size->isEqualTo(2)
         ;
     }
 }
