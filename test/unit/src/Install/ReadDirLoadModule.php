@@ -23,6 +23,7 @@ class ReadDirLoadModule extends atoum
         
         $this->mockGenerator
             ->makeVisible('itemAction')
+            ->makeVisible('dirAction')
             ->generate('BFW\Install\ReadDirLoadModule')
         ;
         
@@ -58,6 +59,46 @@ class ReadDirLoadModule extends atoum
                 ->isEqualTo([
                     0 => __DIR__
                 ])
+        ;
+    }
+
+    public function testDirAction()
+    {
+        $this->assert('test Helpers\ReadDirectory::dirAction - prepare')
+            ->given($pregMathReturn = null)
+            ->and($this->function->preg_match = function (...$args) use (&$pregMathReturn) {
+                $pregMathReturn = preg_match(...$args);
+
+                return $pregMathReturn;
+            })
+        ;
+
+        $this->assert('test Helpers\ReadDirectory::dirAction for parent returned value')
+            ->given($pregMathReturn = null)
+            ->then
+            //Take a real directory to read with very few items into it
+            ->variable($this->invoke($this->mock)->dirAction(__DIR__.'/../../helpers/Install/'))
+                ->isNull()
+            ->integer($pregMathReturn)
+                ->isEqualTo(0)
+        ;
+
+        $this->assert('test Helpers\ReadDirectory::dirAction for parent returned value')
+            ->given($pregMathReturn = null)
+            ->then
+            ->variable($this->invoke($this->mock)->dirAction('vendor/bulton-fr/bfw/test'))
+                ->isNull()
+            ->integer($pregMathReturn)
+                ->isEqualTo(1)
+        ;
+
+        $this->assert('test Helpers\ReadDirectory::dirAction for parent returned value')
+            ->given($pregMathReturn = null)
+            ->then
+            ->variable($this->invoke($this->mock)->dirAction('vendor/bulton-fr/bfw/tests'))
+                ->isNull()
+            ->integer($pregMathReturn)
+                ->isEqualTo(1)
         ;
     }
 }

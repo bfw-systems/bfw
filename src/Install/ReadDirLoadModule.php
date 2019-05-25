@@ -30,4 +30,16 @@ class ReadDirLoadModule extends ReadDirectory
 
         return '';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function dirAction(string $dirPath)
+    {
+        if (preg_match('/test(s?)$/', $dirPath) === 1) {
+            return;
+        }
+
+        return parent::dirAction($dirPath);
+    }
 }
