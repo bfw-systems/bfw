@@ -50,6 +50,14 @@ class Request
     protected $request;
 
     /**
+     * Constructor - protected to prevent direct instantiation (singleton pattern)
+     */
+    protected function __construct()
+    {
+        // Empty constructor - prevents direct instantiation
+    }
+
+    /**
      * Create singleton instance for this class
      * 
      * @return \BFW\Request
