@@ -9,6 +9,7 @@ use \BFW\Core\AppSystems\SystemInterface;
  * Application class
  * Manage all BFW application
  * Load and init components, modules, ...
+ * Implements PSR-11 Container support for dependency injection
  * 
  * @method \Composer\Autoload\ClassLoader getComposerLoader()
  * @method \BFW\Config getConfig()
@@ -75,6 +76,11 @@ class Application
      * @var \BFW\RunTasks|null All method tu exec during run
      */
     protected $runTasks;
+    
+    /**
+     * @var \BFW\Container PSR-11 Container for dependency injection
+     */
+    protected $container;
 
     /**
      * Constructor
@@ -94,6 +100,9 @@ class Application
         
         //Default charset to UTF-8. Define here add possiblity to override him
         ini_set('default_charset', 'UTF-8');
+        
+        //Initialize the PSR-11 container
+        $this->container = new Container();
     }
 
     /**
@@ -167,13 +176,55 @@ class Application
     }
     
     /**
+     * Getter accessor to property container
+     * 
+     * PSR-11 Container for dependency injection.
+     * Modules can manually register services using:
+     * $app->getContainer()->set('serviceName', $serviceInstance);
+     * 
+     * @return \BFW\Container
+     */
+    public function getContainer(): Container
+    {
+        return $this->container;
+    }
+    
+    /**
+     * PHP Magic method __get for property access
+     * Delegates to container for service resolution
+     * 
+     * @param string $name The property name
+     * 
+     * @return mixed
+     * 
+     * @throws \Exception If the property not exist.
+     */
+    public function __get(string $name)
+    {
+        // Try to get from container first
+        if ($this->container->has($name)) {
+            return $this->container->get($name);
+        }
+        
+        // Fallback to old appSystemList for backward compatibility
+        if (!array_key_exists($name, $this->appSystemList)) {
+            throw new Exception(
+                'Unknown property '.$name,
+                self::ERR_CALL_UNKNOWN_PROPERTY
+            );
+        }
+        
+        return $this->appSystemList[$name]();
+    }
+    
+    /**
      * PHP Magic method, called when we call an unexisting method
      * Only method getXXX are allowed.
      * The property should be a key (ucfirst for camelcase) of the array
      * coreSystemList.
      * Ex: getConfig() or getModuleList()
      * The value returned will be the returned value of the __invoke method
-     * into the core system class called.
+     * into the core system class called, or from the PSR-11 container.
      * 
      * @param string $name The method name
      * @param array $arguments The argument passed to the method
@@ -195,6 +246,13 @@ class Application
         }
         
         $property = lcfirst(substr($name, 3));
+        
+        // Try to get from container first
+        if ($this->container->has($property)) {
+            return $this->container->get($property);
+        }
+        
+        // Fallback to old appSystemList for backward compatibility
         if (!array_key_exists($property, $this->appSystemList)) {
             throw new Exception(
                 'Unknown property '.$property,
@@ -281,6 +339,7 @@ class Application
     /**
      * Instantiate the appSystem declared, only if they implement the interface.
      * If the system should be run, we add him to the runTasks object.
+     * Also registers the system with the PSR-11 container.
      * 
      * @param string $name The core system name
      * @param string $className The core system class name
@@ -305,7 +364,11 @@ class Application
             );
         }
         
+        // Keep in appSystemList for backward compatibility
         $this->appSystemList[$name] = $appSystem;
+        
+        // Register with PSR-11 container
+        $this->container->set($name, $appSystem);
         
         if ($appSystem->toRun() === true) {
             $this->runTasks->addToRunSteps(
