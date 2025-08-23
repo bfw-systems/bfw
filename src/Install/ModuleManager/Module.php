@@ -11,8 +11,8 @@ class Module
      * @const EXCEP_DELETE_ENABLED_MODULE Exception code if the user want
      * delete a module which is always enabled.
      */
-    const EXCEP_DELETE_ENABLED_MODULE = 1702001;
-    
+    public const EXCEP_DELETE_ENABLED_MODULE = 1702001;
+
     /**
      * The monolog logger instance
      *
@@ -26,14 +26,14 @@ class Module
      * @var \bultonFr\Utils\Files\FileManager $fileManager
      */
     protected $fileManager;
-    
+
     /**
      * The module's name
      *
      * @var string
      */
     protected $name;
-    
+
     /**
      * The path to the source of the module in the vendor directory
      * The value is set by a setter only, so is possible the value is not
@@ -44,35 +44,35 @@ class Module
      * @var string
      */
     protected $vendorPath = '';
-    
+
     /**
      * The path of the module into /app/modules/available folder
      *
      * @var string
      */
     protected $availablePath = '';
-    
+
     /**
      * The path of the module into /app/modules/enabled folder
      *
      * @var string
      */
     protected $enabledPath = '';
-    
+
     /**
      * The path of the config module into /app/config folder
      *
      * @var string
      */
     protected $configPath = '';
-    
+
     /**
      * The class which contain info abouts the module
      *
      * @var \BFW\Install\ModuleManager\ModulesInfo|null
      */
     protected $info;
-    
+
     /**
      * Constructor
      *
@@ -90,11 +90,11 @@ class Module
         ;
 
         $this->fileManager = new FileManager($this->logger);
-        
+
         $this->name          = $name;
-        $this->availablePath = MODULES_AVAILABLE_DIR.$name;
-        $this->enabledPath   = MODULES_ENABLED_DIR.$name;
-        $this->configPath    = CONFIG_DIR.$name;
+        $this->availablePath = MODULES_AVAILABLE_DIR . $name;
+        $this->enabledPath   = MODULES_ENABLED_DIR . $name;
+        $this->configPath    = CONFIG_DIR . $name;
     }
 
     /**
@@ -116,7 +116,7 @@ class Module
     {
         return $this->fileManager;
     }
-    
+
     /**
      * Get the value of name
      *
@@ -136,7 +136,7 @@ class Module
     {
         return $this->vendorPath;
     }
-    
+
     /**
      * Set the value of vendorPath
      *
@@ -190,7 +190,7 @@ class Module
     {
         return $this->info;
     }
-    
+
     /**
      * Execute the installation action
      * * Create a symlink from module in vendor into /app/modules/available
@@ -208,7 +208,7 @@ class Module
         );
         $this->copyAllConfigFiles();
     }
-    
+
     /**
      * Execute the enable action
      * * Create the symlink from module in /app/modules/available into
@@ -220,13 +220,13 @@ class Module
     {
         $this->readModuleInfo($this->availablePath);
         $srcPath = $this->info->getSrcPath();
-        
+
         $this->fileManager->createSymLink(
-            $this->availablePath.'/'.$srcPath,
+            $this->availablePath . '/' . $srcPath,
             $this->enabledPath
         );
     }
-    
+
     /**
      * Execute the disable action
      * * Remove the symlink into /app/modules/enabled
@@ -238,7 +238,7 @@ class Module
         $this->readModuleInfo($this->availablePath);
         $this->fileManager->removeSymLink($this->enabledPath);
     }
-    
+
     /**
      * Execute the delete action
      * * Remove the module's directory into /app/modules/available
@@ -249,14 +249,14 @@ class Module
     public function doDelete()
     {
         $this->readModuleInfo($this->availablePath);
-        
+
         if (file_exists($this->enabledPath)) {
             throw new Exception(
-                'Module '.$this->name.' is always enabled. Please disable it before delete',
+                'Module ' . $this->name . ' is always enabled. Please disable it before delete',
                 static::EXCEP_DELETE_ENABLED_MODULE
             );
         }
-        
+
         if (is_link($this->availablePath)) {
             $this->fileManager->removeSymLink($this->availablePath);
         } else {
@@ -265,7 +265,7 @@ class Module
 
         $this->deleteConfigFiles();
     }
-    
+
     /**
      * Instanciate the moduleInfo class.
      *
@@ -279,11 +279,11 @@ class Module
             'Module - Read module info',
             ['name' => $this->name, 'path' => $modulePath]
         );
-        
+
         $moduleInfo = \BFW\Module::installInfo($modulePath);
         $this->info = new ModuleInfo($moduleInfo);
     }
-    
+
     /**
      * Copy all module's declared config files.
      *
@@ -291,8 +291,8 @@ class Module
      */
     protected function copyAllConfigFiles()
     {
-        $sourceConfigPath = $this->availablePath.'/'.$this->info->getConfigPath();
-        
+        $sourceConfigPath = $this->availablePath . '/' . $this->info->getConfigPath();
+
         $this->logger->debug(
             'Module - Copy config files',
             [
@@ -302,25 +302,25 @@ class Module
                 'configFiles'      => $this->info->getConfigFiles()
             ]
         );
-        
+
         $configFileList = $this->info->getConfigFiles(); //Need tmp var for empty()
         if (empty($configFileList)) {
             return;
         }
-        
+
         if (file_exists($this->configPath) === false) {
             $this->fileManager->createDirectory($this->configPath);
         }
 
         $this->copyConfigFile(
-            $sourceConfigPath.'manifest.json',
-            $this->configPath.'/manifest.json'
+            $sourceConfigPath . 'manifest.json',
+            $this->configPath . '/manifest.json'
         );
 
         foreach ($configFileList as $configFilename) {
             $this->copyConfigFile(
-                $sourceConfigPath.$configFilename,
-                $this->configPath.'/'.$configFilename
+                $sourceConfigPath . $configFilename,
+                $this->configPath . '/' . $configFilename
             );
         }
     }
@@ -343,7 +343,7 @@ class Module
             }
         }
     }
-    
+
     /**
      * Delete all module's config files and the module's directory in /app/config
      *
@@ -355,14 +355,14 @@ class Module
             'Module - Delete config files',
             ['name' => $this->name, 'configPath' => $this->configPath]
         );
-        
+
         if (file_exists($this->configPath) === false) {
             return;
         }
-        
+
         $this->fileManager->removeRecursiveDirectory($this->configPath);
     }
-    
+
     /**
      * Check if the module has a installation script.
      *
@@ -375,10 +375,10 @@ class Module
         if (empty($installScript)) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     /**
      * Execute the module installation script into the scope of the method.
      *
@@ -389,7 +389,7 @@ class Module
         if ($this->hasInstallScript() === false) {
             return;
         }
-        
+
         $this->logger->debug(
             'Module - Run install script',
             [
@@ -397,7 +397,7 @@ class Module
                 'installScript' => $this->info->getInstallScript()
             ]
         );
-        
-        require_once($this->availablePath.'/'.$this->info->getInstallScript());
+
+        require_once($this->availablePath . '/' . $this->info->getInstallScript());
     }
 }

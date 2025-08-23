@@ -2,9 +2,9 @@
 
 namespace BFW\Core\AppSystems\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,32 +12,32 @@ require_once(__DIR__.'/../../../../../vendor/autoload.php');
 class Errors extends atoum
 {
     use \BFW\Test\Helpers\Application;
-    
+
     protected $mock;
-    
+
     public function beforeTestMethod($testMethod)
     {
-        $this->setRootDir(__DIR__.'/../../../../..');
+        $this->setRootDir(__DIR__ . '/../../../../..');
         $this->createApp();
         $this->initApp();
-        
+
         if ($testMethod === 'testConstructor') {
             return;
         }
-        
-        $this->mock = new \mock\BFW\Core\AppSystems\Errors;
+
+        $this->mock = new \mock\BFW\Core\AppSystems\Errors();
     }
-    
+
     public function testInit()
     {
         $this->assert('test Core\AppSystems\Errors::__construct')
-            ->given($this->mock = new \mock\BFW\Core\AppSystems\Errors)
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\Errors())
             ->then
             ->object($this->mock->getErrors())
                 ->isInstanceOf('\BFW\Core\Errors')
         ;
     }
-    
+
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\Errors::__invoke')
@@ -45,7 +45,7 @@ class Errors extends atoum
                 ->isIdenticalTo($this->mock->getErrors())
         ;
     }
-    
+
     public function testToRun()
     {
         $this->assert('test Core\AppSystems\Errors::toRun')

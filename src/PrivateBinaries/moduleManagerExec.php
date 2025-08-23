@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Manager BFW Modules
  *
@@ -19,23 +20,23 @@ $cliArgs = getopt(
     ]
 );
 
-$bfwPath = realpath(__DIR__.'/../../../../../');
+$bfwPath = realpath(__DIR__ . '/../../../../../');
 if (isset($cliArgs['bfw-path'])) {
     $bfwPath = realpath($cliArgs['bfw-path']);
 }
 
-$vendorPath = $bfwPath.'/vendor';
+$vendorPath = $bfwPath . '/vendor';
 if (isset($cliArgs['vendor-path'])) {
     $vendorPath = realpath($cliArgs['vendor-path']);
 }
 
-if (!file_exists($vendorPath.'/autoload.php')) {
+if (!file_exists($vendorPath . '/autoload.php')) {
     echo "\033[1;31mUnable to load autoload file from $vendorPath/autoload.php\033[0m\n";
     exit;
 }
 
-require_once($vendorPath.'/autoload.php');
-use \bultonFr\Utils\Cli\BasicMsg;
+require_once($vendorPath . '/autoload.php');
+use bultonFr\Utils\Cli\BasicMsg;
 
 $action = null;
 if (isset($cliArgs['action'])) {

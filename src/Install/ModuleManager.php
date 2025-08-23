@@ -144,7 +144,7 @@ class ModuleManager
             $actionClass = $this->obtainActionClass();
             $actionClass->doAction();
         } catch (Exception $e) {
-            $msg = 'Error #'.$e->getCode().' : '.$e->getMessage();
+            $msg = 'Error #' . $e->getCode() . ' : ' . $e->getMessage();
             BasicMsg::displayMsgNL($msg, 'red', 'bold');
         }
     }

@@ -2,9 +2,9 @@
 
 namespace BFW\Install\Core\AppSystems\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,9 +12,9 @@ require_once(__DIR__.'/../../../../../../vendor/autoload.php');
 class ModuleList extends atoum
 {
     use \BFW\Test\Helpers\Application;
-    
+
     protected $mock;
-    
+
     public function beforeTestMethod($testMethod)
     {
         $this->mockGenerator
@@ -23,17 +23,17 @@ class ModuleList extends atoum
             ->makeVisible('runAllAppModules')
             ->makeVisible('runModule')
         ;
-        
-        $this->mock = new \mock\BFW\Install\Core\AppSystems\ModuleList;
+
+        $this->mock = new \mock\BFW\Install\Core\AppSystems\ModuleList();
     }
-    
+
     public function testRunAndIsRun()
     {
         $this->assert('test Install\Core\AppSystems\ModuleList::isRun before run')
             ->boolean($this->mock->isRun())
                 ->isFalse()
         ;
-        
+
         $this->assert('test Install\Core\AppSystems\ModuleList::run and isRun after')
             ->and($this->calling($this->mock)->loadAllModules = null)
             ->and($this->calling($this->mock)->runAllCoreModules = null)

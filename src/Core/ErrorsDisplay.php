@@ -6,14 +6,14 @@ class ErrorsDisplay
 {
     /**
      * The default cli render in BFW
-     * 
+     *
      * @param string   $errType : Human readable error severity
      * @param string   $errMsg : Error/exception message
      * @param string   $errFile : File where the error/exception is triggered
      * @param integer  $errLine : Line where the error/exception is triggered
      * @param array    $backtrace : Error/exception backtrace
      * @param int|null $exceptionCode : Exception code
-     * 
+     *
      * @return void
      */
     public static function defaultCliErrorRender(
@@ -25,28 +25,28 @@ class ErrorsDisplay
         $exceptionCode
     ) {
         if (!empty($exceptionCode)) {
-            $errMsg = '#'.$exceptionCode.' : '.$errMsg;
+            $errMsg = '#' . $exceptionCode . ' : ' . $errMsg;
         }
-        
+
         //Create the cli message
-        $msgError = $errType.' Error : '.$errMsg.
-            ' in '.$errFile.' at line '.$errLine;
-        
-        echo "\033[0;37;41m".$msgError."\033[0m\n";
+        $msgError = $errType . ' Error : ' . $errMsg .
+            ' in ' . $errFile . ' at line ' . $errLine;
+
+        echo "\033[0;37;41m" . $msgError . "\033[0m\n";
         ob_flush();
         exit;
     }
 
     /**
      * The default error render in BFW
-     * 
+     *
      * @param string   $errType : Human readable error severity
      * @param string   $errMsg : Error/exception message
      * @param string   $errFile : File where the error/exception is triggered
      * @param integer  $errLine : Line where the error/exception is triggered
      * @param array    $backtrace : Error/exception backtrace
      * @param int|null $exceptionCode : Exception code
-     * 
+     *
      * @return void
      */
     public static function defaultErrorRender(
@@ -61,9 +61,9 @@ class ErrorsDisplay
         ob_clean();
 
         if (!empty($exceptionCode)) {
-            $errMsg = '#'.$exceptionCode.' : '.$errMsg;
+            $errMsg = '#' . $exceptionCode . ' : ' . $errMsg;
         }
-        
+
         echo '
         <!doctype html>
         <html lang="fr">
@@ -82,36 +82,36 @@ class ErrorsDisplay
             <body>
                 <div>
                     <p class="title">Niarf, an error is detected !</p>
-                    <p class="info">'.$errType.' Error : <strong>'.$errMsg.'</strong> in '.$errFile.' at line '.$errLine.'</p>
+                    <p class="info">' . $errType . ' Error : <strong>' . $errMsg . '</strong> in ' . $errFile . ' at line ' . $errLine . '</p>
                     <fieldset><pre>';
-                        foreach ($backtrace as $i => $info) {
-                            echo '#'.$i.'  '.$info['function'];
+        foreach ($backtrace as $i => $info) {
+            echo '#' . $i . '  ' . $info['function'];
 
-                            if (isset($info['args']) && count($info['args']) > 0) {
-                                echo '(';
+            if (isset($info['args']) && count($info['args']) > 0) {
+                echo '(';
 
-                                foreach ($info['args'] as $iArgs => $args) {
-                                    if ($iArgs > 0) {
-                                        echo ', ';
-                                    }
+                foreach ($info['args'] as $iArgs => $args) {
+                    if ($iArgs > 0) {
+                        echo ', ';
+                    }
 
-                                    if (is_array($args) || is_object($args)) {
-                                        echo gettype($args);
-                                    } elseif (is_null($args)) {
-                                        echo 'null';
-                                    } else {
-                                        echo htmlentities($args);
-                                    }
-                                }
+                    if (is_array($args) || is_object($args)) {
+                        echo gettype($args);
+                    } elseif (is_null($args)) {
+                        echo 'null';
+                    } else {
+                        echo htmlentities($args);
+                    }
+                }
 
-                                echo ')';
-                            }
+                echo ')';
+            }
 
-                            if (isset($info['file'], $info['line'])) {
-                                echo ' called at ['.$info['file'].' line '.$info['line'].']';
-                            }
-                            echo "\n\n";
-                        }
+            if (isset($info['file'], $info['line'])) {
+                echo ' called at [' . $info['file'] . ' line ' . $info['line'] . ']';
+            }
+            echo "\n\n";
+        }
                     echo '</pre></fieldset>
                 </div>
             <body>

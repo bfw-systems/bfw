@@ -2,9 +2,9 @@
 
 namespace BFW\Install\ModuleManager\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,13 +12,13 @@ require_once(__DIR__.'/../../../../../vendor/autoload.php');
 class Module extends atoum
 {
     use \BFW\Test\Helpers\Install\Application;
-    
+
     protected $mock;
 
     protected $fileManager;
 
     protected $info;
-    
+
     public function beforeTestMethod($testMethod)
     {
         $this->mockGenerator
@@ -29,7 +29,7 @@ class Module extends atoum
             ->generate('BFW\Install\ModuleManager\Module')
         ;
 
-        $this->setRootDir(__DIR__.'/../../../../..');
+        $this->setRootDir(__DIR__ . '/../../../../..');
         $this->createApp();
         $this->initApp();
 
@@ -50,7 +50,7 @@ class Module extends atoum
         $setFileManager($this->fileManager);
 
         if ($testMethod !== 'testGetAndSetVendorPath') {
-            $this->mock->setVendorPath($this->rootDir.'/vendor/bfw/hello-world');
+            $this->mock->setVendorPath($this->rootDir . '/vendor/bfw/hello-world');
         }
 
         if ($testMethod !== 'readModuleInfo') {
@@ -94,11 +94,11 @@ class Module extends atoum
             ->string($this->mock->getVendorPath())
                 ->isEmpty()
             ->string($this->mock->getAvailablePath())
-                ->isEqualTo(MODULES_AVAILABLE_DIR.'hello-world')
+                ->isEqualTo(MODULES_AVAILABLE_DIR . 'hello-world')
             ->string($this->mock->getEnabledPath())
-                ->isEqualTo(MODULES_ENABLED_DIR.'hello-world')
+                ->isEqualTo(MODULES_ENABLED_DIR . 'hello-world')
             ->string($this->mock->getConfigPath())
-                ->isEqualTo(CONFIG_DIR.'hello-world')
+                ->isEqualTo(CONFIG_DIR . 'hello-world')
             ->variable($this->mock->getInfo())
                 ->isNull()
         ;
@@ -159,7 +159,7 @@ class Module extends atoum
             ->mock($this->fileManager)
                 ->call('createSymLink')
                     ->withArguments(
-                        $this->mock->getAvailablePath().'/src/',
+                        $this->mock->getAvailablePath() . '/src/',
                         $this->mock->getEnabledPath()
                     )
                         ->once()
@@ -194,7 +194,7 @@ class Module extends atoum
             ->and($this->calling($this->fileManager)->removeSymLink = null)
             ->and($this->calling($this->fileManager)->removeRecursiveDirectory = null)
             ->then
-            
+
             ->if($this->function->file_exists = false)
             ->and($this->function->is_link = true)
         ;
@@ -222,7 +222,7 @@ class Module extends atoum
             ->if($this->function->file_exists = false)
             ->and($this->function->is_link = false)
             ->then
-            
+
             ->variable($this->mock->doDelete())
                 ->isNull()
             ->mock($this->mock)
@@ -241,7 +241,7 @@ class Module extends atoum
             ->if($this->function->file_exists = true)
             ->and($this->function->is_link = true)
             ->then
-            
+
             ->exception(function () {
                 $this->mock->doDelete();
             })
@@ -270,7 +270,7 @@ class Module extends atoum
                 }
             ')) //eval, like do atoum internaly with php function mocking
             ->then
-            
+
             ->variable($this->mock->readModuleInfo($this->mock->getAvailablePath()))
                 ->isNull()
             ->boolean($handler->hasDebug('Module - Read module info'))
@@ -302,14 +302,14 @@ class Module extends atoum
         $this->assert('test Install\ModuleManager\Module::copyAllConfigFiles - prepare')
             ->if($this->calling($this->mock)->copyConfigFile = null)
             ->and($this->calling($this->fileManager)->createDirectory = null)
-            ->given($srcConfigPath = $this->mock->getAvailablePath().'/'.$this->mock->getInfo()->getConfigPath())
+            ->given($srcConfigPath = $this->mock->getAvailablePath() . '/' . $this->mock->getInfo()->getConfigPath())
             ->given($handler = $this->app->getMonolog()->getLogger()->getHandlers()[0])
         ;
 
         $this->assert('test Install\ModuleManager\Module::copyAllConfigFiles - with config files')
             ->variable($this->mock->copyAllConfigFiles())
                 ->isNull()
-            
+
             ->boolean($handler->hasDebug('Module - Copy config files'))
                 ->isTrue()
             ->array($allRecords = $handler->getRecords())
@@ -323,7 +323,7 @@ class Module extends atoum
                     'sourceConfigPath' => $srcConfigPath,
                     'configFiles'      => $this->mock->getInfo()->getConfigFiles()
                 ])
-            
+
             ->mock($this->fileManager)
                 ->call('createDirectory')
                     ->withArguments($this->mock->getConfigPath())
@@ -331,18 +331,18 @@ class Module extends atoum
             ->mock($this->mock) //['myConfig.php', 'test.json']
                 ->call('copyConfigFile')
                     ->withArguments(
-                        $srcConfigPath.'manifest.json',
-                        $this->mock->getConfigPath().'/manifest.json'
+                        $srcConfigPath . 'manifest.json',
+                        $this->mock->getConfigPath() . '/manifest.json'
                     )
                         ->once()
                     ->withArguments(
-                        $srcConfigPath.'myConfig.php',
-                        $this->mock->getConfigPath().'/myConfig.php'
+                        $srcConfigPath . 'myConfig.php',
+                        $this->mock->getConfigPath() . '/myConfig.php'
                     )
                         ->once()
                     ->withArguments(
-                        $srcConfigPath.'test.json',
-                        $this->mock->getConfigPath().'/test.json'
+                        $srcConfigPath . 'test.json',
+                        $this->mock->getConfigPath() . '/test.json'
                     )
                         ->once()
         ;
@@ -354,7 +354,7 @@ class Module extends atoum
 
             ->variable($this->mock->copyAllConfigFiles())
                 ->isNull()
-            
+
             ->boolean($handler->hasDebug('Module - Copy config files'))
                 ->isTrue()
             ->array($allRecords = $handler->getRecords())
@@ -368,7 +368,7 @@ class Module extends atoum
                     'sourceConfigPath' => $srcConfigPath,
                     'configFiles'      => $this->mock->getInfo()->getConfigFiles()
                 ])
-            
+
             ->mock($this->fileManager)
                 ->call('createDirectory')
                     ->never()
@@ -434,7 +434,7 @@ class Module extends atoum
             ->then
             ->variable($this->mock->deleteConfigFiles())
                 ->isNull()
-            
+
             ->boolean($handler->hasDebug('Module - Delete config files'))
                 ->isTrue()
             ->array($allRecords = $handler->getRecords())
@@ -458,7 +458,7 @@ class Module extends atoum
             ->then
             ->variable($this->mock->deleteConfigFiles())
                 ->isNull()
-            
+
             ->boolean($handler->hasDebug('Module - Delete config files'))
                 ->isTrue()
             ->array($allRecords = $handler->getRecords())

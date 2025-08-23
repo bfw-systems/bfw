@@ -2,9 +2,9 @@
 
 namespace BFW\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,14 +12,14 @@ require_once(__DIR__.'/../../../vendor/autoload.php');
 class Request extends atoum
 {
     //use \BFW\Test\Helpers\Application;
-    
+
     protected $mock;
-    
+
     public function beforeTestMethod($testMethod)
     {
         //$this->createApp();
         //$this->initApp();
-        
+
         $this->mockGenerator
             ->makeVisible('serverValue')
             ->makeVisible('detectIp')
@@ -30,14 +30,14 @@ class Request extends atoum
             ->makeVisible('detectRequest')
             ->generate('BFW\Request')
         ;
-        
+
         if ($testMethod === 'testConstructAndGetInstance') {
             return;
         }
-        
+
         $this->mock = \mock\BFW\Request::getInstance();
     }
-    
+
     public function testConstructAndGetInstance()
     {
         $this->assert('test Constructor')
@@ -47,16 +47,16 @@ class Request extends atoum
                 ->isIdenticalTo($request)
         ;
     }
-    
+
     public function testGetServerValue()
     {
         $this->assert('test Request::getServerValue with not existing key')
-            ->exception(function() {
+            ->exception(function () {
                 \BFW\Request::getServerValue('atoum');
             })
                 ->hasCode(\BFW\Request::ERR_KEY_NOT_EXIST)
         ;
-        
+
         $this->assert('test Request::getServerValue with existing key')
             ->if($_SERVER['atoum'] = 'unitTest')
             ->then
@@ -64,7 +64,7 @@ class Request extends atoum
                 ->isEqualTo('unitTest')
         ;
     }
-    
+
     public function testServerValue()
     {
         //Atoum not allow to mock static method, so we can't mock the
@@ -74,7 +74,7 @@ class Request extends atoum
             ->string($this->mock->serverValue('atoum'))
                 ->isEmpty()
         ;
-        
+
         $this->assert('test Request::serverValue with existing key')
             ->if($_SERVER['atoum'] = 'unitTest')
             ->then
@@ -82,7 +82,7 @@ class Request extends atoum
                 ->isEqualTo('unitTest')
         ;
     }
-    
+
     public function testRunDetect()
     {
         $this->assert('test Request::runDetect')
@@ -93,7 +93,7 @@ class Request extends atoum
             ->and($this->calling($this->mock)->detectSsl = null)
             ->and($this->calling($this->mock)->detectRequest = null)
             ->then
-            
+
             ->variable($this->mock->runDetect())
                 ->isNull()
             ->mock($this->mock)
@@ -105,14 +105,14 @@ class Request extends atoum
                 ->call('detectRequest')->once()
         ;
     }
-    
+
     public function testGetAndDetectIp()
     {
         $this->assert('test Request::getIp with default value')
             ->string($this->mock->getIp())
                 ->isEmpty()
         ;
-        
+
         $this->assert('test Request::detectIp and Request::getIp')
             ->if($_SERVER['REMOTE_ADDR'] = '192.168.0.255')
             ->then
@@ -122,14 +122,14 @@ class Request extends atoum
                 ->isEqualTo('192.168.0.255')
         ;
     }
-    
+
     public function testGetAndDetectLang()
     {
         $this->assert('test Request::getLang with default value')
             ->string($this->mock->getLang())
                 ->isEmpty()
         ;
-        
+
         $this->assert('test Request::detectLang and Request::getLang for empty preference')
             ->if($_SERVER['HTTP_ACCEPT_LANGUAGE'] = '')
             ->then
@@ -138,7 +138,7 @@ class Request extends atoum
             ->string($this->mock->getLang())
                 ->isEmpty()
         ;
-        
+
         $this->assert('test Request::detectLang and Request::getLang with preference')
             ->if($_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4')
             ->then
@@ -148,14 +148,14 @@ class Request extends atoum
                 ->isEqualTo('fr')
         ;
     }
-    
+
     public function testGetAndDetectReferer()
     {
         $this->assert('test Request::getReferer with default value')
             ->string($this->mock->getReferer())
                 ->isEmpty()
         ;
-        
+
         $this->assert('test Request::detectReferer and Request::getReferer')
             ->if($_SERVER['HTTP_REFERER'] = 'https://bfw.bulton.fr')
             ->then
@@ -165,14 +165,14 @@ class Request extends atoum
                 ->isEqualTo('https://bfw.bulton.fr')
         ;
     }
-    
+
     public function testGetAndDetectMethod()
     {
         $this->assert('test Request::getMethod with default value')
             ->string($this->mock->getMethod())
                 ->isEmpty()
         ;
-        
+
         $this->assert('test Request::detectMethod and Request::getMethod')
             ->if($_SERVER['REQUEST_METHOD'] = 'GET')
             ->then
@@ -182,14 +182,14 @@ class Request extends atoum
                 ->isEqualTo('GET')
         ;
     }
-    
+
     public function testGetAndDetectSsl()
     {
         $this->assert('test Request::getSsl with default value')
             ->variable($this->mock->getSsl())
                 ->isNull()
         ;
-        
+
         $this->assert('test Request::detectSsl and Request::getSsl for no ssl')
             ->if($_SERVER['HTTPS'] = '')
             ->and($_SERVER['HTTP_X_FORWARDED_PROTO'] = '')
@@ -200,7 +200,7 @@ class Request extends atoum
             ->boolean($this->mock->getSsl())
                 ->isFalse()
         ;
-        
+
         $this->assert('test Request::detectSsl and Request::getSsl for HTTP_X_FORWARDED_SSL')
             ->if($_SERVER['HTTPS'] = '')
             ->and($_SERVER['HTTP_X_FORWARDED_PROTO'] = '')
@@ -211,7 +211,7 @@ class Request extends atoum
             ->boolean($this->mock->getSsl())
                 ->isTrue()
         ;
-        
+
         $this->assert('test Request::detectSsl and Request::getSsl for HTTP_X_FORWARDED_PROTO')
             ->if($_SERVER['HTTPS'] = '')
             ->and($_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https')
@@ -222,7 +222,7 @@ class Request extends atoum
             ->boolean($this->mock->getSsl())
                 ->isTrue()
         ;
-        
+
         $this->assert('test Request::detectSsl and Request::getSsl for HTTPS')
             ->if($_SERVER['HTTPS'] = 'on')
             ->and($_SERVER['HTTP_X_FORWARDED_PROTO'] = '')
@@ -234,14 +234,14 @@ class Request extends atoum
                 ->isTrue()
         ;
     }
-    
+
     public function testGetAndDetectRequest()
     {
         $this->assert('test Request::getRequest with default value')
             ->variable($this->mock->getRequest())
                 ->isNull()
         ;
-        
+
         $this->assert('test Request::detectRequest and Request::getRequest with empty infos')
             ->if($_SERVER['REQUEST_URI'] = '')
             ->and($_SERVER['HTTP_HOST'] = '')
@@ -263,7 +263,7 @@ class Request extends atoum
                     'fragment' => '',
                 ])
         ;
-        
+
         $this->assert('test Request::detectRequest and Request::getRequest with only default infos')
             ->if($_SERVER['REQUEST_URI'] = '')
             ->and($_SERVER['HTTP_HOST'] = 'bfw.bulton.fr')
@@ -285,7 +285,7 @@ class Request extends atoum
                     'fragment' => '',
                 ])
         ;
-        
+
         $this->assert('test Request::detectRequest and Request::getRequest with all infos')
             ->if($_SERVER['REQUEST_URI'] = 'https://bfw.bulton.fr/wiki/v3.0/fr/introduction')
             ->and($_SERVER['HTTP_HOST'] = 'www.bulton.fr')

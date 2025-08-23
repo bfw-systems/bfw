@@ -2,9 +2,9 @@
 
 namespace BFW\Core\AppSystems\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,44 +12,44 @@ require_once(__DIR__.'/../../../../../vendor/autoload.php');
 class CtrlRouterLink extends atoum
 {
     use \BFW\Test\Helpers\Application;
-    
+
     protected $mock;
-    
+
     public function beforeTestMethod($testMethod)
     {
         $this->mockGenerator
             ->makeVisible('obtainCtrlRouterLinkTasks')
             ->makeVisible('runCtrlRouterLink')
         ;
-        
-        $this->setRootDir(__DIR__.'/../../../../..');
+
+        $this->setRootDir(__DIR__ . '/../../../../..');
         $this->createApp();
-        
+
         $appSystemList = $this->app->obtainAppSystemDefaultList();
         unset($appSystemList['ctrlRouterLink']);
         $this->app->setAppSystemToInstantiate($appSystemList);
-        
+
         $this->initApp();
-        
+
         if ($testMethod === 'testConstructor') {
             return;
         }
-        
-        $this->mock = new \mock\BFW\Core\AppSystems\CtrlRouterLink;
+
+        $this->mock = new \mock\BFW\Core\AppSystems\CtrlRouterLink();
     }
-    
+
     public function testConstructor()
     {
         $this->assert('test Core\AppSystems\CtrlRouterLink::__construct')
             ->given($subjectList = \BFW\Application::getInstance()->getSubjectList())
             ->given($appTasks = $subjectList->getSubjectByName('ApplicationTasks'))
-            ->given($observer = new \BFW\Test\Helpers\ObserverArray)
+            ->given($observer = new \BFW\Test\Helpers\ObserverArray())
             ->and($appTasks->attach($observer))
             ->then
-            
-            ->given($this->mock = new \mock\BFW\Core\AppSystems\CtrlRouterLink)
+
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\CtrlRouterLink())
             ->then
-            
+
             ->object($this->mock->getCtrlRouterInfos())
                 ->string(get_class($this->mock->getCtrlRouterInfos()))
                     ->contains('class@anonymous')
@@ -65,7 +65,7 @@ class CtrlRouterLink extends atoum
                 ->isEqualTo('bfw_ctrlRouterLink_subject_added')
         ;
     }
-    
+
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\CtrlRouterLink::__invoke')
@@ -73,7 +73,7 @@ class CtrlRouterLink extends atoum
                 ->isIdenticalTo($this->mock->getCtrlRouterInfos())
         ;
     }
-    
+
     public function testToRun()
     {
         $this->assert('test Core\AppSystems\CtrlRouterLink::toRun')
@@ -81,14 +81,14 @@ class CtrlRouterLink extends atoum
                 ->isTrue()
         ;
     }
-    
+
     public function testRunAndIsRun()
     {
         $this->assert('test Core\AppSystems\CtrlRouterLink::isRun before run')
             ->boolean($this->mock->isRun())
                 ->isFalse()
         ;
-        
+
         $this->assert('test Core\AppSystems\CtrlRouterLink::run and isRun after')
             ->and($this->calling($this->mock)->runCtrlRouterLink = null)
             ->variable($this->mock->run())
@@ -100,11 +100,11 @@ class CtrlRouterLink extends atoum
                     ->once()
         ;
     }
-    
+
     public function testRunCtrlRouterLink()
     {
         $this->assert('test Core\AppSystems\CtrlRouterLink::runCtrlRouterLink')
-            ->given($observer = new \BFW\Test\Helpers\ObserverArray)
+            ->given($observer = new \BFW\Test\Helpers\ObserverArray())
             ->and(
                 \BFW\Application::getInstance()
                     ->getSubjectList()
@@ -112,21 +112,21 @@ class CtrlRouterLink extends atoum
                     ->attach($observer)
             )
             ->then
-            
+
             ->variable($this->mock->runCtrlRouterLink())
                 ->isNull()
             ->array($observer->getActionReceived())
                 ->isEmpty()
         ;
     }
-    
+
     public function testRunCtrlRouterLinkWhenNotCli()
     {
         $this->assert('test Core\AppSystems\CtrlRouterLink::runCtrlRouterLink')
             ->if($this->constant->PHP_SAPI = 'www')
             ->then
-            
-            ->given($observer = new \BFW\Test\Helpers\ObserverArray)
+
+            ->given($observer = new \BFW\Test\Helpers\ObserverArray())
             ->and(
                 \BFW\Application::getInstance()
                     ->getSubjectList()
@@ -134,7 +134,7 @@ class CtrlRouterLink extends atoum
                     ->attach($observer)
             )
             ->then
-            
+
             ->variable($this->mock->runCtrlRouterLink())
                 ->isNull()
             ->array($actions = $observer->getActionReceived())
