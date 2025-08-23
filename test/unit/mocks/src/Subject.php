@@ -22,6 +22,7 @@ class Subject extends \BFW\Subject
 
     /**
      * Setter to property notifyHeap
+     * For backward compatibility with tests
      * 
      * @param array $notifyHeap
      * 
@@ -29,7 +30,17 @@ class Subject extends \BFW\Subject
      */
     public function setNotifyHeap(array $notifyHeap): self
     {
-        $this->notifyHeap = $notifyHeap;
+        // Clear current queue and add new events
+        $currentQueue = $this->getEventDispatcher()->getEventQueue();
+        while (!empty($currentQueue)) {
+            array_shift($currentQueue);
+        }
+        
+        foreach ($notifyHeap as $item) {
+            $event = new \BFW\Events\Event($item->action, $item->context);
+            $this->getEventDispatcher()->queueEvent($event);
+        }
+        
         return $this;
     }
 
@@ -61,6 +72,7 @@ class Subject extends \BFW\Subject
     
     /**
      * Add a new item into the notifyHeap list
+     * For backward compatibility with tests
      * 
      * @param string $action
      * @param mixed $context
@@ -69,14 +81,7 @@ class Subject extends \BFW\Subject
      */
     public function addNotifyHeap(string $action, $context)
     {
-        $this->notifyHeap[] = new class($action, $context) {
-            public $action;
-            public $context;
-            
-            public function __construct($action, $context) {
-                $this->action  = $action;
-                $this->context = $context;
-            }
-        };
+        $event = new \BFW\Events\Event($action, $context);
+        $this->getEventDispatcher()->queueEvent($event);
     }
 }
