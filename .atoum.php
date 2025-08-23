@@ -10,8 +10,8 @@ More information on documentation:
 [fr] http://docs.atoum.org/fr/chapter3.html#Fichier-de-configuration
 */
 
-use \mageekguy\atoum;
-//use \mageekguy\atoum\reports;
+use \atoum\atoum;
+//use \atoum\atoum\reports;
 
 // CODE COVERAGE SETUP
 if(!file_exists('/home/travis'))

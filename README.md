@@ -1,4 +1,4 @@
-BFW : Framework PHP 7.x
+BFW : Framework PHP 8.x
 ===
 
 [![Build Status](https://travis-ci.org/bfw-systems/bfw.svg?branch=3.0)](https://travis-ci.org/bfw-systems/bfw) [![Coverage Status](https://coveralls.io/repos/bfw-systems/bfw/badge.png?branch=3.0)](https://coveralls.io/r/bfw-systems/bfw?branch=3.0) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/bfw-systems/bfw/badges/quality-score.png?b=3.0)](https://scrutinizer-ci.com/g/bfw-systems/bfw/?branch=3.0)

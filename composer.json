@@ -22,18 +22,17 @@
         "source": "https://github.com/bfw-systems/bfw"
     },
     "require": {
-        "php": "^7.0.0",
+        "php": "^8.3.0",
         "bulton-fr/dependency-tree": "@stable",
-        "monolog/monolog": "~1.0",
-        "bulton-fr/utils": "~1.0"
+        "monolog/monolog": "^2.0 || ^3.0"
     },
     "require-dev": {
-        "atoum/atoum": "~3.1",
-        "atoum/visibility-extension": "~1.3",
-        "pulse00/monolog-parser": "0.0.3"
+        "atoum/atoum": "^4.0",
+        "atoum/visibility-extension": "^2.0"
     },
     "suggest": {
         "ext-memcached": "To save datas into your memory and be faster to access it",
+        "bulton-fr/utils": "For enhanced CLI and file management utilities in installer modules",
         "bulton-fr/bfw-api": "API module for the framework",
         "bulton-fr/bfw-controller": "Controller module for the framework",
         "bulton-fr/bfw-fastroute": "Router module for the framework who use fastroute lib",
