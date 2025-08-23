@@ -112,16 +112,16 @@ How users will know that when it does a composer update ? How its config file wi
 The solution is found, and it uses a file to know current state of config file into application (the file `manifest.json`).
 The idea is when update is doing, to compare info into manifest.json file between application and repository and run update script if needed.
 
-However, the system has not been implemented yet.
-So the user will do to update config file manually for the moment.
-But I prefer to add this file now to be sure the user has the file to compare when the system will add.
-
-For the moment, there is not much info into the file.
-Maybe more info will be added later when the system will be implemented.
+The system has been implemented and works as follows:
+- When modules are updated via composer, the system compares version information between the vendor module's manifest and the application's manifest
+- If version differences are detected and auto-update is enabled, config files are automatically updated
+- Before updating, the original config file is backed up with a timestamp
+- The system respects the `autoUpdate` flag to allow users to disable automatic updates
 
 For example, the `manifest.json` file used for bfw :
 ```json
 {
+    "autoUpdate": true,
     "errors.php": {
         "version": "3.0.0",
         "scriptsPlayed": []
@@ -146,7 +146,15 @@ For example, the `manifest.json` file used for bfw :
 ```
 
 It's an object where all config file is listed.
+The `autoUpdate` property controls whether config files should be automatically updated when version changes are detected.
 For each file, the current version number and the list of update script played.
+
+### Auto-Update Behavior
+
+- When `autoUpdate` is `true`, config files will be automatically updated if version differences are detected
+- When `autoUpdate` is `false`, config files will not be updated automatically
+- Before any update, the original config file is backed up with a timestamp (e.g., `config.php.backup.2023-12-01-14-30-45`)
+- The system preserves the user's `autoUpdate` setting during updates
 
 ## How my module will work ?
 

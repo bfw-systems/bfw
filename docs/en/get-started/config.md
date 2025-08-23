@@ -7,7 +7,7 @@ They are all into the directory `app/config/bfw/`.
 Only the file `manifest.json` is not a config file and should not be modified.
 
 The `manifest.json` file is intended to be used during framework (and modules) update for automatically update configs files.
-However, this system is not implemented yet,  so you will need to continue to manually update config files.
+This system has been implemented and will automatically update config files when version changes are detected, as long as the `autoUpdate` flag is set to `true` in the manifest.
 
 All configuration has been split into many files :
 * errors.php : Used by the system who catch errors
