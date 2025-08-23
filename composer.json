@@ -25,7 +25,8 @@
         "php": "^7.0.0",
         "bulton-fr/dependency-tree": "@stable",
         "monolog/monolog": "~1.0",
-        "bulton-fr/utils": "~1.0"
+        "bulton-fr/utils": "~1.0",
+        "psr/event-dispatcher": "^1.0"
     },
     "require-dev": {
         "atoum/atoum": "~3.1",
@@ -59,5 +60,10 @@
         "bin/bfwDelMod",
         "bin/bfwDisMod",
         "bin/bfwEnMod"
-    ]
+    ],
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    }
 }
