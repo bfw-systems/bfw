@@ -80,7 +80,7 @@ class RunTasks extends Subject
      * 
      * @return $this
      */
-    public function setNotifyPrefix(string$notifyPrefix): self
+    public function setNotifyPrefix(string $notifyPrefix): self
     {
         $this->notifyPrefix = $notifyPrefix;
         return $this;
@@ -159,7 +159,14 @@ class RunTasks extends Subject
     public static function generateStepItem($context = null, $callback = null)
     {
         return new class ($context, $callback) {
+            /**
+             * @var mixed The context for the step
+             */
             public $context;
+            
+            /**
+             * @var callable|null The callback to execute
+             */
             public $callback;
             
             public function __construct($context, $callback)

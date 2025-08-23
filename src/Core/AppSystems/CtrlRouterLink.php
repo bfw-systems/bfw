@@ -18,10 +18,25 @@ class CtrlRouterLink extends AbstractSystem
     public function __construct()
     {
         //Others properties can be dynamically added by modules
-        $this->ctrlRouterInfos = new class {
-            public $isFound = false;
+        $this->ctrlRouterInfos = new #[AllowDynamicProperties] class {
+            /**
+             * @var bool Whether the route is found
+             */
+            public bool $isFound = false;
+            
+            /**
+             * @var mixed Who the route is for
+             */
             public $forWho = null;
+            
+            /**
+             * @var mixed The target of the route
+             */
             public $target = null;
+            
+            /**
+             * @var mixed Additional data for the route
+             */
             public $datas = null;
         };
         

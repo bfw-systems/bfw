@@ -22,7 +22,7 @@
         "source": "https://github.com/bfw-systems/bfw"
     },
     "require": {
-        "php": "^8.3.0",
+        "php": "^8.3.0 || ^8.4.0",
         "bulton-fr/dependency-tree": "@stable",
         "monolog/monolog": "^2.0 || ^3.0"
     },

@@ -3,6 +3,7 @@ language: php
 
 # list any PHP version you want to test against
 php:
+  - 8.4
   - 8.3
   - 8.2
   - 8.1

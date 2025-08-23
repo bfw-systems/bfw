@@ -288,8 +288,15 @@ class Dates extends DateTime
         $diff    = parent::diff($current);
         
         $parsedTxt = new class {
-            public $date = '';
-            public $time = '';
+            /**
+             * @var string The date part
+             */
+            public string $date = '';
+            
+            /**
+             * @var string The time part
+             */
+            public string $time = '';
         };
 
         if ($current == $this) {
