@@ -4,7 +4,7 @@
  */
 
 //Get path of root and vendor directories
-$rootDir   = realpath(__DIR__.'/../');
+$rootDir   = realpath(__DIR__.'/../../../');
 $vendorDir = realpath($rootDir.'/vendor');
 
 //Load composer autoloader

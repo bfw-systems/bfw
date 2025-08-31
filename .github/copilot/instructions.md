@@ -2,6 +2,8 @@
 
 **ALWAYS follow these instructions first and fallback to search or bash commands only when the information here is incomplete or found to be in error.**
 
+**Note**: This directory contains `test-app/` and `test-web/` folders that are used solely for Copilot validation and testing. These are NOT part of the actual framework structure and should be ignored by framework users.
+
 BFW (Bulton Framework) is a modular PHP 7.x framework designed for lightness, flexibility, and speed. It uses a module-based architecture with support for MVC patterns, logging via Monolog, caching via Memcached, and a robust configuration system.
 
 ## Critical Setup Requirements
@@ -26,15 +28,15 @@ composer dump-autoload
 ## Working Effectively
 
 ### Build and Run Commands
-- **Test framework functionality**: `php web/index.php` (should complete silently)
-- **Start development server**: `php -S localhost:8000 -t web web/index.php`
+- **Test framework functionality**: `php .github/copilot/test-web/index.php` (should complete silently)
+- **Start development server**: `php -S localhost:8000 -t .github/copilot/test-web .github/copilot/test-web/index.php`
 - **Test server**: `curl -I http://localhost:8000/` (expect 404 response - normal with no routes)
 
 ### Testing
 - **Test runner**: `./vendor/bin/atoum -c .atoum.php -d test/unit/src +verbose`  
 - **COMPATIBILITY WARNING**: Test runner (atoum) has compatibility issues with PHP 8.3 but framework itself works correctly
 - **Test timing**: Tests would take ~5-15 minutes if compatible - NEVER CANCEL when working
-- **Alternative validation**: Run `php web/index.php` and development server for manual testing
+- **Alternative validation**: Run `php .github/copilot/test-web/index.php` and development server for manual testing
 
 ### Module Management
 - **Add modules**: `./bin/bfwAddMod [--all] [-- moduleName]`
@@ -46,23 +48,23 @@ composer dump-autoload
 ### Development Workflow Validation
 ALWAYS validate changes by running these steps:
 1. `composer dump-autoload` - Regenerate autoloader after code changes
-2. `php web/index.php` - Verify framework loads without errors
-3. `php -S localhost:8000 -t web web/index.php` - Test development server
+2. `php .github/copilot/test-web/index.php` - Verify framework loads without errors
+3. `php -S localhost:8000 -t .github/copilot/test-web .github/copilot/test-web/index.php` - Test development server
 4. `curl -I http://localhost:8000/` - Verify server responds
 
 ## Architecture Overview
 
 ### Key Directories
 - `src/` - Framework source code (BFW namespace)
-- `app/` - Application structure (created by bfwInstall)
-  - `app/config/bfw/` - Framework configuration files
-  - `app/modules/` - Available and enabled modules
-- `web/` - Web entry point and assets
+- `.github/copilot/test-app/` - Test application structure (for Copilot validation only)
+  - `.github/copilot/test-app/config/bfw/` - Framework configuration files
+  - `.github/copilot/test-app/modules/` - Available and enabled modules (created by bfwInstall)
+- `.github/copilot/test-web/` - Test web entry point and assets (for Copilot validation only)
 - `docs/en/` - Comprehensive documentation
 - `test/` - Test suites (unit tests in test/unit/src/)
 - `skel/` - Skeleton files for new installations
 
-### Configuration Files in app/config/bfw/
+### Configuration Files in .github/copilot/test-app/config/bfw/
 - `global.php` - Global framework settings
 - `modules.php` - Core module configuration
 - `errors.php` - Error handling configuration  
@@ -85,11 +87,11 @@ ALWAYS validate changes by running these steps:
 
 ### Debugging and Logging
 - Framework uses Monolog for internal logging
-- Check `app/config/bfw/monolog.php` for handler configuration
+- Check `.github/copilot/test-app/config/bfw/monolog.php` for handler configuration
 - Default uses TestHandler (keeps messages in memory, doesn't output)
 
 ### Web Application Development
-- Entry point: `web/index.php`
+- Entry point: `.github/copilot/test-web/index.php`
 - Example development: See `docs/en/get-started/example-scripts.md`
 - Requires router and controller modules for full MVC functionality
 
@@ -127,12 +129,12 @@ After making changes, ALWAYS test these complete scenarios:
    composer install --ignore-platform-reqs --no-interaction
    ./bin/bfwInstall  
    composer dump-autoload
-   php web/index.php
+   php .github/copilot/test-web/index.php
    ```
 
 2. **Development Server Workflow**:
    ```bash
-   php -S localhost:8000 -t web web/index.php &
+   php -S localhost:8000 -t .github/copilot/test-web .github/copilot/test-web/index.php &
    curl -I http://localhost:8000/
    # Kill server with Ctrl+C
    ```
@@ -140,7 +142,7 @@ After making changes, ALWAYS test these complete scenarios:
 3. **Module Management Workflow**:
    ```bash
    ./bin/bfwAddMod --help
-   ls -la app/modules/
+   ls -la .github/copilot/test-app/modules/
    ```
 
 4. **Source Code Validation**:
