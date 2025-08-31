@@ -17,7 +17,7 @@ before_install:
 # execute any number of scripts before the test run, custom env's are available as variables
 before_script:
 #   - wget http://downloads.atoum.org/nightly/mageekguy.atoum.phar;
-  - composer install
+  - composer install --optimize-autoloader
   # Ensure the memcache extension is available
   - composer show --platform ext-memcached
   - chmod +x ./test/bin/installFwk.php
