@@ -1,0 +1,50 @@
+name: Security
+
+on:
+  push:
+    branches: [ "3.0", "main", "master" ]
+  pull_request:
+    branches: [ "3.0", "main", "master" ]
+  schedule:
+    - cron: '0 0 * * 1'  # Run every Monday
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    name: Security Audit
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        tools: composer
+        
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --ignore-platform-reqs
+      
+    - name: Security Audit
+      run: composer audit || echo "Security audit completed with warnings"
+      continue-on-error: true
+
+  dependency-check:
+    runs-on: ubuntu-latest
+    name: Dependency Check
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Run Dependency Check
+      uses: dependency-check/Dependency-Check_Action@main
+      with:
+        project: 'BFW'
+        path: '.'
+        format: 'ALL'
+        
+    - name: Upload Test results
+      uses: actions/upload-artifact@master
+      with:
+         name: Dependency-Check report
+         path: reports/

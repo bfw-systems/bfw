@@ -1,6 +1,6 @@
-[![](https://travis-ci.org/bulton-fr/bfw.svg?branch=3.0)](https://travis-ci.org/bulton-fr/bfw "Build Status")
-[![Coverage Status](https://coveralls.io/repos/github/bulton-fr/bfw/badge.svg?branch=3.0)](https://coveralls.io/github/bulton-fr/bfw?branch=3.0)
-[![](https://scrutinizer-ci.com/g/bulton-fr/bfw/badges/quality-score.png?b=3.0)](https://scrutinizer-ci.com/g/bulton-fr/bfw/?branch=3.0 "Scrutinizer Code Quality")
+[![CI](https://github.com/bfw-systems/bfw/workflows/CI/badge.svg?branch=3.0)](https://github.com/bfw-systems/bfw/actions/workflows/ci.yml "Build Status")
+[![Code Quality](https://github.com/bfw-systems/bfw/workflows/Code%20Quality/badge.svg?branch=3.0)](https://github.com/bfw-systems/bfw/actions/workflows/code-quality.yml "Code Quality")
+[![Codecov](https://codecov.io/gh/bfw-systems/bfw/branch/3.0/graph/badge.svg)](https://codecov.io/gh/bfw-systems/bfw "Code Coverage")
 [![](https://poser.pugx.org/bulton-fr/bfw/v/stable)](https://packagist.org/packages/bulton-fr/bfw "Latest Stable Version")
 [![](https://poser.pugx.org/bulton-fr/bfw/v/unstable)](https://packagist.org/packages/bulton-fr/bfw "Latest Unstable Version")
 [![](https://poser.pugx.org/bulton-fr/bfw/license)](https://packagist.org/packages/bulton-fr/bfw "License")
@@ -8,8 +8,8 @@
 
 BFW is a framework makes for web projects create with PHP.
 
-It is compatible with PHP >= 7.0
-The full list of supported version is on [travis-ci](https://travis-ci.org/bulton-fr/bfw "bfw builds on travis-ci").
+It is compatible with PHP >= 7.4
+The full list of supported version is on [GitHub Actions](https://github.com/bfw-systems/bfw/actions "bfw builds on GitHub Actions").
 
 ## Why a new framework / The origin :
 

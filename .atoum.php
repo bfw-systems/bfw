@@ -14,7 +14,7 @@ use \mageekguy\atoum;
 //use \mageekguy\atoum\reports;
 
 // CODE COVERAGE SETUP
-if(!file_exists('/home/travis'))
+if(!getenv('GITHUB_ACTIONS'))
 {
     $report = $script->addDefaultReport();
     
@@ -39,40 +39,14 @@ $script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/class/memcac
 //$script->getRunner()->addTestsFromDirectory(__DIR__.'/test/unit/src/trait');
 /**/
 
-if(file_exists('/home/travis'))
+if(getenv('GITHUB_ACTIONS'))
 {
-    $script->addDefaultReport(); //For travis debug only !
+    $script->addDefaultReport(); //For GitHub Actions debug!
     
-    // Publish code coverage report on coveralls.io
-    $sources = './src';
-    $token = 'ycIQWlEx47Xh3QzvlQ4kxh3jOHHo55m1E';
-    $coverallsReport = new atoum\reports\asynchronous\coveralls($sources, $token);
-    
-    // If you are using Travis-CI (or any other CI tool), you should customize the report
-    // https://coveralls.io/docs/api
-    // http://about.travis-ci.org/docs/user/ci-environment/#Environment-variables
-    // https://wiki.jenkins-ci.org/display/JENKINS/Building+a+software+project#Buildingasoftwareproject-JenkinsSetEnvironmentVariables
-    $defaultFinder = $coverallsReport->getBranchFinder();
-    $coverallsReport
-        ->setBranchFinder(function() use ($defaultFinder) {
-            if (($branch = getenv('TRAVIS_BRANCH')) === false)
-            {
-                $branch = $defaultFinder();
-            }
-    
-            return $branch;
-        })
-        ->setServiceName(getenv('TRAVIS') ? 'travis-ci' : null)
-        ->setServiceJobId(getenv('TRAVIS_JOB_ID') ?: null)
-        ->addDefaultWriter()
-    ;
-    
-    $runner->addReport($coverallsReport);
-    
-    //Scrutinizer coverage
-	$cloverWriter = new atoum\writers\file('clover.xml');
-	$cloverReport = new atoum\reports\asynchronous\clover();
-	$cloverReport->addWriter($cloverWriter);
+    // Generate clover coverage report for Codecov
+    $cloverWriter = new atoum\writers\file('clover.xml');
+    $cloverReport = new atoum\reports\asynchronous\clover();
+    $cloverReport->addWriter($cloverWriter);
 
-	$runner->addReport($cloverReport);
+    $runner->addReport($cloverReport);
 }
