@@ -2,12 +2,24 @@
 
 The easier is to use [Composer](https://getcomposer.org/).
 
-If you not have Composer, refers you to [the download page](https://getcomposer.org/download/) of Composer.
-Many ways to install it is suggested.
+If you do not have Composer, refer to [the download page](https://getcomposer.org/download/) of Composer.
+Many ways to install it are suggested. For the latest Composer v2, you can use the installer script.
 
 ## Get the framework
 
 Run the command `composer require bulton-fr/bfw:3.*`
+
+For production environments, you can optimize the installation with:
+```bash
+composer require bulton-fr/bfw:3.* --optimize-autoloader --no-dev
+```
+
+## Security
+
+Composer v2 includes security auditing. You can check for known vulnerabilities with:
+```bash
+composer audit
+```
 
 ## Create the structure
 

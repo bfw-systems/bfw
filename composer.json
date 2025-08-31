@@ -8,7 +8,7 @@
     ],
     "homepage": "https://github.com/bfw-systems/bfw",
     "time": "2016-05-29",
-    "license": "LGPL-3.0",
+    "license": "LGPL-3.0-only",
     "authors": [
         {
             "name": "Vermeulen Maxime / Bulton",
@@ -23,7 +23,7 @@
     },
     "require": {
         "php": "^7.0.0",
-        "bulton-fr/dependency-tree": "@stable",
+        "bulton-fr/dependency-tree": "^1.0",
         "monolog/monolog": "~1.0",
         "bulton-fr/utils": "~1.0"
     },
