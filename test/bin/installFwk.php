@@ -9,10 +9,10 @@ $composerWhereIs = `whereis composer`;
 
 if ($composerWhereIs === 'composer:'."\n") {
     echo "\033[0;33mDownload composer \033[0m";
-    `cd $installDir && curl -sS https://getcomposer.org/installer | php`;
+    `cd $installDir && curl -sS https://getcomposer.org/installer | php -- --install-dir=. --filename=composer`;
     echo "\033[1;32mOK\033[0m\n";
     
-    $composerBin = 'php composer.phar';
+    $composerBin = './composer';
 }
 
 `cd $installDir && $composerBin install -n --prefer-dist`;
