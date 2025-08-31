@@ -1,0 +1,139 @@
+name: CI
+
+on:
+  push:
+    branches: [ "3.0", "main", "master" ]
+  pull_request:
+    branches: [ "3.0", "main", "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0', '8.1', '8.2', '8.3']
+        
+    name: PHP ${{ matrix.php-version }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: memcached, mbstring, xml, ctype, json, curl
+        coverage: xdebug
+        
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict --no-check-lock
+      
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
+        restore-keys: |
+          ${{ runner.os }}-php-${{ matrix.php-version }}-
+          
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --ignore-platform-reqs
+      
+    - name: Run test suite
+      run: ./vendor/bin/atoum -c .atoum.php -d test/unit/src +verbose
+      
+    - name: Test framework installation
+      run: php ./test/bin/installFwk.php
+      
+    - name: Test module manager
+      run: php ./test/bin/moduleManager.php
+
+  code-quality:
+    runs-on: ubuntu-latest
+    name: Code Quality
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: memcached, mbstring, xml, ctype, json, curl
+        tools: phpcs, phpstan, psalm
+        
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-quality-${{ hashFiles('**/composer.json') }}
+        restore-keys: |
+          ${{ runner.os }}-php-quality-
+          
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --ignore-platform-reqs
+      
+    - name: Run PHPCS
+      run: |
+        if [ -f ./vendor/bin/phpcs ]; then
+          ./vendor/bin/phpcs --standard=phpcs.xml.dist src/ || echo "PHPCS found issues"
+        else
+          phpcs --standard=phpcs.xml.dist src/ || echo "PHPCS found issues"
+        fi
+      continue-on-error: true
+      
+    - name: Run PHPStan
+      run: |
+        if [ -f ./vendor/bin/phpstan ]; then
+          ./vendor/bin/phpstan analyse --configuration=phpstan.neon.dist || echo "PHPStan found issues"
+        else
+          phpstan analyse --configuration=phpstan.neon.dist || echo "PHPStan found issues"
+        fi
+      continue-on-error: true
+      
+    - name: Run Psalm
+      run: |
+        if [ -f ./vendor/bin/psalm ]; then
+          ./vendor/bin/psalm --config=psalm.xml.dist || echo "Psalm found issues"
+        else
+          psalm --config=psalm.xml.dist || echo "Psalm found issues"
+        fi
+      continue-on-error: true
+
+  coverage:
+    runs-on: ubuntu-latest
+    name: Code Coverage
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: memcached, mbstring, xml, ctype, json, curl
+        coverage: xdebug
+        
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-coverage-${{ hashFiles('**/composer.json') }}
+        restore-keys: |
+          ${{ runner.os }}-php-coverage-
+          
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --ignore-platform-reqs
+      
+    - name: Run tests with coverage
+      run: ./vendor/bin/atoum -c .atoum.php -d test/unit/src +verbose
+      
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./clover.xml
+        fail_ci_if_error: false

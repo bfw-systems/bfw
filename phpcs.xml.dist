@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<ruleset name="BFW Coding Standard">
+    <description>The coding standard for BFW framework</description>
+
+    <!-- Use PSR-12 as base standard -->
+    <rule ref="PSR12"/>
+
+    <!-- Show sniff codes in all reports -->
+    <arg value="s"/>
+
+    <!-- Show progress -->
+    <arg value="p"/>
+
+    <!-- Use colors -->
+    <arg name="colors"/>
+
+    <!-- Check all files in src directory -->
+    <file>src</file>
+
+    <!-- Exclude vendor directory -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    
+    <!-- Exclude test directory from main checks -->
+    <exclude-pattern>*/test/*</exclude-pattern>
+
+    <!-- Allow longer lines for complex logic -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="200"/>
+        </properties>
+    </rule>
+
+    <!-- Allow array() syntax alongside [] -->
+    <rule ref="Generic.Arrays.DisallowShortArraySyntax.Found">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Ignore missing namespace warnings for legacy files -->
+    <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
+        <exclude-pattern>*/skel/*</exclude-pattern>
+    </rule>
+</ruleset>

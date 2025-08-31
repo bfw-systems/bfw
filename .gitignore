@@ -4,3 +4,12 @@ test/unit/report/coverage/*
 !test/unit/report/coverage/.gitkeep
 test/unit/report/treemap/*
 !test/unit/report/treemap/.gitkeep
+
+# Code quality artifacts
+clover.xml
+.phpunit.result.cache
+.psalm
+.phpstan.neon
+psalm.xml
+phpcs.xml
+.php-cs-fixer.cache
