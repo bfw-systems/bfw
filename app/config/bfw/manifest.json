@@ -1,0 +1,22 @@
+{
+    "errors.php": {
+        "version": "3.0.0",
+        "scriptsPlayed": []
+    },
+    "global.php": {
+        "version": "3.0.0",
+        "scriptsPlayed": []
+    },
+    "memcached.php": {
+        "version": "3.0.0",
+        "scriptsPlayed": []
+    },
+    "modules.php": {
+        "version": "3.0.0",
+        "scriptsPlayed": []
+    },
+    "monolog.php": {
+        "version": "3.0.0",
+        "scriptsPlayed": []
+    }
+}
