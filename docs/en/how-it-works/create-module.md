@@ -205,6 +205,104 @@ So like you can see, everybody (other modules, controllers, etc) can access your
 
 For more info about how to use the `\BFW\Config` class, please refer to [dedicated page](../others-classes/Config.md).
 
+### Private configuration
+
+Starting from version 3.0, modules can also have private configuration that is not accessible to other modules.
+This is useful for storing sensitive data like API keys, passwords, or tokens.
+
+To use private configuration:
+
+1. Create a `private` subdirectory in your module's config directory: `/app/config/myModule/private/`
+2. Place your private config files in this directory (e.g., `secrets.json`, `tokens.php`)
+3. Access private config from within your module using the protected method `getPrivateConfig()`
+
+Example structure:
+```
+/app/config/myModule/
+├── public_config.json     (accessible by all modules)
+└── private/
+    ├── secrets.json       (only accessible by myModule)
+    └── tokens.php         (only accessible by myModule)
+```
+
+In your runner file:
+```php
+// Access public config (same as before)
+$publicConfig = $this->getConfig();
+$apiUrl = $publicConfig->getValue('api_url');
+
+// Access private config (new feature)
+$privateConfig = $this->getPrivateConfig();
+$apiKey = $privateConfig->getValue('api_key', 'secrets.json');
+```
+
+**Important security note**: Private config provides protection against accidental access from other modules, but it cannot prevent intentionally malicious modules from reading the files directly using functions like `file_get_contents()`. It is designed to provide reasonable isolation for most use cases.
+
+### Enhanced Security with Encrypted Private Configuration
+
+For additional security beyond method-level protection, BFW supports encrypted private configuration files. This feature provides protection against malicious modules attempting to read configuration files directly from the filesystem.
+
+**Features:**
+- **Runtime encryption/decryption**: Configuration files are encrypted at rest using AES-256-GCM
+- **Multi-source key derivation**: Encryption keys derived from module name, application secrets, and system entropy
+- **Automatic detection**: System automatically uses encrypted config when `.enc` files are present
+- **Backward compatibility**: Falls back to plain files when no encrypted files exist
+
+**Directory structure with encryption:**
+```
+/app/config/myModule/
+├── public_config.json     (accessible by all modules)
+└── private/
+    ├── secrets.json       (plain private config - optional)
+    └── secrets.enc        (encrypted private config - preferred)
+```
+
+**Creating encrypted private configuration:**
+```php
+// In your module runner
+public function setupSecrets()
+{
+    $sensitiveData = [
+        'api_key' => 'your-secret-api-key',
+        'database_password' => 'super-secret-password',
+        'oauth_client_secret' => 'oauth-secret'
+    ];
+    
+    // Save as encrypted configuration
+    $this->saveEncryptedPrivateConfig('secrets', $sensitiveData, 'json');
+}
+
+public function useSecrets()
+{
+    // Access encrypted private config (same API as before)
+    $privateConfig = $this->getPrivateConfig();
+    $apiKey = $privateConfig->getValue('api_key', 'secrets.enc');
+    
+    // Check if using encrypted config
+    if ($this->isUsingEncryptedPrivateConfig()) {
+        // Additional security measures if needed
+    }
+}
+```
+
+**Security benefits of encrypted configuration:**
+1. **Protection against file access**: Malicious modules cannot easily read encrypted files
+2. **Module-specific keys**: Each module gets a unique encryption key
+3. **No key storage**: Encryption keys are derived at runtime, not stored
+4. **Authenticated encryption**: Prevents tampering with encrypted data
+
+**Migration from plain to encrypted:**
+1. Use `saveEncryptedPrivateConfig()` to create encrypted versions of your configuration
+2. Remove plain files once encrypted versions are working
+3. System automatically detects and uses encrypted files when available
+4. No code changes needed for reading configuration
+
+**Security considerations:**
+- Provides strong protection against accidental access and basic attacks
+- Cannot prevent sophisticated attacks from modules with system-level access
+- Encryption keys are derived from accessible data, but combine multiple entropy sources
+- Performance impact is minimal due to on-demand decryption
+
 ## Some getters to module info
 
 The class `\BFW\Module` contain many methods, but only some methods can interest you.

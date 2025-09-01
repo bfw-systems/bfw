@@ -23,9 +23,13 @@ class Module extends atoum
         
         $this->mockGenerator
             ->makeVisible('loadConfig')
+            ->makeVisible('loadPrivateConfig')
             ->makeVisible('obtainLoadInfos')
             ->makeVisible('readJsonFile')
             ->makeVisible('obtainRunnerFile')
+            ->makeVisible('getPrivateConfig')
+            ->makeVisible('isUsingEncryptedPrivateConfig')
+            ->makeVisible('saveEncryptedPrivateConfig')
             ->generate('BFW\Module')
         ;
         
@@ -171,6 +175,74 @@ class Module extends atoum
             ->then
             ->object($this->mock->getConfig())
                 ->isInstanceOf('\BFW\Config')
+        ;
+    }
+    
+    public function testLoadAndGetPrivateConfig()
+    {
+        $this->assert('test Module::getPrivateConfig without load')
+            ->variable($this->invoke($this->mock)->getPrivateConfig())
+                ->isNull()
+        ;
+        
+        $this->assert('test Module::loadPrivateConfig without a private config directory')
+            ->if($this->function->file_exists = false)
+            ->and($this->invoke($this->mock)->loadPrivateConfig())
+            ->then
+            ->variable($this->invoke($this->mock)->getPrivateConfig())
+                ->isNull()
+        ;
+        
+        $this->assert('test Module::loadPrivateConfig with a private config directory')
+            ->if($this->function->file_exists = function($path) {
+                return ($path === CONFIG_DIR.'atoum/private');
+            })
+            ->and($this->function->glob = []) // No encrypted files
+            ->and($this->invoke($this->mock)->loadPrivateConfig())
+            ->then
+            ->object($this->invoke($this->mock)->getPrivateConfig())
+                ->isInstanceOf('\BFW\Config')
+            ->string($this->invoke($this->mock)->getPrivateConfig()->getConfigDirName())
+                ->isEqualTo('atoum/private')
+            ->boolean($this->invoke($this->mock)->isUsingEncryptedPrivateConfig())
+                ->isFalse()
+        ;
+    }
+    
+    public function testLoadEncryptedPrivateConfig()
+    {
+        $this->assert('test Module::loadPrivateConfig with encrypted config files')
+            ->if($this->function->file_exists = function($path) {
+                return ($path === CONFIG_DIR.'atoum/private');
+            })
+            ->and($this->function->glob = [CONFIG_DIR.'atoum/private/secrets.enc']) // Encrypted files exist
+            ->and($this->invoke($this->mock)->loadPrivateConfig())
+            ->then
+            ->object($this->invoke($this->mock)->getPrivateConfig())
+                ->isInstanceOf('\BFW\EncryptedConfig')
+            ->string($this->invoke($this->mock)->getPrivateConfig()->getConfigDirName())
+                ->isEqualTo('atoum/private')
+            ->boolean($this->invoke($this->mock)->isUsingEncryptedPrivateConfig())
+                ->isTrue()
+        ;
+    }
+    
+    public function testSaveEncryptedPrivateConfig()
+    {
+        $this->assert('test Module::saveEncryptedPrivateConfig without existing privateConfig')
+            ->given($testData = ['api_key' => 'secret123', 'token' => 'abc456'])
+            ->if($this->function->file_exists = function($path) {
+                // Simulate directory creation
+                return strpos($path, CONFIG_DIR.'atoum/private') === 0;
+            })
+            ->and($this->function->mkdir = true)
+            ->then
+            ->boolean($this->invoke($this->mock)->saveEncryptedPrivateConfig('secrets', $testData, 'json'))
+                ->isTrue()
+            ->object($this->invoke($this->mock)->getPrivateConfig())
+                ->isInstanceOf('\BFW\EncryptedConfig')
+            ->boolean($this->invoke($this->mock)->isUsingEncryptedPrivateConfig())
+                ->isTrue()
         ;
     }
     

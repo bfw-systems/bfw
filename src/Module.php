@@ -42,6 +42,16 @@ class Module
     protected $config;
 
     /**
+     * @var \BFW\Config|null $privateConfig Private config object for this module
+     */
+    protected $privateConfig;
+
+    /**
+     * @var bool $useEncryptedPrivateConfig Whether to use encrypted private config
+     */
+    protected $useEncryptedPrivateConfig = false;
+
+    /**
      * @var \stdClass|null $loadInfos All informations about how to run the module
      */
     protected $loadInfos;
@@ -152,6 +162,55 @@ class Module
     }
 
     /**
+     * Get the private Config object which have private config for this module
+     * This method is protected to prevent access from outside the module
+     * 
+     * @return \BFW\Config|null
+     */
+    protected function getPrivateConfig()
+    {
+        return $this->privateConfig;
+    }
+
+    /**
+     * Check if the module is using encrypted private configuration
+     * 
+     * @return bool True if using encrypted private config
+     */
+    protected function isUsingEncryptedPrivateConfig(): bool
+    {
+        return $this->useEncryptedPrivateConfig;
+    }
+
+    /**
+     * Save encrypted private configuration
+     * This method allows modules to securely store sensitive configuration
+     * 
+     * @param string $filename The filename (without .enc extension)
+     * @param mixed $data The configuration data to encrypt and save
+     * @param string $originalExtension The original file extension (json, php, etc.)
+     * 
+     * @return bool True on success
+     * 
+     * @throws \Exception If encryption or saving fails
+     */
+    protected function saveEncryptedPrivateConfig(string $filename, $data, string $originalExtension = 'json'): bool
+    {
+        if (!$this->privateConfig instanceof \BFW\EncryptedConfig) {
+            // Initialize encrypted config if not already done
+            $privateConfigDir = CONFIG_DIR.$this->name.'/private';
+            if (!file_exists($privateConfigDir)) {
+                mkdir($privateConfigDir, 0755, true);
+            }
+            
+            $this->privateConfig = new \BFW\EncryptedConfig($this->name.'/private', $this->name);
+            $this->useEncryptedPrivateConfig = true;
+        }
+        
+        return $this->privateConfig->saveEncryptedConfig($filename, $data, $originalExtension);
+    }
+
+    /**
      * Get the load informations
      * 
      * @return \stdClass|null
@@ -204,6 +263,38 @@ class Module
 
         $this->config = new \BFW\Config($this->name);
         $this->config->loadFiles();
+        
+        $this->loadPrivateConfig();
+    }
+
+    /**
+     * Instantiate the private Config object to obtains module's private configuration
+     * Supports both encrypted and plain private configuration
+     * 
+     * @return void
+     */
+    protected function loadPrivateConfig()
+    {
+        $privateConfigDir = CONFIG_DIR.$this->name.'/private';
+        
+        if (!file_exists($privateConfigDir)) {
+            return;
+        }
+
+        // Check if encrypted config files exist (*.enc)
+        $encryptedFiles = glob($privateConfigDir.'/*.enc');
+        
+        if (!empty($encryptedFiles)) {
+            // Use encrypted config for enhanced security
+            $this->privateConfig = new \BFW\EncryptedConfig($this->name.'/private', $this->name);
+            $this->useEncryptedPrivateConfig = true;
+        } else {
+            // Fall back to regular config for backward compatibility
+            $this->privateConfig = new \BFW\Config($this->name.'/private');
+            $this->useEncryptedPrivateConfig = false;
+        }
+        
+        $this->privateConfig->loadFiles();
     }
 
     /**
