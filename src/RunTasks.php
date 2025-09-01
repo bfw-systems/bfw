@@ -22,6 +22,8 @@ class RunTasks extends Subject
      */
     public function __construct(array $runSteps, string $notifyPrefix)
     {
+        parent::__construct();
+        
         $this->runSteps     = $runSteps;
         $this->notifyPrefix = $notifyPrefix;
     }
@@ -132,17 +134,20 @@ class RunTasks extends Subject
      */
     public function sendNotify(string $action, $context = null)
     {
-        \BFW\Application::getInstance()
-            ->getMonolog()
-            ->getLogger()
-            ->debug(
-                'RunTask notify',
-                [
-                    'prefix' => $this->notifyPrefix,
-                    'action' => $action
-                ]
-            )
-        ;
+        try {
+            \BFW\Application::getInstance()
+                ->getMonolog()
+                ->getLogger()
+                ->debug(
+                    'RunTask notify',
+                    [
+                        'prefix' => $this->notifyPrefix,
+                        'action' => $action
+                    ]
+                );
+        } catch (\Exception $e) {
+            // Application or monolog not available, continue without logging
+        }
         
         $this->addNotification($action, $context);
     }

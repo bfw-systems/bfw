@@ -1,7 +1,34 @@
 # Subject
 
-This class implement the interface `\SplSubject` and give to the user
-an easy way to use the [design pattern observer](https://en.wikipedia.org/wiki/Observer_pattern).
+This class implements the interface `\SplSubject` and provides an easy way to use the [design pattern observer](https://en.wikipedia.org/wiki/Observer_pattern).
+
+**Important:** Starting with BFW v3.1, the Subject class now uses the PSR-14 Event Dispatcher internally while maintaining full backward compatibility with the `SplSubject`/`SplObserver` pattern.
+
+## PSR-14 Implementation
+
+The Subject class now leverages [PSR-14 Event Dispatcher](https://www.php-fig.org/psr/psr-14/) for improved event handling:
+
+- **Event Objects**: Actions and contexts are wrapped in PSR-14 compliant event objects
+- **Event Dispatcher**: Uses `Psr\EventDispatcher\EventDispatcherInterface` for dispatching events
+- **Listener Provider**: Manages event listeners through `Psr\EventDispatcher\ListenerProviderInterface`
+- **Backward Compatibility**: All existing `SplObserver` implementations continue to work unchanged
+
+### Accessing PSR-14 Components
+
+```php
+$subject = new \BFW\Subject();
+
+// Get the PSR-14 event dispatcher
+$dispatcher = $subject->getEventDispatcher();
+
+// Get the listener provider
+$listenerProvider = $subject->getListenerProvider();
+
+// Add PSR-14 listeners directly
+$listenerProvider->addListener('my_action', function($event) {
+    echo "Event: " . $event->getAction();
+});
+```
 
 For more detail about how to use it, please refer to the page [Observers / Hooks](../how-it-works/observateurs-hooks.md).
 

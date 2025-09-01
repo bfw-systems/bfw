@@ -1,9 +1,45 @@
 # Observers / Hooks
 
-The framework integrate an observer system (also called hook) based on the [design pattern Observer](https://en.wikipedia.org/wiki/Observer_pattern)
-To use it, it's recommended to use PHP classes [SplObserver](http://php.net/manual/en/class.splobserver.php) and [SplSubject](http://php.net/manual/en/class.splsubject.php).
+The framework integrates an observer system (also called hook) based on the [design pattern Observer](https://en.wikipedia.org/wiki/Observer_pattern).
 
-## Subjects
+**Important:** Starting with BFW v3.1, the framework now uses [PSR-14 Event Dispatcher](https://www.php-fig.org/psr/psr-14/) internally while maintaining full backward compatibility with PHP classes [SplObserver](http://php.net/manual/en/class.splobserver.php) and [SplSubject](http://php.net/manual/en/class.splsubject.php).
+
+## PSR-14 Event Dispatcher
+
+The framework now leverages PSR-14 Event Dispatcher for enhanced event handling:
+
+- **Standards Compliant**: Follows PHP-FIG PSR-14 specification
+- **Improved Performance**: Better event queuing and dispatching
+- **Enhanced Features**: Stoppable events, event propagation control
+- **Backward Compatible**: All existing `SplObserver` implementations work unchanged
+
+### Using PSR-14 Events
+
+You can now use PSR-14 events directly alongside traditional observers:
+
+```php
+// Traditional SplObserver (still works)
+class MyObserver implements \SplObserver {
+    public function update(\SplSubject $subject) {
+        echo "Action: " . $subject->getAction();
+    }
+}
+
+// PSR-14 Event Listener
+$subject = new \BFW\Subject();
+$subject->getListenerProvider()->addListener('my_action', function($event) {
+    echo "PSR-14 Event: " . $event->getAction();
+    
+    // Stop event propagation if needed
+    if ($event instanceof \Psr\EventDispatcher\StoppableEventInterface) {
+        $event->stopPropagation();
+    }
+});
+```
+
+## Subjects (Legacy SplSubject Pattern)
+
+**Note:** This section describes the traditional SplSubject pattern which is still supported for backward compatibility. New code should consider using PSR-14 events directly.
 
 With the design pattern Observer, subjects are systems who sent notify to all observers attached to him.
 
