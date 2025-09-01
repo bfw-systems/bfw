@@ -42,6 +42,11 @@ class Module
     protected $config;
 
     /**
+     * @var \BFW\Config|null $privateConfig Private config object for this module
+     */
+    protected $privateConfig;
+
+    /**
      * @var \stdClass|null $loadInfos All informations about how to run the module
      */
     protected $loadInfos;
@@ -152,6 +157,17 @@ class Module
     }
 
     /**
+     * Get the private Config object which have private config for this module
+     * This method is protected to prevent access from outside the module
+     * 
+     * @return \BFW\Config|null
+     */
+    protected function getPrivateConfig()
+    {
+        return $this->privateConfig;
+    }
+
+    /**
      * Get the load informations
      * 
      * @return \stdClass|null
@@ -204,6 +220,25 @@ class Module
 
         $this->config = new \BFW\Config($this->name);
         $this->config->loadFiles();
+        
+        $this->loadPrivateConfig();
+    }
+
+    /**
+     * Instantiate the private Config object to obtains module's private configuration
+     * 
+     * @return void
+     */
+    protected function loadPrivateConfig()
+    {
+        $privateConfigDir = CONFIG_DIR.$this->name.'/private';
+        
+        if (!file_exists($privateConfigDir)) {
+            return;
+        }
+
+        $this->privateConfig = new \BFW\Config($this->name.'/private');
+        $this->privateConfig->loadFiles();
     }
 
     /**

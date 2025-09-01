@@ -205,6 +205,39 @@ So like you can see, everybody (other modules, controllers, etc) can access your
 
 For more info about how to use the `\BFW\Config` class, please refer to [dedicated page](../others-classes/Config.md).
 
+### Private configuration
+
+Starting from version 3.0, modules can also have private configuration that is not accessible to other modules.
+This is useful for storing sensitive data like API keys, passwords, or tokens.
+
+To use private configuration:
+
+1. Create a `private` subdirectory in your module's config directory: `/app/config/myModule/private/`
+2. Place your private config files in this directory (e.g., `secrets.json`, `tokens.php`)
+3. Access private config from within your module using the protected method `getPrivateConfig()`
+
+Example structure:
+```
+/app/config/myModule/
+├── public_config.json     (accessible by all modules)
+└── private/
+    ├── secrets.json       (only accessible by myModule)
+    └── tokens.php         (only accessible by myModule)
+```
+
+In your runner file:
+```php
+// Access public config (same as before)
+$publicConfig = $this->getConfig();
+$apiUrl = $publicConfig->getValue('api_url');
+
+// Access private config (new feature)
+$privateConfig = $this->getPrivateConfig();
+$apiKey = $privateConfig->getValue('api_key', 'secrets.json');
+```
+
+**Important security note**: Private config provides protection against accidental access from other modules, but it cannot prevent intentionally malicious modules from reading the files directly using functions like `file_get_contents()`. It is designed to provide reasonable isolation for most use cases.
+
 ## Some getters to module info
 
 The class `\BFW\Module` contain many methods, but only some methods can interest you.
