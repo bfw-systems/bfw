@@ -2,9 +2,9 @@
 
 namespace BFW\Core\AppSystems\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,32 +12,32 @@ require_once(__DIR__.'/../../../../../vendor/autoload.php');
 class Request extends atoum
 {
     use \BFW\Test\Helpers\Application;
-    
+
     protected $mock;
-    
+
     public function beforeTestMethod($testMethod)
     {
-        $this->setRootDir(__DIR__.'/../../../../..');
+        $this->setRootDir(__DIR__ . '/../../../../..');
         $this->createApp();
-        
+
         //Remove from the list used by initApp() because request is singleton.
         $appSystemList = $this->app->obtainAppSystemDefaultList();
         unset($appSystemList['request']);
         $this->app->setAppSystemToInstantiate($appSystemList);
-        
+
         $this->initApp();
-        
+
         if ($testMethod === 'testConstructor') {
             return;
         }
-        
-        $this->mock = new \mock\BFW\Core\AppSystems\Request;
+
+        $this->mock = new \mock\BFW\Core\AppSystems\Request();
     }
-    
+
     public function testConstructor()
     {
         $this->assert('test Core\AppSystems\Request::__construct')
-            ->given($this->mock = new \mock\BFW\Core\AppSystems\Request)
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\Request())
             ->then
             ->object($this->mock->getRequest())
                 ->isInstanceOf('\BFW\Request')
@@ -45,7 +45,7 @@ class Request extends atoum
                 ->isNotNull() //runDetect has been executed
         ;
     }
-    
+
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\Request::__invoke')
@@ -53,7 +53,7 @@ class Request extends atoum
                 ->isIdenticalTo($this->mock->getRequest())
         ;
     }
-    
+
     public function testToRun()
     {
         $this->assert('test Core\AppSystems\Request::toRun')

@@ -12,15 +12,15 @@ abstract class AbstractSystem implements SystemInterface
      * @var boolean $runStatus To know if the run method has been called
      */
     protected $runStatus = false;
-    
+
     /**
      * PHP Magic method
      * Called when the class is called like a function
-     * 
+     *
      * @return mixed
      */
     abstract public function __invoke();
-    
+
     /**
      * {@inheritdoc}
      */
@@ -28,7 +28,7 @@ abstract class AbstractSystem implements SystemInterface
     {
         return false;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -36,7 +36,7 @@ abstract class AbstractSystem implements SystemInterface
     {
         return $this->runStatus;
     }
-    
+
     /**
      * {@inheritdoc}
      * Should change runStatus to true.

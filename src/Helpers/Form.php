@@ -2,8 +2,8 @@
 
 namespace BFW\Helpers;
 
-use \DateTime;
-use \Exception;
+use DateTime;
+use Exception;
 
 /**
  * Class to manage html forms
@@ -14,42 +14,42 @@ class Form
     /**
      * @const ERR_NO_TOKEN Exception code if there is no token declared
      */
-    const ERR_NO_TOKEN = 1606001;
-    
+    public const ERR_NO_TOKEN = 1606001;
+
     /**
      * @const ERR_NO_TOKEN_FOR_FORM_ID Exception code if there is no token for
      * the form id.
      */
-    const ERR_NO_TOKEN_FOR_FORM_ID = 1606002;
-    
+    public const ERR_NO_TOKEN_FOR_FORM_ID = 1606002;
+
     /**
      * @const ERR_FORM_ID_EMPTY Exception code if the form id is not declared.
      */
-    const ERR_FORM_ID_EMPTY = 1606003;
-    
+    public const ERR_FORM_ID_EMPTY = 1606003;
+
     /**
-     * @var string $formId The form id 
+     * @var string $formId The form id
      */
     protected $formId = '';
 
     /**
      * Constructor
      * Define the form's id.
-     * 
+     *
      * @param string $formId The form's id
      */
     public function __construct(string $formId)
     {
         $this->formId = $formId;
-        
+
         if (empty($this->formId)) {
             throw new Exception('Form id is empty.', $this::ERR_FORM_ID_EMPTY);
         }
     }
-    
+
     /**
      * Getter accessor to the property formId
-     * 
+     *
      * @return string
      */
     public function getFormId(): string
@@ -59,9 +59,9 @@ class Form
 
     /**
      * Save the form's token
-     * 
+     *
      * @param object $saveInfos Infos about token (id and expire time)
-     * 
+     *
      * @return void
      */
     protected function saveToken($saveInfos)
@@ -72,11 +72,11 @@ class Form
 
     /**
      * Save a token in php session
-     * 
+     *
      * @global array $_SESSION
-     * 
+     *
      * @param object $saveInfos Infos about token (id and expire time)
-     * 
+     *
      * @return void
      */
     protected function saveTokenInSession($saveInfos)
@@ -88,7 +88,7 @@ class Form
 
     /**
      * Get the token informations
-     * 
+     *
      * @return object
      */
     protected function obtainToken()
@@ -98,11 +98,11 @@ class Form
 
     /**
      * Get a token from the session
-     * 
+     *
      * @global array $_SESSION
-     * 
+     *
      * @return object
-     * 
+     *
      * @throws \Exception If there are no token
      */
     protected function obtainTokenFromSession()
@@ -115,7 +115,7 @@ class Form
 
         if (!isset($_SESSION['formsTokens'][$this->formId])) {
             throw new Exception(
-                'no token found for the form id '.$this->formId,
+                'no token found for the form id ' . $this->formId,
                 $this::ERR_NO_TOKEN_FOR_FORM_ID
             );
         }
@@ -125,21 +125,21 @@ class Form
 
     /**
      * Create a token for the form and return the token
-     * 
+     *
      * @param int $expire (default 15) time on minute during which the
      *  token is valid
-     * 
+     *
      * @return string
-     * 
+     *
      * @throws \Exception If the form id is undefined
      */
     public function createToken(int $expire = 15): string
     {
         $token = uniqid(rand(), true);
-        
+
         $saveInfos = (object) [
             'token' => $token,
-            'date'  => new DateTime,
+            'date'  => new DateTime(),
             'expire' => $expire
         ];
 
@@ -149,11 +149,11 @@ class Form
 
     /**
      * Check the token receive with the generated token
-     * 
+     *
      * @param string $tokenToCheck The token receive from user
-     * 
+     *
      * @throws \Exception If the token not exist
-     * 
+     *
      * @return boolean
      */
     public function checkToken(string $tokenToCheck): bool
@@ -169,21 +169,21 @@ class Form
             return false;
         }
 
-        $limitDate = new DateTime;
-        $limitDate->modify('-'.$timeExpire.' minutes');
-        
+        $limitDate = new DateTime();
+        $limitDate->modify('-' . $timeExpire . ' minutes');
+
         unset($_SESSION['formsTokens'][$this->formId]);
-        
+
         if ($dateCreate < $limitDate) {
             return false;
         }
 
         return true;
     }
-    
+
     /**
      * Check if the form has a token
-     * 
+     *
      * @return boolean
      */
     public function hasToken(): bool
@@ -193,7 +193,7 @@ class Form
         } catch (Exception $e) {
             return false;
         }
-        
+
         return true;
     }
 }

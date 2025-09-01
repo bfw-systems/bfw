@@ -42,7 +42,7 @@ trait LogLineTesterTrait
     protected function checkLogLineExist($logIdx)
     {
         if (!isset($this->logRecords[$logIdx])) {
-            throw new Exception('There are no line for idx '.$logIdx);
+            throw new Exception('There are no line for idx ' . $logIdx);
         }
     }
 
@@ -53,7 +53,7 @@ trait LogLineTesterTrait
         $logMsg = $this->logRecords[$logIdx]['message'];
         if ($logMsg !== $expectedMsg) {
             throw new Exception(
-                '[LM] Msg on line idx '.$logIdx.' is not equal to expected'
+                '[LM] Msg on line idx ' . $logIdx . ' is not equal to expected'
             );
         }
     }
@@ -67,7 +67,7 @@ trait LogLineTesterTrait
         foreach ($expectedKeys as $expectedKey) {
             if (!array_key_exists($expectedKey, $context)) {
                 throw new Exception(
-                    '[LCK] Context for line idx '.$logIdx.' not contain the key '.$expectedKey
+                    '[LCK] Context for line idx ' . $logIdx . ' not contain the key ' . $expectedKey
                 );
             }
         }
@@ -80,13 +80,13 @@ trait LogLineTesterTrait
         $context = $this->logRecords[$logIdx]['context'];
         if (!isset($context[$keyName])) {
             throw new Exception(
-                '[LCKE] Context for line idx '.$logIdx.' not contain the key '.$keyName
+                '[LCKE] Context for line idx ' . $logIdx . ' not contain the key ' . $keyName
             );
         }
 
         if ($context[$keyName] !== $expectedValue) {
             throw new Exception(
-                '[LCKE] The key '.$keyName.' in context for line idx '.$logIdx.' is not equal to the expected value'
+                '[LCKE] The key ' . $keyName . ' in context for line idx ' . $logIdx . ' is not equal to the expected value'
             );
         }
     }
@@ -98,13 +98,13 @@ trait LogLineTesterTrait
         $context = $this->logRecords[$logIdx]['context'];
         if (!isset($context[$keyName])) {
             throw new Exception(
-                '[LCKC] Context for line idx '.$logIdx.' not contain the key '.$keyName
+                '[LCKC] Context for line idx ' . $logIdx . ' not contain the key ' . $keyName
             );
         }
 
         if (strpos($context[$keyName], $expectedValue) === false) {
             throw new Exception(
-                '[LCKC] The key '.$keyName.' in context for line idx '.$logIdx.' not contain the expected value'
+                '[LCKC] The key ' . $keyName . ' in context for line idx ' . $logIdx . ' not contain the expected value'
             );
         }
     }

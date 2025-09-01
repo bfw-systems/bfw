@@ -22,18 +22,18 @@ class ReinstallAll extends AbstractModuleManagerTests
     {
         BasicMsg::displayMsg('> Check command output : ', 'yellow');
 
-        $cmd       = 'cd '.$this->installDir.' && ./vendor/bin/bfwAddMod -a -r';
+        $cmd       = 'cd ' . $this->installDir . ' && ./vendor/bin/bfwAddMod -a -r';
         $cmdOutput = $this->execCmd($cmd);
 
         $expectedOutput = ""
-            ."\033[0;33m> Delete module bfw-hello-world ... \033[0m\033[0;32mDone\033[0m\n"
-            ."\033[0;33m> Delete module bfw-test-install ... \033[0m\033[0;32mDone\033[0m\n"
-            ."\033[0;33m> Add module bfw-hello-world ... \033[0m\033[0;32mDone\033[0m\n"
-            ."\033[0;33m> Add module bfw-test-install ... \033[0m\033[0;32mDone\033[0m\n"
-            ."\033[0;33m> Execute install script for bfw-hello-world ... \033[0m\033[0;33mNo script, pass.\033[0m\n"
-            ."\033[0;33m> Execute install script for bfw-test-install ... \033[0m"
-                ."  \033[1;33mCreate install_test.php file into web directory\033[0m\n"
-            ."\033[0;32mDone\033[0m\n"
+            . "\033[0;33m> Delete module bfw-hello-world ... \033[0m\033[0;32mDone\033[0m\n"
+            . "\033[0;33m> Delete module bfw-test-install ... \033[0m\033[0;32mDone\033[0m\n"
+            . "\033[0;33m> Add module bfw-hello-world ... \033[0m\033[0;32mDone\033[0m\n"
+            . "\033[0;33m> Add module bfw-test-install ... \033[0m\033[0;32mDone\033[0m\n"
+            . "\033[0;33m> Execute install script for bfw-hello-world ... \033[0m\033[0;33mNo script, pass.\033[0m\n"
+            . "\033[0;33m> Execute install script for bfw-test-install ... \033[0m"
+                . "  \033[1;33mCreate install_test.php file into web directory\033[0m\n"
+            . "\033[0;32mDone\033[0m\n"
         ;
 
         if ($cmdOutput === $expectedOutput) {
@@ -213,7 +213,7 @@ class ReinstallAll extends AbstractModuleManagerTests
             $this->checkLogLineContextKeyEqual($lineNb, 'name', 'bfw-test-install');
             $this->checkLogLineContextKeyEqual($lineNb, 'installScript', 'install.php');
         } catch (Exception $e) {
-            BasicMsg::displayMsgNL('Fail : '.$e->getMessage(), 'red', 'bold');
+            BasicMsg::displayMsgNL('Fail : ' . $e->getMessage(), 'red', 'bold');
             return false;
         }
 

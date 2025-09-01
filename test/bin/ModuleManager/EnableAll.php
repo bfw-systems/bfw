@@ -22,12 +22,12 @@ class EnableAll extends AbstractModuleManagerTests
     {
         BasicMsg::displayMsg('> Check command output : ', 'yellow');
 
-        $cmd       = 'cd '.$this->installDir.' && ./vendor/bin/bfwEnMod -a';
+        $cmd       = 'cd ' . $this->installDir . ' && ./vendor/bin/bfwEnMod -a';
         $cmdOutput = $this->execCmd($cmd);
 
         $expectedOutput = ""
-            ."\033[0;33m> Enable module bfw-hello-world ... \033[0m\033[0;32mDone\033[0m\n"
-            ."\033[0;33m> Enable module bfw-test-install ... \033[0m\033[0;32mDone\033[0m\n"
+            . "\033[0;33m> Enable module bfw-hello-world ... \033[0m\033[0;32mDone\033[0m\n"
+            . "\033[0;33m> Enable module bfw-test-install ... \033[0m\033[0;32mDone\033[0m\n"
         ;
 
         if ($cmdOutput === $expectedOutput) {
@@ -90,7 +90,7 @@ class EnableAll extends AbstractModuleManagerTests
             $this->checkLogLineContextKeys($lineNb, ['target']);
             $this->checkLogLineContextKeyContain($lineNb, 'target', '../available/bfw-test-install/src/');
         } catch (Exception $e) {
-            BasicMsg::displayMsgNL('Fail : '.$e->getMessage(), 'red', 'bold');
+            BasicMsg::displayMsgNL('Fail : ' . $e->getMessage(), 'red', 'bold');
             return false;
         }
 

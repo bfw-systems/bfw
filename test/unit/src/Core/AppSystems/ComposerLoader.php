@@ -2,9 +2,9 @@
 
 namespace BFW\Core\AppSystems\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,36 +12,36 @@ require_once(__DIR__.'/../../../../../vendor/autoload.php');
 class ComposerLoader extends atoum
 {
     use \BFW\Test\Helpers\Application;
-    
+
     protected $mock;
-    
+
     public function beforeTestMethod($testMethod)
     {
         $this->mockGenerator
             ->makeVisible('obtainVendorDir')
             ->makeVisible('addComposerNamespaces')
         ;
-        
-        $this->setRootDir(__DIR__.'/../../../../..');
+
+        $this->setRootDir(__DIR__ . '/../../../../..');
         $this->createApp();
         $this->initApp();
-        
+
         if ($testMethod === 'testConstructor') {
             return;
         }
-        
-        $this->mock = new \mock\BFW\Core\AppSystems\ComposerLoader;
+
+        $this->mock = new \mock\BFW\Core\AppSystems\ComposerLoader();
     }
-    
+
     public function testConstructor()
     {
         $this->assert('test Core\AppSystems\ComposerLoader::__construct')
-            ->given($this->mock = new \mock\BFW\Core\AppSystems\ComposerLoader)
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\ComposerLoader())
             ->object($this->mock->getLoader())
                 ->isInstanceOf('\Composer\Autoload\ClassLoader')
         ;
     }
-    
+
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\ComposerLoader::__invoke')
@@ -49,7 +49,7 @@ class ComposerLoader extends atoum
                 ->isIdenticalTo($this->mock->getLoader())
         ;
     }
-    
+
     public function testToRun()
     {
         $this->assert('test Core\AppSystems\ComposerLoader::toRun')
@@ -57,16 +57,16 @@ class ComposerLoader extends atoum
                 ->isFalse()
         ;
     }
-    
+
     public function testObtainVendorDir()
     {
         $this->assert('test Core\AppSystems\ComposerLoader::obtainVendorDir')
             ->string($this->mock->obtainVendorDir())
                 ->isNotEmpty()
-                ->isEqualTo(realpath($this->rootDir.'/vendor').'/')
+                ->isEqualTo(realpath($this->rootDir . '/vendor') . '/')
         ;
     }
-    
+
     public function testAddComposerNamespaces()
     {
         $this->assert('test Core\AppSystems\ComposerLoader::addComposerNamespaces')

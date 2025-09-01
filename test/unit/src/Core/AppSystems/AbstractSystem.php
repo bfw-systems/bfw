@@ -2,9 +2,9 @@
 
 namespace BFW\Core\AppSystems\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,12 +12,12 @@ require_once(__DIR__.'/../../../../../vendor/autoload.php');
 class AbstractSystem extends atoum
 {
     protected $mock;
-    
+
     public function beforeTestMethod($testMethod)
     {
-        $this->mock = new \mock\BFW\Core\AppSystems\AbstractSystem;
+        $this->mock = new \mock\BFW\Core\AppSystems\AbstractSystem();
     }
-    
+
     public function testToRun()
     {
         $this->assert('test Core\AppSystems\AbstractSystem::toRun')
@@ -25,14 +25,14 @@ class AbstractSystem extends atoum
                 ->isFalse()
         ;
     }
-    
+
     public function testRunAndIsRun()
     {
         $this->assert('test Core\AppSystems\AbstractSystem::isRun before run')
             ->boolean($this->mock->isRun())
                 ->isFalse()
         ;
-        
+
         $this->assert('test Core\AppSystems\AbstractSystem::run and isRun after')
             ->variable($this->mock->run())
                 ->isNull()
