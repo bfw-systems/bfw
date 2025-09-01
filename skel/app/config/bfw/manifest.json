@@ -1,4 +1,5 @@
 {
+    "autoUpdate": true,
     "errors.php": {
         "version": "3.0.0",
         "scriptsPlayed": []

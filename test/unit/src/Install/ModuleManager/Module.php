@@ -26,6 +26,14 @@ class Module extends atoum
             ->makeVisible('copyAllConfigFiles')
             ->makeVisible('copyConfigFile')
             ->makeVisible('deleteConfigFiles')
+            ->makeVisible('updateConfigFiles')
+            ->makeVisible('loadManifest')
+            ->makeVisible('isAutoUpdateEnabled')
+            ->makeVisible('updateConfigFileIfNeeded')
+            ->makeVisible('getConfigFileVersion')
+            ->makeVisible('backupConfigFile')
+            ->makeVisible('updateManifest')
+            ->makeVisible('updateManifestForCopy')
             ->generate('BFW\Install\ModuleManager\Module')
         ;
 
@@ -301,6 +309,7 @@ class Module extends atoum
     {
         $this->assert('test Install\ModuleManager\Module::copyAllConfigFiles - prepare')
             ->if($this->calling($this->mock)->copyConfigFile = null)
+            ->and($this->calling($this->mock)->updateConfigFiles = null)
             ->and($this->calling($this->fileManager)->createDirectory = null)
             ->given($srcConfigPath = $this->mock->getAvailablePath().'/'.$this->mock->getInfo()->getConfigPath())
             ->given($handler = $this->app->getMonolog()->getLogger()->getHandlers()[0])
@@ -345,6 +354,12 @@ class Module extends atoum
                         $this->mock->getConfigPath().'/test.json'
                     )
                         ->once()
+                ->call('updateConfigFiles')
+                    ->withArguments(
+                        $srcConfigPath,
+                        $this->mock->getInfo()->getConfigFiles()
+                    )
+                        ->once()
         ;
 
         $this->assert('test Install\ModuleManager\Module::copyAllConfigFiles - without config files')
@@ -374,6 +389,8 @@ class Module extends atoum
                     ->never()
             ->mock($this->mock)
                 ->call('copyConfigFile')
+                    ->never()
+                ->call('updateConfigFiles')
                     ->never()
         ;
     }
@@ -497,5 +514,107 @@ class Module extends atoum
     public function testRunInstallScript()
     {
         //Cannot test because require_once() cannot be mocked
+    }
+
+    public function testLoadManifest()
+    {
+        $this->assert('test Install\ModuleManager\Module::loadManifest - valid manifest')
+            ->given($manifestPath = '/tmp/test_manifest.json')
+            ->and($manifestData = [
+                'autoUpdate' => true,
+                'config.php' => ['version' => '1.0.0', 'scriptsPlayed' => []]
+            ])
+            ->and(file_put_contents($manifestPath, json_encode($manifestData)))
+            ->then
+
+            ->array($this->mock->loadManifest($manifestPath))
+                ->isEqualTo($manifestData)
+        ;
+
+        $this->assert('test Install\ModuleManager\Module::loadManifest - non-existent file')
+            ->array($this->mock->loadManifest('/tmp/non_existent.json'))
+                ->isEmpty()
+        ;
+
+        // Cleanup
+        if (file_exists($manifestPath)) {
+            unlink($manifestPath);
+        }
+    }
+
+    public function testIsAutoUpdateEnabled()
+    {
+        $this->assert('test Install\ModuleManager\Module::isAutoUpdateEnabled - enabled')
+            ->boolean($this->mock->isAutoUpdateEnabled(['autoUpdate' => true]))
+                ->isTrue()
+        ;
+
+        $this->assert('test Install\ModuleManager\Module::isAutoUpdateEnabled - disabled')
+            ->boolean($this->mock->isAutoUpdateEnabled(['autoUpdate' => false]))
+                ->isFalse()
+        ;
+
+        $this->assert('test Install\ModuleManager\Module::isAutoUpdateEnabled - not set')
+            ->boolean($this->mock->isAutoUpdateEnabled([]))
+                ->isFalse()
+        ;
+    }
+
+    public function testGetConfigFileVersion()
+    {
+        $this->assert('test Install\ModuleManager\Module::getConfigFileVersion - valid version')
+            ->given($manifest = [
+                'config.php' => ['version' => '2.1.0', 'scriptsPlayed' => []]
+            ])
+            ->then
+
+            ->string($this->mock->getConfigFileVersion($manifest, 'config.php'))
+                ->isEqualTo('2.1.0')
+        ;
+
+        $this->assert('test Install\ModuleManager\Module::getConfigFileVersion - missing file')
+            ->string($this->mock->getConfigFileVersion($manifest, 'missing.php'))
+                ->isEmpty()
+        ;
+
+        $this->assert('test Install\ModuleManager\Module::getConfigFileVersion - missing version')
+            ->given($manifestNoVersion = [
+                'config.php' => ['scriptsPlayed' => []]
+            ])
+            ->then
+
+            ->string($this->mock->getConfigFileVersion($manifestNoVersion, 'config.php'))
+                ->isEmpty()
+        ;
+    }
+
+    public function testBackupConfigFile()
+    {
+        $this->assert('test Install\ModuleManager\Module::backupConfigFile - file exists')
+            ->given($configPath = '/tmp/test_config.php')
+            ->and(file_put_contents($configPath, '<?php return [];'))
+            ->and($handler = $this->app->getMonolog()->getLogger()->getHandlers()[0])
+            ->then
+
+            ->variable($this->mock->backupConfigFile($configPath))
+                ->isNull()
+
+            ->boolean($handler->hasInfo('Module - Config file backed up'))
+                ->isTrue()
+        ;
+
+        $this->assert('test Install\ModuleManager\Module::backupConfigFile - file does not exist')
+            ->variable($this->mock->backupConfigFile('/tmp/non_existent.php'))
+                ->isNull()
+        ;
+
+        // Cleanup
+        if (file_exists($configPath)) {
+            unlink($configPath);
+        }
+        // Remove backup files
+        foreach (glob('/tmp/test_config.php.backup.*') as $backupFile) {
+            unlink($backupFile);
+        }
     }
 }

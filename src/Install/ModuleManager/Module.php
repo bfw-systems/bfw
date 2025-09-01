@@ -312,11 +312,16 @@ class Module
             $this->fileManager->createDirectory($this->configPath);
         }
 
+        // First, handle manifest.json - always copy/update it for comparison
         $this->copyConfigFile(
             $sourceConfigPath.'manifest.json',
             $this->configPath.'/manifest.json'
         );
 
+        // Check if we need to update config files
+        $this->updateConfigFiles($sourceConfigPath, $configFileList);
+
+        // Copy any new config files that don't exist yet
         foreach ($configFileList as $configFilename) {
             $this->copyConfigFile(
                 $sourceConfigPath.$configFilename,
@@ -336,11 +341,338 @@ class Module
     protected function copyConfigFile(string $sourcePath, string $destPath)
     {
         try {
+            // For manifest.json, we need special handling for updates
+            if (basename($destPath) === 'manifest.json' && file_exists($destPath)) {
+                $this->updateManifestForCopy($sourcePath, $destPath);
+                return;
+            }
+
             $this->fileManager->copyFile($sourcePath, $destPath);
         } catch (Exception $e) {
             if ($e->getCode() !== FileManager::EXCEP_FILE_EXIST) {
                 throw $e;
             }
+        }
+    }
+
+    /**
+     * Handle manifest.json updates during copy operations
+     *
+     * @param string $sourcePath Source manifest path
+     * @param string $destPath Destination manifest path
+     *
+     * @return void
+     */
+    protected function updateManifestForCopy(string $sourcePath, string $destPath)
+    {
+        $sourceManifest = $this->loadManifest($sourcePath);
+        $appManifest = $this->loadManifest($destPath);
+
+        // If app manifest doesn't have autoUpdate flag, add it with default true
+        if (!isset($appManifest['autoUpdate'])) {
+            $appManifest['autoUpdate'] = true;
+        }
+
+        // Add any new config file entries from source that don't exist in app
+        foreach ($sourceManifest as $configFile => $info) {
+            if ($configFile === 'autoUpdate') {
+                continue; // Don't overwrite autoUpdate setting
+            }
+
+            if (!isset($appManifest[$configFile])) {
+                $appManifest[$configFile] = $info;
+            }
+        }
+
+        // Write updated manifest back
+        try {
+            $content = json_encode($appManifest, JSON_PRETTY_PRINT);
+            file_put_contents($destPath, $content);
+        } catch (Exception $e) {
+            $this->logger->warning(
+                'Module - Failed to update manifest during copy',
+                [
+                    'name' => $this->name,
+                    'path' => $destPath,
+                    'error' => $e->getMessage()
+                ]
+            );
+        }
+    }
+
+    /**
+     * Update config files if version changes are detected and auto-update is enabled
+     *
+     * @param string $sourceConfigPath The source config path
+     * @param array $configFileList List of config files
+     *
+     * @return void
+     */
+    protected function updateConfigFiles(string $sourceConfigPath, array $configFileList)
+    {
+        $sourceManifestPath = $sourceConfigPath.'manifest.json';
+        $appManifestPath = $this->configPath.'/manifest.json';
+
+        // If no source manifest, nothing to compare
+        if (!file_exists($sourceManifestPath)) {
+            return;
+        }
+
+        // If no app manifest exists yet, this is first install - no update needed
+        if (!file_exists($appManifestPath)) {
+            return;
+        }
+
+        $sourceManifest = $this->loadManifest($sourceManifestPath);
+        $appManifest = $this->loadManifest($appManifestPath);
+
+        // Check if auto-update is disabled
+        if (!$this->isAutoUpdateEnabled($appManifest)) {
+            $this->logger->debug(
+                'Module - Auto-update disabled for config files',
+                ['name' => $this->name]
+            );
+            return;
+        }
+
+        $this->logger->debug(
+            'Module - Checking for config file updates',
+            [
+                'name' => $this->name,
+                'sourceConfigPath' => $sourceConfigPath,
+                'configFiles' => $configFileList
+            ]
+        );
+
+        foreach ($configFileList as $configFilename) {
+            $this->updateConfigFileIfNeeded(
+                $sourceConfigPath,
+                $configFilename,
+                $sourceManifest,
+                $appManifest
+            );
+        }
+
+        // Update manifest with new versions after successful updates
+        $this->updateManifest($sourceManifest, $appManifestPath);
+    }
+
+    /**
+     * Load and decode manifest.json file
+     *
+     * @param string $manifestPath Path to manifest.json file
+     *
+     * @return array|object Decoded manifest data
+     */
+    protected function loadManifest(string $manifestPath)
+    {
+        if (!file_exists($manifestPath)) {
+            return [];
+        }
+
+        $content = file_get_contents($manifestPath);
+        $manifest = json_decode($content, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $this->logger->warning(
+                'Module - Invalid manifest.json format',
+                [
+                    'name' => $this->name,
+                    'path' => $manifestPath,
+                    'error' => json_last_error_msg()
+                ]
+            );
+            return [];
+        }
+
+        return $manifest;
+    }
+
+    /**
+     * Check if auto-update is enabled in the app manifest
+     *
+     * @param array $appManifest The application manifest data
+     *
+     * @return bool True if auto-update is enabled
+     */
+    protected function isAutoUpdateEnabled(array $appManifest): bool
+    {
+        return isset($appManifest['autoUpdate']) && $appManifest['autoUpdate'] === true;
+    }
+
+    /**
+     * Update a single config file if version has changed
+     *
+     * @param string $sourceConfigPath Source config directory path
+     * @param string $configFilename Name of the config file
+     * @param array $sourceManifest Source manifest data
+     * @param array $appManifest Application manifest data
+     *
+     * @return void
+     */
+    protected function updateConfigFileIfNeeded(
+        string $sourceConfigPath,
+        string $configFilename,
+        array $sourceManifest,
+        array $appManifest
+    ) {
+        $sourceFilePath = $sourceConfigPath.$configFilename;
+        $appFilePath = $this->configPath.'/'.$configFilename;
+
+        // Skip if source file doesn't exist
+        if (!file_exists($sourceFilePath)) {
+            return;
+        }
+
+        // Skip if app file doesn't exist (will be copied by copyConfigFile)
+        if (!file_exists($appFilePath)) {
+            return;
+        }
+
+        $sourceVersion = $this->getConfigFileVersion($sourceManifest, $configFilename);
+        $appVersion = $this->getConfigFileVersion($appManifest, $configFilename);
+
+        // If versions are the same, no update needed
+        if ($sourceVersion === $appVersion) {
+            return;
+        }
+
+        $this->logger->info(
+            'Module - Config file version change detected',
+            [
+                'name' => $this->name,
+                'file' => $configFilename,
+                'currentVersion' => $appVersion,
+                'newVersion' => $sourceVersion
+            ]
+        );
+
+        // Create backup before updating
+        $this->backupConfigFile($appFilePath);
+
+        // Copy the new version
+        try {
+            $this->fileManager->copyFile($sourceFilePath, $appFilePath);
+            
+            $this->logger->info(
+                'Module - Config file updated successfully',
+                [
+                    'name' => $this->name,
+                    'file' => $configFilename,
+                    'version' => $sourceVersion
+                ]
+            );
+        } catch (Exception $e) {
+            $this->logger->error(
+                'Module - Failed to update config file',
+                [
+                    'name' => $this->name,
+                    'file' => $configFilename,
+                    'error' => $e->getMessage()
+                ]
+            );
+        }
+    }
+
+    /**
+     * Get version for a specific config file from manifest
+     *
+     * @param array $manifest Manifest data
+     * @param string $configFilename Name of the config file
+     *
+     * @return string Version string or empty string if not found
+     */
+    protected function getConfigFileVersion(array $manifest, string $configFilename): string
+    {
+        if (!isset($manifest[$configFilename]) || !isset($manifest[$configFilename]['version'])) {
+            return '';
+        }
+
+        return (string) $manifest[$configFilename]['version'];
+    }
+
+    /**
+     * Create a backup of the existing config file
+     *
+     * @param string $configFilePath Path to the config file to backup
+     *
+     * @return void
+     */
+    protected function backupConfigFile(string $configFilePath)
+    {
+        if (!file_exists($configFilePath)) {
+            return;
+        }
+
+        $backupPath = $configFilePath.'.backup.'.date('Y-m-d-H-i-s');
+
+        try {
+            $this->fileManager->copyFile($configFilePath, $backupPath);
+            
+            $this->logger->info(
+                'Module - Config file backed up',
+                [
+                    'name' => $this->name,
+                    'original' => $configFilePath,
+                    'backup' => $backupPath
+                ]
+            );
+        } catch (Exception $e) {
+            $this->logger->warning(
+                'Module - Failed to backup config file',
+                [
+                    'name' => $this->name,
+                    'file' => $configFilePath,
+                    'error' => $e->getMessage()
+                ]
+            );
+        }
+    }
+
+    /**
+     * Update the application manifest with new version information
+     *
+     * @param array $sourceManifest Source manifest data
+     * @param string $appManifestPath Path to application manifest file
+     *
+     * @return void
+     */
+    protected function updateManifest(array $sourceManifest, string $appManifestPath)
+    {
+        if (!file_exists($appManifestPath)) {
+            return;
+        }
+
+        $appManifest = $this->loadManifest($appManifestPath);
+
+        // Preserve autoUpdate setting and merge new version info
+        foreach ($sourceManifest as $configFile => $info) {
+            if ($configFile === 'autoUpdate') {
+                continue; // Don't overwrite autoUpdate setting
+            }
+
+            if (isset($info['version'])) {
+                $appManifest[$configFile]['version'] = $info['version'];
+            }
+        }
+
+        try {
+            $content = json_encode($appManifest, JSON_PRETTY_PRINT);
+            file_put_contents($appManifestPath, $content);
+
+            $this->logger->debug(
+                'Module - Manifest updated',
+                ['name' => $this->name, 'path' => $appManifestPath]
+            );
+        } catch (Exception $e) {
+            $this->logger->warning(
+                'Module - Failed to update manifest',
+                [
+                    'name' => $this->name,
+                    'path' => $appManifestPath,
+                    'error' => $e->getMessage()
+                ]
+            );
         }
     }
     
