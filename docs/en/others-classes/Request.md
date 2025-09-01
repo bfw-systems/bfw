@@ -2,9 +2,7 @@
 
 This class detect and kept a lot of info about the current user and request.
 
-The [design pattern Singleton](https://en.wikipedia.org/wiki/Singleton_pattern) is used.
-But because an issue ([#84](https://github.com/bulton-fr/bfw/issues/84)) with unit test, the constructor is actually public.
-This will be changed to protected when a solution will be found and implemented.
+The [design pattern Singleton](https://en.wikipedia.org/wiki/Singleton_pattern) is used with a proper protected constructor.
 
 ## Constants
 
