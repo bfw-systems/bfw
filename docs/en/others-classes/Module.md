@@ -40,10 +40,6 @@ __`protected object $status;`__
 An anonymous class with the load and run status.
 The class contain public boolean properties `load` and `run`.
 
-__`private array $dynamicProperties;`__
-
-Storage for dynamic properties set by modules. This prevents PHP 8.2+ deprecation warnings for dynamic properties while maintaining backward compatibility.
-
 ## Methods
 
 __`self public __construct(string $name)`__
@@ -135,15 +131,3 @@ Return the value of the property `runner` (from loadInfos) and check if the file
 
 If the runner file not exist, an exception will be thrown;
 the exception code will be the constant `\BFW\Module::ERR_RUNNER_FILE_NOT_FOUND`.
-
-### Dynamic Properties (PHP 8.2+ Compatibility)
-
-__`self public declareProperty(string $name, mixed $value = null, ?string $type = null)`__
-
-Declare a dynamic property for better IDE support. This method can be used in module runners to explicitly declare properties with optional type hints.
-
-__`array public getDynamicProperties()`__
-
-Get all declared dynamic properties. Useful for debugging and introspection.
-
-**Note**: The Module class now uses magic methods (`__get`, `__set`, `__isset`, `__unset`) to handle dynamic properties, preventing PHP 8.2+ deprecation warnings while maintaining full backward compatibility. You can continue to use `$this->propertyName = $value` syntax in module runners as before.

@@ -52,11 +52,6 @@ class Module
     protected $status;
 
     /**
-     * @var array $dynamicProperties Storage for dynamic properties set by modules
-     */
-    private $dynamicProperties = [];
-
-    /**
      * Constructor
      *
      * @param string $name Module name
@@ -87,16 +82,6 @@ class Module
      */
     public function __call(string $name, array $arguments)
     {
-        // Check if the property exists in dynamic properties and is callable
-        if (
-            array_key_exists($name, $this->dynamicProperties) &&
-            is_callable($this->dynamicProperties[$name])
-        ) {
-            $fct = $this->dynamicProperties[$name];
-            return $fct(...$arguments);
-        }
-
-        // Legacy check for properties that might exist directly on the object
         if (
             property_exists($this, $name) === true &&
             is_callable($this->$name) === true
@@ -110,89 +95,6 @@ class Module
             'The method ' . $name . ' not exist in module class for ' . $this->name,
             self::ERR_METHOD_NOT_EXIST
         );
-    }
-
-    /**
-     * PHP Magic method for getting dynamic properties
-     * This prevents PHP 8.2+ deprecation warnings for dynamic properties
-     *
-     * @param string $name The property name
-     *
-     * @return mixed
-     */
-    public function __get(string $name)
-    {
-        if (array_key_exists($name, $this->dynamicProperties)) {
-            return $this->dynamicProperties[$name];
-        }
-
-        // For backward compatibility, still allow access to undefined properties
-        // This will return null instead of causing an error
-        return null;
-    }
-
-    /**
-     * PHP Magic method for setting dynamic properties  
-     * This prevents PHP 8.2+ deprecation warnings for dynamic properties
-     *
-     * @param string $name The property name
-     * @param mixed $value The property value
-     *
-     * @return void
-     */
-    public function __set(string $name, $value): void
-    {
-        $this->dynamicProperties[$name] = $value;
-    }
-
-    /**
-     * PHP Magic method for checking if dynamic properties exist
-     * 
-     * @param string $name The property name
-     *
-     * @return bool
-     */
-    public function __isset(string $name): bool
-    {
-        return array_key_exists($name, $this->dynamicProperties);
-    }
-
-    /**
-     * PHP Magic method for unsetting dynamic properties
-     *
-     * @param string $name The property name
-     *
-     * @return void
-     */
-    public function __unset(string $name): void
-    {
-        unset($this->dynamicProperties[$name]);
-    }
-
-    /**
-     * Declare a dynamic property for better IDE support
-     * This method can be used in module runners to explicitly declare properties
-     * 
-     * @param string $name The property name
-     * @param mixed $value The initial value (optional)
-     * @param string|null $type The expected type for documentation (optional)
-     *
-     * @return self
-     */
-    public function declareProperty(string $name, $value = null, ?string $type = null): self
-    {
-        $this->dynamicProperties[$name] = $value;
-        return $this;
-    }
-
-    /**
-     * Get all declared dynamic properties
-     *
-     * @return array
-     */
-    public function getDynamicProperties(): array
-    {
-        return $this->dynamicProperties;
     }
 
     /**

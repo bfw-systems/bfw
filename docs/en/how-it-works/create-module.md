@@ -190,26 +190,6 @@ To access to the property `fenom` : `\BFW\Application::getInstance()->getModuleL
 
 However, you should keep in mind this property is public, so everybody can change this value.
 
-### PHP 8.2+ Best Practices
-
-Since PHP 8.2+, dynamic properties are deprecated. The BFW Module class now uses magic methods to handle dynamic properties without deprecation warnings while maintaining full backward compatibility.
-
-You can continue using the same syntax as before:
-```php
-$this->fenom = Fenom::factory(...);
-```
-
-For better IDE support, you can optionally use the `declareProperty()` method:
-```php
-$this->declareProperty('fenom', null, 'Fenom')
-    ->declareProperty('database', null, 'PDO');
-
-$this->fenom = Fenom::factory(...);
-$this->database = new PDO(...);
-```
-
-This provides better IDE autocompletion and type hints while maintaining the same runtime behavior.
-
 ## Access to the config
 
 Like I said before, all config file is read when module is loaded.
