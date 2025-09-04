@@ -1,0 +1,6 @@
+{
+    "class": "MyVendor\\ExampleModule\\ExampleModule",
+    "priority": 10,
+    "require": [],
+    "description": "Example module demonstrating class-based module runners"
+}
