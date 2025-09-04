@@ -19,6 +19,7 @@ use BFW\CommonModule;
  * - No PHP 8.2+ dynamic property warnings  
  * - Better code organization and maintainability
  * - Proper inheritance and composition support
+ * - Direct access to BFW Module instance
  */
 class ExampleModule extends CommonModule
 {
@@ -110,11 +111,18 @@ class ExampleModule extends CommonModule
     /**
      * Example of a custom method that modules can add
      * 
+     * This shows how you can access the BFW Module instance
+     * to interact with the framework.
+     * 
      * @param string $message
      * @return string
      */
     public function formatMessage(string $message): string
     {
-        return '[' . $this->getModuleName() . '] ' . $message;
+        $bfwModule = $this->getModule();
+        $isLoaded = $bfwModule ? $bfwModule->isLoaded() : false;
+        $status = $isLoaded ? 'LOADED' : 'NOT_LOADED';
+        
+        return '[' . $this->getModuleName() . ':' . $status . '] ' . $message;
     }
 }

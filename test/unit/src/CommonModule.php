@@ -22,9 +22,17 @@ class CommonModule extends atoum
         $this->initApp();
 
         // Create a concrete implementation for testing
-        $this->mockGenerator
-            ->generate('BFW\CommonModule', 'ConcreteModule', 'BFW\test\unit')
-        ;
+        eval('
+            namespace BFW\\test\\unit;
+            
+            class ConcreteModule extends \\BFW\\CommonModule
+            {
+                public function run(): void
+                {
+                    // Concrete implementation for testing
+                }
+            }
+        ');
     }
 
     public function testCommonModuleImplementsInterface()
@@ -45,8 +53,8 @@ class CommonModule extends atoum
 
     public function testModuleNameGetterSetter()
     {
-        $this->mock = new \BFW\test\unit\ConcreteModule();
-        $this->calling($this->mock)->run = null;
+        $module = new \BFW\Module('test');
+        $this->mock = new \BFW\test\unit\ConcreteModule($module);
 
         $this->assert('test CommonModule module name getter/setter')
             ->variable($this->mock->getModuleName())
@@ -60,8 +68,8 @@ class CommonModule extends atoum
 
     public function testConfigGetterSetter()
     {
-        $this->mock = new \BFW\test\unit\ConcreteModule();
-        $this->calling($this->mock)->run = null;
+        $module = new \BFW\Module('test');
+        $this->mock = new \BFW\test\unit\ConcreteModule($module);
 
         $config = new \BFW\Config('test');
 
@@ -72,6 +80,17 @@ class CommonModule extends atoum
                 ->isIdenticalTo($this->mock)
             ->object($this->mock->getConfig())
                 ->isIdenticalTo($config)
+        ;
+    }
+
+    public function testModuleGetterConstructor()
+    {
+        $module = new \BFW\Module('test');
+        $this->mock = new \BFW\test\unit\ConcreteModule($module);
+
+        $this->assert('test CommonModule stores module instance from constructor')
+            ->object($this->mock->getModule())
+                ->isIdenticalTo($module)
         ;
     }
 

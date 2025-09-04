@@ -20,10 +20,9 @@ class Module
     public const ERR_JSON_PARSE = 1104002;
 
     /**
-     * @const ERR_RUNNER_FILE_NOT_FOUND Exception code if the runner file to
-     * execute is not found.
+     * @const ERR_CLASS_NOT_FOUND Exception code if the module class is not found.
      */
-    public const ERR_RUNNER_FILE_NOT_FOUND = 1104003;
+    public const ERR_CLASS_NOT_FOUND = 1104003;
 
     /**
      * @const ERR_METHOD_NOT_EXIST Exception code if the use call an unexisting
@@ -50,6 +49,11 @@ class Module
      * @var object $status Load and run status
      */
     protected $status;
+
+    /**
+     * @var \BFW\ModuleInterface|null $moduleInstance The instantiated module class
+     */
+    protected ?\BFW\ModuleInterface $moduleInstance = null;
 
     /**
      * Constructor
@@ -172,6 +176,16 @@ class Module
     }
 
     /**
+     * Get the instantiated module class
+     *
+     * @return \BFW\ModuleInterface|null
+     */
+    public function getModuleInstance(): ?\BFW\ModuleInterface
+    {
+        return $this->moduleInstance;
+    }
+
+    /**
      * Return the load status
      *
      * @return boolean
@@ -274,37 +288,6 @@ class Module
     }
 
     /**
-     * Get path to the runner file
-     *
-     * @return string
-     *
-     * @throws \Exception If the file not exists
-     */
-    protected function obtainRunnerFile(): string
-    {
-        $moduleInfos = $this->loadInfos;
-        $runnerFile  = '';
-
-        if (property_exists($moduleInfos, 'runner')) {
-            $runnerFile = (string) $moduleInfos->runner;
-        }
-
-        if (empty($runnerFile)) {
-            return '';
-        }
-
-        $runnerFile = MODULES_ENABLED_DIR . $this->name . '/' . $runnerFile;
-        if (!file_exists($runnerFile)) {
-            throw new Exception(
-                'Runner file for module ' . $this->name . ' not found.',
-                $this::ERR_RUNNER_FILE_NOT_FOUND
-            );
-        }
-
-        return $runnerFile;
-    }
-
-    /**
      * Get the class name for class-based module runner
      *
      * @return string|null
@@ -321,16 +304,6 @@ class Module
     }
 
     /**
-     * Check if this module uses a class-based runner
-     *
-     * @return bool
-     */
-    protected function isClassBasedModule(): bool
-    {
-        return $this->obtainRunnerClass() !== null;
-    }
-
-    /**
      * Instantiate and configure a class-based module runner
      *
      * @return \BFW\ModuleInterface
@@ -341,14 +314,21 @@ class Module
     {
         $className = $this->obtainRunnerClass();
         
+        if (empty($className)) {
+            throw new Exception(
+                'No module class defined for module ' . $this->name . '. Please define "class" in module.json.',
+                self::ERR_CLASS_NOT_FOUND
+            );
+        }
+        
         if (!class_exists($className)) {
             throw new Exception(
                 'Module class ' . $className . ' for module ' . $this->name . ' not found.',
-                self::ERR_RUNNER_FILE_NOT_FOUND
+                self::ERR_CLASS_NOT_FOUND
             );
         }
 
-        $moduleInstance = new $className();
+        $moduleInstance = new $className($this);
 
         if (!$moduleInstance instanceof ModuleInterface) {
             throw new Exception(
@@ -363,11 +343,14 @@ class Module
             $moduleInstance->setConfig($this->config);
         }
 
+        // Store the instance for later access
+        $this->moduleInstance = $moduleInstance;
+
         return $moduleInstance;
     }
 
     /**
-     * Run the module in a closure
+     * Run the module
      *
      * @return void
      */
@@ -379,23 +362,8 @@ class Module
 
         $this->status->run = true;
 
-        // Check if this is a class-based module
-        if ($this->isClassBasedModule()) {
-            $moduleInstance = $this->instantiateModuleClass();
-            $moduleInstance->run();
-            return;
-        }
-
-        // Fallback to file-based runner for backward compatibility
-        $runnerFile   = $this->obtainRunnerFile();
-        $initFunction = function () use ($runnerFile) {
-            if (empty($runnerFile)) {
-                return;
-            }
-
-            require(realpath($runnerFile));
-        };
-
-        $initFunction();
+        // Instantiate and run the module class
+        $moduleInstance = $this->instantiateModuleClass();
+        $moduleInstance->run();
     }
 }

@@ -25,7 +25,8 @@ class Module extends atoum
             ->makeVisible('loadConfig')
             ->makeVisible('obtainLoadInfos')
             ->makeVisible('readJsonFile')
-            ->makeVisible('obtainRunnerFile')
+            ->makeVisible('obtainRunnerClass')
+            ->makeVisible('instantiateModuleClass')
             ->generate('BFW\Module')
         ;
 
@@ -186,7 +187,7 @@ class Module extends atoum
             ->given($this->mockLoadJsonFile(
                 MODULES_ENABLED_DIR . $this->mock->getName() . '/module.json',
                 '{
-                    "runner": "mymodule.php",
+                    "class": "MyModule\\\\TestModule",
                     "priority": 0,
                     "require": []
                 }'
@@ -195,7 +196,7 @@ class Module extends atoum
             ->then
             ->object($this->mock->getLoadInfos())
                 ->isEqualTo((object) [
-                    'runner'   => 'mymodule.php',
+                    'class'    => 'MyModule\\TestModule',
                     'priority' => 0,
                     'require'  => []
                 ])
@@ -299,14 +300,14 @@ class Module extends atoum
         $this->assert('test Modulle::readJsonFile with a correct json')
             ->if($this->function->file_exists = true)
             ->and($this->function->file_get_contents = '{
-                    "runner": "mymodule.php",
+                    "class": "MyModule\\\\TestModule",
                     "priority": 0,
                     "require": []
                 }')
             ->then
             ->object($this->mock->callReadJsonFile(MODULES_ENABLED_DIR . 'atoum/module.json'))
                 ->isEqualTo((object) [
-                    'runner'   => 'mymodule.php',
+                    'class'    => 'MyModule\\TestModule',
                     'priority' => 0,
                     'require'  => []
                 ])
@@ -352,78 +353,61 @@ class Module extends atoum
         ;
     }
 
-    public function testObtainRunnerFile()
+    public function testObtainRunnerClass()
     {
-        $this->mockGenerator
-            ->makeVisible('obtainRunnerFile')
-            ->generate('BFW\Test\Mock\Module')
+        $this->assert('test Module::obtainRunnerClass without property "class"')
+            ->variable($this->invoke($this->mock)->obtainRunnerClass())
+                ->isNull()
         ;
 
-        $this->mock = new \mock\BFW\Test\Mock\Module('atoum');
-
-        $this->assert('test Module::obtainRunnerFile without property "runner"')
-            ->string($this->invoke($this->mock)->obtainRunnerFile())
-                ->isEmpty()
+        $this->assert('test Module::obtainRunnerClass with property "class"')
+            ->given($this->mock->setLoadInfos((object) ['class' => 'MyModule\\TestModule']))
+            ->string($this->invoke($this->mock)->obtainRunnerClass())
+                ->isEqualTo('MyModule\\TestModule')
         ;
+    }
 
-        $this->assert('test Module::obtainRunnerFile with empty property "runner"')
-            ->given($this->mock->setLoadInfos((object) ['runner' => '']))
-            ->string($this->invoke($this->mock)->obtainRunnerFile())
-                ->isEmpty()
-        ;
-
-        $this->assert('test Module::obtainRunnerFile without runner file')
-            ->given($this->mock->setLoadInfos((object) ['runner' => 'run_atoum.php']))
-            ->and($this->function->file_exists = false)
-            ->exception(function () {
-                $this->invoke($this->mock)->obtainRunnerFile();
-            })
-                ->hasCode(\BFW\Module::ERR_RUNNER_FILE_NOT_FOUND)
-        ;
-
-        $this->assert('test Module::obtainRunnerFile with runner file')
-            ->given($this->mock->setLoadInfos((object) ['runner' => 'run_atoum.php']))
-            ->and($this->function->file_exists = true)
-            ->string($this->invoke($this->mock)->obtainRunnerFile())
-                ->isEqualTo(MODULES_ENABLED_DIR . $this->mock->getName() . '/run_atoum.php')
+    public function testGetModuleInstance()
+    {
+        $this->assert('test Module::getModuleInstance initially returns null')
+            ->variable($this->mock->getModuleInstance())
+                ->isNull()
         ;
     }
 
     public function testRunModule()
     {
-        $this->mockGenerator
-            ->makeVisible('obtainRunnerFile')
-            ->generate('BFW\Test\Mock\Module')
-        ;
-
-        $this->mock = new \mock\BFW\Test\Mock\Module('atoum');
+        // Create a test module class that implements ModuleInterface
+        eval('
+            namespace BFW\\test\\unit;
+            
+            class TestModuleRunner extends \\BFW\\CommonModule
+            {
+                public $runCalled = false;
+                
+                public function run(): void
+                {
+                    $this->runCalled = true;
+                }
+            }
+        ');
 
         $this->assert('test Module::runModule if the module is already runned')
             ->if($this->mock->setStatus(true, true))
-            ->and($this->calling($this->mock)->obtainRunnerFile = '')
             ->then
             ->variable($this->mock->runModule())
                 ->isNull()
-            ->mock($this->mock)
-                ->call('obtainRunnerFile')
-                    ->never()
             ->boolean($this->mock->isRun())
                 ->isTrue()
         ;
 
-        $this->assert('test Module::runModule without file to run')
-            ->if($this->mock->setStatus(true, false))
-            ->and($this->calling($this->mock)->obtainRunnerFile = '')
-            ->then
-            ->variable($this->mock->runModule())
-                ->isNull()
-            ->mock($this->mock)
-                ->call('obtainRunnerFile')
-                    ->once()
-            ->boolean($this->mock->isRun())
-                ->isTrue()
+        $this->assert('test Module::runModule with class-based runner - no class defined')
+            ->given($newMock = new \mock\BFW\Module('test'))
+            ->and($newMock->setLoadInfos(new \stdClass()))
+            ->exception(function () use ($newMock) {
+                $newMock->runModule();
+            })
+                ->hasCode(\BFW\Module::ERR_CLASS_NOT_FOUND)
         ;
-
-        //Require not mockable, so we can't test with file to execute.
     }
 }

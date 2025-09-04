@@ -25,7 +25,6 @@ class ModuleClassBased extends atoum
 
         $this->mockGenerator
             ->makeVisible('obtainRunnerClass')
-            ->makeVisible('isClassBasedModule')
             ->makeVisible('instantiateModuleClass')
             ->generate('BFW\Module')
         ;
@@ -65,22 +64,6 @@ class ModuleClassBased extends atoum
             ]))
             ->string($this->invoke($this->mock)->obtainRunnerClass())
                 ->isEqualTo('MyModule\\TestModule')
-        ;
-    }
-
-    public function testIsClassBasedModule()
-    {
-        $this->assert('test Module::isClassBasedModule without class property')
-            ->boolean($this->invoke($this->mock)->isClassBasedModule())
-                ->isFalse()
-        ;
-
-        $this->assert('test Module::isClassBasedModule with class property')
-            ->given($this->mock->setLoadInfos((object) [
-                'class' => 'MyModule\\TestModule'
-            ]))
-            ->boolean($this->invoke($this->mock)->isClassBasedModule())
-                ->isTrue()
         ;
     }
 
@@ -125,7 +108,7 @@ class ModuleClassBased extends atoum
             ->exception(function () {
                 $this->invoke($this->mock)->instantiateModuleClass();
             })
-                ->hasCode(\BFW\Module::ERR_RUNNER_FILE_NOT_FOUND)
+                ->hasCode(\BFW\Module::ERR_CLASS_NOT_FOUND)
         ;
     }
 
@@ -155,25 +138,6 @@ class ModuleClassBased extends atoum
                 $this->invoke($this->mock)->instantiateModuleClass();
             })
                 ->hasCode(\BFW\Module::ERR_METHOD_NOT_EXIST)
-        ;
-    }
-
-    public function testRunModuleBackwardCompatibility()
-    {
-        $this->assert('test Module::runModule maintains backward compatibility with file-based runners')
-            ->given($this->mock->setLoadInfos((object) [
-                'runner' => 'test-runner.php'
-            ]))
-            // Mock file-based runner functionality
-            ->and($this->function->file_exists = true)
-            ->and($this->function->realpath = function ($path) {
-                return $path;
-            })
-            ->and($this->function->require = null)
-            ->variable($this->mock->runModule())
-                ->isNull()
-            ->boolean($this->mock->isRun())
-                ->isTrue()
         ;
     }
 }

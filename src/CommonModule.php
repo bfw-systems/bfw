@@ -24,6 +24,31 @@ abstract class CommonModule implements ModuleInterface
     protected ?\BFW\Config $config = null;
 
     /**
+     * @var \BFW\Module|null $module The BFW Module instance that manages this module
+     */
+    protected ?\BFW\Module $module = null;
+
+    /**
+     * Constructor
+     * 
+     * @param \BFW\Module $module The BFW Module instance that manages this module
+     */
+    public function __construct(\BFW\Module $module)
+    {
+        $this->module = $module;
+    }
+
+    /**
+     * Get the BFW Module instance that manages this module
+     * 
+     * @return \BFW\Module|null
+     */
+    public function getModule(): ?\BFW\Module
+    {
+        return $this->module;
+    }
+
+    /**
      * Set the module name (called by the framework)
      * 
      * @param string $name The module name
