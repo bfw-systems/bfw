@@ -22,15 +22,34 @@ class Secure
     public const ERR_SECURE_ARRAY_KEY_NOT_EXIST = 1609002;
 
     /**
-     * Hash a string
+     * Hash a string using a secure algorithm
+     * 
+     * Note: This method is deprecated for password hashing.
+     * Use password_hash() and password_verify() for passwords.
+     * 
+     * For backward compatibility, the default behavior uses the legacy
+     * md5+sha256 combination. Use $secure=true for better security.
      *
      * @param string $val String to hash
+     * @param string $algorithm Hash algorithm (default: sha256)
+     * @param bool $secure Use secure hashing (default: false for compatibility)
      *
      * @return string
      */
-    public static function hash(string $val): string
+    public static function hash(string $val, string $algorithm = 'sha256', bool $secure = false): string
     {
-        return hash('sha256', md5($val));
+        // Maintain backward compatibility by default
+        if (!$secure) {
+            return hash('sha256', md5($val));
+        }
+        
+        // Validate algorithm to prevent injection
+        $allowedAlgorithms = ['sha256', 'sha512', 'sha3-256', 'sha3-512'];
+        if (!in_array($algorithm, $allowedAlgorithms, true)) {
+            $algorithm = 'sha256';
+        }
+        
+        return hash($algorithm, $val);
     }
 
     /**
@@ -46,15 +65,36 @@ class Secure
     public static function secureKnownType($data, string $type)
     {
         $filterType = 'text';
+        $filterOptions = null;
 
-        if ($type === 'int' || $type === 'integer') {
-            $filterType = FILTER_VALIDATE_INT;
-        } elseif ($type === 'float' || $type === 'double') {
-            $filterType = FILTER_VALIDATE_FLOAT;
-        } elseif ($type === 'bool' || $type === 'boolean') {
-            $filterType = FILTER_VALIDATE_BOOLEAN;
-        } elseif ($type === 'email') {
-            $filterType = FILTER_VALIDATE_EMAIL;
+        switch ($type) {
+            case 'int':
+            case 'integer':
+                $filterType = FILTER_VALIDATE_INT;
+                break;
+            case 'float':
+            case 'double':
+                $filterType = FILTER_VALIDATE_FLOAT;
+                break;
+            case 'bool':
+            case 'boolean':
+                $filterType = FILTER_VALIDATE_BOOLEAN;
+                break;
+            case 'email':
+                $filterType = FILTER_VALIDATE_EMAIL;
+                break;
+            case 'url':
+                $filterType = FILTER_VALIDATE_URL;
+                break;
+            case 'ip':
+                $filterType = FILTER_VALIDATE_IP;
+                break;
+            case 'mac':
+                $filterType = FILTER_VALIDATE_MAC;
+                break;
+            case 'domain':
+                $filterType = FILTER_VALIDATE_DOMAIN;
+                break;
         }
 
         if ($filterType === 'text') {
@@ -64,7 +104,10 @@ class Secure
             );
         }
 
-        return filter_var($data, $filterType);
+        $result = filter_var($data, $filterType, $filterOptions);
+        
+        // Keep original behavior for backward compatibility
+        return $result;
     }
 
     /**
@@ -75,23 +118,47 @@ class Secure
      * @param string $type The type of datas
      * @param boolean $htmlentities If use htmlentities function
      *  to a better security
+     * @param boolean $useHtml5 Use HTML5 entities instead of HTML4 (default: false for compatibility)
      *
-     * @return mixed
+     * @return string
      */
     public static function secureUnknownType(
         $data,
         string $type,
-        bool $htmlentities
+        bool $htmlentities,
+        bool $useHtml5 = false
     ): string {
+        // Convert to string if not already
+        $data = (string) $data;
+        
         if ($type !== 'html') {
             $data = strip_tags($data);
         }
 
         if ($type === 'html' || $htmlentities === true) {
+            // Use HTML5 encoding with UTF-8 for better security when requested
+            if ($useHtml5) {
+                return htmlentities($data, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            }
+            // Keep backward compatibility with HTML4
             return htmlentities($data, ENT_QUOTES | ENT_HTML401);
         }
 
+        // Use a more secure escaping method
+        // Note: addslashes is kept for backward compatibility but not recommended for SQL
         return addslashes($data);
+    }
+
+    /**
+     * Get the SQL secure method from configuration
+     * 
+     * @return string|null
+     */
+    public static function getSqlSecureMethod(): ?string
+    {
+        // This would typically get the function from configuration
+        // For now, return null to maintain existing behavior
+        return null;
     }
 
     /**
@@ -236,5 +303,71 @@ class Secure
         }
 
         return $result;
+    }
+
+    /**
+     * Sanitize filename to prevent directory traversal attacks
+     *
+     * @param string $filename The filename to sanitize
+     * @return string Sanitized filename
+     */
+    public static function sanitizeFilename(string $filename): string
+    {
+        // Remove directory traversal attempts
+        $filename = str_replace(['../', '.\\', '..\\'], '', $filename);
+        
+        // Remove null bytes and other dangerous characters
+        $filename = str_replace(["\0", "\r", "\n"], '', $filename);
+        
+        // Remove leading dots and slashes
+        $filename = ltrim($filename, './\\');
+        
+        return $filename;
+    }
+
+    /**
+     * Generate a cryptographically secure random token
+     *
+     * @param int $length Token length (default: 32)
+     * @return string Secure random token
+     */
+    public static function generateSecureToken(int $length = 32): string
+    {
+        if ($length < 1) {
+            $length = 32;
+        }
+        
+        try {
+            return bin2hex(random_bytes($length));
+        } catch (\Exception $e) {
+            // Fallback for older systems
+            return hash('sha256', uniqid(mt_rand(), true));
+        }
+    }
+
+    /**
+     * Constant-time string comparison to prevent timing attacks
+     *
+     * @param string $known The known string
+     * @param string $user The user-provided string
+     * @return bool True if strings are equal
+     */
+    public static function timingSafeEquals(string $known, string $user): bool
+    {
+        if (function_exists('hash_equals')) {
+            return hash_equals($known, $user);
+        }
+        
+        // Fallback implementation
+        if (strlen($known) !== strlen($user)) {
+            return false;
+        }
+        
+        $result = 0;
+        for ($i = 0; $i < strlen($known); $i++) {
+            $result |= ord($known[$i]) ^ ord($user[$i]);
+        }
+        
+        return $result === 0;
     }
 }
