@@ -186,6 +186,16 @@ class Module
     }
 
     /**
+     * Check if the module class has been instantiated
+     *
+     * @return bool
+     */
+    public function isInstancied(): bool
+    {
+        return $this->moduleInstance !== null;
+    }
+
+    /**
      * Return the load status
      *
      * @return boolean

@@ -375,6 +375,14 @@ class Module extends atoum
         ;
     }
 
+    public function testIsInstancied()
+    {
+        $this->assert('test Module::isInstancied initially returns false')
+            ->boolean($this->mock->isInstancied())
+                ->isFalse()
+        ;
+    }
+
     public function testRunModule()
     {
         // Create a test module class that implements ModuleInterface
