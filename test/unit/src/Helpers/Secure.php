@@ -25,6 +25,14 @@ class Secure extends atoum
     {
         $this->assert('test Helpers\Secure::hash')
             ->string(\BFW\Helpers\Secure::hash('atoum'))
+                ->isEqualTo(hash('sha256', 'atoum'))
+        ;
+    }
+
+    public function testLegacyHash()
+    {
+        $this->assert('test Helpers\Secure::legacyHash')
+            ->string(\BFW\Helpers\Secure::legacyHash('atoum'))
                 ->isEqualTo(hash('sha256', md5('atoum')))
         ;
     }

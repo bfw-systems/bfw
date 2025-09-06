@@ -22,28 +22,64 @@ class Secure
      */
     public const ERR_SECURE_ARRAY_KEY_NOT_EXIST = 1609002;
 
+    // Security type constants for secureKnownType
+    public const TYPE_INT = 'int';
+    public const TYPE_INTEGER = 'integer';
+    public const TYPE_FLOAT = 'float';
+    public const TYPE_DOUBLE = 'double';
+    public const TYPE_BOOL = 'bool';
+    public const TYPE_BOOLEAN = 'boolean';
+    public const TYPE_EMAIL = 'email';
+    public const TYPE_URL = 'url';
+    public const TYPE_IP = 'ip';
+    public const TYPE_MAC = 'mac';
+    public const TYPE_DOMAIN = 'domain';
+    public const TYPE_JSON = 'json';
+    public const TYPE_BASE64 = 'base64';
+    public const TYPE_UUID = 'uuid';
+    public const TYPE_PHONE = 'phone';
+    public const TYPE_CREDITCARD = 'creditcard';
+    public const TYPE_JWT = 'jwt';
+    public const TYPE_TIMEZONE = 'timezone';
+    public const TYPE_COLOR = 'color';
+    public const TYPE_REGEX = 'regex';
+    public const TYPE_FILE_EXTENSION = 'file_extension';
+    public const TYPE_MIME_TYPE = 'mime_type';
+    public const TYPE_CSRF_TOKEN = 'csrf_token';
+
+    // Security context constants for secureUnknownType
+    public const CONTEXT_HTML = 'html';
+    public const CONTEXT_SQL = 'sql';
+    public const CONTEXT_COMMAND = 'command';
+    public const CONTEXT_SHELL = 'shell';
+    public const CONTEXT_LDAP = 'ldap';
+    public const CONTEXT_XML = 'xml';
+    public const CONTEXT_NOSQL = 'nosql';
+    public const CONTEXT_MONGODB = 'mongodb';
+    public const CONTEXT_CSS = 'css';
+    public const CONTEXT_JAVASCRIPT = 'javascript';
+    public const CONTEXT_JS = 'js';
+    public const CONTEXT_URI = 'uri';
+    public const CONTEXT_FILENAME = 'filename';
+    public const CONTEXT_PATH = 'path';
+    public const CONTEXT_CSV = 'csv';
+    public const CONTEXT_TEMPLATE = 'template';
+    public const CONTEXT_HEADER = 'header';
+    public const CONTEXT_DEFAULT = 'default';
+
     /**
      * Hash a string using a secure algorithm
      * 
-     * Note: This method is deprecated for password hashing.
+     * Note: This method is not suitable for password hashing.
      * Use password_hash() and password_verify() for passwords.
-     * 
-     * For backward compatibility, the default behavior uses the legacy
-     * md5+sha256 combination. Use $secure=true for better security.
      *
      * @param string $val String to hash
      * @param string $algorithm Hash algorithm (default: sha256)
-     * @param bool $secure Use secure hashing (default: false for compatibility)
      *
      * @return string
      */
-    public static function hash(string $val, string $algorithm = 'sha256', bool $secure = false): string
+    public static function hash(string $val, string $algorithm = 'sha256'): string
     {
-        // Maintain backward compatibility by default
-        if (!$secure) {
-            return hash('sha256', md5($val));
-        }
-        
         // Validate algorithm to prevent injection
         $allowedAlgorithms = ['sha256', 'sha512', 'sha3-256', 'sha3-512'];
         if (!in_array($algorithm, $allowedAlgorithms, true)) {
@@ -51,6 +87,20 @@ class Secure
         }
         
         return hash($algorithm, $val);
+    }
+
+    /**
+     * Legacy hash method using md5+sha256 combination
+     * 
+     * @deprecated 3.0 Use @hash method instead for better security
+     * 
+     * @param string $val String to hash
+     *
+     * @return string
+     */
+    public static function legacyHash(string $val): string
+    {
+        return hash('sha256', md5($val));
     }
 
     /**
@@ -91,7 +141,9 @@ class Secure
         $filterOptions = null;
 
         switch ($type) {
+            case self::TYPE_INT:
             case 'int':
+            case self::TYPE_INTEGER:
             case 'integer':
                 $filterType = FILTER_VALIDATE_INT;
                 // Add range validation for security
@@ -105,7 +157,9 @@ class Secure
                 }
                 break;
                 
+            case self::TYPE_FLOAT:
             case 'float':
+            case self::TYPE_DOUBLE:
             case 'double':
                 $filterType = FILTER_VALIDATE_FLOAT;
                 // Add range validation for security
@@ -119,11 +173,14 @@ class Secure
                 }
                 break;
                 
+            case self::TYPE_BOOL:
             case 'bool':
+            case self::TYPE_BOOLEAN:
             case 'boolean':
                 $filterType = FILTER_VALIDATE_BOOLEAN;
                 break;
                 
+            case self::TYPE_EMAIL:
             case 'email':
                 $filterType = FILTER_VALIDATE_EMAIL;
                 // Additional email security validation when options provided
@@ -142,6 +199,7 @@ class Secure
                 }
                 break;
                 
+            case self::TYPE_URL:
             case 'url':
                 $filterType = FILTER_VALIDATE_URL;
                 // Additional URL security validation when options provided
@@ -160,6 +218,7 @@ class Secure
                 }
                 break;
                 
+            case self::TYPE_IP:
             case 'ip':
                 $filterType = FILTER_VALIDATE_IP;
                 // Add IP version restrictions if specified
@@ -170,48 +229,62 @@ class Secure
                 }
                 break;
                 
+            case self::TYPE_MAC:
             case 'mac':
                 $filterType = FILTER_VALIDATE_MAC;
                 break;
                 
+            case self::TYPE_DOMAIN:
             case 'domain':
                 $filterType = FILTER_VALIDATE_DOMAIN;
                 break;
                 
             // New comprehensive validation types
+            case self::TYPE_JSON:
             case 'json':
                 return self::validateJson($data, $options);
                 
+            case self::TYPE_BASE64:
             case 'base64':
                 return self::validateBase64($data, $options);
                 
+            case self::TYPE_UUID:
             case 'uuid':
                 return self::validateUUID($data, $options);
                 
+            case self::TYPE_PHONE:
             case 'phone':
                 return self::validatePhone($data, $options);
                 
+            case self::TYPE_CREDITCARD:
             case 'creditcard':
                 return self::validateCreditCard($data, $options);
                 
+            case self::TYPE_JWT:
             case 'jwt':
                 return self::validateJWT($data, $options);
                 
+            case self::TYPE_TIMEZONE:
             case 'timezone':
                 return self::validateTimezone($data, $options);
                 
+            case self::TYPE_COLOR:
             case 'color':
                 return self::validateColor($data, $options);
                 
+            case self::TYPE_REGEX:
             case 'regex':
                 return self::validateRegex($data, $options);
                 
+            case self::TYPE_FILE_EXTENSION:
             case 'file_extension':
                 return self::validateFileExtension($data, $options);
                 
+            case self::TYPE_MIME_TYPE:
             case 'mime_type':
                 return self::validateMimeType($data, $options);
                 
+            case self::TYPE_CSRF_TOKEN:
             case 'csrf_token':
                 return self::validateCSRFToken($data, $options);
         }
@@ -226,7 +299,11 @@ class Secure
         $result = filter_var($data, $filterType, $filterOptions);
         
         // Additional security check: ensure result is not false for security-critical validations
-        if ($result === false && in_array($type, ['email', 'url', 'ip'])) {
+        if ($result === false && in_array($type, [
+            self::TYPE_EMAIL, 'email', 
+            self::TYPE_URL, 'url', 
+            self::TYPE_IP, 'ip'
+        ])) {
             return false;
         }
         
@@ -260,47 +337,65 @@ class Secure
         
         // Apply context-specific security based on type
         switch ($type) {
+            case self::CONTEXT_HTML:
             case 'html':
                 return self::secureForHtml($data, $htmlentities, $useHtml5, $options);
                 
+            case self::CONTEXT_SQL:
             case 'sql':
                 return self::secureForSql($data, $options);
                 
+            case self::CONTEXT_COMMAND:
             case 'command':
+            case self::CONTEXT_SHELL:
             case 'shell':
                 return self::secureForCommand($data, $options);
                 
+            case self::CONTEXT_LDAP:
             case 'ldap':
                 return self::secureForLdap($data, $options);
                 
+            case self::CONTEXT_XML:
             case 'xml':
                 return self::secureForXml($data, $options);
                 
+            case self::CONTEXT_NOSQL:
             case 'nosql':
+            case self::CONTEXT_MONGODB:
             case 'mongodb':
                 return self::secureForNoSql($data, $options);
                 
+            case self::CONTEXT_CSS:
             case 'css':
                 return self::secureForCss($data, $options);
                 
+            case self::CONTEXT_JAVASCRIPT:
             case 'javascript':
+            case self::CONTEXT_JS:
             case 'js':
                 return self::secureForJavaScript($data, $options);
                 
+            case self::TYPE_URL:
             case 'url':
+            case self::CONTEXT_URI:
             case 'uri':
                 return self::secureForUrl($data, $options);
                 
+            case self::CONTEXT_FILENAME:
             case 'filename':
+            case self::CONTEXT_PATH:
             case 'path':
                 return self::secureForPath($data, $options);
                 
+            case self::CONTEXT_CSV:
             case 'csv':
                 return self::secureForCsv($data, $options);
                 
+            case self::CONTEXT_TEMPLATE:
             case 'template':
                 return self::secureForTemplate($data, $options);
                 
+            case self::CONTEXT_HEADER:
             case 'header':
                 return self::secureForHeader($data, $options);
                 
@@ -539,7 +634,7 @@ class Secure
     /**
      * Validate JSON with security checks
      */
-    private static function validateJson($data, array $options = [])
+    protected static function validateJson($data, array $options = [])
     {
         if (!is_string($data)) {
             return false;
@@ -561,7 +656,7 @@ class Secure
     /**
      * Validate Base64 with security checks
      */
-    private static function validateBase64($data, array $options = [])
+    protected static function validateBase64($data, array $options = [])
     {
         if (!is_string($data)) {
             return false;
@@ -584,7 +679,7 @@ class Secure
     /**
      * Validate UUID with security checks
      */
-    private static function validateUUID($data, array $options = [])
+    protected static function validateUUID($data, array $options = [])
     {
         if (!is_string($data)) {
             return false;
@@ -597,7 +692,7 @@ class Secure
     /**
      * Validate phone numbers with security checks
      */
-    private static function validatePhone($data, array $options = [])
+    protected static function validatePhone($data, array $options = [])
     {
         if (!is_string($data)) {
             return false;
@@ -617,7 +712,7 @@ class Secure
     /**
      * Validate credit card with security checks (PCI DSS compliant)
      */
-    private static function validateCreditCard($data, array $options = [])
+    protected static function validateCreditCard($data, array $options = [])
     {
         if (!is_string($data)) {
             return false;
@@ -643,7 +738,7 @@ class Secure
     /**
      * Luhn algorithm for credit card validation
      */
-    private static function luhnCheck($number): bool
+    protected static function luhnCheck($number): bool
     {
         $sum = 0;
         $alternate = false;
@@ -668,7 +763,7 @@ class Secure
     /**
      * Validate JWT token structure
      */
-    private static function validateJWT($data, array $options = [])
+    protected static function validateJWT($data, array $options = [])
     {
         if (!is_string($data)) {
             return false;
@@ -692,7 +787,7 @@ class Secure
     /**
      * Validate timezone
      */
-    private static function validateTimezone($data, array $options = [])
+    protected static function validateTimezone($data, array $options = [])
     {
         if (!is_string($data)) {
             return false;
@@ -704,7 +799,7 @@ class Secure
     /**
      * Validate color codes
      */
-    private static function validateColor($data, array $options = [])
+    protected static function validateColor($data, array $options = [])
     {
         if (!is_string($data)) {
             return false;
@@ -726,7 +821,7 @@ class Secure
     /**
      * Validate with custom regex
      */
-    private static function validateRegex($data, array $options = [])
+    protected static function validateRegex($data, array $options = [])
     {
         if (!is_string($data) || !isset($options['pattern'])) {
             return false;
@@ -743,7 +838,7 @@ class Secure
     /**
      * Validate file extension
      */
-    private static function validateFileExtension($data, array $options = [])
+    protected static function validateFileExtension($data, array $options = [])
     {
         if (!is_string($data)) {
             return false;
@@ -758,7 +853,7 @@ class Secure
     /**
      * Validate MIME type
      */
-    private static function validateMimeType($data, array $options = [])
+    protected static function validateMimeType($data, array $options = [])
     {
         if (!is_string($data)) {
             return false;
@@ -778,7 +873,7 @@ class Secure
     /**
      * Validate CSRF token
      */
-    private static function validateCSRFToken($data, array $options = [])
+    protected static function validateCSRFToken($data, array $options = [])
     {
         if (!is_string($data)) {
             return false;
@@ -804,7 +899,7 @@ class Secure
     /**
      * Universal security pre-processing
      */
-    private static function universalSecurityFilter(string $data, array $options = []): string
+    protected static function universalSecurityFilter(string $data, array $options = []): string
     {
         // Remove null bytes
         $data = str_replace("\0", '', $data);
@@ -834,7 +929,7 @@ class Secure
     /**
      * Secure for HTML context with comprehensive XSS protection
      */
-    private static function secureForHtml(string $data, bool $htmlentities, bool $useHtml5, array $options = []): string
+    protected static function secureForHtml(string $data, bool $htmlentities, bool $useHtml5, array $options = []): string
     {
         // Remove dangerous HTML tags and attributes
         $data = self::removeHtmlThreats($data, $options);
@@ -852,7 +947,7 @@ class Secure
     /**
      * Remove HTML-based security threats
      */
-    private static function removeHtmlThreats(string $data, array $options = []): string
+    protected static function removeHtmlThreats(string $data, array $options = []): string
     {
         // Remove script tags and their content
         $data = preg_replace('/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/mi', '', $data);
@@ -877,7 +972,7 @@ class Secure
     /**
      * Secure for SQL context
      */
-    private static function secureForSql(string $data, array $options = []): string
+    protected static function secureForSql(string $data, array $options = []): string
     {
         // Remove SQL injection patterns
         $patterns = [
@@ -901,7 +996,7 @@ class Secure
     /**
      * Secure for command injection
      */
-    private static function secureForCommand(string $data, array $options = []): string
+    protected static function secureForCommand(string $data, array $options = []): string
     {
         // Remove command injection patterns
         $dangerous = ['|', '&', ';', '`', '$', '(', ')', '<', '>', '"', "'", '\\', "\n", "\r"];
@@ -916,7 +1011,7 @@ class Secure
     /**
      * Secure for LDAP injection
      */
-    private static function secureForLdap(string $data, array $options = []): string
+    protected static function secureForLdap(string $data, array $options = []): string
     {
         $dangerous = ['(', ')', '*', '\\', '/', "\0"];
         $safe = ['\\28', '\\29', '\\2a', '\\5c', '\\2f', '\\00'];
@@ -927,7 +1022,7 @@ class Secure
     /**
      * Secure for XML injection and XXE attacks
      */
-    private static function secureForXml(string $data, array $options = []): string
+    protected static function secureForXml(string $data, array $options = []): string
     {
         // Remove XML special characters
         $data = str_replace(['<', '>', '&', '"', "'"], ['&lt;', '&gt;', '&amp;', '&quot;', '&#39;'], $data);
@@ -947,7 +1042,7 @@ class Secure
     /**
      * Secure for NoSQL injection
      */
-    private static function secureForNoSql(string $data, array $options = []): string
+    protected static function secureForNoSql(string $data, array $options = []): string
     {
         // Remove NoSQL injection patterns
         $patterns = [
@@ -973,7 +1068,7 @@ class Secure
     /**
      * Secure for CSS context
      */
-    private static function secureForCss(string $data, array $options = []): string
+    protected static function secureForCss(string $data, array $options = []): string
     {
         // Remove dangerous CSS functions
         $dangerous = [
@@ -995,7 +1090,7 @@ class Secure
     /**
      * Secure for JavaScript context
      */
-    private static function secureForJavaScript(string $data, array $options = []): string
+    protected static function secureForJavaScript(string $data, array $options = []): string
     {
         // JSON encode for JavaScript context
         return json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
@@ -1004,7 +1099,7 @@ class Secure
     /**
      * Secure for URL context
      */
-    private static function secureForUrl(string $data, array $options = []): string
+    protected static function secureForUrl(string $data, array $options = []): string
     {
         // URL encode
         $data = urlencode($data);
@@ -1021,7 +1116,7 @@ class Secure
     /**
      * Secure for file path context
      */
-    private static function secureForPath(string $data, array $options = []): string
+    protected static function secureForPath(string $data, array $options = []): string
     {
         return self::sanitizeFilename($data);
     }
@@ -1029,7 +1124,7 @@ class Secure
     /**
      * Secure for CSV context
      */
-    private static function secureForCsv(string $data, array $options = []): string
+    protected static function secureForCsv(string $data, array $options = []): string
     {
         // Prevent CSV injection
         if (in_array(substr($data, 0, 1), ['=', '+', '-', '@'])) {
@@ -1045,7 +1140,7 @@ class Secure
     /**
      * Secure for template injection
      */
-    private static function secureForTemplate(string $data, array $options = []): string
+    protected static function secureForTemplate(string $data, array $options = []): string
     {
         // Remove template injection patterns
         $patterns = [
@@ -1065,7 +1160,7 @@ class Secure
     /**
      * Secure for HTTP header context
      */
-    private static function secureForHeader(string $data, array $options = []): string
+    protected static function secureForHeader(string $data, array $options = []): string
     {
         // Remove CRLF injection
         $data = str_replace(["\r", "\n", "\r\n"], '', $data);
@@ -1079,7 +1174,7 @@ class Secure
     /**
      * Default comprehensive protection
      */
-    private static function secureDefault(string $data, bool $htmlentities, bool $useHtml5, array $options = []): string
+    protected static function secureDefault(string $data, bool $htmlentities, bool $useHtml5, array $options = []): string
     {
         // If not HTML, strip tags by default
         $data = strip_tags($data);
