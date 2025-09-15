@@ -21,6 +21,18 @@ jobs:
       with:
         php-version: '8.1'
         tools: composer
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-phpmd-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-phpmd-
+
+    - name: Configure GitHub token for Composer
+      run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
         
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --ignore-platform-reqs

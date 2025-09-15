@@ -7,9 +7,13 @@ test/unit/report/treemap/*
 
 # Code quality artifacts
 clover.xml
+coverage.xml
 .phpunit.result.cache
 .psalm
 .phpstan.neon
 psalm.xml
 phpcs.xml
 .php-cs-fixer.cache
+
+# For copilot
+auth.json

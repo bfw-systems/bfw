@@ -14,7 +14,7 @@ jobs:
       matrix:
         php-version: ['7.4', '8.0', '8.1', '8.2', '8.3']
         
-    name: PHP ${{ matrix.php-version }}
+    name: PHP ${{ matrix.php-version }} Tests
     
     steps:
     - uses: actions/checkout@v4
@@ -37,12 +37,26 @@ jobs:
         key: ${{ runner.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
         restore-keys: |
           ${{ runner.os }}-php-${{ matrix.php-version }}-
+
+    - name: Configure GitHub token for Composer
+      run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
           
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --ignore-platform-reqs
       
     - name: Run test suite
       run: ./vendor/bin/atoum -c .atoum.php -d test/unit/src +verbose
+      env:
+        CI: true
+        ENABLE_COVERAGE: ${{ matrix.php-version == '8.3' && 'true' || 'false' }}
+
+    - name: Upload coverage to Codecov
+      if: matrix.php-version == '8.3'
+      uses: codecov/codecov-action@v5
+      with:
+        files: ./coverage.xml
+        fail_ci_if_error: false
+        token: ${{ secrets.CODECOV_TOKEN }}
       
     - name: Test framework installation
       run: php ./test/bin/installFwk.php
@@ -50,62 +64,16 @@ jobs:
     - name: Test module manager
       run: php ./test/bin/moduleManager.php
 
-  code-quality:
-    runs-on: ubuntu-latest
-    name: Code Quality
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.1'
-        extensions: memcached, mbstring, xml, ctype, json, curl
-        tools: phpcs, phpstan, psalm
-        
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v3
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-quality-${{ hashFiles('**/composer.json') }}
-        restore-keys: |
-          ${{ runner.os }}-php-quality-
-          
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --ignore-platform-reqs
-      
-    - name: Run PHPCS
+    - name: Notify badge service
+      if: always()
       run: |
-        if [ -f ./vendor/bin/phpcs ]; then
-          ./vendor/bin/phpcs --standard=phpcs.xml.dist src/ || echo "PHPCS found issues"
-        else
-          phpcs --standard=phpcs.xml.dist src/ || echo "PHPCS found issues"
-        fi
-      continue-on-error: true
-      
-    - name: Run PHPStan
-      run: |
-        if [ -f ./vendor/bin/phpstan ]; then
-          ./vendor/bin/phpstan analyse --configuration=phpstan.neon.dist || echo "PHPStan found issues"
-        else
-          phpstan analyse --configuration=phpstan.neon.dist || echo "PHPStan found issues"
-        fi
-      continue-on-error: true
-      
-    - name: Run Psalm
-      run: |
-        if [ -f ./vendor/bin/psalm ]; then
-          ./vendor/bin/psalm --config=psalm.xml.dist || echo "Psalm found issues"
-        else
-          psalm --config=psalm.xml.dist || echo "Psalm found issues"
-        fi
-      continue-on-error: true
+        curl -X POST "https://gh-badges.bulton.fr/webhook" \
+          -H "Content-Type: application/json" \
+          -d "{\"secure_key\":\"${{ secrets.GH_BADGE_SECURE_KEY }}\",\"repository\":\"${{ github.repository }}\",\"branch\":\"${{ github.head_ref || github.ref_name }}\",\"workflow_name\":\"${{ github.workflow }}\",\"job_name\":\"${{ github.job }}\",\"status\":\"${{ job.status }}\"}"
 
-  coverage:
+  phpstan:
     runs-on: ubuntu-latest
-    name: Code Coverage
+    name: PHPStan Analysis
     
     steps:
     - uses: actions/checkout@v4
@@ -113,27 +81,109 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.1'
-        extensions: memcached, mbstring, xml, ctype, json, curl
-        coverage: xdebug
-        
+        php-version: '8.3'
+        extensions: mbstring, intl
+        coverage: none
+    
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v3
       with:
         path: vendor
-        key: ${{ runner.os }}-php-coverage-${{ hashFiles('**/composer.json') }}
+        key: ${{ runner.os }}-php-phpstan-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
-          ${{ runner.os }}-php-coverage-
-          
+          ${{ runner.os }}-php-phpstan-
+
+    - name: Configure GitHub token for Composer
+      run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
+    
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --ignore-platform-reqs
-      
-    - name: Run tests with coverage
-      run: ./vendor/bin/atoum -c .atoum.php -d test/unit/src +verbose
-      
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      run: composer install --prefer-dist --no-progress
+    
+    - name: Run PHPStan
+      run: ./vendor/bin/phpstan analyse --memory-limit=1G
+
+    - name: Notify badge service
+      if: always()
+      run: |
+        curl -X POST "https://gh-badges.bulton.fr/webhook" \
+          -H "Content-Type: application/json" \
+          -d "{\"secure_key\":\"${{ secrets.GH_BADGE_SECURE_KEY }}\",\"repository\":\"${{ github.repository }}\",\"branch\":\"${{ github.head_ref || github.ref_name }}\",\"workflow_name\":\"${{ github.workflow }}\",\"job_name\":\"${{ github.job }}\",\"status\":\"${{ job.status }}\"}"
+
+  phpcs:
+    runs-on: ubuntu-latest
+    name: Code Style Check
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
       with:
-        file: ./clover.xml
-        fail_ci_if_error: false
+        php-version: '8.3'
+        extensions: mbstring, intl
+        coverage: none
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-phpcs-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-phpcs-
+
+    - name: Configure GitHub token for Composer
+      run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run PHP CodeSniffer
+      run: ./vendor/bin/phpcs
+
+    - name: Notify badge service
+      if: always()
+      run: |
+        curl -X POST "https://gh-badges.bulton.fr/webhook" \
+          -H "Content-Type: application/json" \
+          -d "{\"secure_key\":\"${{ secrets.GH_BADGE_SECURE_KEY }}\",\"repository\":\"${{ github.repository }}\",\"branch\":\"${{ github.head_ref || github.ref_name }}\",\"workflow_name\":\"${{ github.workflow }}\",\"job_name\":\"${{ github.job }}\",\"status\":\"${{ job.status }}\"}"
+
+  phpmd:
+    runs-on: ubuntu-latest
+    name: Mess Detector
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, intl
+        coverage: none
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-phpmd-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-phpmd-
+
+    - name: Configure GitHub token for Composer
+      run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
+    
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+    
+    - name: Run PHPMD
+      run: ./vendor/bin/phpmd src text cleancode,codesize,controversial,design,naming,unusedcode
+
+    - name: Notify badge service
+      if: always()
+      run: |
+        curl -X POST "https://gh-badges.bulton.fr/webhook" \
+          -H "Content-Type: application/json" \
+          -d "{\"secure_key\":\"${{ secrets.GH_BADGE_SECURE_KEY }}\",\"repository\":\"${{ github.repository }}\",\"branch\":\"${{ github.head_ref || github.ref_name }}\",\"workflow_name\":\"${{ github.workflow }}\",\"job_name\":\"${{ github.job }}\",\"status\":\"${{ job.status }}\"}"
