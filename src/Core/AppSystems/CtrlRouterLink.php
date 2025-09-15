@@ -9,7 +9,7 @@ class CtrlRouterLink extends AbstractSystem
      * system
      */
     protected $ctrlRouterInfos;
-    
+
     /**
      * Initialize the ctrlRouterInfos property
      * Create the new runTasks ctrlRouterLink, add him to subjectList and send
@@ -24,42 +24,42 @@ class CtrlRouterLink extends AbstractSystem
             public $target = null;
             public $datas = null;
         };
-        
+
         $ctrlRouterTask = new \BFW\RunTasks(
             $this->obtainCtrlRouterLinkTasks(),
             'ctrlRouterLink'
         );
-        
+
         $subjectList = \BFW\Application::getInstance()->getSubjectList();
         $subjectList->addSubject($ctrlRouterTask, 'ctrlRouterLink');
-        
+
         $runTasks = $subjectList->getSubjectByName('ApplicationTasks');
         $runTasks->sendNotify('bfw_ctrlRouterLink_subject_added');
     }
-    
+
     /**
      * {@inheritdoc}
-     * 
+     *
      * @return object
      */
     public function __invoke()
     {
         return $this->ctrlRouterInfos;
     }
-    
+
     /**
      * Getter accessor for property ctrlRouterInfos
-     * 
+     *
      * @return object
      */
     public function getCtrlRouterInfos()
     {
         return $this->ctrlRouterInfos;
     }
-    
+
     /**
      * List all tasks runned by ctrlRouterLink
-     * 
+     *
      * @return array
      */
     protected function obtainCtrlRouterLinkTasks(): array
@@ -70,7 +70,7 @@ class CtrlRouterLink extends AbstractSystem
             ),
             'checkRouteFound' => \BFW\RunTasks::generateStepItem(
                 null,
-                function() {
+                function () {
                     if ($this->ctrlRouterInfos->isFound === false) {
                         http_response_code(404);
                     }
@@ -81,7 +81,7 @@ class CtrlRouterLink extends AbstractSystem
             )
         ];
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -89,7 +89,7 @@ class CtrlRouterLink extends AbstractSystem
     {
         return true;
     }
-    
+
     /**
      * {@inheritdoc}
      * Execute the ctrlRouter tasks
@@ -99,12 +99,12 @@ class CtrlRouterLink extends AbstractSystem
         $this->runCtrlRouterLink();
         $this->runStatus = true;
     }
-    
+
     /**
      * Execute the ctrlRouter task to find the route and the controller.
      * If nothing is found (context object), return an 404 error.
      * Not executed in cli.
-     * 
+     *
      * @return void
      */
     protected function runCtrlRouterLink()
@@ -112,7 +112,7 @@ class CtrlRouterLink extends AbstractSystem
         if (PHP_SAPI === 'cli') {
             return;
         }
-        
+
         \BFW\Application::getInstance()
             ->getSubjectList()
             ->getSubjectByName('ctrlRouterLink')

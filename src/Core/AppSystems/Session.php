@@ -7,7 +7,7 @@ class Session extends AbstractSystem
     /**
      * Initialize sessions system
      * Automaticaly destroy cookie if browser quit and start sessions
-     * 
+     *
      * @return void
      */
     public function __construct()
@@ -22,20 +22,20 @@ class Session extends AbstractSystem
         //Run session
         session_start();
     }
-    
+
     /**
      * {@inheritdoc}
-     * 
+     *
      * @return null
      */
     public function __invoke()
     {
         return null;
     }
-    
+
     /**
      * Obtain the value of the option runSession passed to Application
-     * 
+     *
      * @return boolean
      */
     protected function obtainRunSession(): bool

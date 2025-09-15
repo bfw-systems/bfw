@@ -2,9 +2,9 @@
 
 namespace BFW\Install\ModuleManager\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,9 +12,9 @@ require_once(__DIR__.'/../../../../../vendor/autoload.php');
 class ModuleInfo extends atoum
 {
     protected $mock;
-    
+
     protected $info;
-    
+
     public function beforeTestMethod($testMethod)
     {
         $this->mockGenerator
@@ -23,7 +23,7 @@ class ModuleInfo extends atoum
             ->makeVisible('convertInstallScript')
             ->generate('BFW\Install\ModuleManager\ModuleInfo')
         ;
-        
+
         $this->info = (object) [
             'srcPath'       => 'src/',
             'configFiles'   => ['myConfig.php', 'test.json'],

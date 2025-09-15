@@ -7,9 +7,9 @@ namespace BFW\Test\Helpers;
  * for sqlSecureMethod.
  * There are no secure into this function. It's only return the value passed
  * into parameters.
- * 
+ *
  * @param string $value
- * 
+ *
  * @return string
  */
 function secureSqlMethod(string $value): string

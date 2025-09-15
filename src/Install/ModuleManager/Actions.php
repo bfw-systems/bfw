@@ -13,7 +13,7 @@ class Actions
      * @const EXCEP_MOD_NOT_FOUND Exception code if the asked module has not
      * been found.
      */
-    const EXCEP_MOD_NOT_FOUND = 1701001;
+    public const EXCEP_MOD_NOT_FOUND = 1701001;
 
     /**
      * The manager which have instancied this class
@@ -21,7 +21,7 @@ class Actions
      * @var \BFW\Install\ModuleManager
      */
     protected $manager;
-    
+
     /**
      * List of all path for all modules found.
      * The key is the module name, the value the absolute path.
@@ -29,7 +29,7 @@ class Actions
      * @var string[string] $modulePathList
      */
     protected $modulePathList = [];
-    
+
     /**
      * List of all module found.
      * The key is the module name, the value the instance of
@@ -78,7 +78,7 @@ class Actions
     {
         return $this->moduleList;
     }
-    
+
     /**
      * Call the method dedicated to the action.
      * The action is obtain from Manager class.
@@ -88,7 +88,7 @@ class Actions
     public function doAction()
     {
         $actionName = $this->manager->getAction();
-        
+
         if ($actionName === 'add') {
             return $this->doAdd();
         } elseif ($actionName === 'enable') {
@@ -99,7 +99,7 @@ class Actions
             return $this->doDelete();
         }
     }
-    
+
     /**
      * Run actions to do to prepare and execute add of modules
      * Execute the deleting action if the reinstall option has been declared.
@@ -114,15 +114,15 @@ class Actions
 
         $app        = \BFW\Install\Application::getInstance();
         $vendorPath = $app->getOptions()->getValue('vendorDir');
-        
+
         $this->obtainModulePathList($vendorPath);
         $this->executeForModules('doAdd', 'Add');
-        
+
         foreach ($this->moduleList as $module) {
             $this->runInstallScript($module);
         }
     }
-    
+
     /**
      * Run actions to do to prepare and execute enabling of modules
      *
@@ -133,7 +133,7 @@ class Actions
         $this->obtainModulePathList(MODULES_AVAILABLE_DIR);
         $this->executeForModules('doEnable', 'Enable');
     }
-    
+
     /**
      * Run actions to do to prepare and execute disabling of modules
      *
@@ -144,7 +144,7 @@ class Actions
         $this->obtainModulePathList(MODULES_AVAILABLE_DIR);
         $this->executeForModules('doDisable', 'Disable');
     }
-    
+
     /**
      * Run actions to do to prepare and execute deleting of modules
      *
@@ -193,7 +193,7 @@ class Actions
 
         return $listModules;
     }
-    
+
     /**
      * Call the method actionOnModule for each module find, or only for the
      * module specified on the Manager.
@@ -215,10 +215,10 @@ class Actions
                 $actionMethodName,
                 $actionName
             );
-            
+
             return;
         }
-        
+
         foreach ($this->modulePathList as $moduleName => $modulePath) {
             $this->actionOnModule(
                 $moduleName,
@@ -230,7 +230,7 @@ class Actions
 
         ksort($this->moduleList);
     }
-    
+
     /**
      * Instanciate Module class dedicated for $moduleName, and
      * call $actionMethodName into the Module class to run the action for this
@@ -251,35 +251,35 @@ class Actions
         string $actionMethodName,
         string $actionName
     ) {
-        BasicMsg::displayMsg('> '.$actionName.' module '.$moduleName.' ... ', 'yellow');
-        
+        BasicMsg::displayMsg('> ' . $actionName . ' module ' . $moduleName . ' ... ', 'yellow');
+
         if (empty($modulePath)) {
             if (!isset($this->modulePathList[$moduleName])) {
                 throw new Exception(
-                    'The module '.$moduleName.' has not been found in the directory',
+                    'The module ' . $moduleName . ' has not been found in the directory',
                     static::EXCEP_MOD_NOT_FOUND
                 );
             }
-            
+
             $modulePath = $this->modulePathList[$moduleName];
         }
-        
+
         try {
             $module = $this->obtainModule($moduleName);
             $module->setVendorPath($modulePath);
             $module->{$actionMethodName}();
         } catch (Exception $e) {
             BasicMsg::displayMsgNL(
-                'ERROR #'.$e->getCode().' : '.$e->getMessage(),
+                'ERROR #' . $e->getCode() . ' : ' . $e->getMessage(),
                 'red',
                 'bold'
             );
-            
+
             return;
         }
-        
+
         $this->moduleList[$moduleName] = $module;
-        
+
         BasicMsg::displayMsgNL('Done', 'green');
     }
 
@@ -294,7 +294,7 @@ class Actions
     {
         return new Module($moduleName);
     }
-    
+
     /**
      * Check if there are an install script for $module, and call the method
      * to run it if there is one.
@@ -308,27 +308,27 @@ class Actions
     protected function runInstallScript(Module $module)
     {
         BasicMsg::displayMsg(
-            '> Execute install script for '.$module->getName().' ... ',
+            '> Execute install script for ' . $module->getName() . ' ... ',
             'yellow'
         );
-        
+
         if ($module->hasInstallScript() === false) {
             BasicMsg::displayMsgNL('No script, pass.', 'yellow');
             return;
         }
-        
+
         try {
             $module->runInstallScript();
         } catch (Exception $e) {
             BasicMsg::displayMsgNL(
-                'ERROR #'.$e->getCode().' : '.$e->getMessage(),
+                'ERROR #' . $e->getCode() . ' : ' . $e->getMessage(),
                 'red',
                 'bold'
             );
-            
+
             return;
         }
-        
+
         BasicMsg::displayMsgNL('Done', 'green');
     }
 }

@@ -2,9 +2,9 @@
 
 namespace BFW\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,20 +12,20 @@ require_once(__DIR__.'/../../../vendor/autoload.php');
 class Options extends atoum
 {
     use \BFW\Test\Helpers\Application;
-    
+
     protected $mock;
-    
+
     public function beforeTestMethod($testMethod)
     {
-        $this->setRootDir(__DIR__.'/../../..');
+        $this->setRootDir(__DIR__ . '/../../..');
         $this->createApp();
         $this->initApp();
-        
+
         if ($testMethod == 'testConstruct') {
             return;
         }
     }
-    
+
     public function testConstructAndGetOptions()
     {
         $this->assert('test Options::__construct only with default options')
@@ -34,14 +34,14 @@ class Options extends atoum
             ->array($mock->getOptions())
                 ->isEqualTo(['lib' => 'atoum'])
         ;
-        
+
         $this->assert('test Options::__construct only with personal options')
             ->if($mock = new \BFW\Options([], ['lib' => 'atoum']))
             ->then
             ->array($mock->getOptions())
                 ->isEqualTo(['lib' => 'atoum'])
         ;
-        
+
         $this->assert('test Options::__construct with default and personal options')
             ->if($mock = new \BFW\Options(
                 [
@@ -62,7 +62,7 @@ class Options extends atoum
                 ])
         ;
     }
-    
+
     public function testGetValue()
     {
         $this->assert('test Options::getValue')
@@ -83,7 +83,7 @@ class Options extends atoum
                 ->isEqualTo('bfw')
             ->boolean($this->mock->getValue('inTest'))
                 ->isTrue()
-            ->exception(function() {
+            ->exception(function () {
                 $this->mock->getValue('hello-world');
             })
                 ->hasCode(\BFW\Options::ERR_KEY_NOT_EXIST)

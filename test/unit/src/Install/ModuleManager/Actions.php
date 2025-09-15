@@ -2,9 +2,9 @@
 
 namespace BFW\Install\ModuleManager\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -16,7 +16,7 @@ class Actions extends atoum
 
     protected $mock;
     protected $manager;
-    
+
     public function beforeTestMethod($testMethod)
     {
         $this->mockGenerator
@@ -33,11 +33,11 @@ class Actions extends atoum
             ->generate('BFW\Install\ModuleManager\Actions')
         ;
 
-        $this->setRootDir(__DIR__.'/../../../../..');
+        $this->setRootDir(__DIR__ . '/../../../../..');
         $this->createApp();
         $this->initApp();
 
-        $this->manager = new \mock\BFW\Install\ModuleManager;
+        $this->manager = new \mock\BFW\Install\ModuleManager();
 
         if ($testMethod !== 'testConstructAndDefaultValues') {
             $this->mock = new \mock\BFW\Install\ModuleManager\Actions(
@@ -141,7 +141,7 @@ class Actions extends atoum
             ->and($this->calling($this->mock)->executeForModules = null)
             ->and($this->calling($this->mock)->runInstallScript = null)
             ->then
-            ->given($vendorPath = realpath($this->rootDir.'/vendor').'/')
+            ->given($vendorPath = realpath($this->rootDir . '/vendor') . '/')
         ;
 
         $this->assert('test Install\ModuleManager\Actions::doAdd - no reinstall - without module')
@@ -259,8 +259,8 @@ class Actions extends atoum
     {
         $this->assert('test Install\ModuleManager\Actions::obtainModulePathList with module finded')
             ->if($this->calling($this->mock)->searchAllModulesInDir = [
-                MODULES_AVAILABLE_DIR.'unit-test',
-                MODULES_AVAILABLE_DIR.'hello-world'
+                MODULES_AVAILABLE_DIR . 'unit-test',
+                MODULES_AVAILABLE_DIR . 'hello-world'
             ])
             ->then
             ->variable($this->invoke($this->mock)->obtainModulePathList(MODULES_AVAILABLE_DIR))
@@ -271,12 +271,12 @@ class Actions extends atoum
                         ->once()
             ->array($this->mock->getModulePathList())
                 ->isEqualTo([
-                    'hello-world' => MODULES_AVAILABLE_DIR.'hello-world',
-                    'unit-test'   => MODULES_AVAILABLE_DIR.'unit-test'
+                    'hello-world' => MODULES_AVAILABLE_DIR . 'hello-world',
+                    'unit-test'   => MODULES_AVAILABLE_DIR . 'unit-test'
                 ])
         ;
     }
-    
+
     /*
      * Not tested because cannot mock function into ReadDirLoadModule from here
      * And it's just a call to ReadDirLoadModule::run so real test is in
@@ -293,8 +293,8 @@ class Actions extends atoum
             ->then
             ->given($setModulePathList = function () {
                 $this->modulePathList = [
-                    'hello-world' => MODULES_AVAILABLE_DIR.'hello-world',
-                    'unit-test'   => MODULES_AVAILABLE_DIR.'unit-test'
+                    'hello-world' => MODULES_AVAILABLE_DIR . 'hello-world',
+                    'unit-test'   => MODULES_AVAILABLE_DIR . 'unit-test'
                 ];
             })
             ->and($setModulePathList = $setModulePathList->bindTo($this->mock, $this->mock))
@@ -323,9 +323,9 @@ class Actions extends atoum
             ->mock($this->mock)
                 ->call('actionOnModule')
                     ->twice()
-                    ->withArguments('hello-world', MODULES_AVAILABLE_DIR.'hello-world', 'doEnable', 'Enable')
+                    ->withArguments('hello-world', MODULES_AVAILABLE_DIR . 'hello-world', 'doEnable', 'Enable')
                         ->once()
-                    ->withArguments('unit-test', MODULES_AVAILABLE_DIR.'unit-test', 'doEnable', 'Enable')
+                    ->withArguments('unit-test', MODULES_AVAILABLE_DIR . 'unit-test', 'doEnable', 'Enable')
                         ->once()
         ;
     }
@@ -345,8 +345,8 @@ class Actions extends atoum
 
             ->given($setModulePathList = function () {
                 $this->modulePathList = [
-                    'hello-world' => MODULES_AVAILABLE_DIR.'hello-world',
-                    'unit-test'   => MODULES_AVAILABLE_DIR.'unit-test'
+                    'hello-world' => MODULES_AVAILABLE_DIR . 'hello-world',
+                    'unit-test'   => MODULES_AVAILABLE_DIR . 'unit-test'
                 ];
             })
             ->and($setModulePathList = $setModulePathList->bindTo($this->mock, $this->mock))
@@ -361,14 +361,14 @@ class Actions extends atoum
             ->given($lastFlushedMsg = '')
             ->variable($this->invoke($this->mock)->actionOnModule(
                 'hello-world',
-                MODULES_AVAILABLE_DIR.'hello-world',
+                MODULES_AVAILABLE_DIR . 'hello-world',
                 'doEnable',
                 'Enable'
             ))
                 ->isNull()
             ->mock($mockedModule)
                 ->call('setVendorPath')
-                    ->withArguments(MODULES_AVAILABLE_DIR.'hello-world')
+                    ->withArguments(MODULES_AVAILABLE_DIR . 'hello-world')
                         ->once()
                 ->call('doEnable')
                     ->once()
@@ -379,7 +379,7 @@ class Actions extends atoum
             ->string($lastFlushedMsg)
                 ->isEqualTo(
                     "\033[0;33m> Enable module hello-world ... \033[0m"
-                    ."\033[0;32mDone\033[0m\n"
+                    . "\033[0;32mDone\033[0m\n"
                 )
         ;
 
@@ -394,7 +394,7 @@ class Actions extends atoum
                 ->isNull()
             ->mock($mockedModule)
                 ->call('setVendorPath')
-                    ->withArguments(MODULES_AVAILABLE_DIR.'hello-world')
+                    ->withArguments(MODULES_AVAILABLE_DIR . 'hello-world')
                         ->once()
                 ->call('doEnable')
                     ->once()
@@ -405,7 +405,7 @@ class Actions extends atoum
             ->string($lastFlushedMsg)
                 ->isEqualTo(
                     "\033[0;33m> Enable module hello-world ... \033[0m"
-                    ."\033[0;32mDone\033[0m\n"
+                    . "\033[0;32mDone\033[0m\n"
                 )
         ;
 
@@ -433,14 +433,14 @@ class Actions extends atoum
             ->given($lastFlushedMsg = '')
             ->variable($this->invoke($this->mock)->actionOnModule(
                 'hello-world',
-                MODULES_AVAILABLE_DIR.'hello-world',
+                MODULES_AVAILABLE_DIR . 'hello-world',
                 'doEnable',
                 'Enable'
             ))
                 ->isNull()
             ->mock($mockedModule)
                 ->call('setVendorPath')
-                    ->withArguments(MODULES_AVAILABLE_DIR.'hello-world')
+                    ->withArguments(MODULES_AVAILABLE_DIR . 'hello-world')
                         ->once()
                 ->call('doEnable')
                     ->once()
@@ -451,7 +451,7 @@ class Actions extends atoum
             ->string($lastFlushedMsg)
                 ->isEqualTo(
                     "\033[0;33m> Enable module hello-world ... \033[0m"
-                    ."\033[1;31mERROR #9 : unit-test error\033[0m\n"
+                    . "\033[1;31mERROR #9 : unit-test error\033[0m\n"
                 )
         ;
     }
@@ -487,7 +487,7 @@ class Actions extends atoum
                 ->string($lastFlushedMsg)
                     ->isEqualTo(
                         "\033[0;33m> Execute install script for hello-world ... \033[0m"
-                        ."\033[0;33mNo script, pass.\033[0m\n"
+                        . "\033[0;33mNo script, pass.\033[0m\n"
                     )
         ;
 
@@ -501,7 +501,7 @@ class Actions extends atoum
                 ->string($lastFlushedMsg)
                     ->isEqualTo(
                         "\033[0;33m> Execute install script for hello-world ... \033[0m"
-                        ."\033[0;32mDone\033[0m\n"
+                        . "\033[0;32mDone\033[0m\n"
                     )
         ;
 
@@ -517,7 +517,7 @@ class Actions extends atoum
                 ->string($lastFlushedMsg)
                     ->isEqualTo(
                         "\033[0;33m> Execute install script for hello-world ... \033[0m"
-                        ."\033[1;31mERROR #9 : for unit test\033[0m\n"
+                        . "\033[1;31mERROR #9 : for unit test\033[0m\n"
                     )
         ;
     }

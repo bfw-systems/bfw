@@ -2,9 +2,9 @@
 
 namespace BFW\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,10 +12,10 @@ require_once(__DIR__.'/../../../vendor/autoload.php');
 class Memcached extends atoum
 {
     use \BFW\Test\Helpers\Application;
-    
+
     protected $mock;
     protected $addServersArg = [];
-    
+
     public function beforeTestMethod($testMethod)
     {
         $this->mockGenerator
@@ -24,24 +24,24 @@ class Memcached extends atoum
             ->makeVisible('obtainConnectedServerList')
             ->generate('BFW\Memcached')
         ;
-        
-        $this->setRootDir(__DIR__.'/../../..');
+
+        $this->setRootDir(__DIR__ . '/../../..');
         $this->createApp();
         $this->initApp();
-        
+
         if ($testMethod === 'testConstruct') {
             return;
         }
-        
-        $this->mock = new \mock\BFW\Memcached;
+
+        $this->mock = new \mock\BFW\Memcached();
     }
-    
+
     public function testConstruct()
     {
         //How test the construt ? We can't access to persistant value into
         //the \Memcached object. So there is not test to do here :/
     }
-    
+
     public function testGetConfig()
     {
         $this->assert('test \Memcache\Memcache::getConfig')
@@ -49,7 +49,7 @@ class Memcached extends atoum
                 ->isNotEmpty()
         ;
     }
-    
+
     protected function mockMethodsUsedByConnectToServer()
     {
         $this
@@ -58,13 +58,13 @@ class Memcached extends atoum
             ->and($this->calling($this->mock)->completeServerInfos = function ($infos) {
                 return $infos;
             })
-            ->and($this->calling($this->mock)->addServers = function($servers) use ($that) {
+            ->and($this->calling($this->mock)->addServers = function ($servers) use ($that) {
                 $that->addServersArg = $servers;
             })
             ->and($this->calling($this->mock)->testConnect = true)
         ;
     }
-    
+
     public function testConnectToServersWithoutServer()
     {
         $this->assert('test Memcached::connectToServers without server to connect')
@@ -76,7 +76,7 @@ class Memcached extends atoum
                 ->isEmpty()
         ;
     }
-    
+
     public function testConnectToServersWithOneServer()
     {
         $this->assert('test Memcached::connectToServers with one memcache server')
@@ -89,11 +89,11 @@ class Memcached extends atoum
                 $config
             ))
             ->then
-            
-            ->given($this->mock = new \mock\BFW\Memcached)
+
+            ->given($this->mock = new \mock\BFW\Memcached())
             ->if($this->mockMethodsUsedByConnectToServer())
             ->then
-            
+
             ->variable($this->mock->connectToServers())
                 ->isNull()
             ->array($this->addServersArg)
@@ -106,7 +106,7 @@ class Memcached extends atoum
                 ])
         ;
     }
-    
+
     public function testConnectToServersWithManyServerAndWithPersistent()
     {
         $this->assert('test Memcached::connectToServers with many memcache server and with persistent')
@@ -125,16 +125,16 @@ class Memcached extends atoum
                 $config
             ))
             ->then
-            
-            ->given($this->mock = new \mock\BFW\Memcached)
+
+            ->given($this->mock = new \mock\BFW\Memcached())
             ->if($this->mockMethodsUsedByConnectToServer())
-            ->and($this->calling($this->mock)->obtainConnectedServerList = function() {
+            ->and($this->calling($this->mock)->obtainConnectedServerList = function () {
                 return [
                     'localhost:11212'
                 ];
             })
             ->then
-            
+
             ->variable($this->mock->connectToServers())
                 ->isNull()
             ->array($this->addServersArg)
@@ -155,20 +155,20 @@ class Memcached extends atoum
                 ])
         ;
     }
-    
+
     public function testObtainConnectedServerList()
     {
         $this->assert('test Memcached::obtainConnectedServerList without server')
-            ->if($this->calling($this->mock)->getServerList = function() {
+            ->if($this->calling($this->mock)->getServerList = function () {
                 return [];
             })
             ->then
             ->array($this->mock->obtainConnectedServerList())
                 ->isEmpty()
         ;
-            
+
         $this->assert('test Memcached::obtainConnectedServerList with servers')
-            ->if($this->calling($this->mock)->getServerList = function() {
+            ->if($this->calling($this->mock)->getServerList = function () {
                 return [
                     [
                         'host'   => 'mc1.localhost.com',
@@ -190,7 +190,7 @@ class Memcached extends atoum
                 ])
         ;
     }
-    
+
     public function testCompleteServerInfos()
     {
         $this->assert('test Memcached::completeServerInfos with no infos')
@@ -204,7 +204,7 @@ class Memcached extends atoum
                     'weight' => 0
                 ])
         ;
-        
+
         $this->assert('test Memcached::completeServerInfos with somes infos')
             ->given($infos = [
                 'port' => 11211
@@ -218,7 +218,7 @@ class Memcached extends atoum
                     'weight' => 0
                 ])
         ;
-        
+
         $this->assert('test Memcached::completeServerInfos with all infos')
             ->given($infos = [
                     'host'   => 'localhost',
@@ -235,21 +235,21 @@ class Memcached extends atoum
                 ])
         ;
     }
-    
+
     public function testTestConnect()
     {
         $this->assert('test Memcached::testConnect without server')
             ->and($this->calling($this->mock)->getStats = false)
             ->then
-            
-            ->exception(function() {
+
+            ->exception(function () {
                 $this->mock->testConnect();
             })
                 ->hasCode(\BFW\Memcached::ERR_NO_SERVER_CONNECTED)
         ;
-        
+
         $this->assert('test Memcached::testConnect with a not connected server')
-            ->and($this->calling($this->mock)->getStats = function() {
+            ->and($this->calling($this->mock)->getStats = function () {
                 return [
                     'unit'  => ['uptime' => 10],
                     'test'  => ['uptime' => -1],
@@ -258,16 +258,16 @@ class Memcached extends atoum
                 ];
             })
             ->then
-            
+
             ->given($mock = $this->mock)
-            ->exception(function() {
+            ->exception(function () {
                 $this->mock->testConnect();
             })
                 ->hasCode($mock::ERR_A_SERVER_IS_NOT_CONNECTED)
         ;
-        
+
         $this->assert('test Memcached::testConnect with a not connected server')
-            ->and($this->calling($this->mock)->getStats = function() {
+            ->and($this->calling($this->mock)->getStats = function () {
                 return [
                     'unit'  => ['uptime' => 10],
                     'test'  => ['uptime' => 1],
@@ -276,12 +276,12 @@ class Memcached extends atoum
                 ];
             })
             ->then
-            
+
             ->boolean($this->mock->testConnect())
                 ->isTrue()
         ;
     }
-    
+
     public function testIfExists()
     {
         $this->assert('test Memcached::ifExists with not existing key')
@@ -290,7 +290,7 @@ class Memcached extends atoum
             ->boolean($this->mock->ifExists('phpunit'))
                 ->isFalse()
         ;
-        
+
         $this->assert('test Memcached::ifExists with a existing key')
             ->if($this->calling($this->mock)->get = true)
             ->then
@@ -298,18 +298,18 @@ class Memcached extends atoum
                 ->isTrue()
         ;
     }
-    
+
     public function testUpdateExpire()
     {
         $this->assert('test Memcached::updateExpire with not exist key')
             ->if($this->calling($this->mock)->ifExists = false)
             ->then
-            ->exception(function() {
+            ->exception(function () {
                 $this->mock->updateExpire('phpunit', 10);
             })
                 ->hasCode(\BFW\Memcached::ERR_KEY_NOT_EXIST)
         ;
-        
+
         $this->assert('test Memcached::updateExpire with exist key')
             ->if($this->calling($this->mock)->ifExists = true)
             ->and($this->calling($this->mock)->touch = true)

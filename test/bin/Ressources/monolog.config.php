@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Config file for monolog
  *
@@ -14,7 +15,7 @@ return [
         [
             'name' => '\Monolog\Handler\StreamHandler',
             'args' => [
-                APP_DIR.'logs/bfw/bfw.log',
+                APP_DIR . 'logs/bfw/bfw.log',
                 Logger::DEBUG
             ]
         ]

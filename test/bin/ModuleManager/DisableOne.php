@@ -22,11 +22,11 @@ class DisableOne extends AbstractModuleManagerTests
     {
         BasicMsg::displayMsg('> Check command output : ', 'yellow');
 
-        $cmd       = 'cd '.$this->installDir.' && ./vendor/bin/bfwDisMod -- bfw-test-install';
+        $cmd       = 'cd ' . $this->installDir . ' && ./vendor/bin/bfwDisMod -- bfw-test-install';
         $cmdOutput = $this->execCmd($cmd);
 
         $expectedOutput = ""
-            ."\033[0;33m> Disable module bfw-test-install ... \033[0m\033[0;32mDone\033[0m\n"
+            . "\033[0;33m> Disable module bfw-test-install ... \033[0m\033[0;32mDone\033[0m\n"
         ;
 
         if ($cmdOutput === $expectedOutput) {
@@ -62,7 +62,7 @@ class DisableOne extends AbstractModuleManagerTests
             $this->checkLogLineContextKeys($lineNb, ['linkFile']);
             $this->checkLogLineContextKeyContain($lineNb, 'linkFile', '/test/install/app/modules/enabled/bfw-test-install');
         } catch (Exception $e) {
-            BasicMsg::displayMsgNL('Fail : '.$e->getMessage(), 'red', 'bold');
+            BasicMsg::displayMsgNL('Fail : ' . $e->getMessage(), 'red', 'bold');
             return false;
         }
 

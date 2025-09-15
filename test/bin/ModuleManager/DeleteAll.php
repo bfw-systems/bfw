@@ -22,12 +22,12 @@ class DeleteAll extends AbstractModuleManagerTests
     {
         BasicMsg::displayMsg('> Check command output : ', 'yellow');
 
-        $cmd       = 'cd '.$this->installDir.' && ./vendor/bin/bfwDelMod -a';
+        $cmd       = 'cd ' . $this->installDir . ' && ./vendor/bin/bfwDelMod -a';
         $cmdOutput = $this->execCmd($cmd);
 
         $expectedOutput = ""
-            ."\033[0;33m> Delete module bfw-hello-world ... \033[0m\033[0;32mDone\033[0m\n"
-            ."\033[0;33m> Delete module bfw-test-install ... \033[0m\033[0;32mDone\033[0m\n"
+            . "\033[0;33m> Delete module bfw-hello-world ... \033[0m\033[0;32mDone\033[0m\n"
+            . "\033[0;33m> Delete module bfw-test-install ... \033[0m\033[0;32mDone\033[0m\n"
         ;
 
         if ($cmdOutput === $expectedOutput) {
@@ -102,7 +102,7 @@ class DeleteAll extends AbstractModuleManagerTests
             $this->checkLogLineContextKeys($lineNb, ['path']);
             $this->checkLogLineContextKeyContain($lineNb, 'path', '/test/install/app/config/bfw-test-install');
         } catch (Exception $e) {
-            BasicMsg::displayMsgNL('Fail : '.$e->getMessage(), 'red', 'bold');
+            BasicMsg::displayMsgNL('Fail : ' . $e->getMessage(), 'red', 'bold');
             return false;
         }
 

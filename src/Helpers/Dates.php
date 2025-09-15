@@ -2,8 +2,8 @@
 
 namespace BFW\Helpers;
 
-use \DateTime;
-use \Exception;
+use DateTime;
+use Exception;
 
 /**
  * Class to have shortcuts to DateTime(Zone) methods and to display a date
@@ -37,7 +37,7 @@ class Dates extends DateTime
 
     /**
      * Return the value of the humanReadableI18n property
-     * 
+     *
      * @return string[]
      */
     public static function getHumanReadableI18n(): array
@@ -47,10 +47,10 @@ class Dates extends DateTime
 
     /**
      * Define a new value for a key of the humanReadableI18n property
-     * 
+     *
      * @param string $key The key in humanReadableI18n
      * @param string $value The new value for the key
-     * 
+     *
      * @return void
      */
     public static function setHumanReadableI18nKey(string $key, string $value)
@@ -60,9 +60,9 @@ class Dates extends DateTime
 
     /**
      * Define a new value to the property humanReadableI18n
-     * 
+     *
      * @param string[] $value The new value for the property
-     * 
+     *
      * @return void
      */
     public static function setHumanReadableI18n(array $value)
@@ -72,7 +72,7 @@ class Dates extends DateTime
 
     /**
      * Return the value of the humanReadableFormats property
-     * 
+     *
      * @return string[]
      */
     public static function getHumanReadableFormats(): array
@@ -82,10 +82,10 @@ class Dates extends DateTime
 
     /**
      * Define a new value for a key of the humanReadableFormats property
-     * 
+     *
      * @param string $key The key in humanReadableFormats
      * @param string $value The new value for the key
-     * 
+     *
      * @return void
      */
     public static function setHumanReadableFormatsKey(
@@ -97,9 +97,9 @@ class Dates extends DateTime
 
     /**
      * Define a new value to the property humanReadableFormats
-     * 
+     *
      * @param string[] $value The new value for the property
-     * 
+     *
      * @return void
      */
     public static function setHumanReadableFormats(array $value)
@@ -109,7 +109,7 @@ class Dates extends DateTime
 
     /**
      * Return the date. Format is Y-m-d H:i:sO
-     * 
+     *
      * @return string
      */
     public function getDate(): string
@@ -119,7 +119,7 @@ class Dates extends DateTime
 
     /**
      * Return a numeric representation of a year, 4 digits.
-     * 
+     *
      * @return int
      */
     public function getYear(): int
@@ -130,7 +130,7 @@ class Dates extends DateTime
     /**
      * Return the numeric representation of a month, without leading zeros.
      * The returned int format can not have leading zeros.
-     * 
+     *
      * @return int
      */
     public function getMonth(): int
@@ -141,7 +141,7 @@ class Dates extends DateTime
     /**
      * Return the day of the month without leading zeros.
      * The returned int format can not have leading zeros.
-     * 
+     *
      * @return int
      */
     public function getDay(): int
@@ -152,7 +152,7 @@ class Dates extends DateTime
     /**
      * Return 24-hour format without leading zeros.
      * The returned int format can not have leading zeros.
-     * 
+     *
      * @return int
      */
     public function getHour(): int
@@ -163,7 +163,7 @@ class Dates extends DateTime
     /**
      * Return minutes, without leading zeros.
      * The returned int format can not have leading zeros.
-     * 
+     *
      * @return int
      */
     public function getMinute(): int
@@ -174,7 +174,7 @@ class Dates extends DateTime
     /**
      * Return second, without leading zeros.
      * The returned int format can not have leading zeros.
-     * 
+     *
      * @return int
      */
     public function getSecond(): int
@@ -185,22 +185,22 @@ class Dates extends DateTime
     /**
      * Return the difference to Greenwich time (GMT)
      * with colon between hours and minutes
-     * 
+     *
      * @return string
      */
     public function getZone(): string
     {
         return parent::format('P');
     }
-    
+
     /**
      * Return date's SQL format (postgresql format).
      * The return can be an array or a string.
-     * 
+     *
      * @param boolean $returnArray (default false) True to return an array.
      * @param boolean $withZone (default false) True to include the timezone
      *  into the time returned data.
-     * 
+     *
      * @return string[]|string
      */
     public function getSqlFormat(
@@ -209,7 +209,7 @@ class Dates extends DateTime
     ) {
         $date = $this->format('Y-m-d');
         $time = $this->format('H:i:s');
-        
+
         if ($withZone === true) {
             $time .= $this->format('O');
         }
@@ -218,12 +218,12 @@ class Dates extends DateTime
             return [$date, $time];
         }
 
-        return $date.' '.$time;
+        return $date . ' ' . $time;
     }
 
     /**
      * List all timezone existing in current php version
-     * 
+     *
      * @return string[]
      */
     public function lstTimeZone(): array
@@ -233,7 +233,7 @@ class Dates extends DateTime
 
     /**
      * List all continent define in php DateTimeZone.
-     * 
+     *
      * @return string[]
      */
     public function lstTimeZoneContinent(): array
@@ -254,10 +254,10 @@ class Dates extends DateTime
 
     /**
      * List all available country for a continent
-     * 
+     *
      * @param string $continent The continent for which we want
      *  the countries list
-     * 
+     *
      * @return string[]
      */
     public function lstTimeZoneCountries(string $continent): array
@@ -276,17 +276,17 @@ class Dates extends DateTime
 
     /**
      * Transform a date to a human readable format
-     * 
+     *
      * @param boolean $returnDateAndTime (default true) True to return date and
      *  time concatenated with a space. False to have only date.
-     * 
+     *
      * @return string
      */
     public function humanReadable(bool $returnDateAndTime = true): string
     {
-        $current = new Dates;
+        $current = new Dates();
         $diff    = parent::diff($current);
-        
+
         $parsedTxt = new class {
             public $date = '';
             public $time = '';
@@ -317,16 +317,16 @@ class Dates extends DateTime
 
         return $txtReturned;
     }
-    
+
     /**
      * Check if the date to read for humanReadable is yesterday or tomorrow.
-     * 
+     *
      * We cannot only check the property "d" of DateInterval because it's a
      * range of +/- 24 to 48 hours. If we are at 48h before, it's not ok.
-     * 
+     *
      * @param \DateInterval $diff Interval between now and date to read
      * @param DateTime $current DateTime object for now
-     * 
+     *
      * @return bool
      */
     protected function humanDateIsYesterdayOrTomorrow(
@@ -337,42 +337,42 @@ class Dates extends DateTime
         if (($diff->d === 1 && $diff->m === 0 && $diff->y === 0) === false) {
             return false;
         }
-        
+
         /**
          * With $diff->d === 1, we know if we are in range from 24h to 48h.
          * But yesterday or tomorrow day can finish into the range.
-         * 
+         *
          * Example :
-         * 
+         *
          *    [---03/10---][---04/10---][---05/10---]
          * ---|----|-------|----|-------|----|------
          *       -48h         -24h         $this
          *         [ $diff->d=1 ]
-         * 
+         *
          * Like we can see, the $diff->d=1 is not only on the 04/10, but also
          * on 03/10 because the range is from 24h to 48h before the date.
          * So we need a check to not display "yesterday" for the 03/10.
          */
-        
+
         $twoDays = clone $current;
         if ($diff->invert === 0) {
             $twoDays->modify('-2 days');
         } else {
             $twoDays->modify('+2 days');
         }
-        
+
         if ($this->format('d') === $twoDays->format('d')) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     /**
      * Format date to human readable when the date is now
-     * 
+     *
      * @param object $parsedTxt Texts returned by humanReadable method
-     * 
+     *
      * @return void
      */
     protected function humanDateNow($parsedTxt)
@@ -380,13 +380,13 @@ class Dates extends DateTime
         $currentClass    = get_called_class();
         $parsedTxt->date = $currentClass::$humanReadableI18n['now'];
     }
-    
+
     /**
      * Format date to human readable when date is today
-     * 
+     *
      * @param object $parsedTxt Texts returned by humanReadable method
      * @param \DateInterval $diff Interval between now and date to read
-     * 
+     *
      * @return void
      */
     protected function humanDateToday($parsedTxt, \DateInterval $diff)
@@ -395,27 +395,27 @@ class Dates extends DateTime
         if ($diff->invert === 1) {
             $textKey = 'today_future';
         }
-        
+
         $time = '';
         if ($diff->h === 0 && $diff->i === 0) {
-            $time .= $diff->s.'s';
+            $time .= $diff->s . 's';
         } elseif ($diff->h === 0) {
-            $time .= $diff->i.'min';
+            $time .= $diff->i . 'min';
         } else {
-            $time .= $diff->h.'h';
+            $time .= $diff->h . 'h';
         }
-        
+
         $currentClass    = get_called_class();
         $parsedTxt->date = $currentClass::$humanReadableI18n[$textKey];
-        
+
         $this->humanParseDateAndTimeText($parsedTxt, '', $time);
     }
-    
+
     /**
      * Format date to human readable when date is yesterday
-     * 
+     *
      * @param object $parsedTxt Texts returned by humanReadable method
-     * 
+     *
      * @return void
      */
     protected function humanDateYesterday($parsedTxt)
@@ -423,17 +423,17 @@ class Dates extends DateTime
         $currentClass    = get_called_class();
         $parsedTxt->date = $currentClass::$humanReadableI18n['yesterday'];
         $parsedTxt->time = $currentClass::$humanReadableI18n['time_part'];
-        
+
         $time = $this->format($currentClass::$humanReadableFormats['time']);
-        
+
         $this->humanParseDateAndTimeText($parsedTxt, '', $time);
     }
-    
+
     /**
      * Format date to human readable when date is tomorrow
-     * 
+     *
      * @param object $parsedTxt Texts returned by humanReadable method
-     * 
+     *
      * @return void
      */
     protected function humanDateTomorrow($parsedTxt)
@@ -441,47 +441,47 @@ class Dates extends DateTime
         $currentClass    = get_called_class();
         $parsedTxt->date = $currentClass::$humanReadableI18n['tomorrow'];
         $parsedTxt->time = $currentClass::$humanReadableI18n['time_part'];
-        
+
         $time = $this->format($currentClass::$humanReadableFormats['time']);
-        
+
         $this->humanParseDateAndTimeText($parsedTxt, '', $time);
     }
-    
+
     /**
      * Format date to human readable when date is not now, today or yesterday
-     * 
+     *
      * @param object $parsedTxt Texts returned by humanReadable method
      * @param \DateTime $current DateTime object for now
-     * 
+     *
      * @return void
      */
     protected function humanDateOther($parsedTxt, \DateTime $current)
     {
         $currentClass = get_called_class();
-        
+
         $dateFormat = $currentClass::$humanReadableFormats['dateDifferentYear'];
         if ($current->format('Y') === $this->format('Y')) {
             $dateFormat = $currentClass::$humanReadableFormats['dateSameYear'];
         }
-        
+
         $parsedTxt->date = $currentClass::$humanReadableI18n['others'];
         $parsedTxt->time = $currentClass::$humanReadableI18n['time_part'];
-        
+
         $date = $this->format($dateFormat);
         $time = $this->format($currentClass::$humanReadableFormats['time']);
-        
+
         $this->humanParseDateAndTimeText($parsedTxt, $date, $time);
     }
-    
+
     /**
      * Replace the expression "{date}" by the $date value and the expression
      * "{time}" by the $time value into properties "date" and "time" of the
      * $parsedTxt object.
-     * 
+     *
      * @param object $parsedTxt Texts returned by humanReadable method
      * @param string $date The date value used to replace "{date}" into texts
      * @param string $time The time value used to replace "{time}" into texts
-     * 
+     *
      * @return void
      */
     protected function humanParseDateAndTimeText(
@@ -491,7 +491,7 @@ class Dates extends DateTime
     ) {
         $parsedTxt->date = str_replace('{date}', $date, $parsedTxt->date);
         $parsedTxt->date = str_replace('{time}', $time, $parsedTxt->date);
-        
+
         $parsedTxt->time = str_replace('{date}', $date, $parsedTxt->time);
         $parsedTxt->time = str_replace('{time}', $time, $parsedTxt->time);
     }

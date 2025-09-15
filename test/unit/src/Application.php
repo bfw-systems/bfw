@@ -2,9 +2,9 @@
 
 namespace BFW\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,30 +12,30 @@ require_once(__DIR__.'/../../../vendor/autoload.php');
 class Application extends atoum
 {
     use \BFW\Test\Helpers\Application;
-    
+
     public function beforeTestMethod($testMethod)
     {
-        $this->setRootDir(__DIR__.'/../../..');
-        
+        $this->setRootDir(__DIR__ . '/../../..');
+
         if ($testMethod === 'testConstructAndGetInstance') {
             return;
         }
-        
+
         $this->createApp();
-        
+
         $testWithAppInitialized = [
             'testCall',
             'testRun'
         ];
-        
+
         if (in_array($testMethod, $testWithAppInitialized)) {
             $this->initApp();
         }
     }
-    
+
     /**
      * Test method for __constructor() and getInstance()
-     * 
+     *
      * @return void
      */
     public function testConstructAndGetInstance()
@@ -50,30 +50,30 @@ class Application extends atoum
             ;
         ;
     }
-    
+
     public function testCall()
     {
         $this->assert('test Application::__call when unknown method')
-            ->exception(function() {
+            ->exception(function () {
                 $this->app->setConfig(null);
             })
                 ->hasCode(\BFW\Application::ERR_CALL_UNKNOWN_METHOD)
         ;
-        
+
         $this->assert('test Application::__call when unknown property')
-            ->exception(function() {
+            ->exception(function () {
                 $this->app->getAtoum();
             })
                 ->hasCode(\BFW\Application::ERR_CALL_UNKNOWN_PROPERTY)
         ;
-        
+
         $this->assert('test Application::__call when known method')
             ->object($this->app->getConfig())
                 ->isInstanceOf('\BFW\Config')
                 ->isIdenticalTo($this->app->getAppSystemList()['config']->getConfig())
         ;
     }
-    
+
     public function testObtainAppSystemList()
     {
         $this->assert('test Application::obtainAppSystemList')
@@ -106,7 +106,7 @@ class Application extends atoum
                 ->isEqualTo('\BFW\Core\AppSystems\SubjectList')
         ;
     }
-    
+
     public function testInitSystems()
     {
         $this->assert('test Application::initSystems')
@@ -132,7 +132,7 @@ class Application extends atoum
             ->string($records[3]['message'])
                 ->isEqualTo('Framework initializing done.')
         ;
-        
+
         /**
          * [2018-07-29 19:32:59] bfw.DEBUG: Currently during the initialization framework step. [] []
          * [2018-07-29 19:32:59] bfw.DEBUG: RunTask notify {"prefix":"BfwApp","action":"bfw_ctrlRouterLink_subject_added"} []
@@ -140,48 +140,48 @@ class Application extends atoum
          * [2018-07-29 19:32:59] bfw.DEBUG: Framework initializing done. [] []
          */
     }
-    
+
     public function testInitAppSystemWithNonExistingClass()
     {
         $this->assert('test Application::initAppSystem - prepare')
             ->given($list = $this->app->obtainAppSystemDefaultList())
             ->and($this->app->setAppSystemToInstantiate($list))
         ;
-        
+
         $this->assert('test Application::initAppSystem with an unknown class')
             ->if($this->app->addToAppSystemToInstantiate('mock', 'unknownClass'))
             ->then
-            ->exception(function() {
+            ->exception(function () {
                 $this->initApp();
             })
                 ->hasCode(\BFW\Application::ERR_APP_SYSTEM_CLASS_NOT_EXIST)
         ;
     }
-    
+
     public function testInitAppSystemWithClassNotImplementInterface()
     {
         $this->assert('test Application::initAppSystem - prepare')
             ->given($list = $this->app->obtainAppSystemDefaultList())
             ->and($this->app->setAppSystemToInstantiate($list))
         ;
-        
+
         $this->assert('test Application::initAppSystem with a class which not implement the interface')
             ->if($this->app->addToAppSystemToInstantiate('mock', '\BFW\Helpers\Dates'))
             ->then
-            ->exception(function() {
+            ->exception(function () {
                 $this->initApp();
             })
                 ->hasCode(\BFW\Application::ERR_APP_SYSTEM_NOT_IMPLEMENT_INTERFACE)
         ;
     }
-    
+
     public function testInitAppSystemWithoutRun()
     {
         $this->assert('test Application::initAppSystem - prepare')
             ->given($list = $this->app->obtainAppSystemDefaultList())
             ->and($this->app->setAppSystemToInstantiate($list))
         ;
-        
+
         $this->assert('test Application::initAppSystem without run system')
             ->if($this->app->addToAppSystemToInstantiate('mock', '\mock\BFW\Core\AppSystems\AbstractSystem'))
             ->then
@@ -195,14 +195,14 @@ class Application extends atoum
                 ->notHasKey('mock')
         ;
     }
-    
+
     public function testInitAppSystemWithRun()
     {
         $this->assert('test Application::initAppSystem - prepare')
             ->given($list = $this->app->obtainAppSystemDefaultList())
             ->and($this->app->setAppSystemToInstantiate($list))
         ;
-        
+
         $this->assert('test Application::initAppSystem with run system')
             ->if($this->app->addToAppSystemToInstantiate('mock_moduleList', '\mock\BFW\Core\AppSystems\ModuleList'))
             ->then
@@ -216,14 +216,14 @@ class Application extends atoum
                 ->hasKey('mock_moduleList')
         ;
     }
-    
+
     public function testRun()
     {
         $this->assert('test Application::run')
             ->given($runTasks = new \mock\BFW\RunTasks([], 'BfwApp'))
             ->if($this->app->setRunTasks($runTasks))
             ->then
-            
+
             ->variable($this->app->run())
                 ->isNull()
             ->mock($runTasks)
@@ -233,7 +233,7 @@ class Application extends atoum
                     ->withArguments('bfw_run_done')
                         ->once()
             ->then
-            
+
             ->given(
                 $records = $this
                     ->app
@@ -247,7 +247,7 @@ class Application extends atoum
             ->string($records[8]['context']['action'])
                 ->isEqualTo('bfw_run_done')
         ;
-        
+
         /**
          * [2018-07-29 20:00:49] bfw.DEBUG: Currently during the initialization framework step. [] []
          * [2018-07-29 20:00:49] bfw.DEBUG: RunTask notify {"prefix":"BfwApp","action":"bfw_ctrlRouterLink_subject_added"} []

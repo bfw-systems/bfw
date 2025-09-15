@@ -12,8 +12,8 @@ class Request
      * @const ERR_KEY_NOT_EXIST Exception code if a key not exist into the
      * $_SERVER array.
      */
-    const ERR_KEY_NOT_EXIST = 1107001;
-    
+    public const ERR_KEY_NOT_EXIST = 1107001;
+
     /**
      * @var \BFW\Request $instance Instance for this class (singleton pattern)
      */
@@ -50,15 +50,23 @@ class Request
     protected $request;
 
     /**
+     * Constructor - protected to prevent direct instantiation (singleton pattern)
+     */
+    protected function __construct()
+    {
+        // Empty constructor - prevents direct instantiation
+    }
+
+    /**
      * Create singleton instance for this class
-     * 
+     *
      * @return \BFW\Request
      */
     public static function getInstance(): Request
     {
         if (self::$instance === null) {
             $calledClass    = get_called_class(); //Autorize extends this class
-            self::$instance = new $calledClass;
+            self::$instance = new $calledClass();
         }
 
         return self::$instance;
@@ -66,7 +74,7 @@ class Request
 
     /**
      * Get the client IP
-     * 
+     *
      * @return string
      */
     public function getIp(): string
@@ -76,7 +84,7 @@ class Request
 
     /**
      * Get the client primary language
-     * 
+     *
      * @return string
      */
     public function getLang(): string
@@ -86,7 +94,7 @@ class Request
 
     /**
      * Get the referer url
-     * 
+     *
      * @return string
      */
     public function getReferer(): string
@@ -96,7 +104,7 @@ class Request
 
     /**
      * Get the http method
-     * 
+     *
      * @return string
      */
     public function getMethod(): string
@@ -106,7 +114,7 @@ class Request
 
     /**
      * Get information about if the request is ssl
-     * 
+     *
      * @return boolean|null
      */
     public function getSsl()
@@ -116,7 +124,7 @@ class Request
 
     /**
      * Get the current request
-     * 
+     *
      * @return \stdClass|null
      */
     public function getRequest()
@@ -127,47 +135,47 @@ class Request
     /**
      * Get the information from the $_SERVER array if the key exist.
      * If not exist, return an exception.
-     * 
+     *
      * @param string $keyName The key's value in $_SERVER array
-     * 
+     *
      * @return string
-     * 
+     *
      * @throws \Exception If the key not exist into $_SERVER
      */
     public static function getServerValue(string $keyName): string
     {
         if (!isset($_SERVER[$keyName])) {
             throw new \Exception(
-                'The key '.$keyName.' not exist into $_SERVER array',
+                'The key ' . $keyName . ' not exist into $_SERVER array',
                 self::ERR_KEY_NOT_EXIST
             );
         }
 
         return $_SERVER[$keyName];
     }
-    
+
     /**
      * Get the information from the $_SERVER array if the key exist.
      * If not exist, return a empty string.
-     * 
+     *
      * @param string $keyName The key's value in $_SERVER array
-     * 
+     *
      * @return string
      */
     protected function serverValue(string $keyName): string
     {
         $calledClass = get_called_class(); //Autorize extends this class
-        
+
         try {
             return $calledClass::getServerValue($keyName);
         } catch (\Exception $e) {
             return '';
         }
     }
-    
+
     /**
      * Run all detect method
-     * 
+     *
      * @return void
      */
     public function runDetect()
@@ -182,7 +190,7 @@ class Request
 
     /**
      * Detect the client IP
-     * 
+     *
      * @return void
      */
     protected function detectIp()
@@ -192,7 +200,7 @@ class Request
 
     /**
      * Detect the primary client's language
-     * 
+     *
      * @return void
      */
     protected function detectLang()
@@ -204,13 +212,13 @@ class Request
          * Next "en-US" (preference 0.6/1)
          * End "en" (preference 0.4/1)
          **/
-        
+
         $acceptLanguage = $this->serverValue('HTTP_ACCEPT_LANGUAGE');
         if (empty($acceptLanguage)) {
             $this->lang = '';
             return;
         }
-        
+
         $acceptedLangs = explode(',', $acceptLanguage);
         $firstLang     = explode(';', $acceptedLangs[0]);
         $lang          = strtolower($firstLang[0]);
@@ -225,7 +233,7 @@ class Request
 
     /**
      * Detect the referer page
-     * 
+     *
      * @return void
      */
     protected function detectReferer()
@@ -235,7 +243,7 @@ class Request
 
     /**
      * Detect the http method
-     * 
+     *
      * @return void
      */
     protected function detectMethod()
@@ -245,7 +253,7 @@ class Request
 
     /**
      * Detect if the request is with ssl (https)
-     * 
+     *
      * @return void
      */
     protected function detectSsl()
@@ -267,7 +275,7 @@ class Request
 
     /**
      * Detect the current request informations
-     * 
+     *
      * @return void
      */
     protected function detectRequest()
