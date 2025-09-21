@@ -4,7 +4,7 @@ namespace BFW\Test\Bin\ModuleManager;
 
 use Exception;
 use bultonFr\Utils\Cli\BasicMsg;
-use Dubture\Monolog\Reader\LogReader;
+use Devdot\Monolog\Parser;
 
 class LoadedAll extends AbstractModuleManagerTests
 {
@@ -21,8 +21,9 @@ class LoadedAll extends AbstractModuleManagerTests
 
         exec('curl -s -I http://localhost:8000');
 
-        $logRecords = new LogReader($this->logFilePath);
-        if (count($logRecords) === 0) {
+        $logParser = new Parser($this->logFilePath);
+        $logRecordList = $logParser->get();
+        if (count($logRecordList) === 0) {
             BasicMsg::displayMsgNL('Fail : No log to read', 'red', 'bold');
             return false;
         }
@@ -30,16 +31,16 @@ class LoadedAll extends AbstractModuleManagerTests
         $logNewModule  = [];
         $logLoadModule = [];
 
-        foreach ($logRecords as $record) {
+        foreach ($logRecordList as $record) {
             if (empty($record)) {
                 continue;
             }
 
-            if ($record['message'] === 'New module declared') {
+            if ($record->message === 'New module declared') {
                 $logNewModule[] = $record;
             }
 
-            if ($record['message'] === 'Load module') {
+            if ($record->message === 'Load module') {
                 $logLoadModule[] = $record;
             }
         }
