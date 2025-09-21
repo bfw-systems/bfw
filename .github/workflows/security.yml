@@ -41,25 +41,38 @@ jobs:
       run: composer audit || echo "Security audit completed with warnings"
       continue-on-error: true
 
-  dependency-check:
+  vulnerability-scan:
     runs-on: ubuntu-latest
-    name: Dependency Check
+    name: Vulnerability Scan
     
     steps:
     - uses: actions/checkout@v4
     
-    - name: Run Dependency Check
-      uses: dependency-check/Dependency-Check_Action@main
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
       with:
-        project: 'BFW'
-        path: '.'
-        format: 'ALL'
-      env:
-        OSSINDEX_USERNAME: ${{ secrets.OSS_INDEX_USERNAME }}
-        OSSINDEX_PASSWORD: ${{ secrets.OSS_INDEX_PASSWORD }}
+        php-version: '8.1'
+        tools: composer
         
-    - name: Upload Test results
-      uses: actions/upload-artifact@master
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --ignore-platform-reqs
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
       with:
-         name: Dependency-Check report
-         path: reports/
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'trivy-results.sarif'
+        
+    - name: Upload scan results as artifact
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+         name: Trivy vulnerability report
+         path: trivy-results.sarif
