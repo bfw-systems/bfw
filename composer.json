@@ -23,7 +23,7 @@
     },
     "require": {
         "php": "^7.4.0 || ^8.0",
-        "bulton-fr/dependency-tree": "@stable",
+        "bulton-fr/dependency-tree": "^1.2",
         "monolog/monolog": "^1.0 || ^2.0 || ^3.0",
         "bulton-fr/utils": "~1.0 || ^2.0"
     },
