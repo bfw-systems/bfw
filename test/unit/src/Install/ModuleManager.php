@@ -2,9 +2,9 @@
 
 namespace BFW\Install\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -14,7 +14,7 @@ class ModuleManager extends atoum
     use \BFW\Test\Helpers\OutputBuffer;
 
     protected $mock;
-    
+
     public function beforeTestMethod($testMethod)
     {
         $this->mockGenerator
@@ -22,9 +22,9 @@ class ModuleManager extends atoum
             ->generate('BFW\Install\ModuleManager')
         ;
 
-        $this->mock = new \mock\BFW\Install\ModuleManager;
+        $this->mock = new \mock\BFW\Install\ModuleManager();
     }
-    
+
     public function testGetAndSetAction()
     {
         $this->assert('test Install\ModuleManager::getAction for default value')
@@ -39,7 +39,7 @@ class ModuleManager extends atoum
                 ->isEqualTo('add')
         ;
     }
-    
+
     public function testGetAndSetReinstall()
     {
         $this->assert('test Install\ModuleManager::getReinstall for default value')
@@ -58,7 +58,7 @@ class ModuleManager extends atoum
                 ->isFalse()
         ;
     }
-    
+
     public function testGetAndSetAllModules()
     {
         $this->assert('test Install\ModuleManager::getAllModules for default value')
@@ -77,7 +77,7 @@ class ModuleManager extends atoum
                 ->isFalse()
         ;
     }
-    
+
     public function testGetAndSetSpecificModule()
     {
         $this->assert('test Install\ModuleManager::getSpecificModule for default value')
@@ -92,11 +92,11 @@ class ModuleManager extends atoum
                 ->isEqualTo('bfw-hello-world')
         ;
     }
-    
+
     public function testDoAction()
     {
         $this->assert('test Install\ModuleManager::doAction - without error')
-            ->given($mockedManager = new class($this->mock) extends \BFW\Install\ModuleManager\Actions {
+            ->given($mockedManager = new class ($this->mock) extends \BFW\Install\ModuleManager\Actions {
                 public $doActionCalled = false;
 
                 public function doAction()
@@ -118,7 +118,7 @@ class ModuleManager extends atoum
             ->and($this->defineOutputBuffer($flushedMsg))
             ->then
 
-            ->given($mockedManager = new class($this->mock) extends \BFW\Install\ModuleManager\Actions {
+            ->given($mockedManager = new class ($this->mock) extends \BFW\Install\ModuleManager\Actions {
                 public $doActionCalled = false;
 
                 public function doAction()

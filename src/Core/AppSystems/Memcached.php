@@ -2,7 +2,7 @@
 
 namespace BFW\Core\AppSystems;
 
-use \Exception;
+use Exception;
 
 class Memcached extends AbstractSystem
 {
@@ -12,7 +12,7 @@ class Memcached extends AbstractSystem
      * The class name should be declared into config file.
      */
     protected $memcached;
-    
+
     /**
      * Load and initialize le memcached object
      */
@@ -20,32 +20,32 @@ class Memcached extends AbstractSystem
     {
         $this->loadMemcached();
     }
-    
+
     /**
      * {@inheritdoc}
-     * 
+     *
      * @return \BFW\Memcached
      */
     public function __invoke()
     {
         return $this->memcached;
     }
-    
+
     /**
      * Getter accessor to property memcached
-     * 
+     *
      * @return \BFW\Memcached
      */
     public function getMemcached()
     {
         return $this->memcached;
     }
-    
+
     /**
      * Connect to memcache(d) server with the class declared in config file
-     * 
+     *
      * @return void
-     * 
+     *
      * @throws \Exception If memcached is enabled but no class is define. Or if
      *  The class declared into the config is not found.
      */
@@ -61,14 +61,14 @@ class Memcached extends AbstractSystem
         }
 
         try {
-            $this->memcached = new \BFW\Memcached;
+            $this->memcached = new \BFW\Memcached();
             $this->memcached->connectToServers();
         } catch (Exception $e) {
             $this->memcached = null;
-            
+
             trigger_error(
                 'Memcached connexion error'
-                .' #'.$e->getCode().' : '.$e->getMessage(),
+                . ' #' . $e->getCode() . ' : ' . $e->getMessage(),
                 E_USER_WARNING
             );
         }

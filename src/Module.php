@@ -2,7 +2,7 @@
 
 namespace BFW;
 
-use \Exception;
+use Exception;
 
 /**
  * Class to manage a module
@@ -13,24 +13,24 @@ class Module
     /**
      * @const ERR_FILE_NOT_FOUND Exception code if the file is not found.
      */
-    const ERR_FILE_NOT_FOUND = 1104001;
-    
+    public const ERR_FILE_NOT_FOUND = 1104001;
+
     /**
      * @const ERR_JSON_PARSE Exception code if the parse of a json file fail.
      */
-    const ERR_JSON_PARSE = 1104002;
-    
+    public const ERR_JSON_PARSE = 1104002;
+
     /**
      * @const ERR_RUNNER_FILE_NOT_FOUND Exception code if the runner file to
      * execute is not found.
      */
-    const ERR_RUNNER_FILE_NOT_FOUND = 1104003;
-    
+    public const ERR_RUNNER_FILE_NOT_FOUND = 1104003;
+
     /**
      * @const ERR_METHOD_NOT_EXIST Exception code if the use call an unexisting
      * method.
      */
-    const ERR_METHOD_NOT_EXIST = 1104004;
+    public const ERR_METHOD_NOT_EXIST = 1104004;
 
     /**
      * @var string $name Module's name
@@ -54,7 +54,7 @@ class Module
 
     /**
      * Constructor
-     * 
+     *
      * @param string $name Module name
      */
     public function __construct(string $name)
@@ -64,7 +64,7 @@ class Module
             ->getLogger()
             ->debug('New module declared', ['name' => $name])
         ;
-        
+
         $this->name   = $name;
         $this->status = new class {
             /**
@@ -78,14 +78,14 @@ class Module
             public bool $run  = false;
         };
     }
-    
+
     /**
      * PHP Magic method, called when we call an unexisting method
      * This method allow the module to add dynamic method on fly (issue #88)
-     * 
+     *
      * @param string $name The method name
      * @param array $arguments The argument passed to the method
-     * 
+     *
      * @return mixed
      */
     public function __call(string $name, array $arguments)
@@ -98,16 +98,16 @@ class Module
             $fct = $this->$name;
             return $fct(...$arguments);
         }
-        
+
         throw new Exception(
-            'The method '.$name.' not exist in module class for '.$this->name,
+            'The method ' . $name . ' not exist in module class for ' . $this->name,
             self::ERR_METHOD_NOT_EXIST
         );
     }
-    
+
     /**
      * Load informations about the module
-     * 
+     *
      * @return void
      */
     public function loadModule()
@@ -117,7 +117,7 @@ class Module
             ->getLogger()
             ->debug('Load module', ['name' => $this->name])
         ;
-        
+
         $this->loadConfig();
         $this->obtainLoadInfos();
 
@@ -126,22 +126,22 @@ class Module
 
     /**
      * Get installation informations
-     * 
+     *
      * @param string $sourceFiles Path to module source (in vendor)
-     * 
+     *
      * @return \stdClass
      */
     public static function installInfo(string $sourceFiles): \stdClass
     {
         $currentClass = get_called_class(); //Allow extends
         return $currentClass::readJsonFile(
-            $sourceFiles.'/bfwModulesInfos.json'
+            $sourceFiles . '/bfwModulesInfos.json'
         );
     }
 
     /**
      * Get the module's name
-     * 
+     *
      * @return string
      */
     public function getName(): string
@@ -151,7 +151,7 @@ class Module
 
     /**
      * Get the Config object which have config for this module
-     * 
+     *
      * @return \BFW\Config|null
      */
     public function getConfig()
@@ -161,7 +161,7 @@ class Module
 
     /**
      * Get the load informations
-     * 
+     *
      * @return \stdClass|null
      */
     public function getLoadInfos()
@@ -171,7 +171,7 @@ class Module
 
     /**
      * Get the status object for this module
-     * 
+     *
      * @return object
      */
     public function getStatus()
@@ -181,7 +181,7 @@ class Module
 
     /**
      * Return the load status
-     * 
+     *
      * @return boolean
      */
     public function isLoaded(): bool
@@ -191,7 +191,7 @@ class Module
 
     /**
      * Return the run status
-     * 
+     *
      * @return boolean
      */
     public function isRun(): bool
@@ -201,12 +201,12 @@ class Module
 
     /**
      * Instantiate the Config object to obtains module's configuration
-     * 
+     *
      * @return void
      */
     protected function loadConfig()
     {
-        if (!file_exists(CONFIG_DIR.$this->name)) {
+        if (!file_exists(CONFIG_DIR . $this->name)) {
             return;
         }
 
@@ -216,33 +216,33 @@ class Module
 
     /**
      * Save loaded informations from json file into the loadInfos property
-     * 
+     *
      * @return void
      */
     protected function obtainLoadInfos()
     {
         $currentClass = get_called_class(); //Allow extends
-        
+
         $this->loadInfos = $currentClass::readJsonFile(
-            MODULES_ENABLED_DIR.$this->name
-            .'/module.json'
+            MODULES_ENABLED_DIR . $this->name
+            . '/module.json'
         );
     }
 
     /**
      * Read and parse a json file
-     * 
+     *
      * @param string $jsonFilePath : The path to the file to read
-     * 
+     *
      * @return mixed Json parsed datas
-     * 
+     *
      * @throws \Exception If the file is not found or for a json parser error
      */
     protected static function readJsonFile(string $jsonFilePath)
     {
         if (!file_exists($jsonFilePath)) {
             throw new Exception(
-                'File '.$jsonFilePath.' not found.',
+                'File ' . $jsonFilePath . ' not found.',
                 self::ERR_FILE_NOT_FOUND
             );
         }
@@ -257,13 +257,13 @@ class Module
 
         return $infos;
     }
-    
+
     /**
      * Add a dependency to the module
      * Used for needMe property in module infos
-     * 
+     *
      * @param string $dependencyName The dependency name to add
-     * 
+     *
      * @return $this
      */
     public function addDependency(string $dependencyName): self
@@ -271,21 +271,21 @@ class Module
         if (!property_exists($this->loadInfos, 'require')) {
             $this->loadInfos->require = [];
         }
-        
+
         if (!is_array($this->loadInfos->require)) {
             $this->loadInfos->require = [$this->loadInfos->require];
         }
-        
+
         $this->loadInfos->require[] = $dependencyName;
-        
+
         return $this;
     }
 
     /**
      * Get path to the runner file
-     * 
+     *
      * @return string
-     * 
+     *
      * @throws \Exception If the file not exists
      */
     protected function obtainRunnerFile(): string
@@ -301,10 +301,10 @@ class Module
             return '';
         }
 
-        $runnerFile = MODULES_ENABLED_DIR.$this->name.'/'.$runnerFile;
+        $runnerFile = MODULES_ENABLED_DIR . $this->name . '/' . $runnerFile;
         if (!file_exists($runnerFile)) {
             throw new Exception(
-                'Runner file for module '.$this->name.' not found.',
+                'Runner file for module ' . $this->name . ' not found.',
                 $this::ERR_RUNNER_FILE_NOT_FOUND
             );
         }
@@ -314,7 +314,7 @@ class Module
 
     /**
      * Run the module in a closure
-     * 
+     *
      * @return void
      */
     public function runModule()
@@ -322,13 +322,13 @@ class Module
         if ($this->status->run === true) {
             return;
         }
-        
+
         $runnerFile   = $this->obtainRunnerFile();
-        $initFunction = function() use ($runnerFile) {
+        $initFunction = function () use ($runnerFile) {
             if (empty($runnerFile)) {
                 return;
             }
-            
+
             require(realpath($runnerFile));
         };
 

@@ -8,18 +8,18 @@ class ModuleList extends AbstractSystem
      * @var \BFW\Core\ModuleList $moduleList
      */
     protected $moduleList;
-    
+
     /**
      * Initialize the ModuleList system
      */
     public function __construct()
     {
-        $this->moduleList = new \BFW\Core\ModuleList;
+        $this->moduleList = new \BFW\Core\ModuleList();
     }
-    
+
     /**
      * {@inheritdoc}
-     * 
+     *
      * @return \BFW\Core\ModuleList
      */
     public function __invoke()
@@ -29,14 +29,14 @@ class ModuleList extends AbstractSystem
 
     /**
      * Getter accessor to property moduleList
-     * 
+     *
      * @return \BFW\Core\ModuleList
      */
     public function getModuleList()
     {
         return $this->moduleList;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -44,10 +44,10 @@ class ModuleList extends AbstractSystem
     {
         return true;
     }
-    
+
     /**
      * {@inheritdoc}
-     * 
+     *
      * Load all modules, run all core and app modules
      */
     public function run()
@@ -55,16 +55,16 @@ class ModuleList extends AbstractSystem
         $this->loadAllModules();
         $this->runAllCoreModules();
         $this->runAllAppModules();
-        
+
         $this->runStatus = true;
     }
-    
+
     /**
      * Read all directories in modules directory and add each module to Modules
      * class.
      * Generate the load tree.
      * Not initialize modules !
-     * 
+     *
      * @return void
      */
     protected function loadAllModules()
@@ -72,7 +72,7 @@ class ModuleList extends AbstractSystem
         $listModules = array_diff(scandir(MODULES_ENABLED_DIR), ['.', '..']);
 
         foreach ($listModules as $moduleName) {
-            $modulePath = realpath(MODULES_ENABLED_DIR.$moduleName); //Symlink
+            $modulePath = realpath(MODULES_ENABLED_DIR . $moduleName); //Symlink
 
             if (!is_dir($modulePath)) {
                 continue;
@@ -88,7 +88,7 @@ class ModuleList extends AbstractSystem
     /**
      * Load core modules defined into config bfw file.
      * Only module for controller, router, database and template only.
-     * 
+     *
      * @return void
      */
     protected function runAllCoreModules()
@@ -97,7 +97,7 @@ class ModuleList extends AbstractSystem
             ->getConfig()
             ->getValue('modules', 'modules.php')
         ;
-        
+
         foreach ($allModules as $moduleInfos) {
             $moduleName    = $moduleInfos['name'];
             $moduleEnabled = $moduleInfos['enabled'];
@@ -114,7 +114,7 @@ class ModuleList extends AbstractSystem
      * Load all modules (except core).
      * Get the load tree, read him and load all modules with the order
      * declared into the tree.
-     * 
+     *
      * @return void
      */
     protected function runAllAppModules()
@@ -132,19 +132,19 @@ class ModuleList extends AbstractSystem
 
     /**
      * Load a module
-     * 
+     *
      * @param string $moduleName The module's name to load
-     * 
+     *
      * @return void
      */
     protected function runModule(string $moduleName)
     {
         $app = \BFW\Application::getInstance();
-        
+
         $app->getSubjectList()
             ->getSubjectByName('ApplicationTasks')
-            ->sendNotify('BfwApp_run_module_'.$moduleName);
-        
+            ->sendNotify('BfwApp_run_module_' . $moduleName);
+
         $this->moduleList
             ->getModuleByName($moduleName)
             ->runModule();

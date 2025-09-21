@@ -2,7 +2,7 @@
 
 namespace BFW\Install\Core\AppSystems;
 
-use \BFW\Core\AppSystems\AbstractSystem;
+use BFW\Core\AppSystems\AbstractSystem;
 use BFW\Install\ModuleManager as Manager;
 
 class ModuleManager extends AbstractSystem
@@ -17,29 +17,29 @@ class ModuleManager extends AbstractSystem
      */
     public function __construct()
     {
-        $this->manager = new Manager;
+        $this->manager = new Manager();
     }
-    
+
     /**
      * {@inheritdoc}
-     * 
+     *
      * @return $this
      */
     public function __invoke()
     {
         return $this->manager;
     }
-    
+
     /**
      * Getter accessor to property manager
-     * 
+     *
      * @return \BFW\Install\ModuleManager
      */
     public function getManager(): Manager
     {
         return $this->manager;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -47,7 +47,7 @@ class ModuleManager extends AbstractSystem
     {
         return true;
     }
-    
+
     /**
      * {@inheritdoc}
      * Run install of all modules

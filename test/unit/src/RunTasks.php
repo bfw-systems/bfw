@@ -2,9 +2,9 @@
 
 namespace BFW\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,25 +12,25 @@ require_once(__DIR__.'/../../../vendor/autoload.php');
 class RunTasks extends atoum
 {
     use \BFW\Test\Helpers\Application;
-    
+
     protected $mock;
     protected $observer;
-    
+
     public function beforeTestMethod($testMethod)
     {
-        $this->setRootDir(__DIR__.'/../../..');
+        $this->setRootDir(__DIR__ . '/../../..');
         $this->createApp();
         $this->initApp();
-        
+
         if ($testMethod === 'testConstruct') {
             return;
         }
-        
-        $this->observer = new \BFW\Test\Helpers\ObserverArray;
+
+        $this->observer = new \BFW\Test\Helpers\ObserverArray();
         $this->mock     = new \mock\BFW\RunTasks([], 'unitTest');
         $this->mock->attach($this->observer);
     }
-    
+
     public function testConstruct()
     {
         $this->assert('test Constructor')
@@ -42,14 +42,14 @@ class RunTasks extends atoum
                 ->isEqualto('unitTest')
         ;
     }
-    
+
     public function testGetSetAddRunSteps()
     {
         $this->assert('test RunTasks::getRunSteps with construct value')
             ->array($this->mock->getRunSteps())
                 ->isEmpty()
         ;
-        
+
         $this->assert('test RunTasks::setRunSteps')
             ->given($objAtoumStep = \BFW\RunTasks::generateStepItem($this))
             ->object($this->mock->setRunSteps([
@@ -61,11 +61,11 @@ class RunTasks extends atoum
                     'atoum' => $objAtoumStep
                 ])
         ;
-        
+
         $this->assert('test RunTasks::addRunSteps')
             ->given($objHelloStep = \BFW\RunTasks::generateStepItem(
                 null,
-                function() {
+                function () {
                     echo 'hello world !';
                 }
             ))
@@ -78,14 +78,14 @@ class RunTasks extends atoum
                 ])
         ;
     }
-    
+
     public function testGetAndSetNotifyPrefix()
     {
         $this->assert('test RunTasks::getNotifyPrefix with construct value')
             ->string($this->mock->getNotifyPrefix())
                 ->isEqualTo('unitTest')
         ;
-        
+
         $this->assert('test RunTasks::setNotifyPrefix')
             ->object($this->mock->setNotifyPrefix('atoum'))
                 ->isIdenticalTo($this->mock)
@@ -93,7 +93,7 @@ class RunTasks extends atoum
                 ->isEqualTo('atoum')
         ;
     }
-    
+
     public function testRun()
     {
         $this->assert('test RunTasks::run - prepare')
@@ -102,13 +102,13 @@ class RunTasks extends atoum
                 'atoum' => \BFW\RunTasks::generateStepItem($this),
                 'hello' => \BFW\RunTasks::generateStepItem(
                     null,
-                    function() use(&$helloOutput) {
+                    function () use (&$helloOutput) {
                         $helloOutput = 'hello world !';
                     }
                 )
             ]))
         ;
-        
+
         $this->assert('test RunTasks::run')
             ->variable($this->mock->run())
             ->string($helloOutput)
@@ -142,7 +142,7 @@ class RunTasks extends atoum
                         ->isNull()
         ;
     }
-    
+
     public function testSendNotify()
     {
         $this->assert('test RunTasks::sendNotify without context')
@@ -156,7 +156,7 @@ class RunTasks extends atoum
                     ->variable($received[0]->context)
                         ->isNull()
         ;
-        
+
         $this->assert('test RunTasks::sendNotify with context')
             ->variable($this->mock->sendNotify('hi_from_atoum', $this))
                 ->isNull()

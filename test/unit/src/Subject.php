@@ -2,9 +2,9 @@
 
 namespace BFW\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,78 +12,79 @@ require_once(__DIR__.'/../../../vendor/autoload.php');
 class Subject extends atoum
 {
     use \BFW\Test\Helpers\Application;
-    
+
     protected $mock;
     protected $observer;
-    
+
     public function beforeTestMethod($testMethod)
     {
-        $this->setRootDir(__DIR__.'/../../..');
+        $this->setRootDir(__DIR__ . '/../../..');
         $this->createApp();
         $this->initApp();
-        
+
         if ($testMethod === 'testConstruct') {
             return;
         }
-        
-        $this->observer = new \BFW\Test\Helpers\ObserverArray;
-        $this->mock     = new \BFW\Test\Mock\Subject;
-        
+
+        $this->observer = new \BFW\Test\Helpers\ObserverArray();
+        $this->mock     = new \BFW\Test\Mock\Subject();
+
         if (
             $testMethod === 'testGettersDefaultValues' ||
             $testMethod === 'testAttachAndDetach'
         ) {
             return;
         }
-        
+
         $this->mock->attach($this->observer);
     }
-    
+
     protected function newNotify($action, $context)
     {
-        return new class($action, $context) {
+        return new class ($action, $context) {
             public $action;
             public $context;
-            
-            public function __construct($action, $context) {
+
+            public function __construct($action, $context)
+            {
                 $this->action  = $action;
                 $this->context = $context;
             }
         };
     }
-    
+
     public function testConstruct()
     {
         $this->assert('test Constructor')
-            ->object($runTasks = new \mock\BFW\Subject)
+            ->object($runTasks = new \mock\BFW\Subject())
                 ->isInstanceOf('\BFW\Subject')
                 ->IsInstanceOf('\SplSubject')
         ;
     }
-    
+
     public function testGettersDefaultValues()
     {
         $this->assert('test Subject::getObservers for default value')
             ->array($this->mock->getObservers())
                 ->isEmpty()
         ;
-        
+
         $this->assert('test Subject::getNotifyHeap for default value')
             ->array($this->mock->getNotifyHeap())
                 ->isEmpty()
         ;
-        
+
         $this->assert('test Subject::getAction for default value')
             ->string($this->mock->getAction())
                 ->isEmpty()
         ;
-        
+
         $this->assert('test Subject::getContext for default value')
             ->variable($this->mock->getContext())
                 ->isNull()
         ;
     }
-    
+
     public function testAttachAndDetach()
     {
         $this->assert('test Subject::attach')
@@ -95,19 +96,19 @@ class Subject extends atoum
             ->object($observerList[0])
                 ->isIdenticalTo($this->observer)
         ;
-        
+
         $this->assert('test Subject::detach')
             ->variable($this->mock->detach($this->observer))
                 ->isNull()
             ->array($observerList = $this->mock->getObservers())
                 ->isEmpty()
-            ->exception(function() {
+            ->exception(function () {
                 $this->mock->detach($this->observer);
             })
                 ->hasCode(\BFW\Subject::ERR_OBSERVER_NOT_FOUND)
         ;
     }
-    
+
     public function testNotify()
     {
         $this->assert('test Subject::notify')
@@ -118,21 +119,21 @@ class Subject extends atoum
                     ->isEqualTo(1)
         ;
     }
-    
+
     public function testReadNotifyHeap()
     {
-        $this->mock = new \mock\BFW\Test\Mock\Subject;
-        
+        $this->mock = new \mock\BFW\Test\Mock\Subject();
+
         $this->assert('test Subject::readNotifyHeap')
             ->given($notifyList = [])
             ->given($mock = $this->mock)
             ->given($atoum = $this)
-            ->if($this->calling($this->mock)->notify = function() use (&$notifyList, &$mock, $atoum) {
+            ->if($this->calling($this->mock)->notify = function () use (&$notifyList, &$mock, $atoum) {
                 $notifyList[] = $atoum->newNotify(
                     $mock->getAction(),
                     $mock->getContext()
                 );
-                
+
                 if ($mock->getAction() === 'add_new_notify') {
                     $mock->addNotifyHeap('hello', 'world !');
                 }
@@ -143,7 +144,7 @@ class Subject extends atoum
                 $this->newNotify('hi', null)
             ]))
             ->then
-            
+
             ->object($this->mock->readNotifyHeap())
                 ->isIdenticalTo($this->mock)
             ->array($notifyList)
@@ -170,16 +171,16 @@ class Subject extends atoum
                         ->isEqualTo('world !')
         ;
     }
-    
+
     public function testAddNotification()
     {
-        $this->mock = new \mock\BFW\Test\Mock\Subject;
-        
+        $this->mock = new \mock\BFW\Test\Mock\Subject();
+
         $this->assert('test Subject::addNotification for first call')
             ->given($nbCallToReadNotifyHeap = 0)
-            ->if($this->calling($this->mock)->readNotifyHeap = function() use (&$nbCallToReadNotifyHeap) {
+            ->if($this->calling($this->mock)->readNotifyHeap = function () use (&$nbCallToReadNotifyHeap) {
                 $nbCallToReadNotifyHeap++;
-                
+
                 return $this;
             })
             ->then

@@ -2,9 +2,9 @@
 
 namespace BFW\Core\AppSystems\test\unit;
 
-use \atoum;
+use atoum;
 
-require_once(__DIR__.'/../../../../../vendor/autoload.php');
+require_once(__DIR__ . '/../../../../../vendor/autoload.php');
 
 /**
  * @engine isolate
@@ -12,30 +12,30 @@ require_once(__DIR__.'/../../../../../vendor/autoload.php');
 class Memcached extends atoum
 {
     use \BFW\Test\Helpers\Application;
-    
+
     protected $mock;
-    
+
     public function beforeTestMethod($testMethod)
     {
         $this->mockGenerator
             ->makeVisible('loadMemcached')
         ;
-        
-        $this->setRootDir(__DIR__.'/../../../../..');
+
+        $this->setRootDir(__DIR__ . '/../../../../..');
         $this->createApp();
         $this->initApp();
-        
+
         if ($testMethod === 'testConstructor') {
             return;
         }
-        
-        $this->mock = new \mock\BFW\Core\AppSystems\Memcached;
+
+        $this->mock = new \mock\BFW\Core\AppSystems\Memcached();
     }
-    
+
     public function testConstructor()
     {
         $this->assert('test Core\AppSystems\Memcached::__construct')
-            ->given($this->mock = new \mock\BFW\Core\AppSystems\Memcached)
+            ->given($this->mock = new \mock\BFW\Core\AppSystems\Memcached())
             ->if($this->calling($this->mock)->loadMemcached = null)
             ->variable($this->mock->getMemcached())
                 ->isNull()
@@ -44,7 +44,7 @@ class Memcached extends atoum
                     ->once()
         ;
     }
-    
+
     public function testInvoke()
     {
         $this->assert('test Core\AppSystems\Memcached::__invoke')
@@ -52,7 +52,7 @@ class Memcached extends atoum
                 ->isNull() //default value because memcached disabled
         ;
     }
-    
+
     public function testToRun()
     {
         $this->assert('test Core\AppSystems\Memcached::toRun')
@@ -60,7 +60,7 @@ class Memcached extends atoum
                 ->isFalse()
         ;
     }
-    
+
     public function testLoadMemcached()
     {
         $this->assert('test Core\AppSystems\Memcached::loadMemcached - prepare')
@@ -68,14 +68,14 @@ class Memcached extends atoum
             ->given($memcacheConfig = $config->getConfigByFilename('memcached.php'))
             ->and($config->setConfigForFilename('memcached.php', $memcacheConfig))
         ;
-        
+
         $this->assert('test Core\AppSystems\Memcached::loadMemcached with memcached disabled')
             ->variable($this->mock->loadMemcached())
                 ->isNull()
             ->variable($this->mock->getMemcached())
                 ->isNull()
         ;
-        
+
         $this->assert('test Core\AppSystems\Memcached::loadMemcached with memcached enabled')
             ->if($memcacheConfig['memcached']['enabled'] = true)
             ->and($memcacheConfig['memcached']['servers'][0]['host'] = 'localhost')
@@ -91,14 +91,14 @@ class Memcached extends atoum
             ->array($this->mock->getMemcached()->getServerList())
                 ->isNotEmpty()
         ;
-        
+
         $this->assert('test Core\AppSystems\Memcached::loadMemcached with a memcached error')
             ->if($memcacheConfig['memcached']['enabled'] = true)
             ->and($memcacheConfig['memcached']['servers'][0]['host'] = 'localhost')
             ->and($memcacheConfig['memcached']['servers'][0]['port'] = 11212)
             ->and($config->setConfigForFilename('memcached.php', $memcacheConfig))
             ->then
-            ->when(function() {
+            ->when(function () {
                 $this->mock->loadMemcached();
             })
             ->error()

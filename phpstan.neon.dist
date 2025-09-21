@@ -1,0 +1,16 @@
+parameters:
+    level: 6
+    paths:
+        - src
+    excludePaths:
+        - src/PrivateBinaries/*
+    ignoreErrors:
+        # Allow mixed return types for legacy compatibility
+        - '#Method .* should return .* but returns mixed#'
+        # Allow dynamic properties for legacy compatibility  
+        - '#Access to an undefined property#'
+        # Allow variable variables for configuration flexibility
+        - '#Variable \$\$.*#'
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    reportUnmatchedIgnoredErrors: false

@@ -40,7 +40,7 @@ class ModuleInfo
      * @var string
      */
     protected $installScript = '';
-    
+
     /**
      * Constructor
      *
@@ -60,7 +60,7 @@ class ModuleInfo
                 $this->{$propName} = $moduleInfo->{$propName};
             }
         }
-        
+
         $this->convertValues();
     }
 
@@ -113,7 +113,7 @@ class ModuleInfo
     {
         return $this->installScript;
     }
-    
+
     /**
      * Call methods to convert values for some properties
      *

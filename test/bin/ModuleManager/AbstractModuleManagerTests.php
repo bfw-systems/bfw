@@ -13,8 +13,8 @@ abstract class AbstractModuleManagerTests
 
     public function __construct()
     {
-        $this->installDir  = realpath(__DIR__.'/../../install');
-        $this->logFilePath = $this->installDir.'/app/logs/bfw/bfw.log';
+        $this->installDir  = realpath(__DIR__ . '/../../install');
+        $this->logFilePath = $this->installDir . '/app/logs/bfw/bfw.log';
 
         $this->checkBfwInstalled();
         static::copyMonologConfigFile($this->installDir);
@@ -23,7 +23,7 @@ abstract class AbstractModuleManagerTests
 
     protected function checkBfwInstalled()
     {
-        if (!file_exists($this->installDir.'/app')) {
+        if (!file_exists($this->installDir . '/app')) {
             throw new Exception('BFW seem to not be installed in /test/install directory.');
         }
     }
@@ -36,14 +36,14 @@ abstract class AbstractModuleManagerTests
 
         static::$monologConfigFileCopyStatus = true;
 
-        copy($installDir.'/app/config/bfw/monolog.php', $installDir.'/app/config/bfw/monolog.php.bak');
-        copy(__DIR__.'/../Ressources/monolog.config.php', $installDir.'/app/config/bfw/monolog.php');
+        copy($installDir . '/app/config/bfw/monolog.php', $installDir . '/app/config/bfw/monolog.php.bak');
+        copy(__DIR__ . '/../Ressources/monolog.config.php', $installDir . '/app/config/bfw/monolog.php');
     }
 
     protected function removeMonologLog()
     {
-        if (file_exists($this->installDir.'/app/logs/bfw/bfw.log')) {
-            unlink($this->installDir.'/app/logs/bfw/bfw.log');
+        if (file_exists($this->installDir . '/app/logs/bfw/bfw.log')) {
+            unlink($this->installDir . '/app/logs/bfw/bfw.log');
         }
     }
 
@@ -66,7 +66,7 @@ abstract class AbstractModuleManagerTests
     {
         $cmdOutput = [];
         exec($cmd, $cmdOutput);
-        
-        return implode("\n", $cmdOutput)."\n";
+
+        return implode("\n", $cmdOutput) . "\n";
     }
 }
