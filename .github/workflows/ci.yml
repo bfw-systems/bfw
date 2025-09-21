@@ -90,7 +90,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: vendor
-        key: ${{ runner.os }}-php-phpstan-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-php-phpstan-${{ hashFiles('**/composer.json') }}
         restore-keys: |
           ${{ runner.os }}-php-phpstan-
 
@@ -129,7 +129,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: vendor
-        key: ${{ runner.os }}-phpcs-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-phpcs-${{ hashFiles('**/composer.json') }}
         restore-keys: |
           ${{ runner.os }}-phpcs-
 
@@ -168,7 +168,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: vendor
-        key: ${{ runner.os }}-php-phpmd-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-php-phpmd-${{ hashFiles('**/composer.json') }}
         restore-keys: |
           ${{ runner.os }}-php-phpmd-
 
