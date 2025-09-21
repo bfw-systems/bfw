@@ -41,10 +41,10 @@ jobs:
 
     - name: Configure GitHub token for Composer
       run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
-          
+
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --ignore-platform-reqs
-      
+      run: composer install --prefer-dist --no-progress
+
     - name: Run test suite
       run: ./vendor/bin/atoum -c .atoum.php -d test/unit/src +verbose
       env:
@@ -216,7 +216,7 @@ jobs:
       run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
         
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --ignore-platform-reqs --no-dev
+      run: composer install --prefer-dist --no-progress --no-dev
       
     - name: Run Psalm
       run: psalm --config=psalm.xml.dist --output-format=github
