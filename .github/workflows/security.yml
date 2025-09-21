@@ -54,6 +54,9 @@ jobs:
         project: 'BFW'
         path: '.'
         format: 'ALL'
+      env:
+        OSSINDEX_USERNAME: ${{ secrets.OSS_INDEX_USERNAME }}
+        OSSINDEX_PASSWORD: ${{ secrets.OSS_INDEX_PASSWORD }}
         
     - name: Upload Test results
       uses: actions/upload-artifact@master
