@@ -219,7 +219,6 @@ jobs:
       
     - name: Run Psalm
       run: psalm --config=psalm.xml.dist --output-format=github
-      continue-on-error: true
 
     - name: Notify badge service
       if: always()
