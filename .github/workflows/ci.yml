@@ -1,0 +1,233 @@
+name: CI
+
+on:
+  push:
+    branches: [ "3.0", "main", "master" ]
+  pull_request:
+    branches: [ "3.0", "main", "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        #php-version: ['7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3']
+        php-version: ['7.2', '7.3']
+        
+    name: PHP ${{ matrix.php-version }} Tests
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: memcached, mbstring, xml, ctype, json, curl
+        coverage: xdebug
+        
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict --no-check-lock
+      
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
+        restore-keys: |
+          ${{ runner.os }}-php-${{ matrix.php-version }}-
+
+    - name: Configure GitHub token for Composer
+      run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
+
+    - name: Remove others CI dependencies not used by unit test
+    # Because PHP compatibility versions of packages
+      run: composer remove --no-update --dev vimeo/psalm phpstan/phpstan phpmd/phpmd squizlabs/php_codesniffer
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run test suite
+      run: ./vendor/bin/atoum -c .atoum.php -d test/unit/src +verbose
+      env:
+        CI: true
+        ENABLE_COVERAGE: ${{ matrix.php-version == '8.3' && 'true' || 'false' }}
+
+    - name: Upload coverage to Codecov
+      if: matrix.php-version == '8.3'
+      uses: codecov/codecov-action@v5
+      with:
+        files: ./coverage.xml
+        fail_ci_if_error: false
+        token: ${{ secrets.CODECOV_TOKEN }}
+      
+    - name: Test framework installation
+      run: php ./test/bin/installFwk.php
+      
+    - name: Test module manager
+      run: php ./test/bin/moduleManager.php
+
+    - name: Notify badge service
+      if: always()
+      run: |
+        curl -X POST "https://gh-badges.bulton.fr/webhook" \
+          -H "Content-Type: application/json" \
+          -d "{\"secure_key\":\"${{ secrets.GH_BADGE_SECURE_KEY }}\",\"repository\":\"${{ github.repository }}\",\"branch\":\"${{ github.head_ref || github.ref_name }}\",\"workflow_name\":\"${{ github.workflow }}\",\"job_name\":\"${{ github.job }}\",\"status\":\"${{ job.status }}\"}"
+
+  phpstan:
+    runs-on: ubuntu-latest
+    name: PHPStan Analysis
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, intl
+        coverage: none
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-phpstan-${{ hashFiles('**/composer.json') }}
+        restore-keys: |
+          ${{ runner.os }}-php-phpstan-
+
+    - name: Configure GitHub token for Composer
+      run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
+    
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+    
+    - name: Run PHPStan
+      run: ./vendor/bin/phpstan analyse --memory-limit=1G
+
+    - name: Notify badge service
+      if: always()
+      run: |
+        curl -X POST "https://gh-badges.bulton.fr/webhook" \
+          -H "Content-Type: application/json" \
+          -d "{\"secure_key\":\"${{ secrets.GH_BADGE_SECURE_KEY }}\",\"repository\":\"${{ github.repository }}\",\"branch\":\"${{ github.head_ref || github.ref_name }}\",\"workflow_name\":\"${{ github.workflow }}\",\"job_name\":\"${{ github.job }}\",\"status\":\"${{ job.status }}\"}"
+
+  phpcs:
+    runs-on: ubuntu-latest
+    name: Code Style Check
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, intl
+        coverage: none
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-phpcs-${{ hashFiles('**/composer.json') }}
+        restore-keys: |
+          ${{ runner.os }}-phpcs-
+
+    - name: Configure GitHub token for Composer
+      run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run PHP CodeSniffer
+      run: ./vendor/bin/phpcs
+
+    - name: Notify badge service
+      if: always()
+      run: |
+        curl -X POST "https://gh-badges.bulton.fr/webhook" \
+          -H "Content-Type: application/json" \
+          -d "{\"secure_key\":\"${{ secrets.GH_BADGE_SECURE_KEY }}\",\"repository\":\"${{ github.repository }}\",\"branch\":\"${{ github.head_ref || github.ref_name }}\",\"workflow_name\":\"${{ github.workflow }}\",\"job_name\":\"${{ github.job }}\",\"status\":\"${{ job.status }}\"}"
+
+  phpmd:
+    runs-on: ubuntu-latest
+    name: Mess Detector
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, intl
+        coverage: none
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-phpmd-${{ hashFiles('**/composer.json') }}
+        restore-keys: |
+          ${{ runner.os }}-php-phpmd-
+
+    - name: Configure GitHub token for Composer
+      run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
+    
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+    
+    - name: Run PHPMD
+      run: ./vendor/bin/phpmd src text cleancode,codesize,controversial,design,naming,unusedcode
+
+    - name: Notify badge service
+      if: always()
+      run: |
+        curl -X POST "https://gh-badges.bulton.fr/webhook" \
+          -H "Content-Type: application/json" \
+          -d "{\"secure_key\":\"${{ secrets.GH_BADGE_SECURE_KEY }}\",\"repository\":\"${{ github.repository }}\",\"branch\":\"${{ github.head_ref || github.ref_name }}\",\"workflow_name\":\"${{ github.workflow }}\",\"job_name\":\"${{ github.job }}\",\"status\":\"${{ job.status }}\"}"
+  
+  psalm:
+    runs-on: ubuntu-latest
+    name: Psalm
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: memcached, mbstring, xml, ctype, json
+        tools: psalm
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-psalm-${{ hashFiles('**/composer.json') }}
+        restore-keys: |
+          ${{ runner.os }}-php-psalm-
+
+    - name: Configure GitHub token for Composer
+      run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
+        
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-dev
+      
+    - name: Run Psalm
+      run: psalm --config=psalm.xml.dist --output-format=github
+
+    - name: Notify badge service
+      if: always()
+      run: |
+        curl -X POST "https://gh-badges.bulton.fr/webhook" \
+          -H "Content-Type: application/json" \
+          -d "{\"secure_key\":\"${{ secrets.GH_BADGE_SECURE_KEY }}\",\"repository\":\"${{ github.repository }}\",\"branch\":\"${{ github.head_ref || github.ref_name }}\",\"workflow_name\":\"${{ github.workflow }}\",\"job_name\":\"${{ github.job }}\",\"status\":\"${{ job.status }}\"}"

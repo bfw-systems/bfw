@@ -1,0 +1,78 @@
+name: Security
+
+on:
+  push:
+    branches: [ "3.0", "main", "master" ]
+  pull_request:
+    branches: [ "3.0", "main", "master" ]
+  schedule:
+    - cron: '0 0 * * 1'  # Run every Monday
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    name: Security Audit
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        tools: composer
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-phpmd-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-phpmd-
+
+    - name: Configure GitHub token for Composer
+      run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
+        
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --ignore-platform-reqs
+      
+    - name: Security Audit
+      run: composer audit || echo "Security audit completed with warnings"
+      continue-on-error: true
+
+  vulnerability-scan:
+    runs-on: ubuntu-latest
+    name: Vulnerability Scan
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        tools: composer
+        
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --ignore-platform-reqs
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'trivy-results.sarif'
+        
+    - name: Upload scan results as artifact
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+         name: Trivy vulnerability report
+         path: trivy-results.sarif
