@@ -187,3 +187,43 @@ jobs:
         curl -X POST "https://gh-badges.bulton.fr/webhook" \
           -H "Content-Type: application/json" \
           -d "{\"secure_key\":\"${{ secrets.GH_BADGE_SECURE_KEY }}\",\"repository\":\"${{ github.repository }}\",\"branch\":\"${{ github.head_ref || github.ref_name }}\",\"workflow_name\":\"${{ github.workflow }}\",\"job_name\":\"${{ github.job }}\",\"status\":\"${{ job.status }}\"}"
+  
+  psalm:
+    runs-on: ubuntu-latest
+    name: Psalm
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: memcached, mbstring, xml, ctype, json
+        tools: psalm
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-psalm-${{ hashFiles('**/composer.json') }}
+        restore-keys: |
+          ${{ runner.os }}-php-psalm-
+
+    - name: Configure GitHub token for Composer
+      run: composer config github-oauth.github.com ${{ secrets.GH_COMPOSER_TOKEN }}
+        
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --ignore-platform-reqs --no-dev
+      
+    - name: Run Psalm
+      run: psalm --config=psalm.xml.dist --output-format=github
+      continue-on-error: true
+
+    - name: Notify badge service
+      if: always()
+      run: |
+        curl -X POST "https://gh-badges.bulton.fr/webhook" \
+          -H "Content-Type: application/json" \
+          -d "{\"secure_key\":\"${{ secrets.GH_BADGE_SECURE_KEY }}\",\"repository\":\"${{ github.repository }}\",\"branch\":\"${{ github.head_ref || github.ref_name }}\",\"workflow_name\":\"${{ github.workflow }}\",\"job_name\":\"${{ github.job }}\",\"status\":\"${{ job.status }}\"}"
