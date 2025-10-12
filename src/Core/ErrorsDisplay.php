@@ -70,8 +70,10 @@ class ErrorsDisplay
             <head>
                 <title>An error is detected !</title>
                 <style>
-                    html {padding:0; margin:0; background-color:#e3e3e3; font-family:sans-serif; font-size: 1em; word-wrap:break-word;}
-                    div {position:relative; margin:auto; width:950px; border: 1px solid #a6c9e2; top: 30px; margin-bottom:10px;}
+                    html {padding:0; margin:0; background-color:#e3e3e3; font-family:sans-serif; 
+                          font-size: 1em; word-wrap:break-word;}
+                    div {position:relative; margin:auto; width:950px; border: 1px solid #a6c9e2; 
+                         top: 30px; margin-bottom:10px;}
                     p {padding:0; margin:0;}
                     p.title {font-size:1.2em; background-color:#D0DCE9; padding:10px;}
                     p.info {padding:5px; margin-top:10px; margin-bottom:10px;}
@@ -82,7 +84,8 @@ class ErrorsDisplay
             <body>
                 <div>
                     <p class="title">Niarf, an error is detected !</p>
-                    <p class="info">' . $errType . ' Error : <strong>' . $errMsg . '</strong> in ' . $errFile . ' at line ' . $errLine . '</p>
+                    <p class="info">' . $errType . ' Error : <strong>' . $errMsg .
+                        '</strong> in ' . $errFile . ' at line ' . $errLine . '</p>
                     <fieldset><pre>';
         foreach ($backtrace as $i => $info) {
             echo '#' . $i . '  ' . $info['function'];
