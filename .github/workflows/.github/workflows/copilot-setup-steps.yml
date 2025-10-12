@@ -1,0 +1,52 @@
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+
+      - name: Configure Composer authentication
+        run: composer config -g github-oauth.github.com $GH_COMPOSER_TOKEN
+        env:
+          GH_COMPOSER_TOKEN: ${{ secrets.GH_COMPOSER_TOKEN }}
+
+      - name: Force prefer-dist
+        run: composer config -g preferred-install dist
+
+      - name: Increase Composer timeout
+        run: composer config -g process-timeout 600
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.composer/cache
+            ~/.cache/composer
+          key: composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            composer-
+
+      - name: Validate composer configuration
+        run: composer config --list
+
+      - name: Pre-install all dependencies (including dev)
+        run: composer install --no-interaction --prefer-dist --no-progress
