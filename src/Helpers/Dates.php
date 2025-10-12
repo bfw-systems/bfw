@@ -377,8 +377,7 @@ class Dates extends DateTime
      */
     protected function humanDateNow($parsedTxt)
     {
-        $currentClass    = get_called_class();
-        $parsedTxt->date = $currentClass::$humanReadableI18n['now'];
+        $parsedTxt->date = static::$humanReadableI18n['now'];
     }
 
     /**
@@ -405,8 +404,7 @@ class Dates extends DateTime
             $time .= $diff->h . 'h';
         }
 
-        $currentClass    = get_called_class();
-        $parsedTxt->date = $currentClass::$humanReadableI18n[$textKey];
+        $parsedTxt->date = static::$humanReadableI18n[$textKey];
 
         $this->humanParseDateAndTimeText($parsedTxt, '', $time);
     }
@@ -420,11 +418,10 @@ class Dates extends DateTime
      */
     protected function humanDateYesterday($parsedTxt)
     {
-        $currentClass    = get_called_class();
-        $parsedTxt->date = $currentClass::$humanReadableI18n['yesterday'];
-        $parsedTxt->time = $currentClass::$humanReadableI18n['time_part'];
+        $parsedTxt->date = static::$humanReadableI18n['yesterday'];
+        $parsedTxt->time = static::$humanReadableI18n['time_part'];
 
-        $time = $this->format($currentClass::$humanReadableFormats['time']);
+        $time = $this->format(static::$humanReadableFormats['time']);
 
         $this->humanParseDateAndTimeText($parsedTxt, '', $time);
     }
@@ -438,11 +435,10 @@ class Dates extends DateTime
      */
     protected function humanDateTomorrow($parsedTxt)
     {
-        $currentClass    = get_called_class();
-        $parsedTxt->date = $currentClass::$humanReadableI18n['tomorrow'];
-        $parsedTxt->time = $currentClass::$humanReadableI18n['time_part'];
+        $parsedTxt->date = static::$humanReadableI18n['tomorrow'];
+        $parsedTxt->time = static::$humanReadableI18n['time_part'];
 
-        $time = $this->format($currentClass::$humanReadableFormats['time']);
+        $time = $this->format(static::$humanReadableFormats['time']);
 
         $this->humanParseDateAndTimeText($parsedTxt, '', $time);
     }
@@ -457,18 +453,16 @@ class Dates extends DateTime
      */
     protected function humanDateOther($parsedTxt, \DateTime $current)
     {
-        $currentClass = get_called_class();
-
-        $dateFormat = $currentClass::$humanReadableFormats['dateDifferentYear'];
+        $dateFormat = static::$humanReadableFormats['dateDifferentYear'];
         if ($current->format('Y') === $this->format('Y')) {
-            $dateFormat = $currentClass::$humanReadableFormats['dateSameYear'];
+            $dateFormat = static::$humanReadableFormats['dateSameYear'];
         }
 
-        $parsedTxt->date = $currentClass::$humanReadableI18n['others'];
-        $parsedTxt->time = $currentClass::$humanReadableI18n['time_part'];
+        $parsedTxt->date = static::$humanReadableI18n['others'];
+        $parsedTxt->time = static::$humanReadableI18n['time_part'];
 
         $date = $this->format($dateFormat);
-        $time = $this->format($currentClass::$humanReadableFormats['time']);
+        $time = $this->format(static::$humanReadableFormats['time']);
 
         $this->humanParseDateAndTimeText($parsedTxt, $date, $time);
     }
