@@ -2,10 +2,12 @@
 
 namespace BFW\Core\AppSystems;
 
+use BFW\Core\Options as CoreOptions;
+
 class Options extends AbstractSystem
 {
     /**
-     * @var \BFW\Core\Options $options
+     * @var CoreOptions $options
      */
     protected $options;
 
@@ -14,7 +16,7 @@ class Options extends AbstractSystem
      */
     public function __construct()
     {
-        $this->options = new \BFW\Core\Options(
+        $this->options = new CoreOptions(
             $this->obtainDefaultOptions(),
             \BFW\Application::getInstance()->getDeclaredOptions()
         );
@@ -28,7 +30,7 @@ class Options extends AbstractSystem
     /**
      * {@inheritdoc}
      *
-     * @return \BFW\Core\Options
+     * @return CoreOptions
      */
     public function __invoke()
     {

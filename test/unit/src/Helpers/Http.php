@@ -80,7 +80,8 @@ class Http extends atoum
 
         $this->assert('test Helpers\Http::obtainPostKey - html, but not inline')
             ->string(\BFW\Helpers\Http::obtainPostKey('content', 'html', true, false))
-                ->isEqualTo("\n\t\n" . ' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;')
+                ->isEqualTo("\n\t\n" . ' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour
+                    installer&lt;/p&gt;')
         ;
     }
 
@@ -109,7 +110,8 @@ class Http extends atoum
 
         $this->assert('test Helpers\Http::obtainGetKey - html, but not inline')
             ->string(\BFW\Helpers\Http::obtainGetKey('content', 'html', true, false))
-                ->isEqualTo("\n\t\n" . ' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;')
+                ->isEqualTo("\n\t\n" . ' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour
+                    installer&lt;/p&gt;')
         ;
     }
 
@@ -173,7 +175,8 @@ class Http extends atoum
             ))
                 ->isEqualTo([
                     'titre'   => 'install',
-                    'content' => "\n\t\n" . ' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;'
+                    'content' => "\n\t\n" .
+                        ' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;'
                 ])
         ;
     }
@@ -238,7 +241,8 @@ class Http extends atoum
             ))
                 ->isEqualTo([
                     'titre'   => 'install',
-                    'content' => "\n\t\n" . ' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;'
+                    'content' => "\n\t\n" .
+                        ' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;'
                 ])
         ;
     }

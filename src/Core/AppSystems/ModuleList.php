@@ -2,10 +2,12 @@
 
 namespace BFW\Core\AppSystems;
 
+use BFW\Core\ModuleList as CoreModuleList;
+
 class ModuleList extends AbstractSystem
 {
     /**
-     * @var \BFW\Core\ModuleList $moduleList
+     * @var CoreModuleList $moduleList
      */
     protected $moduleList;
 
@@ -14,13 +16,13 @@ class ModuleList extends AbstractSystem
      */
     public function __construct()
     {
-        $this->moduleList = new \BFW\Core\ModuleList();
+        $this->moduleList = new CoreModuleList();
     }
 
     /**
      * {@inheritdoc}
      *
-     * @return \BFW\Core\ModuleList
+     * @return CoreModuleList
      */
     public function __invoke()
     {

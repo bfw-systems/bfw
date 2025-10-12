@@ -48,7 +48,8 @@ class ExpectedModuleInstall
         } else {
             $output .= " > Create symbolic link ... [Force Reinstall: Remove symlink] \033[1;32mDone\n\033[0m"
                 . " > Copy config files :\n"
-                . " >> Create config directory for this module ... [Force Reinstall: Remove directory] \033[1;32mDone\n\033[0m"
+                . " >> Create config directory for this module ... [Force Reinstall: Remove directory]
+                    \033[1;32mDone\n\033[0m"
                 . " >> Copy manifest.json ... \033[1;32mDone\n\033[0m"
             ;
         }

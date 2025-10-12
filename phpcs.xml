@@ -20,4 +20,9 @@
 
     <!-- Show sniff codes in all reports -->
     <arg value="s"/>
+    
+    <!-- Exclude PSR1.Files.SideEffects for test files (require_once + class declaration pattern) -->
+    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+        <exclude-pattern>test/*</exclude-pattern>
+    </rule>
 </ruleset>

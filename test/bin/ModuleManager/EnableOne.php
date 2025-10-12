@@ -49,21 +49,38 @@ class EnableOne extends AbstractModuleManagerTests
         }
 
         try {
-            //Line 0 [2019-05-17 10:03:03] bfw.DEBUG: Module - Read module info {"name":"bfw-test-install","path":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install"} []
+            //Line 0 [2019-05-17 10:03:03] bfw.DEBUG: Module - Read module info
+            //{"name":"bfw-test-install",
+            //path":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install"} []
             $lineNb = 0;
             $this->checkLogLineMsg($lineNb, 'Module - Read module info');
             $this->checkLogLineContextKeys($lineNb, ['name', 'path']);
             $this->checkLogLineContextKeyEqual($lineNb, 'name', 'bfw-test-install');
-            $this->checkLogLineContextKeyContain($lineNb, 'path', '/test/install/app/modules/available/bfw-test-install');
+            $this->checkLogLineContextKeyContain(
+                $lineNb,
+                'path',
+                '/test/install/app/modules/available/bfw-test-install'
+            );
 
-            //Line 1 [2019-05-17 10:03:03] bfw.DEBUG: FileManager - Create symlink {"linkTarget":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install/src/","linkFile":"/opt/Projects/bfw/bfw/test/install/app/modules/enabled/bfw-test-install"} []
+            //Line 1 [2019-05-17 10:03:03] bfw.DEBUG: FileManager - Create symlink
+            //{"linkTarget":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install/src/",
+            //linkFile":"/opt/Projects/bfw/bfw/test/install/app/modules/enabled/bfw-test-install"} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'FileManager - Create symlink');
             $this->checkLogLineContextKeys($lineNb, ['linkTarget', 'linkFile']);
-            $this->checkLogLineContextKeyContain($lineNb, 'linkTarget', '/test/install/app/modules/available/bfw-test-install/src/');
-            $this->checkLogLineContextKeyContain($lineNb, 'linkFile', '/test/install/app/modules/enabled/bfw-test-install');
+            $this->checkLogLineContextKeyContain(
+                $lineNb,
+                'linkTarget',
+                '/test/install/app/modules/available/bfw-test-install/src/'
+            );
+            $this->checkLogLineContextKeyContain(
+                $lineNb,
+                'linkFile',
+                '/test/install/app/modules/enabled/bfw-test-install'
+            );
 
-            //Line 3 [2019-05-22 22:33:19] bfw.DEBUG: FileManager - Create symlink - Use relative path {"target":"../available/bfw-test-install/src/"} []
+            //Line 3 [2019-05-22 22:33:19] bfw.DEBUG: FileManager - Create symlink - Use relative path
+            //{"target":"../available/bfw-test-install/src/"} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'FileManager - Create symlink - Use relative path');
             $this->checkLogLineContextKeys($lineNb, ['target']);

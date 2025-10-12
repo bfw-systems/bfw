@@ -256,7 +256,8 @@ class Secure extends atoum
                 true, //htmlentities
                 false //inline
             ))
-                ->isEqualTo("\n\t\n" . ' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;')
+                ->isEqualTo("\n\t\n" . ' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour
+                    installer&lt;/p&gt;')
         ;
     }
 
@@ -303,7 +304,8 @@ class Secure extends atoum
             ))
                 ->isEqualTo([
                     'titre'   => 'install',
-                    'content' => "\n\t\n" . ' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;'
+                    'content' => "\n\t\n" .
+                        ' &lt;p&gt;Il est recommand&eacute; d&#039;utiliser composer pour installer&lt;/p&gt;'
                 ])
         ;
 

@@ -49,27 +49,41 @@ class DeleteOne extends AbstractModuleManagerTests
         }
 
         try {
-            //Line 0 [2019-05-17 10:18:51] bfw.DEBUG: Module - Read module info {"name":"bfw-test-install","path":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install"} []
+            //Line 0 [2019-05-17 10:18:51] bfw.DEBUG: Module - Read module info
+            //{"name":"bfw-test-install",
+            //path":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install"} []
             $lineNb = 0;
             $this->checkLogLineMsg($lineNb, 'Module - Read module info');
             $this->checkLogLineContextKeys($lineNb, ['name', 'path']);
             $this->checkLogLineContextKeyEqual($lineNb, 'name', 'bfw-test-install');
-            $this->checkLogLineContextKeyContain($lineNb, 'path', '/test/install/app/modules/available/bfw-test-install');
+            $this->checkLogLineContextKeyContain(
+                $lineNb,
+                'path',
+                '/test/install/app/modules/available/bfw-test-install'
+            );
 
-            //Line 1 [2019-05-17 10:18:51] bfw.DEBUG: FileManager - Remove symlink {"linkFile":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install"} []
+            //Line 1 [2019-05-17 10:18:51] bfw.DEBUG: FileManager - Remove symlink
+            //{"linkFile":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install"} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'FileManager - Remove symlink');
             $this->checkLogLineContextKeys($lineNb, ['linkFile']);
-            $this->checkLogLineContextKeyContain($lineNb, 'linkFile', '/test/install/app/modules/available/bfw-test-install');
+            $this->checkLogLineContextKeyContain(
+                $lineNb,
+                'linkFile',
+                '/test/install/app/modules/available/bfw-test-install'
+            );
 
-            //Line 2 [2019-05-17 10:18:51] bfw.DEBUG: Module - Delete config files {"name":"bfw-test-install","configPath":"/opt/Projects/bfw/bfw/test/install/app/config/bfw-test-install"} []
+            //Line 2 [2019-05-17 10:18:51] bfw.DEBUG: Module - Delete config files
+            //{"name":"bfw-test-install",
+            //configPath":"/opt/Projects/bfw/bfw/test/install/app/config/bfw-test-install"} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'Module - Delete config files');
             $this->checkLogLineContextKeys($lineNb, ['name', 'configPath']);
             $this->checkLogLineContextKeyEqual($lineNb, 'name', 'bfw-test-install');
             $this->checkLogLineContextKeyContain($lineNb, 'configPath', '/test/install/app/config/bfw-test-install');
 
-            //Line 3 [2019-05-17 10:18:51] bfw.DEBUG: FileManager - Remove files and directories {"path":"/opt/Projects/bfw/bfw/test/install/app/config/bfw-test-install"} []
+            //Line 3 [2019-05-17 10:18:51] bfw.DEBUG: FileManager - Remove files and directories
+            //{"path":"/opt/Projects/bfw/bfw/test/install/app/config/bfw-test-install"} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'FileManager - Remove files and directories');
             $this->checkLogLineContextKeys($lineNb, ['path']);

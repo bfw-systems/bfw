@@ -50,31 +50,53 @@ class DisableAll extends AbstractModuleManagerTests
         }
 
         try {
-            //Line 0 [2019-05-17 10:31:09] bfw.DEBUG: Module - Read module info {"name":"bfw-hello-world","path":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-hello-world"} []
+            //Line 0 [2019-05-17 10:31:09] bfw.DEBUG: Module - Read module info
+            //{"name":"bfw-hello-world",
+            //path":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-hello-world"} []
             $lineNb = 0;
             $this->checkLogLineMsg($lineNb, 'Module - Read module info');
             $this->checkLogLineContextKeys($lineNb, ['name', 'path']);
             $this->checkLogLineContextKeyEqual($lineNb, 'name', 'bfw-hello-world');
-            $this->checkLogLineContextKeyContain($lineNb, 'path', '/test/install/app/modules/available/bfw-hello-world');
+            $this->checkLogLineContextKeyContain(
+                $lineNb,
+                'path',
+                '/test/install/app/modules/available/bfw-hello-world'
+            );
 
-            //Line 1 [2019-05-17 10:31:09] bfw.DEBUG: FileManager - Remove symlink {"linkFile":"/opt/Projects/bfw/bfw/test/install/app/modules/enabled/bfw-hello-world"} []
+            //Line 1 [2019-05-17 10:31:09] bfw.DEBUG: FileManager - Remove symlink
+            //{"linkFile":"/opt/Projects/bfw/bfw/test/install/app/modules/enabled/bfw-hello-world"} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'FileManager - Remove symlink');
             $this->checkLogLineContextKeys($lineNb, ['linkFile']);
-            $this->checkLogLineContextKeyContain($lineNb, 'linkFile', '/test/install/app/modules/enabled/bfw-hello-world');
+            $this->checkLogLineContextKeyContain(
+                $lineNb,
+                'linkFile',
+                '/test/install/app/modules/enabled/bfw-hello-world'
+            );
 
-            //Line 2 [2019-05-17 10:31:09] bfw.DEBUG: Module - Read module info {"name":"bfw-test-install","path":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install"} []
+            //Line 2 [2019-05-17 10:31:09] bfw.DEBUG: Module - Read module info
+            //{"name":"bfw-test-install",
+            //path":"/opt/Projects/bfw/bfw/test/install/app/modules/available/bfw-test-install"} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'Module - Read module info');
             $this->checkLogLineContextKeys($lineNb, ['name', 'path']);
             $this->checkLogLineContextKeyEqual($lineNb, 'name', 'bfw-test-install');
-            $this->checkLogLineContextKeyContain($lineNb, 'path', '/test/install/app/modules/available/bfw-test-install');
+            $this->checkLogLineContextKeyContain(
+                $lineNb,
+                'path',
+                '/test/install/app/modules/available/bfw-test-install'
+            );
 
-            //Line 3 [2019-05-17 10:31:09] bfw.DEBUG: FileManager - Remove symlink {"linkFile":"/opt/Projects/bfw/bfw/test/install/app/modules/enabled/bfw-test-install"} []
+            //Line 3 [2019-05-17 10:31:09] bfw.DEBUG: FileManager - Remove symlink
+            //{"linkFile":"/opt/Projects/bfw/bfw/test/install/app/modules/enabled/bfw-test-install"} []
             $lineNb++;
             $this->checkLogLineMsg($lineNb, 'FileManager - Remove symlink');
             $this->checkLogLineContextKeys($lineNb, ['linkFile']);
-            $this->checkLogLineContextKeyContain($lineNb, 'linkFile', '/test/install/app/modules/enabled/bfw-test-install');
+            $this->checkLogLineContextKeyContain(
+                $lineNb,
+                'linkFile',
+                '/test/install/app/modules/enabled/bfw-test-install'
+            );
         } catch (Exception $e) {
             BasicMsg::displayMsgNL('Fail : ' . $e->getMessage(), 'red', 'bold');
             return false;

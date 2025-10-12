@@ -106,6 +106,7 @@ ALWAYS validate changes by running these steps:
 ### Dependencies Issue Resolution
 - If composer install fails due to GitHub authentication, run with `--no-interaction`
 - Private repositories may require GitHub token setup (not needed for framework development)
+- **CRITICAL**: If composer dependency installation fails for any reason (authentication issues, network problems, version conflicts, etc.), STOP immediately and report the problem to the user. Do NOT proceed with any other tasks or attempt workarounds unless explicitly instructed otherwise by the user.
 
 ## Timing Expectations - NEVER CANCEL
 - **Composer install**: 2-5 minutes depending on network - Set timeout to 10+ minutes

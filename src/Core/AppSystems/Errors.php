@@ -2,10 +2,12 @@
 
 namespace BFW\Core\AppSystems;
 
+use BFW\Core\Errors as CoreErrors;
+
 class Errors extends AbstractSystem
 {
     /**
-     * @var \BFW\Core\Errors $errors The error object
+     * @var CoreErrors $errors The error object
      */
     protected $errors;
 
@@ -14,13 +16,13 @@ class Errors extends AbstractSystem
      */
     public function __construct()
     {
-        $this->errors = new \BFW\Core\Errors();
+        $this->errors = new CoreErrors();
     }
 
     /**
      * {@inheritdoc}
      *
-     * @return \BFW\Core\Errors
+     * @return CoreErrors
      */
     public function __invoke()
     {

@@ -2,6 +2,8 @@
 
 namespace BFW\Core\AppSystems;
 
+use BFW\RunTasks;
+
 class CtrlRouterLink extends AbstractSystem
 {
     /**
@@ -25,7 +27,7 @@ class CtrlRouterLink extends AbstractSystem
             public $datas = null;
         };
 
-        $ctrlRouterTask = new \BFW\RunTasks(
+        $ctrlRouterTask = new RunTasks(
             $this->obtainCtrlRouterLinkTasks(),
             'ctrlRouterLink'
         );
@@ -65,10 +67,10 @@ class CtrlRouterLink extends AbstractSystem
     protected function obtainCtrlRouterLinkTasks(): array
     {
         return [
-            'searchRoute'     => \BFW\RunTasks::generateStepItem(
+            'searchRoute'     => RunTasks::generateStepItem(
                 $this->ctrlRouterInfos
             ),
-            'checkRouteFound' => \BFW\RunTasks::generateStepItem(
+            'checkRouteFound' => RunTasks::generateStepItem(
                 null,
                 function () {
                     if ($this->ctrlRouterInfos->isFound === false) {
@@ -76,7 +78,7 @@ class CtrlRouterLink extends AbstractSystem
                     }
                 }
             ),
-            'execRoute'       => \BFW\RunTasks::generateStepItem(
+            'execRoute'       => RunTasks::generateStepItem(
                 $this->ctrlRouterInfos
             )
         ];

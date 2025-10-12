@@ -4,6 +4,7 @@ namespace BFW;
 
 use Exception;
 use BFW\Core\AppSystems\SystemInterface;
+use BFW\RunTasks;
 
 /**
  * Application class
@@ -241,7 +242,7 @@ class Application
     {
         $appSystemList         = $this->obtainAppSystemList();
         $this->declaredOptions = $options;
-        $this->runTasks        = new \BFW\RunTasks([], 'BfwApp');
+        $this->runTasks        = new RunTasks([], 'BfwApp');
 
         foreach ($appSystemList as $name => $className) {
             if ($name === 'ctrlRouterLink') {
@@ -310,7 +311,7 @@ class Application
         if ($appSystem->toRun() === true) {
             $this->runTasks->addToRunSteps(
                 $name,
-                \BFW\RunTasks::generateStepItem(null, [$appSystem, 'run'])
+                RunTasks::generateStepItem(null, [$appSystem, 'run'])
             );
         }
     }
