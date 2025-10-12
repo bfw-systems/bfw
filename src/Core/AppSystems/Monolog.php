@@ -2,10 +2,12 @@
 
 namespace BFW\Core\AppSystems;
 
+use BFW\Monolog as BFWMonolog;
+
 class Monolog extends AbstractSystem
 {
     /**
-     * @var \BFW\Monolog $monolog The monolog system for bfw channel
+     * @var BFWMonolog $monolog The monolog system for bfw channel
      */
     protected $monolog;
 
@@ -15,7 +17,7 @@ class Monolog extends AbstractSystem
     public function __construct()
     {
         $config        = \BFW\Application::getInstance()->getConfig();
-        $this->monolog = new \BFW\Monolog('bfw', $config);
+        $this->monolog = new BFWMonolog('bfw', $config);
         $this->monolog->addAllHandlers('handlers', 'monolog.php');
 
         $this->monolog->getLogger()->debug(
@@ -26,7 +28,7 @@ class Monolog extends AbstractSystem
     /**
      * {@inheritdoc}
      *
-     * @return \BFW\Monolog
+     * @return BFWMonolog
      */
     public function __invoke()
     {

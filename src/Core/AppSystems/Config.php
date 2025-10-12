@@ -2,10 +2,12 @@
 
 namespace BFW\Core\AppSystems;
 
+use BFW\Config as BFWConfig;
+
 class Config extends AbstractSystem
 {
     /**
-     * @var \BFW\Config $config The config object for BFW framework
+     * @var BFWConfig $config The config object for BFW framework
      */
     protected $config;
 
@@ -14,14 +16,14 @@ class Config extends AbstractSystem
      */
     public function __construct()
     {
-        $this->config = new \BFW\Config('bfw');
+        $this->config = new BFWConfig('bfw');
         $this->config->loadFiles();
     }
 
     /**
      * {@inheritdoc}
      *
-     * @return \BFW\Config
+     * @return BFWConfig
      */
     public function __invoke()
     {
