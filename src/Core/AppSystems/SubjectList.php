@@ -2,10 +2,12 @@
 
 namespace BFW\Core\AppSystems;
 
+use BFW\Core\SubjectList as CoreSubjectList;
+
 class SubjectList extends AbstractSystem
 {
     /**
-     * @var \BFW\Core\SubjectList $subjectList
+     * @var CoreSubjectList $subjectList
      */
     protected $subjectList;
 
@@ -14,13 +16,13 @@ class SubjectList extends AbstractSystem
      */
     public function __construct()
     {
-        $this->subjectList = new \BFW\Core\SubjectList();
+        $this->subjectList = new CoreSubjectList();
     }
 
     /**
      * {@inheritdoc}
      *
-     * @return \BFW\Core\SubjectList
+     * @return CoreSubjectList
      */
     public function __invoke()
     {
