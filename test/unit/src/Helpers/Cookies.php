@@ -33,7 +33,8 @@ class Cookies extends atoum
                 ->isEqualTo('Set-Cookie: unit_test=atoum')
             ->string($cookieArgs[1])
                 //Expires=Thu, 15 Nov 2018 06:46:16 Europe/Berlin
-                ->matches('#Expires=[A-Z][a-z]{2}, [0-9]{2} [A-Z][a-z]{2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2} ' . $expireTime->format('e') . '#')
+                ->matches('#Expires=[A-Z][a-z]{2},
+                    [0-9]{2} [A-Z][a-z]{2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2} ' . $expireTime->format('e') . '#')
             ->string($cookieArgs[2])
                 ->isEqualTo('Path=/')
             ->string($cookieArgs[3])
@@ -47,7 +48,8 @@ class Cookies extends atoum
             ->then
             ->given($expireMatch = [])
             ->and(preg_match(
-                '#Expires=([A-Z][a-z]{2}, [0-9]{2} [A-Z][a-z]{2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}) ' . $expireTime->format('e') . '#',
+                '#Expires=([A-Z][a-z]{2},
+                    [0-9]{2} [A-Z][a-z]{2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}) ' . $expireTime->format('e') . '#',
                 $cookieArgs[1],
                 $expireMatch
             ))
@@ -77,11 +79,13 @@ class Cookies extends atoum
                 ->isEqualTo('Set-Cookie: unit_test=atoum')
             ->string($cookieArgs[1])
                 //Expires=Thu, 15 Nov 2018 06:46:16 Europe/Berlin
-                ->matches('#Expires=[A-Z][a-z]{2}, [0-9]{2} [A-Z][a-z]{2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2} ' . $expireTime->format('e') . '#')
+                ->matches('#Expires=[A-Z][a-z]{2},
+                    [0-9]{2} [A-Z][a-z]{2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2} ' . $expireTime->format('e') . '#')
             ->then
             ->given($expireMatch = [])
             ->and(preg_match(
-                '#Expires=([A-Z][a-z]{2}, [0-9]{2} [A-Z][a-z]{2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}) ' . $expireTime->format('e') . '#',
+                '#Expires=([A-Z][a-z]{2},
+                    [0-9]{2} [A-Z][a-z]{2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}) ' . $expireTime->format('e') . '#',
                 $cookieArgs[1],
                 $expireMatch
             ))
@@ -112,7 +116,8 @@ class Cookies extends atoum
                 ->isEqualTo('Set-Cookie: unit_test=atoum')
             ->string($cookieArgs[1])
                 //Expires=Thu, 15 Nov 2018 06:46:16 Europe/Berlin
-                ->matches('#Expires=[A-Z][a-z]{2}, [0-9]{2} [A-Z][a-z]{2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2} ' . $expireTime->format('e') . '#')
+                ->matches('#Expires=[A-Z][a-z]{2},
+                    [0-9]{2} [A-Z][a-z]{2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2} ' . $expireTime->format('e') . '#')
             ->string($cookieArgs[2])
                 ->isEqualTo('Path=/')
             ->string($cookieArgs[3])

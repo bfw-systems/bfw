@@ -409,7 +409,8 @@ class Actions extends atoum
                 )
         ;
 
-        $this->assert('test Install\ModuleManager\Actions::actionOnModule - without modulePath declared and for not existing module')
+        $this->assert('test Install\ModuleManager\Actions::actionOnModule - without modulePath declared and for not
+            existing module')
             ->given($lastFlushedMsg = '')
             ->exception(function () {
                 $this->invoke($this->mock)->actionOnModule(

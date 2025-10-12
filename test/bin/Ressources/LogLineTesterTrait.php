@@ -86,7 +86,8 @@ trait LogLineTesterTrait
 
         if ($context[$keyName] !== $expectedValue) {
             throw new Exception(
-                '[LCKE] The key ' . $keyName . ' in context for line idx ' . $logIdx . ' is not equal to the expected value'
+                '[LCKE] The key ' . $keyName . ' in context for line idx ' . $logIdx .
+                    ' is not equal to the expected value'
             );
         }
     }

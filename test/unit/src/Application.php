@@ -135,7 +135,8 @@ class Application extends atoum
 
         /**
          * [2018-07-29 19:32:59] bfw.DEBUG: Currently during the initialization framework step. [] []
-         * [2018-07-29 19:32:59] bfw.DEBUG: RunTask notify {"prefix":"BfwApp","action":"bfw_ctrlRouterLink_subject_added"} []
+         * [2018-07-29 19:32:59] bfw.DEBUG: RunTask notify
+             {"prefix":"BfwApp","action":"bfw_ctrlRouterLink_subject_added"} []
          * [2018-07-29 19:32:59] bfw.DEBUG: Subject notify event {"action":"bfw_ctrlRouterLink_subject_added"} []
          * [2018-07-29 19:32:59] bfw.DEBUG: Framework initializing done. [] []
          */
@@ -250,7 +251,8 @@ class Application extends atoum
 
         /**
          * [2018-07-29 20:00:49] bfw.DEBUG: Currently during the initialization framework step. [] []
-         * [2018-07-29 20:00:49] bfw.DEBUG: RunTask notify {"prefix":"BfwApp","action":"bfw_ctrlRouterLink_subject_added"} []
+         * [2018-07-29 20:00:49] bfw.DEBUG: RunTask notify
+             {"prefix":"BfwApp","action":"bfw_ctrlRouterLink_subject_added"} []
          * [2018-07-29 20:00:49] bfw.DEBUG: Subject notify event {"action":"bfw_ctrlRouterLink_subject_added"} []
          * [2018-07-29 20:00:49] bfw.DEBUG: Framework initializing done. [] []
          * [2018-07-29 20:00:49] bfw.DEBUG: running framework [] []
