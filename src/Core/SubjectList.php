@@ -79,7 +79,7 @@ class SubjectList
             array_key_exists($subjectName, $this->subjectList) &&
             $this->subjectList[$subjectName] !== $subject
         ) {
-            throw new \Exception(
+            throw new Exception(
                 'A subject with the name ' . $subjectName . ' already exist.',
                 self::ERR_ADD_SUBJECT_ALREADY_EXIST
             );

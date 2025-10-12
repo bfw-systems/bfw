@@ -3,6 +3,8 @@
 namespace BFW\Core;
 
 use Exception;
+use BFW\Module;
+use bultonFr\DependencyTree\DependencyTree;
 
 /**
  * Class to manage all modules in the application
@@ -60,7 +62,7 @@ class ModuleList
      */
     public function addModule(string $moduleName)
     {
-        $this->modules[$moduleName] = new \BFW\Module($moduleName);
+        $this->modules[$moduleName] = new Module($moduleName);
         $this->modules[$moduleName]->loadModule();
     }
 
@@ -138,7 +140,7 @@ class ModuleList
      */
     public function generateTree()
     {
-        $tree = new \bultonFr\DependencyTree\DependencyTree();
+        $tree = new DependencyTree();
 
         foreach ($this->modules as $moduleName => $module) {
             $priority = 0;

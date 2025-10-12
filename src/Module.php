@@ -3,6 +3,7 @@
 namespace BFW;
 
 use Exception;
+use BFW\Config;
 
 /**
  * Class to manage a module
@@ -202,7 +203,7 @@ class Module
             return;
         }
 
-        $this->config = new \BFW\Config($this->name);
+        $this->config = new Config($this->name);
         $this->config->loadFiles();
     }
 

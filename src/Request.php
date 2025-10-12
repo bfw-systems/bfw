@@ -2,6 +2,8 @@
 
 namespace BFW;
 
+use Exception;
+
 /**
  * Class to get informations about http request.
  * Singleton pattern.
@@ -145,7 +147,7 @@ class Request
     public static function getServerValue(string $keyName): string
     {
         if (!isset($_SERVER[$keyName])) {
-            throw new \Exception(
+            throw new Exception(
                 'The key ' . $keyName . ' not exist into $_SERVER array',
                 self::ERR_KEY_NOT_EXIST
             );

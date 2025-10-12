@@ -2,6 +2,8 @@
 
 namespace BFW\Helpers;
 
+use DateTime;
+
 /**
  * Helpers to manage cookies
  */
@@ -56,7 +58,7 @@ class Cookies
     {
         $cookieText = 'Set-Cookie: ' . $name . '=' . $value;
 
-        $expireTime = new \DateTime();
+        $expireTime = new DateTime();
         $expireTime->modify('+ ' . $expire . ' second');
         $cookieText .= '; Expires=' . $expireTime->format('D, d M Y H:i:s e');
 

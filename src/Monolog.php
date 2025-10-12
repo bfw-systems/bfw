@@ -3,6 +3,7 @@
 namespace BFW;
 
 use Exception;
+use Monolog\Logger;
 
 /**
  * Class to read monolog config file and instanciate monolog from config
@@ -60,11 +61,11 @@ class Monolog
      * @param string $channelName The monolog channel name
      * @param \BFW\Config $config The config object containing handlers list
      */
-    public function __construct(string $channelName, \BFW\Config $config)
+    public function __construct(string $channelName, Config $config)
     {
         $this->channelName = $channelName;
         $this->config      = $config;
-        $this->logger      = new \Monolog\Logger($this->channelName);
+        $this->logger      = new Logger($this->channelName);
     }
 
     /**
