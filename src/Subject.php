@@ -168,8 +168,15 @@ class Subject implements SplSubject
      */
     public function addNotification(string $action, $context = null): self
     {
-        $this->notifyHeap[] = new class ($action, $context) {
-            public $action;
+        $this->notifyHeap[] = new class($action, $context) {
+            /**
+             * @var string The action to notify
+             */
+            public string $action;
+            
+            /**
+             * @var mixed The context for the notification
+             */
             public $context;
 
             public function __construct($action, $context)

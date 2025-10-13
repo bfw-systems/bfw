@@ -8,8 +8,8 @@
 
 BFW is a framework makes for web projects create with PHP.
 
-It is compatible with PHP >= 7.4
-The full list of supported version is on [GitHub Actions](https://github.com/bfw-systems/bfw/actions "bfw builds on GitHub Actions").
+It is compatible with PHP >= 8.3 and supports PHP 8.4
+The full list of supported version is on [travis-ci](https://travis-ci.org/bulton-fr/bfw "bfw builds on travis-ci").
 
 ## Why a new framework / The origin :
 

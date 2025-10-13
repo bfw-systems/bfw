@@ -1,4 +1,4 @@
-BFW : Framework PHP 7.4+
+BFW : Framework PHP 8.x
 ===
 
 [![CI](https://github.com/bfw-systems/bfw/workflows/CI/badge.svg?branch=3.0)](https://github.com/bfw-systems/bfw/actions/workflows/ci.yml) [![Code Quality](https://github.com/bfw-systems/bfw/workflows/Code%20Quality/badge.svg?branch=3.0)](https://github.com/bfw-systems/bfw/actions/workflows/code-quality.yml) [![Codecov](https://codecov.io/gh/bfw-systems/bfw/branch/3.0/graph/badge.svg)](https://codecov.io/gh/bfw-systems/bfw)

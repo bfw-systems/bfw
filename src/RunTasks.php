@@ -159,7 +159,14 @@ class RunTasks extends Subject
     public static function generateStepItem($context = null, $callback = null)
     {
         return new class ($context, $callback) {
+            /**
+             * @var mixed The context for the step
+             */
             public $context;
+            
+            /**
+             * @var callable|null The callback to execute
+             */
             public $callback;
 
             public function __construct($context, $callback)

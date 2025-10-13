@@ -7,6 +7,7 @@ use Exception;
 /**
  * Class to manage a module
  */
+#[AllowDynamicProperties]
 class Module
 {
     /**
@@ -66,8 +67,15 @@ class Module
 
         $this->name   = $name;
         $this->status = new class {
-            public $load = false;
-            public $run  = false;
+            /**
+             * @var bool Load status
+             */
+            public bool $load = false;
+            
+            /**
+             * @var bool Run status
+             */
+            public bool $run  = false;
         };
     }
 

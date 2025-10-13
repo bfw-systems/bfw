@@ -3,7 +3,7 @@
 namespace BFW\Test\Bin\Ressources;
 
 use Exception;
-use Dubture\Monolog\Reader\LogReader;
+use Devdot\Monolog\Parser;
 
 trait LogLineTesterTrait
 {
@@ -11,16 +11,18 @@ trait LogLineTesterTrait
 
     protected function obtainMonologRecords($logFilePath): array
     {
-        $logReader  = new LogReader($logFilePath);
+        $logParser = new Parser($this->logFilePath);
+        $logRecordList = $logParser->get();
+
         $mmLogLines = [];
         $startMMLog = false;
 
-        foreach ($logReader as $logLine) {
+        foreach ($logRecordList as $logLine) {
             if (empty($logLine)) {
                 continue;
             }
 
-            if ($logLine['context'] === ['action' => 'BfwApp_run_moduleManager']) {
+            if ($logLine->context === ['action' => 'BfwApp_run_moduleManager']) {
                 $startMMLog = true;
                 continue;
             }
@@ -29,7 +31,7 @@ trait LogLineTesterTrait
                 continue;
             }
 
-            if ($logLine['context'] === ['action' => 'BfwApp_done_moduleManager']) {
+            if ($logLine->context === ['action' => 'BfwApp_done_moduleManager']) {
                 break;
             }
 
@@ -50,7 +52,7 @@ trait LogLineTesterTrait
     {
         $this->checkLogLineExist($logIdx);
 
-        $logMsg = $this->logRecords[$logIdx]['message'];
+        $logMsg = $this->logRecords[$logIdx]->message;
         if ($logMsg !== $expectedMsg) {
             throw new Exception(
                 '[LM] Msg on line idx ' . $logIdx . ' is not equal to expected'
@@ -62,7 +64,7 @@ trait LogLineTesterTrait
     {
         $this->checkLogLineExist($logIdx);
 
-        $context = $this->logRecords[$logIdx]['context'];
+        $context = $this->logRecords[$logIdx]->context;
 
         foreach ($expectedKeys as $expectedKey) {
             if (!array_key_exists($expectedKey, $context)) {
@@ -77,7 +79,7 @@ trait LogLineTesterTrait
     {
         $this->checkLogLineExist($logIdx);
 
-        $context = $this->logRecords[$logIdx]['context'];
+        $context = $this->logRecords[$logIdx]->context;
         if (!isset($context[$keyName])) {
             throw new Exception(
                 '[LCKE] Context for line idx ' . $logIdx . ' not contain the key ' . $keyName
@@ -95,7 +97,7 @@ trait LogLineTesterTrait
     {
         $this->checkLogLineExist($logIdx);
 
-        $context = $this->logRecords[$logIdx]['context'];
+        $context = $this->logRecords[$logIdx]->context;
         if (!isset($context[$keyName])) {
             throw new Exception(
                 '[LCKC] Context for line idx ' . $logIdx . ' not contain the key ' . $keyName
