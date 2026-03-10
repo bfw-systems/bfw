@@ -72,7 +72,7 @@ class Errors
      *
      * @return boolean|array Render infos
      *  Boolean : false if no render to use
-     *  Array   : Infos from config
+     *  Array   : Info from config
      */
     protected function obtainErrorRender()
     {
@@ -90,7 +90,7 @@ class Errors
      *
      * @return boolean|array Render infos
      *  Boolean : false if no render to use
-     *  Array   : Infos from config
+     *  Array   : Info from config
      */
     protected function obtainExceptionRender()
     {
@@ -214,7 +214,7 @@ class Errors
      * Call the personnal class-method or function declared on config when
      * an exception or an error is triggered.
      *
-     * @param array    $renderInfos : Infos from config
+     * @param array    $renderInfos : Info from config
      * @param string   $errType : Human readable error severity
      * @param string   $errMsg : Error/exception message
      * @param string   $errFile : File where the error/exception is triggered

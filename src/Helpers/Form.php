@@ -60,7 +60,7 @@ class Form
     /**
      * Save the form's token
      *
-     * @param object $saveInfos Infos about token (id and expire time)
+     * @param object $saveInfos Info about token (id and expire time)
      *
      * @return void
      */
@@ -75,7 +75,7 @@ class Form
      *
      * @global array $_SESSION
      *
-     * @param object $saveInfos Infos about token (id and expire time)
+     * @param object $saveInfos Info about token (id and expire time)
      *
      * @return void
      */

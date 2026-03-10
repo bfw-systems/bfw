@@ -5,7 +5,7 @@ namespace BFW\Core\AppSystems;
 class CtrlRouterLink extends AbstractSystem
 {
     /**
-     * @var object $ctrlRouterInfos Infos from router for controller
+     * @var object $ctrlRouterInfos Info from router for controller
      * system
      */
     protected $ctrlRouterInfos;
